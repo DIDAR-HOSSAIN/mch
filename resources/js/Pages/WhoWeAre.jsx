@@ -1,21 +1,30 @@
 import React from 'react';
 import whoWeAreBg from "./../assets/images/who-we-are-bg.png";
 import FrontendLayout from '@/frontend/Layout/FrontendLayout';
-const WhoWeAre  = () => {
+import { Head } from '@inertiajs/react';
+
+const WhoWeAre  = ({ auth }) => {
     return (
-        <FrontendLayout>
+        <FrontendLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Who We Are
+                </h1>
+            }
+        >
+            <Head title="Who We Are" />
+
             <div
                 className="mt-10 p-4 shadow-2xl text-lg bg-cover"
                 style={{ backgroundImage: "url(" + whoWeAreBg + ")" }}
             >
                 <h1 className="text-sky-400 bg-black text-3xl p-4 text-center rounded-md">
-                    {" "}
-                    Who We Are{" "}
+                    Who We Are
                 </h1>
 
                 <div className="m-10 text-justify">
                     <p className="">
-                        {" "}
                         Welcome to AriTechs, your one-stop-shop for all your IT
                         needs. We are a tech company that specializes in
                         providing a range of IT services including networking,

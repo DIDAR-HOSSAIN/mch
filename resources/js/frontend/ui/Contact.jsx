@@ -1,36 +1,37 @@
 import React, { useState } from "react";
-import axiosApi from "./axios";
+import axiosApi from "../../axios/axios";
 
 const Contact = () => {
 
-       const [successMessage, setSuccessMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
-       const handleSubmit = async (event) => {
-           event.preventDefault();
-           const form = event.target;
-           const name = form.name.value;
-           const email = form.email.value;
-           const phone = form.phone.value;
-           const inquiry = form.inquiry.value;
+    const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const phone = form.phone.value;
+    const inquiry = form.inquiry.value;
 
-           try {
-               const response = await axiosApi.post("/contact", {
-                   name,
-                   email,
-                   phone,
-                   inquiry,
-               });
+    try {
+        const response = await axiosApi.post("/contacts", {
+            name,
+            email,
+            phone,
+            inquiry,
+        });
 
-               console.log(response.data); // You can handle the response as needed
-               setSuccessMessage("Operation Successful!");
-               form.reset(); // Reset the form fields
-               setTimeout(() => {
-                   setSuccessMessage("");
-               }, 5000);
-           } catch (error) {
-               console.error("Error sending data:", error);
-           }
-       };
+        console.log(response.data); // You can handle the response as needed
+        setSuccessMessage("Data added successfully.");
+        form.reset(); // Reset the form fields
+        setTimeout(() => {
+            setSuccessMessage("");
+        }, 5000);
+    } catch (error) {
+        console.error("Something went wrong:", error);
+    }
+};
+
 
 
     return (
@@ -71,7 +72,7 @@ const Contact = () => {
                         Contact Us
                     </h1>
                     {successMessage && (
-                        <p className="text-green-600 text-center">{successMessage}</p>
+                        <p className="text-2xl bg-red-500 text-white text-center">{successMessage}</p>
                     )}
                     <form onSubmit={handleSubmit} className="bg-gray-100 p-6">
                         {/* Your form inputs go here */}

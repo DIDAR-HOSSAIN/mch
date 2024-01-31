@@ -2,10 +2,10 @@ import React from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-const FrontendLayout = ({ children }) => {
+const FrontendLayout = ({ user, children }) => {
     return (
         <div>
-            <Navbar />
+            <Navbar user={user} />
             {children}
             <Footer />
         </div>

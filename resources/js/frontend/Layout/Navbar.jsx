@@ -6,7 +6,7 @@ import menu from "../../../../public/data/menus.json";
 import logo from "@/assets/images/Logo/logo-transparent.png";
 import UserDropdown from "@/SharedComponents/UserDropdown";
 
-const Navbar = ({user}) => {
+const Navbar = ({ user }) => {
     const { menus } = menu;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     // const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
@@ -149,7 +149,7 @@ const Navbar = ({user}) => {
 
             {/* End Menu */}
             <div className="navbar-end relative">
-                <UserDropdown />
+                <UserDropdown user={user} />
                 {/* <div className="text-white text-lg">{user?.name}</div> */}
             </div>
         </div>

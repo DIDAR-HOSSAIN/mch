@@ -16,6 +16,13 @@ use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    public function index()
+    {
+        $users = User::all();
+        // dd($contacts);
+        return Inertia::render('Users/ViewList', ['users' => $users]);
+    }
+
     /**
      * Display the registration view.
      */

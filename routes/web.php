@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostController;
@@ -20,6 +21,12 @@ use Inertia\Inertia;
 
 Route::inertia('/', 'Home')->name('home');
 
+Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
+
+Route::get('register', [RegisteredUserController::class, 'create'])->middleware(['auth', 'verified'])->name('register');
+
+Route::post('register', [RegisteredUserController::class, 'store'])->middleware(['auth', 'verified']);
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -28,7 +35,8 @@ Route::inertia('/whoweare', 'WhoWeAre')->name('whoweare');
 
 Route::inertia('/about', 'About')->name('about');
 
-Route::resource('contact', ContactController::class);
+Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
 Route::resource('items', PostController::class);
 

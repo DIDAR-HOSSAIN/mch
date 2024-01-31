@@ -121,7 +121,7 @@
         {
             "id": "6",
             "title": "Contact",
-            "path": "/contact/create"
+            "path": "/contacts/create"
         }
     ]
 }
