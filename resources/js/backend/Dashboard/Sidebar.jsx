@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "@inertiajs/react";
 import "./../../../css/sidebar.css"; // Import your CSS file
 import logo from "@/assets/images/Logo/logo-transparent.png";
+import SidebarMenu from "./SidebarMenu";
 
 const Sidebar = () => {
     return (
@@ -16,18 +17,11 @@ const Sidebar = () => {
                 <li>
                     <Link href="/dashboard">Dashboard</Link>
                 </li>
-                <li>
-                    <Link href="/contacts">Contact List</Link>
-                </li>
-                <li>
-                    <Link href="/registers">User List</Link>
-                </li>
                 {/* Add more sidebar items */}
             </ul>
+            <SidebarMenu />
         </div>
     );
 };
 
 export default Sidebar;
-
-///kljkljl
