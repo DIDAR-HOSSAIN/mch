@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
+use Inertia\Inertia;
 
 class GpcrController extends Controller
 {
@@ -21,7 +22,7 @@ class GpcrController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Gpcr/CreateForm');
     }
 
     /**

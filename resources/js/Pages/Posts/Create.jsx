@@ -11,7 +11,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-        await post(route("items.store"));
+        await post(route("post.store"));
     } catch (error) {
         if (error.response.status === 403) {
             // Handle 403 Forbidden error, maybe show an error message

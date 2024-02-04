@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\PostController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,8 @@ Route::inertia('/about', 'About')->name('about');
 Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
-Route::resource('items', PostController::class);
+Route::resource('post', PostController::class);
+Route::resource('pcr', GpcrController::class);
 
 
 
