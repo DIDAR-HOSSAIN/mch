@@ -14,7 +14,8 @@ return new class extends Migration
     {
         Schema::create('gpcrs', function (Blueprint $table) {
             $table->id();
-            $table->char('patient_id', 10)->unique();
+            // $table->string('patient_id')
+            $table->string('patient_id')->unique();
             $table->string('name');
             $table->string('sex');
             $table->string('address');

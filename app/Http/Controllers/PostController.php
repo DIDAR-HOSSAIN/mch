@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+
 
 class PostController extends Controller
 {
@@ -31,15 +34,37 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $data = request()->validate([
+        $request->validate([
             'name' => 'required',
             'description' => 'required',
         ]);
-   
-        Post::create($request->all());
-    
-        return redirect()->route('post.create');
+
+        $data['patient_id'] = $this->generatePatientId();
+        $data['name'] = $request->input('name');
+        $data['description'] = $request->input('description');
+        Post::create($data);
+
+        return redirect()->route('posts.index')->with('success', 'Post created successfully.');
     }
+
+    private function generatePatientId()
+    {
+        // Your logic to generate patient_id goes here
+        $prefix = 'MCH';
+        $currentDate = now()->format('ymd');
+
+        // Get the total count of records for the current date
+        $count = DB::table('posts')->where('patient_id', 'like', "MCH-$currentDate-%")->count();
+
+        // Increment the count by 1 to get the next serial number
+        $serialNumber = $count + 1;
+
+        // Format the serial number with leading zeros
+        $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+
+        return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
+    }
+
 
     /**
      * Display the specified resource.
