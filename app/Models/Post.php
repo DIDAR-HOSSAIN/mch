@@ -9,11 +9,16 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'number_component'; // Use the auto-incrementing number component as the primary key
-    public $incrementing = false; // Disable Laravel's default auto-incrementing behavior
-    protected $keyType = 'string'; // Set the key type to string if needed
+    function generatePatientId()
+{
+    $prefix = 'ABC'; // Replace with your desired prefix
+    $date = now()->format('Ymd');
+    $increment = str_pad(\DB::table('gpcrs')->max('id') + 1, 5, '0', STR_PAD_LEFT);
+
+    return $prefix . $date . $increment;
+}
 
     protected $fillable = [
-        'name', 'description'
+        'name', 'description','patient_id'
     ];
 }

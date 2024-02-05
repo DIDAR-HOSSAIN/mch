@@ -14,10 +14,9 @@ return new class extends Migration
     {
         Schema::create('gpcrs', function (Blueprint $table) {
             $table->id();
-            $table->string('patient_id');
+            $table->char('patient_id', 10)->unique();
             $table->string('name');
             $table->string('sex');
-            $table->string('age');
             $table->string('address');
             $table->string('test_type');
             $table->string('reg_fee');
@@ -47,7 +46,6 @@ return new class extends Migration
             $table->string('nid');
             $table->timestamps();
         });
-        DB::statement('ALTER TABLE gpcrs ADD CONSTRAINT gpcrs_patient_id DEFAULT CONCAT("MCH-", YEAR(CURDATE()), LPAD(MONTH(CURDATE()), 2, "0"), LPAD(DAY(CURDATE()), 2, "0"), "-001") FOR patient_id');
     }
 
     /**

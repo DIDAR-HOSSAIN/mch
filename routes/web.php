@@ -39,7 +39,7 @@ Route::inertia('/about', 'About')->name('about');
 Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
-Route::resource('post', PostController::class);
+Route::resource('posts', PostController::class);
 Route::resource('pcr', GpcrController::class);
 
 

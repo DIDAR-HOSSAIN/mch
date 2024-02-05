@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('prefix', 10)->default('ABC'); // String component
-            $table->date('date_component'); // Date component
-            $table->unsignedBigInteger('number_component')->unique(); // Auto-incrementing number component
+            $table->char('patient_id', 20)->unique();
             $table->string('name');
             $table->text('description');
             $table->timestamps();
