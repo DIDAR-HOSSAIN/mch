@@ -1,11 +1,11 @@
-import FrontendLayout from '@/frontend/Layout/FrontendLayout';
+import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
 import Contact from '@/frontend/ui/Contact';
 import { Head } from '@inertiajs/react';
 import React from 'react';
 
 const CreateForm = ({ auth }) => {
     return (
-        <FrontendLayout
+        <AdminDashboardLayout
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
@@ -18,7 +18,7 @@ const CreateForm = ({ auth }) => {
                 title="Contact Page"
             />
             <Contact />
-        </FrontendLayout>
+        </AdminDashboardLayout>
     );
 };
 
