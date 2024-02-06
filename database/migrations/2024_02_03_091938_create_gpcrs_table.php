@@ -23,10 +23,9 @@ return new class extends Migration
             $table->string('test_type')->default('General PCR');
             $table->string('reg_fee')->default('3500');
             $table->date('date')->format('d/m/Y');
-            $table->string('user_name');
             $table->string('discount');
-            $table->string('total');
             $table->string('discount_reference');
+            $table->string('total');
             $table->string('paid');
             $table->string('due');
             $table->string('contact_no');
@@ -47,6 +46,7 @@ return new class extends Migration
             $table->string('payment_type')->default('Cash');
             $table->string('account_head')->default('Cash in head');
             $table->string('nid')->nullable();
+            $table->string('user_name');
             $table->timestamps();
         });
     }

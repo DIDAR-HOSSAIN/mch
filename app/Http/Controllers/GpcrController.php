@@ -30,7 +30,30 @@ class GpcrController extends Controller
      */
     public function store(StoreGpcrRequest $request)
     {
-        //
+        $data = $request->all();
+        Gpcr::create($data);
+
+        return response()->json(['message' => 'Data stored successfully'], 200);
+    }
+
+    private function generatePatientId()
+    {
+        // Your logic to generate patient_id goes here
+        $prefix = 'MCH';
+        $currentDate = now()->format('ymd');
+
+        // Get the maximum patient_id for the current date
+        $latestPatientId = DB::table('posts')
+            ->where('patient_id', 'like', "MCH-$currentDate-%")
+            ->max('patient_id');
+
+        // If there are existing records for the current date, extract the serial number and increment
+        $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
+
+        // Format the serial number with leading zeros
+        $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+
+        return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
     }
 
     /**
