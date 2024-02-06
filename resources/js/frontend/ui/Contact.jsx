@@ -1,5 +1,5 @@
+import axiosApi from "@/axios/axios";
 import React, { useState } from "react";
-import axiosApi from "../../axios/axios";
 
 const Contact = () => {
 

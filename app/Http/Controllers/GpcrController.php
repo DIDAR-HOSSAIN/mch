@@ -14,7 +14,7 @@ class GpcrController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Gpcr/ViewList');
     }
 
     /**

@@ -15,8 +15,9 @@ return new class extends Migration
         Schema::create('gpcrs', function (Blueprint $table) {
             $table->id();
             // $table->string('patient_id')
-            $table->string('patient_id')->unique()  ;
+            $table->string('patient_id')->unique();
             $table->string('name');
+            $table->string('email')->nullable();
             $table->string('sex');
             $table->string('address');
             $table->string('test_type')->default('General PCR');

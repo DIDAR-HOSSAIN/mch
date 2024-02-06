@@ -53,17 +53,20 @@ class PostController extends Controller
         $prefix = 'MCH';
         $currentDate = now()->format('ymd');
 
-        // Get the total count of records for the current date
-        $count = DB::table('posts')->where('patient_id', 'like', "MCH-$currentDate-%")->count();
+        // Get the maximum patient_id for the current date
+        $latestPatientId = DB::table('posts')
+            ->where('patient_id', 'like', "MCH-$currentDate-%")
+            ->max('patient_id');
 
-        // Increment the count by 1 to get the next serial number
-        $serialNumber = $count + 1;
+        // If there are existing records for the current date, extract the serial number and increment
+        $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
 
         // Format the serial number with leading zeros
         $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
 
         return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
     }
+
 
 
     /**
