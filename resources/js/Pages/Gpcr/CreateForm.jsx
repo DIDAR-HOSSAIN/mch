@@ -170,23 +170,14 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="date" value="Date" />
 
                             <CustomDatePicker
-                                selectedDate={selectedDate}
+                                selectedDate={selectedDate || new Date()}
                                 handleDateChange={handleDateChange}
                             />
 
-                            {/* <TextInput
-                        id="date"
-                        type="date"
-                        name="date"
-                        value={data.date}
-                        className="mt-1 block w-full"
-                        autoComplete="date"
-                        isFocused={true}
-                        onChange={(e) => setData("date", e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.date} className="mt-2" /> */}
+                            <InputError
+                                message={errors.date}
+                                className="mt-2"
+                            />
                         </div>
 
                         {/* <div>
@@ -470,17 +461,9 @@ const CreateForm = ({ auth }) => {
                                 value="First Dose Date"
                             />
 
-                            <TextInput
-                                id="first_dose_date"
-                                type="date"
-                                name="first_dose_date"
-                                value={data.first_dose_date}
-                                className="mt-1 block w-full"
-                                autoComplete="first_dose_date"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("first_dose_date", e.target.value)
-                                }
+                            <CustomDatePicker
+                                selectedDate={selectedDate || new Date()}
+                                handleDateChange={handleDateChange}
                             />
 
                             <InputError
@@ -495,17 +478,9 @@ const CreateForm = ({ auth }) => {
                                 value="Second Dose Date"
                             />
 
-                            <TextInput
-                                id="second_dose_date"
-                                type="date"
-                                name="second_dose_date"
-                                value={data.second_dose_date}
-                                className="mt-1 block w-full"
-                                autoComplete="second_dose_date"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("second_dose_date", e.target.value)
-                                }
+                            <CustomDatePicker
+                                selectedDate={selectedDate || new Date()}
+                                handleDateChange={handleDateChange}
                             />
 
                             <InputError
@@ -520,17 +495,9 @@ const CreateForm = ({ auth }) => {
                                 value="Booster Dose Date"
                             />
 
-                            <TextInput
-                                id="booster_dose_date"
-                                type="date"
-                                name="booster_dose_date"
-                                value={data.booster_dose_date}
-                                className="mt-1 block w-full"
-                                autoComplete="booster_dose_date"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("booster_dose_date", e.target.value)
-                                }
+                            <CustomDatePicker
+                                selectedDate={selectedDate || new Date()}
+                                handleDateChange={handleDateChange}
                             />
 
                             <InputError
@@ -620,16 +587,9 @@ const CreateForm = ({ auth }) => {
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
 
-                            <TextInput
-                                id="dob"
-                                type="date"
-                                name="dob"
-                                value={data.dob}
-                                className="mt-1 block w-full"
-                                autoComplete="dob"
-                                isFocused={true}
-                                onChange={(e) => setData("dob", e.target.value)}
-                                required
+                            <CustomDatePicker
+                                selectedDate={selectedDate || new Date()}
+                                handleDateChange={handleDateChange}
                             />
 
                             <InputError message={errors.dob} className="mt-2" />

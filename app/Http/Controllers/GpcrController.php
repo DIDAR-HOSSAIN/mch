@@ -35,6 +35,9 @@ class GpcrController extends Controller
     {
         $data = $request->all();
 
+        // Generate patient_id
+        $data['patient_id'] = $this->generatePatientId();
+
         // Ensure 'date' is present in the $data array
         if (!isset($data['date'])) {
             $data['date'] = now()->format('Y-m-d');
@@ -42,29 +45,33 @@ class GpcrController extends Controller
             $data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
         }
 
-        // Generate patient_id
-        $data['patient_id'] = $this->generatePatientId();
-
-        $data['user_name'] = Auth::user()->name;
+        // Check if there is an authenticated user
+        if ($user = Auth::user()) {
+            // Access user properties safely
+            $data['user_name'] = $user->name;
+        } else {
+            // Handle the case where there is no authenticated user
+            // For example, you could set a default value or return an error response
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
 
         // Create Gpcr record
         Gpcr::create($data);
-
-        return response()->json(['message' => 'Data stored successfully'], 200);
     }
 
 
 
-        private function generatePatientId()
-        {
-            // Your logic to generate patient_id goes here
-            $prefix = 'MCH';
-            $currentDate = now()->format('ymd');
+    private function generatePatientId()
+    {
+        $prefix = 'MCH';
+        $currentDate = now()->format('ymd');
 
+        // Loop until a unique patient_id is generated
+        do {
             // Get the maximum patient_id for the current date
-            $latestPatientId = DB::table('posts')
-                ->where('patient_id', 'like', "MCH-$currentDate-%")
-                ->max('patient_id');
+            $latestPatientId = DB::table('gpcrs')
+            ->where('patient_id', 'like', "MCH-$currentDate-%")
+            ->max('patient_id');
 
             // If there are existing records for the current date, extract the serial number and increment
             $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
@@ -72,8 +79,13 @@ class GpcrController extends Controller
             // Format the serial number with leading zeros
             $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
 
-            return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
-        }
+            // Generate the new patient_id
+            $newPatientId = $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
+        } while (Gpcr::where('patient_id', $newPatientId)->exists());
+
+        return $newPatientId;
+    }
+
 
     /**
      * Display the specified resource.
