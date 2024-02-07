@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class GpcrController extends Controller
@@ -31,30 +34,46 @@ class GpcrController extends Controller
     public function store(StoreGpcrRequest $request)
     {
         $data = $request->all();
+
+        // Ensure 'date' is present in the $data array
+        if (!isset($data['date'])) {
+            $data['date'] = now()->format('Y-m-d');
+        } else {
+            $data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
+        }
+
+        // Generate patient_id
+        $data['patient_id'] = $this->generatePatientId();
+
+        $data['user_name'] = Auth::user()->name;
+
+        // Create Gpcr record
         Gpcr::create($data);
 
         return response()->json(['message' => 'Data stored successfully'], 200);
     }
 
-    private function generatePatientId()
-    {
-        // Your logic to generate patient_id goes here
-        $prefix = 'MCH';
-        $currentDate = now()->format('ymd');
 
-        // Get the maximum patient_id for the current date
-        $latestPatientId = DB::table('posts')
-            ->where('patient_id', 'like', "MCH-$currentDate-%")
-            ->max('patient_id');
 
-        // If there are existing records for the current date, extract the serial number and increment
-        $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
+        private function generatePatientId()
+        {
+            // Your logic to generate patient_id goes here
+            $prefix = 'MCH';
+            $currentDate = now()->format('ymd');
 
-        // Format the serial number with leading zeros
-        $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+            // Get the maximum patient_id for the current date
+            $latestPatientId = DB::table('posts')
+                ->where('patient_id', 'like', "MCH-$currentDate-%")
+                ->max('patient_id');
 
-        return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
-    }
+            // If there are existing records for the current date, extract the serial number and increment
+            $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
+
+            // Format the serial number with leading zeros
+            $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+
+            return $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
+        }
 
     /**
      * Display the specified resource.
