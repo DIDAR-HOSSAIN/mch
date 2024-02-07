@@ -14,7 +14,43 @@ const CreateForm = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
+        reg_fee: 0, // Initialize reg_fee with 0
+        discount: 0, // Initialize discount with 0
+        paid: 0, // Initialize paid with 0
+        due: 0, // Initialize due with 0
     });
+
+    const [total, setTotal] = useState(data.reg_fee || 0);
+
+
+    const handleRegFeeChange = (value) => {
+        const regFee = parseFloat(value) || 0;
+        const calculatedTotal = regFee - (parseFloat(data.discount) || 0);
+        setTotal(calculatedTotal);
+        setData("reg_fee", regFee);
+      };
+    
+      const handleDiscountChange = (value) => {
+        const discount = parseFloat(value) || 0;
+        const calculatedTotal = (parseFloat(data.reg_fee) || 0) - discount;
+        setTotal(calculatedTotal);
+        setData("discount", discount);
+      };
+    
+      const handlePaidChange = (value) => {
+        const paid = parseFloat(value) || 0;
+        const calculatedTotal = (parseFloat(total) || 0) - paid;
+        setTotal(calculatedTotal);
+        setData("paid", paid);
+      };
+    
+      const handleDueChange = (value) => {
+        const due = parseFloat(value) || 0;
+        const calculatedTotal = (parseFloat(total) || 0) + due;
+        setTotal(calculatedTotal);
+        setData("due", due);
+      };
+    
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -36,9 +72,8 @@ const CreateForm = ({ auth }) => {
             }
         >
             <Head title="General PCR" />
-            <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-                <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                    <form onSubmit={submit}>
+                <div className="py-2">
+                    <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
 
@@ -61,7 +96,7 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        <div className="mt-4">
+                        <div>
                             <InputLabel htmlFor="email" value="Email" />
 
                             <TextInput
@@ -92,7 +127,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.sex}
                                 className="mt-1 block w-full"
                                 autoComplete="sex"
-                                isFocused={true}
                                 onChange={(e) => setData("sex", e.target.value)}
                                 required
                             />
@@ -105,12 +139,10 @@ const CreateForm = ({ auth }) => {
 
                             <TextInput
                                 id="address"
-                                type="textArea"
                                 name="address"
                                 value={data.address}
                                 className="mt-1 block w-full"
                                 autoComplete="address"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("address", e.target.value)
                                 }
@@ -120,193 +152,6 @@ const CreateForm = ({ auth }) => {
                                 message={errors.address}
                                 className="mt-2"
                             />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="test_type" value="Test type" />
-
-                            <TextInput
-                                id="test_type"
-                                name="test_type"
-                                value={data.test_type}
-                                className="mt-1 block w-full"
-                                autoComplete="test_type"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("test_type", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.test_type}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="reg_fee" value="Reg Fee" />
-
-                            <TextInput
-                                id="reg_fee"
-                                type="number"
-                                name="reg_fee"
-                                value={data.reg_fee}
-                                className="mt-1 block w-full"
-                                autoComplete="reg_fee"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("reg_fee", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.reg_fee}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="date" value="Date" />
-
-                            <CustomDatePicker
-                                selectedDate={selectedDate || new Date()}
-                                handleDateChange={handleDateChange}
-                            />
-
-                            <InputError
-                                message={errors.date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        {/* <div>
-                    <InputLabel htmlFor="user_name" value="User Name" />
-
-                    <TextInput
-                        id="user_name"
-                        name="user_name"
-                        value={data.user_name}
-                        className="mt-1 block w-full"
-                        autoComplete="user_name"
-                        isFocused={true}
-                        onChange={(e) => setData("user_name", e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.user_name} className="mt-2" />
-                </div> */}
-
-                        <div>
-                            <InputLabel htmlFor="discount" value="Discount" />
-
-                            <TextInput
-                                id="discount"
-                                type="number"
-                                name="discount"
-                                value={data.discount}
-                                className="mt-1 block w-full"
-                                autoComplete="discount"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("discount", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.discount}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="total" value="Total" />
-
-                            <TextInput
-                                id="total"
-                                type="number"
-                                name="total"
-                                value={data.total}
-                                className="mt-1 block w-full"
-                                autoComplete="total"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("total", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.total}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="discount_reference"
-                                value="Discount Reference"
-                            />
-
-                            <TextInput
-                                id="discount_reference"
-                                name="discount_reference"
-                                value={data.discount_reference}
-                                className="mt-1 block w-full"
-                                autoComplete="discount_reference"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData(
-                                        "discount_reference",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.discount_reference}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="paid" value="Paid" />
-
-                            <TextInput
-                                id="paid"
-                                type="number"
-                                name="paid"
-                                value={data.paid}
-                                className="mt-1 block w-full"
-                                autoComplete="paid"
-                                isFocused={true}
-                                onChange={(e) =>
-                                    setData("paid", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.paid}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="due" value="Due" />
-
-                            <TextInput
-                                id="due"
-                                type="number"
-                                name="due"
-                                value={data.due}
-                                className="mt-1 block w-full"
-                                autoComplete="due"
-                                isFocused={true}
-                                onChange={(e) => setData("due", e.target.value)}
-                            />
-
-                            <InputError message={errors.due} className="mt-2" />
                         </div>
 
                         <div>
@@ -322,7 +167,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.contact_no}
                                 className="mt-1 block w-full"
                                 autoComplete="contact_no"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("contact_no", e.target.value)
                                 }
@@ -347,7 +191,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.police_station}
                                 className="mt-1 block w-full"
                                 autoComplete="police_station"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("police_station", e.target.value)
                                 }
@@ -368,7 +211,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.district}
                                 className="mt-1 block w-full"
                                 autoComplete="district"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("district", e.target.value)
                                 }
@@ -392,7 +234,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.passport_no}
                                 className="mt-1 block w-full"
                                 autoComplete="passport_no"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("passport_no", e.target.value)
                                 }
@@ -400,6 +241,123 @@ const CreateForm = ({ auth }) => {
 
                             <InputError
                                 message={errors.passport_no}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="reg_fee" value="Reg Fee" />
+
+                            <TextInput
+                                id="reg_fee"
+                                type="number"
+                                name="reg_fee"
+                                value={data.reg_fee || 3500}
+                                className="mt-1 block w-full"
+                                autoComplete="reg_fee"
+                                onChange={(e) => handleRegFeeChange(e.target.value)}
+                                required
+                            />
+
+                            <InputError
+                                message={errors.reg_fee}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="discount" value="Discount" />
+
+                            <TextInput
+                                id="discount"
+                                type="number"
+                                name="discount"
+                                value={data.discount}
+                                className="mt-1 block w-full"
+                                autoComplete="discount"
+                                onChange={(e) => handleDiscountChange(e.target.value)}
+                            />
+
+                            <InputError
+                                message={errors.discount}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="paid" value="Paid" />
+
+                            <TextInput
+                                id="paid"
+                                type="number"
+                                name="paid"
+                                value={data.paid}
+                                className="mt-1 block w-full"
+                                autoComplete="paid"
+                                onChange={(e) => handlePaidChange(e.target.value)}
+                                required
+                            />
+
+                            <InputError
+                                message={errors.paid}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="due" value="Due" />
+
+                            <TextInput
+                                id="due"
+                                type="number"
+                                name="due"
+                                value={data.due}
+                                className="mt-1 block w-full"
+                                autoComplete="due"
+                                onChange={(e) => handleDueChange(e.target.value)}
+                            />
+
+                            <InputError message={errors.due} className="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="total" value="Total" />
+
+                            <TextInput
+                                id="total"
+                                type="number"
+                                name="total"
+                                value={data.total}
+                                className="mt-1 block w-full"
+                                autoComplete="total"
+                                onChange={(e) => setTotal(e.target.value)}
+                            />
+
+                            <InputError message={errors.total} className="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="discount_reference"
+                                value="Discount Reference"
+                            />
+
+                            <TextInput
+                                id="discount_reference"
+                                name="discount_reference"
+                                value={data.discount_reference}
+                                className="mt-1 block w-full"
+                                autoComplete="discount_reference"
+                                onChange={(e) =>
+                                    setData(
+                                        "discount_reference",
+                                        e.target.value
+                                    )
+                                }
+                            />
+
+                            <InputError
+                                message={errors.discount_reference}
                                 className="mt-2"
                             />
                         </div>
@@ -416,7 +374,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.vaccine_certificate_no}
                                 className="mt-1 block w-full"
                                 autoComplete="vaccine_certificate_no"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData(
                                         "vaccine_certificate_no",
@@ -443,7 +400,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.vaccine_name}
                                 className="mt-1 block w-full"
                                 autoComplete="vaccine_name"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("vaccine_name", e.target.value)
                                 }
@@ -518,7 +474,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.contact_no_relation}
                                 className="mt-1 block w-full"
                                 autoComplete="contact_no_relation"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData(
                                         "contact_no_relation",
@@ -545,7 +500,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.sample_collected_by}
                                 className="mt-1 block w-full"
                                 autoComplete="sample_collected_by"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData(
                                         "sample_collected_by",
@@ -572,7 +526,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.hospital_name}
                                 className="mt-1 block w-full"
                                 autoComplete="hospital_name"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("hospital_name", e.target.value)
                                 }
@@ -604,7 +557,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.age}
                                 className="mt-1 block w-full"
                                 autoComplete="age"
-                                isFocused={true}
                                 onChange={(e) => setData("age", e.target.value)}
                             />
 
@@ -620,7 +572,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.ticket_no}
                                 className="mt-1 block w-full"
                                 autoComplete="ticket_no"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("ticket_no", e.target.value)
                                 }
@@ -643,7 +594,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.payment_type}
                                 className="mt-1 block w-full"
                                 autoComplete="payment_type"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("payment_type", e.target.value)
                                 }
@@ -667,7 +617,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.account_head}
                                 className="mt-1 block w-full"
                                 autoComplete="account_head"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("account_head", e.target.value)
                                 }
@@ -689,7 +638,6 @@ const CreateForm = ({ auth }) => {
                                 value={data.nid}
                                 className="mt-1 block w-full"
                                 autoComplete="nid"
-                                isFocused={true}
                                 onChange={(e) => setData("nid", e.target.value)}
                             />
 
@@ -713,7 +661,6 @@ const CreateForm = ({ auth }) => {
                         </div>
                     </form>
                 </div>
-            </div>
         </AdminDashboardLayout>
     );
 };

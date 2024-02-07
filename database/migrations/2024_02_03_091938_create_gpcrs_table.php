@@ -34,13 +34,13 @@ return new class extends Migration
             $table->string('passport_no')->nullable();
             $table->string('vaccine_certificate_no')->nullable();
             $table->string('vaccine_name')->nullable();
-            $table->string('first_dose_date')->nullable();
-            $table->string('second_dose_date')->nullable();
-            $table->string('booster_dose_date')->nullable();
+            $table->date('first_dose_date')->default(now());
+            $table->date('second_dose_date')->default(now());
+            $table->date('booster_dose_date')->default(now());
             $table->string('contact_no_relation')->nullable();
             $table->string('sample_collected_by')->nullable();
             $table->string('hospital_name')->nullable();
-            $table->date('dob')->format('d/m/Y');
+            $table->date('dob')->default(now());
             $table->string('age')->default('0');
             $table->string('ticket_no')->nullable();
             $table->string('payment_type')->default('Cash');
