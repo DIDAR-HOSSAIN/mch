@@ -14,34 +14,33 @@ return new class extends Migration
     {
         Schema::create('gpcrs', function (Blueprint $table) {
             $table->id();
-            // $table->string('patient_id')
             $table->string('patient_id')->unique();
             $table->string('name');
             $table->string('email')->nullable();
+            $table->date('dob')->default(now());
+            $table->string('age')->default('0');
             $table->string('sex');
             $table->string('address');
-            $table->string('test_type')->default('General PCR');
-            $table->string('reg_fee')->default('3500');
-            $table->date('date')->default(now());
-            $table->string('discount')->nullable();
-            $table->string('discount_reference')->nullable();
-            $table->string('total');
-            $table->string('paid')->default('0');
-            $table->string('due')->default('0');
             $table->string('contact_no');
+            $table->string('passport_no')->nullable();
             $table->string('police_station')->nullable();
             $table->string('district')->nullable();
-            $table->string('passport_no')->nullable();
-            $table->string('vaccine_certificate_no')->nullable();
+            $table->string('reg_fee')->default('3500');
+            $table->string('discount')->nullable();
+            $table->string('paid')->default('0');
+            $table->string('due')->default('0');
+            $table->string('total');
+            $table->string('discount_reference')->nullable();
             $table->string('vaccine_name')->nullable();
+            $table->string('vaccine_certificate_no')->nullable();
             $table->date('first_dose_date')->nullable();
             $table->date('second_dose_date')->nullable();
             $table->date('booster_dose_date')->nullable();
             $table->string('contact_no_relation')->nullable();
+            $table->string('test_type')->default('General PCR');
+            $table->date('date')->default(now());
             $table->string('sample_collected_by')->nullable();
             $table->string('hospital_name')->nullable();
-            $table->date('dob')->default(now());
-            $table->string('age')->default('0');
             $table->string('ticket_no')->nullable();
             $table->string('payment_type')->default('Cash');
             $table->string('account_head')->default('Cash in head');

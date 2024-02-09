@@ -30,7 +30,6 @@ const calculateAge = (dob) => {
 };
 
 const CreateForm = ({ auth }) => {
-
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -43,7 +42,6 @@ const CreateForm = ({ auth }) => {
     const [firstDoseDate, setFirstDoseDate] = useState(null);
     const [secondDoseDate, setSecondDoseDate] = useState(null);
     const [boosterDoseDate, setBoosterDoseDate] = useState(null);
-
 
     const handleRegFeeChange = (value) => {
         const regFee = parseFloat(value) || 0;
@@ -96,12 +94,8 @@ const CreateForm = ({ auth }) => {
         setData("age", age);
     };
 
-
     const handleDateChange = (date, field) => {
         switch (field) {
-            case "dob":
-                setDob(date);
-                break;
             case "first_dose_date":
                 setFirstDoseDate(date);
                 break;
@@ -117,7 +111,6 @@ const CreateForm = ({ auth }) => {
 
         setData(field, date ? date.toISOString().split("T")[0] : null);
     };
-
 
     const submit = (e) => {
         e.preventDefault();
@@ -171,6 +164,31 @@ const CreateForm = ({ auth }) => {
                         />
 
                         <InputError message={errors.email} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <InputLabel htmlFor="dob" value="Date of Birth" />
+
+                        <CustomDatePicker
+                            selectedDate={dob || new Date()}
+                            handleDateChange={(date) => handleDobChange(date)}
+                        />
+
+                        <InputError message={errors.dob} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <InputLabel htmlFor="age" value="Age" />
+                        <TextInput
+                            id="age"
+                            name="age"
+                            value={data.age}
+                            className="mt-1 block w-full"
+                            autoComplete="age"
+                            onChange={(e) => setData("age", e.target.value)}
+                            required
+                        />
+                        <InputError message={errors.age} className="mt-2" />
                     </div>
 
                     <div>
@@ -228,6 +246,26 @@ const CreateForm = ({ auth }) => {
                     </div>
 
                     <div>
+                        <InputLabel htmlFor="passport_no" value="Passport No" />
+
+                        <TextInput
+                            id="passport_no"
+                            name="passport_no"
+                            value={data.passport_no}
+                            className="mt-1 block w-full"
+                            autoComplete="passport_no"
+                            onChange={(e) =>
+                                setData("passport_no", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.passport_no}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div>
                         <InputLabel
                             htmlFor="police_station"
                             value="Police Station"
@@ -266,26 +304,6 @@ const CreateForm = ({ auth }) => {
 
                         <InputError
                             message={errors.district}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="passport_no" value="Passport No" />
-
-                        <TextInput
-                            id="passport_no"
-                            name="passport_no"
-                            value={data.passport_no}
-                            className="mt-1 block w-full"
-                            autoComplete="passport_no"
-                            onChange={(e) =>
-                                setData("passport_no", e.target.value)
-                            }
-                        />
-
-                        <InputError
-                            message={errors.passport_no}
                             className="mt-2"
                         />
                     </div>
@@ -408,6 +426,29 @@ const CreateForm = ({ auth }) => {
 
                     <div>
                         <InputLabel
+                            htmlFor="vaccine_name"
+                            value="Vaccine Name"
+                        />
+
+                        <TextInput
+                            id="vaccine_name"
+                            name="vaccine_name"
+                            value={data.vaccine_name}
+                            className="mt-1 block w-full"
+                            autoComplete="vaccine_name"
+                            onChange={(e) =>
+                                setData("vaccine_name", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.vaccine_name}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel
                             htmlFor="vaccine_certificate_no"
                             value="Vaccine Certificate No"
                         />
@@ -428,29 +469,6 @@ const CreateForm = ({ auth }) => {
 
                         <InputError
                             message={errors.vaccine_certificate_no}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div>
-                        <InputLabel
-                            htmlFor="vaccine_name"
-                            value="Vaccine Name"
-                        />
-
-                        <TextInput
-                            id="vaccine_name"
-                            name="vaccine_name"
-                            value={data.vaccine_name}
-                            className="mt-1 block w-full"
-                            autoComplete="vaccine_name"
-                            onChange={(e) =>
-                                setData("vaccine_name", e.target.value)
-                            }
-                        />
-
-                        <InputError
-                            message={errors.vaccine_name}
                             className="mt-2"
                         />
                     </div>
@@ -579,32 +597,6 @@ const CreateForm = ({ auth }) => {
                             message={errors.hospital_name}
                             className="mt-2"
                         />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="dob" value="Date of Birth" />
-
-                        <CustomDatePicker
-                            selectedDate={dob || new Date()}
-                            handleDateChange={(date) => handleDobChange(date)}
-                        />
-
-                        <InputError message={errors.dob} className="mt-2" />
-                    </div>
-
-                    <div>
-                        <InputLabel htmlFor="age" value="Age" />
-
-                        <TextInput
-                            id="age"
-                            name="age"
-                            value={data.age}
-                            className="mt-1 block w-full"
-                            autoComplete="age"
-                            readOnly // Make it read-only as it's calculated
-                        />
-
-                        <InputError message={errors.age} className="mt-2" />
                     </div>
 
                     <div>
