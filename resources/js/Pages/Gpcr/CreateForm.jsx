@@ -12,40 +12,38 @@ import "react-datepicker/dist/react-datepicker.css";
 const calculateAge = (dob) => {
     const currentDate = new Date();
     const birthDate = new Date(dob);
-  
+
     let age = currentDate.getFullYear() - birthDate.getFullYear();
-  
+
     const currentMonth = currentDate.getMonth();
     const birthMonth = birthDate.getMonth();
-  
+
     if (
-      currentMonth < birthMonth ||
-      (currentMonth === birthMonth && currentDate.getDate() < birthDate.getDate())
+        currentMonth < birthMonth ||
+        (currentMonth === birthMonth &&
+            currentDate.getDate() < birthDate.getDate())
     ) {
-      age--;
+        age--;
     }
-  
+
     return age;
-  };
+};
 
 const CreateForm = ({ auth }) => {
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [firstDoseDate, setFirstDoseDate] = useState(null);
-    const [secondDoseDate, setSecondDoseDate] = useState(null);
-    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
         reg_fee: 3500,
         total: 3500, // set the default total value here if needed
-        dob: "",
-        first_dose_date: "",
-        second_dose_date: "",
-        booster_dose_date: "",
     });
 
     const [total, setTotal] = useState(data.reg_fee || 0);
+    const [dob, setDob] = useState(null);
+    const [firstDoseDate, setFirstDoseDate] = useState(null);
+    const [secondDoseDate, setSecondDoseDate] = useState(null);
+    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
+
 
     const handleRegFeeChange = (value) => {
         const regFee = parseFloat(value) || 0;
@@ -75,8 +73,7 @@ const CreateForm = ({ auth }) => {
         const calculatedDue = (parseFloat(total) || 0) - paid;
 
         setTotal(total); // No change to total
-        setData("paid", paid);
-        setData("due", calculatedDue);
+        setData({ ...data, paid: paid, due: calculatedDue }); // Update paid and due in the form data
     };
 
     const handleDueChange = (value) => {
@@ -87,14 +84,20 @@ const CreateForm = ({ auth }) => {
     };
 
     const handleDobChange = (date) => {
-        setSelectedDate(date);
-        setData("dob", date.toISOString().split("T")[0]); // Convert date to ISO format
-        const age = calculateAge(date);
-        setData("age", age); // Update age in the form data
-      };
+        // Update the state variable
+        setDob(date);
 
-     const handleDateChange = (date, field) => {
-        // Use the field parameter to determine which date field is being changed
+        // Update the form data with the selected date
+        const isoDate = date ? date.toISOString().split("T")[0] : null;
+        setData("dob", isoDate);
+
+        // Calculate and update the age
+        const age = isoDate ? calculateAge(isoDate) : null;
+        setData("age", age);
+    };
+
+
+    const handleDateChange = (date, field) => {
         switch (field) {
             case "dob":
                 setDob(date);
@@ -112,8 +115,9 @@ const CreateForm = ({ auth }) => {
                 break;
         }
 
-        setData(field, date.toISOString().split("T")[0]); // Convert date to ISO format
+        setData(field, date ? date.toISOString().split("T")[0] : null);
     };
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -164,7 +168,6 @@ const CreateForm = ({ auth }) => {
                             className="mt-1 block w-full"
                             autoComplete="username"
                             onChange={(e) => setData("email", e.target.value)}
-                            required
                         />
 
                         <InputError message={errors.email} className="mt-2" />
@@ -196,6 +199,7 @@ const CreateForm = ({ auth }) => {
                             className="mt-1 block w-full"
                             autoComplete="address"
                             onChange={(e) => setData("address", e.target.value)}
+                            required
                         />
 
                         <InputError message={errors.address} className="mt-2" />
@@ -340,7 +344,6 @@ const CreateForm = ({ auth }) => {
                             className="mt-1 block w-full"
                             autoComplete="paid"
                             onChange={(e) => handlePaidChange(e.target.value)}
-                            required
                         />
 
                         <InputError message={errors.paid} className="mt-2" />
@@ -452,37 +455,61 @@ const CreateForm = ({ auth }) => {
                         />
                     </div>
 
-                        <div>
-                        <InputLabel htmlFor="first_dose_date" value="First Dose Date" />
+                    <div>
+                        <InputLabel
+                            htmlFor="first_dose_date"
+                            value="First Dose Date"
+                        />
 
                         <CustomDatePicker
                             selectedDate={firstDoseDate || new Date()}
-                            handleDateChange={(date) => handleDateChange(date, "first_dose_date")}
+                            handleDateChange={(date) =>
+                                handleDateChange(date, "first_dose_date")
+                            }
                         />
 
-                        <InputError message={errors.first_dose_date} className="mt-2" />
+                        <InputError
+                            message={errors.first_dose_date}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="second_dose_date" value="Second Dose Date" />
+                        <InputLabel
+                            htmlFor="second_dose_date"
+                            value="Second Dose Date"
+                        />
 
                         <CustomDatePicker
                             selectedDate={secondDoseDate || new Date()}
-                            handleDateChange={(date) => handleDateChange(date, "second_dose_date")}
+                            handleDateChange={(date) =>
+                                handleDateChange(date, "second_dose_date")
+                            }
                         />
 
-                        <InputError message={errors.second_dose_date} className="mt-2" />
+                        <InputError
+                            message={errors.second_dose_date}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div>
-                        <InputLabel htmlFor="booster_dose_date" value="Booster Dose Date" />
+                        <InputLabel
+                            htmlFor="booster_dose_date"
+                            value="Booster Dose Date"
+                        />
 
                         <CustomDatePicker
                             selectedDate={boosterDoseDate || new Date()}
-                            handleDateChange={(date) => handleDateChange(date, "booster_dose_date")}
+                            handleDateChange={(date) =>
+                                handleDateChange(date, "booster_dose_date")
+                            }
                         />
 
-                        <InputError message={errors.booster_dose_date} className="mt-2" />
+                        <InputError
+                            message={errors.booster_dose_date}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -554,31 +581,31 @@ const CreateForm = ({ auth }) => {
                         />
                     </div>
 
-                <div>
-                <InputLabel htmlFor="dob" value="Date of Birth" />
+                    <div>
+                        <InputLabel htmlFor="dob" value="Date of Birth" />
 
-                <CustomDatePicker
-                selectedDate={selectedDate || new Date()}
-                handleDateChange={handleDobChange}
-                />
+                        <CustomDatePicker
+                            selectedDate={dob || new Date()}
+                            handleDateChange={(date) => handleDobChange(date)}
+                        />
 
-                <InputError message={errors.dob} className="mt-2" />
-            </div>
+                        <InputError message={errors.dob} className="mt-2" />
+                    </div>
 
-            <div>
-                <InputLabel htmlFor="age" value="Age" />
+                    <div>
+                        <InputLabel htmlFor="age" value="Age" />
 
-                <TextInput
-                id="age"
-                name="age"
-                value={data.age}
-                className="mt-1 block w-full"
-                autoComplete="age"
-                readOnly // Make it read-only as it's calculated
-                />
+                        <TextInput
+                            id="age"
+                            name="age"
+                            value={data.age}
+                            className="mt-1 block w-full"
+                            autoComplete="age"
+                            readOnly // Make it read-only as it's calculated
+                        />
 
-                <InputError message={errors.age} className="mt-2" />
-            </div>
+                        <InputError message={errors.age} className="mt-2" />
+                    </div>
 
                     <div>
                         <InputLabel htmlFor="ticket_no" value="Ticket No" />

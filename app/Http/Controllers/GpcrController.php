@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -34,16 +33,8 @@ class GpcrController extends Controller
     public function store(StoreGpcrRequest $request)
     {
         $data = $request->all();
-
         // Generate patient_id
         $data['patient_id'] = $this->generatePatientId();
-
-        // Ensure 'date' is present in the $data array
-        if (!isset($data['date'])) {
-            $data['date'] = now()->format('Y-m-d');
-        } else {
-            $data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
-        }
 
         // Check if there is an authenticated user
         if ($user = Auth::user()) {
