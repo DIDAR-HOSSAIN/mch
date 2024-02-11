@@ -16,7 +16,9 @@ class GpcrController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Gpcr/ViewList');
+        $datas = Gpcr::all();
+        // dd($datas);
+        return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
     }
 
     /**
@@ -49,7 +51,6 @@ class GpcrController extends Controller
         // Create Gpcr record
         Gpcr::create($data);
     }
-
 
 
     private function generatePatientId()

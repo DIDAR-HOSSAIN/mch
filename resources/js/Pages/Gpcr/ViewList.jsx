@@ -1,9 +1,10 @@
-import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
-import React from 'react';
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { Head, Link, usePage } from "@inertiajs/react";
+import React from "react";
 
-const ViewList = ({ auth, contacts }) => {
+const ViewList = ({ auth, datas }) => {
     // const { contacts } = usePage().props;
+    console.log("from gpcr list", datas);
 
     function destroy(e) {
         if (confirm("Are you sure you want to delete this user?")) {
@@ -16,11 +17,11 @@ const ViewList = ({ auth, contacts }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Contacts
+                    PCR List
                 </h2>
             }
         >
-            <Head title="Contacts" />
+            <Head title="PCR list" />
 
             <div className="py-2">
                 <div className="mx-auto">
@@ -29,9 +30,9 @@ const ViewList = ({ auth, contacts }) => {
                             <div className="flex items-center justify-between mb-6">
                                 <Link
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
-                                    href={route("contacts.create")}
+                                    href={route("pcr.create")}
                                 >
-                                    Create Contact
+                                    Create PCR
                                 </Link>
                             </div>
 
@@ -40,26 +41,44 @@ const ViewList = ({ auth, contacts }) => {
                                     <thead>
                                         <tr className="bg-gray-100">
                                             <th className="px-4 py-2">No.</th>
-                                            <th className="px-4 py-2">Name</th>
-                                            <th className="px-4 py-2">Email</th>
-                                            <th className="px-4 py-2">Phone</th>
                                             <th className="px-4 py-2">
-                                                Inquiry
+                                                Patient ID
                                             </th>
+                                            <th className="px-4 py-2">Date</th>
+                                            <th className="px-4 py-2">Name</th>
+                                            <th className="px-4 py-2">Age</th>
+                                            <th className="px-4 py-2">
+                                                Contact no
+                                            </th>
+                                            <th className="px-4 py-2">
+                                                Reg Fee
+                                            </th>
+                                            <th className="px-4 py-2">
+                                                Discount
+                                            </th>
+                                            <th className="px-4 py-2">Paid</th>
+                                            <th className="px-4 py-2">Due</th>
+                                            <th className="px-4 py-2">Total</th>
                                             <th className="px-4 py-2">
                                                 Action
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {contacts.map(
+                                        {datas.map(
                                             (
                                                 {
                                                     id,
+                                                    patient_id,
+                                                    date,
                                                     name,
-                                                    email,
-                                                    phone,
-                                                    inquiry,
+                                                    age,
+                                                    contact_no,
+                                                    reg_fee,
+                                                    discount,
+                                                    paid,
+                                                    due,
+                                                    total,
                                                 },
                                                 index
                                             ) => (
@@ -68,23 +87,41 @@ const ViewList = ({ auth, contacts }) => {
                                                         {index + 1}
                                                     </td>
                                                     <td className="border px-4 py-2">
+                                                        {patient_id}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {date}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
                                                         {name}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {email}
+                                                        {age}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {phone}
+                                                        {contact_no}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {inquiry}
+                                                        {reg_fee}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {discount}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {paid}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {due}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {total}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         <Link
                                                             tabIndex="1"
                                                             className="px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(
-                                                                "contacts.edit",
+                                                                "pcr.edit",
                                                                 id
                                                             )}
                                                         >
@@ -104,7 +141,7 @@ const ViewList = ({ auth, contacts }) => {
                                             )
                                         )}
 
-                                        {contacts.length === 0 && (
+                                        {datas.length === 0 && (
                                             <tr>
                                                 <td
                                                     className="px-6 py-4 border-t"

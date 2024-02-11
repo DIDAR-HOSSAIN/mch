@@ -38,7 +38,7 @@ return new class extends Migration
             $table->date('booster_dose_date')->nullable();
             $table->string('contact_no_relation')->nullable();
             $table->string('test_type')->default('General PCR');
-            $table->date('date')->default(now());
+            $table->date('date')->default(DB::raw('CURRENT_DATE'));
             $table->string('sample_collected_by')->nullable();
             $table->string('hospital_name')->nullable();
             $table->string('ticket_no')->nullable();

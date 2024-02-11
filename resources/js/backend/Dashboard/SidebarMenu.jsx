@@ -19,6 +19,8 @@ const SidebarMenu = () => {
                 <div className="flex flex-col items-center">
                     <Link href="/contacts">Contact List</Link>
                     <Link href="/registers">User List</Link>
+                    <Link href="/pcr/create">Pcr Reg</Link>
+                    <Link href="/pcr">PCR List</Link>
 
                     {/* <Link
                         href="/general-pcr/link2"
