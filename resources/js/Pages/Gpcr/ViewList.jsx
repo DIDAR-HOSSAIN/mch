@@ -118,6 +118,16 @@ const ViewList = ({ auth, datas }) => {
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         <Link
+                                                        tabIndex="1"
+                                                        className="px-4 py-2 text-sm text-white bg-blue-400 rounded"
+                                                        href={route(
+                                                            "pcr.show",
+                                                            id
+                                                        )}
+                                                        >
+                                                        Show
+                                                        </Link>
+                                                        <Link
                                                             tabIndex="1"
                                                             className="px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(

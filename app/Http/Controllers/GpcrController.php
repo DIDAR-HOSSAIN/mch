@@ -84,7 +84,9 @@ class GpcrController extends Controller
      */
     public function show(Gpcr $gpcr)
     {
-        //
+        return Inertia('Gpcr/ShowDetails',compact('gpcr'));
+        // return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
+
     }
 
     /**
