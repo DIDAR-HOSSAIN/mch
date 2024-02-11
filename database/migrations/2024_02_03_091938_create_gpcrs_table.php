@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -38,7 +39,7 @@ return new class extends Migration
             $table->date('booster_dose_date')->nullable();
             $table->string('contact_no_relation')->nullable();
             $table->string('test_type')->default('General PCR');
-            $table->date('date')->default(DB::raw('CURRENT_DATE'));
+            $table->date('entry_date')->default(Carbon::now());
             $table->string('sample_collected_by')->nullable();
             $table->string('hospital_name')->nullable();
             $table->string('ticket_no')->nullable();

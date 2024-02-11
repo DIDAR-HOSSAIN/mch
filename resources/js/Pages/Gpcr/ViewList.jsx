@@ -44,7 +44,7 @@ const ViewList = ({ auth, datas }) => {
                                             <th className="px-4 py-2">
                                                 Patient ID
                                             </th>
-                                            <th className="px-4 py-2">Date</th>
+                                            <th className="px-4 py-2">Entry Date</th>
                                             <th className="px-4 py-2">Name</th>
                                             <th className="px-4 py-2">Age</th>
                                             <th className="px-4 py-2">
@@ -70,7 +70,7 @@ const ViewList = ({ auth, datas }) => {
                                                 {
                                                     id,
                                                     patient_id,
-                                                    date,
+                                                    entry_date,
                                                     name,
                                                     age,
                                                     contact_no,
@@ -90,7 +90,7 @@ const ViewList = ({ auth, datas }) => {
                                                         {patient_id}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {date}
+                                                        {entry_date}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {name}
