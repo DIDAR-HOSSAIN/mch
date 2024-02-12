@@ -114,8 +114,15 @@ const CreateForm = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
+        if (gpcr) {
+            // If 'gpcr' prop is provided, it's an update operation
+            post(route("pcr.update", gpcr.id)); // Adjust the route accordingly
+        } else {
+            // If 'gpcr' is not provided, it's a create operation
+            post(route("pcr.store"));
+        }
 
-        post(route("pcr.store"));
+        // post(route("pcr.store"));
     };
 
     return (

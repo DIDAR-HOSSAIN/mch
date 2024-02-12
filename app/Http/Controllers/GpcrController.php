@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -17,7 +18,6 @@ class GpcrController extends Controller
     public function index()
     {
         $datas = Gpcr::all();
-        // dd($datas);
         return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
     }
 
@@ -82,19 +82,37 @@ class GpcrController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Gpcr $gpcr)
-    {
-        return Inertia('Gpcr/ShowDetails',compact('gpcr'));
-        // return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
 
+    // public function show(Gpcr $gpcr)
+    // {
+    //     // return response()->json(['gpcr' => $gpcr]);
+    //     dd($gpcr);
+    //     // return Inertia::render('Gpcr.ShowDetails',compact('gpcr'));
+    //     return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
+
+    // }
+
+    public function show($id)
+    {
+        $gpcr = Gpcr::find($id);
+
+        // dd($gpcr); // Uncomment this line for debugging
+        return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Gpcr $gpcr)
+    // public function edit(Gpcr $gpcr)
+    // {
+    //     return Inertia::render('Gpcr/CreateForm', ['gpcr' => $gpcr]);
+    // }
+
+    public function edit($id)
     {
-        //
+        $gpcr = Gpcr::find($id);
+        return Inertia::render('Gpcr/CreateForm', ['gpcr' => $gpcr]);
     }
 
     /**
@@ -102,7 +120,13 @@ class GpcrController extends Controller
      */
     public function update(UpdateGpcrRequest $request, Gpcr $gpcr)
     {
-        //
+        try {
+            $data = $request->all();
+            $gpcr->Update($data);
+            return redirect()->route('incomes.index')->with('message', 'Data Updated Successfully');
+        } catch (QueryException $e) {
+            return redirect()->back()->withInput()->withErrors($e->getMessage());
+        }
     }
 
     /**

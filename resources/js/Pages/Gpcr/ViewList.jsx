@@ -44,7 +44,9 @@ const ViewList = ({ auth, datas }) => {
                                             <th className="px-4 py-2">
                                                 Patient ID
                                             </th>
-                                            <th className="px-4 py-2">Entry Date</th>
+                                            <th className="px-4 py-2">
+                                                Entry Date
+                                            </th>
                                             <th className="px-4 py-2">Name</th>
                                             <th className="px-4 py-2">Age</th>
                                             <th className="px-4 py-2">
@@ -118,18 +120,18 @@ const ViewList = ({ auth, datas }) => {
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         <Link
-                                                        tabIndex="1"
-                                                        className="px-4 py-2 text-sm text-white bg-blue-400 rounded"
-                                                        href={route(
-                                                            "pcr.show",
-                                                            id
-                                                        )}
+                                                            tabIndex="1"
+                                                            className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
+                                                            href={route(
+                                                                "pcr.show",
+                                                                id
+                                                            )}
                                                         >
-                                                        Show
+                                                            Show
                                                         </Link>
                                                         <Link
                                                             tabIndex="1"
-                                                            className="px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                                                            className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(
                                                                 "pcr.edit",
                                                                 id
@@ -142,7 +144,7 @@ const ViewList = ({ auth, datas }) => {
                                                             id={id}
                                                             tabIndex="-1"
                                                             type="button"
-                                                            className="mx-1 px-4 py-2 text-sm text-white bg-red-500 rounded"
+                                                            className="px-4 py-2 text-sm text-white bg-red-500 rounded"
                                                         >
                                                             Delete
                                                         </button>
