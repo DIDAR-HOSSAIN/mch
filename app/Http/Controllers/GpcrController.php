@@ -122,8 +122,8 @@ class GpcrController extends Controller
     {
         try {
             $data = $request->all();
-            $gpcr->Update($data);
-            return redirect()->route('incomes.index')->with('message', 'Data Updated Successfully');
+            $gpcr->update($data);
+            return redirect()->route('pcr.index')->with('message', 'Data Updated Successfully');
         } catch (QueryException $e) {
             return redirect()->back()->withInput()->withErrors($e->getMessage());
         }

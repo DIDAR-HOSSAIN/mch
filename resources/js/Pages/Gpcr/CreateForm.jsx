@@ -31,7 +31,7 @@ const calculateAge = (dob) => {
 
 const CreateForm = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
+        name: data.name,
         email: "",
         reg_fee: 3500,
         total: 3500, // set the default total value here if needed
@@ -116,7 +116,7 @@ const CreateForm = ({ auth }) => {
         e.preventDefault();
         if (gpcr) {
             // If 'gpcr' prop is provided, it's an update operation
-            post(route("pcr.update", gpcr.id)); // Adjust the route accordingly
+            patch(route("pcr.update")); // Adjust the route accordingly
         } else {
             // If 'gpcr' is not provided, it's a create operation
             post(route("pcr.store"));
