@@ -131,6 +131,16 @@ const ViewList = ({ auth, datas }) => {
                                                         </Link>
                                                         <Link
                                                             tabIndex="1"
+                                                            className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
+                                                            href={route(
+                                                                "invoice",
+                                                                id
+                                                            )}
+                                                        >
+                                                            Money Receipt
+                                                        </Link>
+                                                        <Link
+                                                            tabIndex="1"
                                                             className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(
                                                                 "pcr.edit",

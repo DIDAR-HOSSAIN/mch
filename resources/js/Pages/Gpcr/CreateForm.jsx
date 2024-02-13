@@ -31,7 +31,7 @@ const calculateAge = (dob) => {
 
 const CreateForm = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: data.name,
+        name: "",
         email: "",
         reg_fee: 3500,
         total: 3500, // set the default total value here if needed

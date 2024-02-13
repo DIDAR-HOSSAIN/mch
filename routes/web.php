@@ -41,6 +41,8 @@ Route::resource('contacts', ContactController::class)->middleware(['auth', 'veri
 
 Route::resource('posts', PostController::class);
 Route::resource('pcr', GpcrController::class);
+Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
+
 
 
 

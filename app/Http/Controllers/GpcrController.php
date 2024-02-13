@@ -136,4 +136,22 @@ class GpcrController extends Controller
     {
         //
     }
+
+
+    public function moneyReceipt($id)
+    {
+        $data = Gpcr::find($id);
+
+        // Pass the data directly without wrapping it in an array
+        return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
+    }
+
+    // public function moneyReceipt($id)
+    // {
+    //     $gpcr = Gpcr::find($id);
+
+    //     // dd($gpcr); // Uncomment this line for debugging
+    //     return Inertia::render('Gpcr/MoneyReceipt', ['gpcr' => $gpcr]);
+    // }
+    
 }
