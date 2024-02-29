@@ -1,6 +1,7 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, Link, usePage } from "@inertiajs/react";
 import React from "react";
+import { CSVLink } from "react-csv";
 
 const ViewList = ({ auth, datas }) => {
     // const { contacts } = usePage().props;
@@ -34,6 +35,14 @@ const ViewList = ({ auth, datas }) => {
                                 >
                                     Create PCR
                                 </Link>
+
+                                <CSVLink
+                                    data={datas}
+                                    filename={"General PCR Report.csv"}
+                                    className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
+                                >
+                                    Export
+                                </CSVLink>
                             </div>
 
                             <div className="overflow-x-auto">

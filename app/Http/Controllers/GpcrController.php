@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateGpcrRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class GpcrController extends Controller
@@ -48,7 +49,10 @@ class GpcrController extends Controller
         }
 
         // Create Gpcr record
-        Gpcr::create($data);
+        $gpcr = Gpcr::create($data);
+
+        // Redirect to the money invoice route with the ID
+        return Redirect::route('invoice', ['id' => $gpcr->id]);
     }
 
 
