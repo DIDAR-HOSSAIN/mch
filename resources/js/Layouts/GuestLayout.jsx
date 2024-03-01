@@ -1,4 +1,4 @@
-import logo from '@/assets/images/Logo/logo-transparent.png';
+import logo from '@/assets/images/Logo/mch-logo.png';
 import { Link } from '@inertiajs/react';
 
 export default function Guest({ children }) {
