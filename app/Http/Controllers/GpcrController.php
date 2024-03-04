@@ -5,6 +5,7 @@ use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -15,10 +16,27 @@ class GpcrController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(HttpRequest $request)
     {
-        $datas = Gpcr::all();
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Gpcr::query();
+
+        if ($startDate && $endDate) {
+            // Make sure to convert the string dates to DateTime objects
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $datas = $query->get();
+
         return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
+
+        // $datas = Gpcr::all();
+        // return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
     }
 
     /**
@@ -86,15 +104,6 @@ class GpcrController extends Controller
      * Display the specified resource.
      */
 
-    // public function show(Gpcr $gpcr)
-    // {
-    //     // return response()->json(['gpcr' => $gpcr]);
-    //     dd($gpcr);
-    //     // return Inertia::render('Gpcr.ShowDetails',compact('gpcr'));
-    //     return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
-
-    // }
-
     public function show($id)
     {
         $gpcr = Gpcr::find($id);
@@ -107,10 +116,6 @@ class GpcrController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    // public function edit(Gpcr $gpcr)
-    // {
-    //     return Inertia::render('Gpcr/CreateForm', ['gpcr' => $gpcr]);
-    // }
 
     public function edit($id)
     {

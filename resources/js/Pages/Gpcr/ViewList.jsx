@@ -1,15 +1,19 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, Link, usePage } from "@inertiajs/react";
-import React from "react";
+import { Head, Link } from "@inertiajs/react";
 import { CSVLink } from "react-csv";
+import Summary from "./Reports/Summary";
+import { useState } from "react";
 
 const ViewList = ({ auth, datas }) => {
-    // const { contacts } = usePage().props;
-    console.log("from gpcr list", datas);
+    const [filteredData, setFilteredData] = useState(datas);
+
+    const handleSearch = (filteredData) => {
+        setFilteredData(filteredData);
+    };
 
     function destroy(e) {
         if (confirm("Are you sure you want to delete this user?")) {
-            Inertia.delete(route("contacts.destroy", e.currentTarget.id));
+            // Your delete logic here
         }
     }
 
@@ -37,7 +41,22 @@ const ViewList = ({ auth, datas }) => {
                                 </Link>
 
                                 <CSVLink
-                                    data={datas}
+                                    data={filteredData}
+                                    filename={"General PCR Report.csv"}
+                                    className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
+                                >
+                                    Export
+                                </CSVLink>
+                            </div>
+
+                            <div className="flex items-center justify-between mb-6">
+                                <Summary
+                                    datas={datas}
+                                    onSearch={handleSearch}
+                                />
+
+                                <CSVLink
+                                    data={filteredData}
                                     filename={"General PCR Report.csv"}
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                 >
@@ -76,7 +95,7 @@ const ViewList = ({ auth, datas }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {datas.map(
+                                        {filteredData.map(
                                             (
                                                 {
                                                     id,
@@ -172,7 +191,7 @@ const ViewList = ({ auth, datas }) => {
                                             )
                                         )}
 
-                                        {datas.length === 0 && (
+                                        {filteredData.length === 0 && (
                                             <tr>
                                                 <td
                                                     className="px-6 py-4 border-t"

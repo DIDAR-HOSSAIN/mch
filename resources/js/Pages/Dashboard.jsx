@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardCard from "@/backend/Components/DashboardCard";
+import DashboardCard from "@/backend/Dashboard/DashboardCard";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout"
 import { Head } from "@inertiajs/react";
 import dashboard1 from "@/assets/images/Dashboard/income.jpg";

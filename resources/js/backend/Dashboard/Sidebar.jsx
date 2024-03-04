@@ -11,7 +11,7 @@ const Sidebar = () => {
             <ul className="lg:w-64">
                 <li>
                     <Link href={"/dashboard"}>
-                        <img className="h-24" src={logo} alt="" />
+                        <img className="h-16" src={logo} alt="" />
                     </Link>
                 </li>
                 <li>
