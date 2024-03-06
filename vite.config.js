@@ -6,16 +6,18 @@ export default defineConfig({
     plugins: [
         laravel({
             input: 'resources/js/app.jsx',
-            // refresh: true,
             refresh: [{
-                paths: ['http://localhost:8000/help'],
+                paths: ['http://192.168.1.15:8080/help'],
                 config: {
-                    delay: 300
-                }
+                    delay: 300,
+                },
             }],
         }),
         react(),
-
-        
     ],
+    server: {
+        host: '192.168.1.15',
+        port: 5173,
+    },
 });
+
