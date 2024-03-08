@@ -39,6 +39,7 @@ const CreateForm = ({ auth }) => {
 
     const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
+    const [entryDate, setEntryDate] = useState(new Date());
     const [firstDoseDate, setFirstDoseDate] = useState(null);
     const [secondDoseDate, setSecondDoseDate] = useState(null);
     const [boosterDoseDate, setBoosterDoseDate] = useState(null);
@@ -96,6 +97,9 @@ const CreateForm = ({ auth }) => {
 
     const handleDateChange = (date, field) => {
         switch (field) {
+            case "entry_date":
+                setEntryDate(date);
+                break;
             case "first_dose_date":
                 setFirstDoseDate(date);
                 break;
@@ -114,7 +118,7 @@ const CreateForm = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
-
+        
         post(route("pcr.store"), {
             onSuccess: ({ data }) => {
                 const patientId = data.patient_id;
@@ -124,8 +128,6 @@ const CreateForm = ({ auth }) => {
             },
         });
     };
-
-
 
     return (
         <AdminDashboardLayout
@@ -274,23 +276,17 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="passport_no"
-                                value="Passport No"
+                                htmlFor="entry_date"
+                                value="Entry Date"
                             />
 
-                            <TextInput
-                                id="passport_no"
-                                name="passport_no"
-                                value={data.passport_no}
-                                className="mt-1 block w-full"
-                                autoComplete="passport_no"
-                                onChange={(e) =>
-                                    setData("passport_no", e.target.value)
-                                }
+                            <CustomDatePicker
+                                selectedDate={entryDate}
+                                handleDateChange={(date) => setEntryDate(date)}
                             />
 
                             <InputError
-                                message={errors.passport_no}
+                                message={errors.entry_date}
                                 className="mt-2"
                             />
                         </div>
@@ -732,6 +728,27 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <InputError message={errors.nid} className="mt-2" />
+
+                            <InputLabel
+                                htmlFor="passport_no"
+                                value="Passport No"
+                            />
+
+                            <TextInput
+                                id="passport_no"
+                                name="passport_no"
+                                value={data.passport_no}
+                                className="mt-1 block w-full"
+                                autoComplete="passport_no"
+                                onChange={(e) =>
+                                    setData("passport_no", e.target.value)
+                                }
+                            />
+
+                            <InputError
+                                message={errors.passport_no}
+                                className="mt-2"
+                            />
                         </div>
                     </div>
                     <PrimaryButton
