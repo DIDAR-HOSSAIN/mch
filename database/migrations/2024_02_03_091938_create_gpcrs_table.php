@@ -37,12 +37,12 @@ return new class extends Migration
             $table->date('booster_dose_date')->nullable();
             $table->string('contact_no_relation')->nullable();
             $table->string('test_name')->default('General PCR');
-            $table->date('entry_date')->nullable();
+            $table->date('entry_date')->default(now());
             $table->string('sample_collected_by')->nullable();
             $table->string('hospital_name')->nullable();
             $table->string('ticket_no')->nullable();
             $table->string('payment_type')->default('Cash');
-            $table->string('account_head')->default('Cash in head');
+            $table->string('account_head')->default('Cash in hand');
             $table->string('nid')->nullable();
             $table->string('user_name');
             $table->timestamps();

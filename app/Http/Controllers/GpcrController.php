@@ -67,6 +67,9 @@ class GpcrController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
 
+        // Set entry_date to current date if not provided
+        $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
+
         // Create Gpcr record
         $gpcr = Gpcr::create($data);
 

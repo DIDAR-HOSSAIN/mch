@@ -215,6 +215,25 @@ const CreateForm = ({ auth }) => {
                         <div>
                             <InputLabel htmlFor="sex" value="Sex" />
 
+                            <select
+                                id="sex"
+                                name="sex"
+                                value={data.sex}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData("sex", e.target.value)}
+                                required
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+
+                            <InputError message={errors.sex} className="mt-2" />
+                        </div>
+
+                        {/* <div>
+                            <InputLabel htmlFor="sex" value="Sex" />
+
                             <TextInput
                                 id="sex"
                                 name="sex"
@@ -226,7 +245,7 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <InputError message={errors.sex} className="mt-2" />
-                        </div>
+                        </div> */}
 
                         <div>
                             <InputLabel htmlFor="address" value="Address" />
@@ -281,8 +300,10 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={entryDate}
-                                handleDateChange={(date) => setEntryDate(date)}
+                                selectedDate={entryDate || new Date()}
+                                handleDateChange={(date) =>
+                                    handleDateChange(date, "entry_date")
+                                }
                             />
 
                             <InputError
@@ -627,6 +648,29 @@ const CreateForm = ({ auth }) => {
                         </div>
 
                         <div>
+                            <InputLabel htmlFor="hospital_name" value="Hospital Name" />
+
+                            <select
+                                id="hospital_name"
+                                name="hospital_name"
+                                value={data.hospital_name}
+                                className="mt-1 block w-full"
+                                onChange={(e) => setData("hospital_name", e.target.value)}
+                            >
+                                <option value="">Select Hospital</option>
+                                <option value="Metropolitan Hospital">Metropolitan Hospital</option>
+                                <option value="Parkview Hospital">Parkview Hospital</option>
+                                <option value="Medical Center Hospital">Medical Center Hospital</option>
+                                <option value="Diabetic Hospital">Diabetic Hospital</option>
+                                <option value="Royal Hospital">Royal Hospital</option>
+                                <option value="Royal Hospital">Others</option>
+                            </select>
+
+                            <InputError message={errors.hospital_name} className="mt-2" />
+                        </div>
+
+
+                        {/* <div>
                             <InputLabel
                                 htmlFor="hospital_name"
                                 value="Hospital Name"
@@ -647,7 +691,7 @@ const CreateForm = ({ auth }) => {
                                 message={errors.hospital_name}
                                 className="mt-2"
                             />
-                        </div>
+                        </div> */}
 
                         <div>
                             <InputLabel htmlFor="ticket_no" value="Ticket No" />
@@ -668,7 +712,33 @@ const CreateForm = ({ auth }) => {
                                 className="mt-2"
                             />
                         </div>
+
                         <div>
+                            <InputLabel
+                                htmlFor="payment_type"
+                                value="Payment Type"
+                            />
+
+                            <select
+                                id="payment_type"
+                                name="payment_type"
+                                value={data.payment_type}
+                                className="mt-1 block w-full"
+                                onChange={(e) =>
+                                    setData("payment_type", e.target.value)
+                                }
+                            >
+                                <option value="Cash">Cash</option>
+                                <option value="Other">Other</option>
+                            </select>
+
+                            <InputError
+                                message={errors.payment_type}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        {/* <div>
                             <InputLabel
                                 htmlFor="payment_type"
                                 value="Payment Type"
@@ -689,7 +759,30 @@ const CreateForm = ({ auth }) => {
                                 message={errors.payment_type}
                                 className="mt-2"
                             />
-                        </div>
+                        </div> */}
+
+                        {/* <div>
+                            <InputLabel
+                                htmlFor="account_head"
+                                value="Account Head"
+                            />
+
+                            <TextInput
+                                id="account_head"
+                                name="account_head"
+                                value={data.account_head}
+                                className="mt-1 block w-full"
+                                autoComplete="account_head"
+                                onChange={(e) =>
+                                    setData("account_head", e.target.value)
+                                }
+                            />
+
+                            <InputError
+                                message={errors.account_head}
+                                className="mt-2"
+                            />
+                        </div> */}
 
                         <div>
                             <InputLabel
@@ -700,7 +793,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="account_head"
                                 name="account_head"
-                                value={data.account_head}
+                                value={data.account_head || "Cash in hand"} // Set default value here
                                 className="mt-1 block w-full"
                                 autoComplete="account_head"
                                 onChange={(e) =>
