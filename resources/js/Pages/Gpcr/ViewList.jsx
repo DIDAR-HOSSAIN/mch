@@ -7,9 +7,25 @@ import { useState } from "react";
 const ViewList = ({ auth, datas }) => {
     const [filteredData, setFilteredData] = useState(datas);
 
-    const handleSearch = (filteredData) => {
+    const handleDatewiseSearch = (filteredData) => {
         setFilteredData(filteredData);
     };
+
+     const handleSearch = (searchTerm) => {
+    // Filter the data based on the search term
+    const filtered = datas.filter((data) => {
+        // Customize the conditions for searching
+        return (
+            data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
+            // Add more fields as needed
+            // ...
+        );
+    });
+
+    setFilteredData(filtered);
+};
+
 
     function destroy(e) {
         if (confirm("Are you sure you want to delete this user?")) {
@@ -52,16 +68,23 @@ const ViewList = ({ auth, datas }) => {
                             <div className="flex items-center justify-between mb-6">
                                 <Summary
                                     datas={datas}
-                                    onSearch={handleSearch}
+                                    onSearch={handleDatewiseSearch}
                                 />
 
-                                <CSVLink
-                                    data={filteredData}
-                                    filename={"General PCR Report.csv"}
-                                    className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
-                                >
-                                    Export
-                                </CSVLink>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                        onChange={(e) =>
+                                            handleSearch(e.target.value)
+                                        }
+                                    />
+                                    <span className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        {/* Add a search icon or clear button if needed */}
+                                    </span>
+                                </div>
+
                             </div>
 
                             <div className="overflow-x-auto">
