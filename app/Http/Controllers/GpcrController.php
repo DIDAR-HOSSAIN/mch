@@ -104,6 +104,7 @@ class GpcrController extends Controller
     }
 
 
+
     /**
      * Display the specified resource.
      */

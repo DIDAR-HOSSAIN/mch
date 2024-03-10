@@ -40,7 +40,7 @@ export default defineConfig({
 //     ],
 //     server: {
 //         host: '192.168.1.15',
-//         port: 5173,
+//         port: 5273,
 //     },
 // });
 

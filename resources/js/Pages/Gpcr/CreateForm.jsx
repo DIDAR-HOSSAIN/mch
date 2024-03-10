@@ -663,6 +663,8 @@ const CreateForm = ({ auth }) => {
                                 <option value="Medical Center Hospital">Medical Center Hospital</option>
                                 <option value="Diabetic Hospital">Diabetic Hospital</option>
                                 <option value="Royal Hospital">Royal Hospital</option>
+                                <option value="Royal Hospital">Ekushey Hospital</option>
+                                <option value="Royal Hospital">CSCR Hospital</option>
                                 <option value="Royal Hospital">Others</option>
                             </select>
 
