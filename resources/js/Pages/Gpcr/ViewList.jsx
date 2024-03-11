@@ -1,8 +1,8 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, Link } from "@inertiajs/react";
 import { CSVLink } from "react-csv";
-import Summary from "./Reports/Summary";
 import { useState } from "react";
+import DateWiseReport from "./Reports/DateWiseReport";
 
 const ViewList = ({ auth, datas }) => {
     const [filteredData, setFilteredData] = useState(datas);
@@ -66,7 +66,7 @@ const ViewList = ({ auth, datas }) => {
                             </div>
 
                             <div className="flex items-center justify-between mb-6">
-                                <Summary
+                                <DateWiseReport
                                     datas={datas}
                                     onSearch={handleDatewiseSearch}
                                 />

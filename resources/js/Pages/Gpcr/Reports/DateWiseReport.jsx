@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const Summary = ({ datas, onSearch }) => {
+const DateWiseReport = ({ datas, onSearch }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
@@ -54,4 +54,4 @@ const Summary = ({ datas, onSearch }) => {
     );
 };
 
-export default Summary;
+export default DateWiseReport;

@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -87,8 +87,8 @@ class GpcrController extends Controller
         do {
             // Get the maximum patient_id for the current date
             $latestPatientId = DB::table('gpcrs')
-            ->where('patient_id', 'like', "MCH-$currentDate-%")
-            ->max('patient_id');
+                ->where('patient_id', 'like', "MCH-$currentDate-%")
+                ->max('patient_id');
 
             // If there are existing records for the current date, extract the serial number and increment
             $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
@@ -157,5 +157,25 @@ class GpcrController extends Controller
 
         return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
     }
-    
+
+    public function summaryReport($id)
+    {
+        $startDate = request()->input('start_date');
+        $endDate = request()->input('end_date');
+
+        $query = Gpcr::where('id', $id);
+
+        if ($startDate && $endDate) {
+            // Make sure to convert the string dates to DateTime objects
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->first();
+
+        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', ['data' => $data]);
+    }
+
 }

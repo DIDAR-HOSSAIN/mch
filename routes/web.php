@@ -32,16 +32,18 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::inertia('/whoweare', 'WhoWeAre')->name('whoweare');
+// Route::inertia('/whoweare', 'WhoWeAre')->name('whoweare');
 
-Route::inertia('/about', 'About')->name('about');
+// Route::inertia('/about', 'About')->name('about');
 
-Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
-Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
+// Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+// Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
-Route::resource('posts', PostController::class);
 Route::resource('pcr', GpcrController::class);
 Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
+
+Route::get('summary/{id}', [GpcrController::class, 'summaryReport'])->name('summary');
+
 
 
 
