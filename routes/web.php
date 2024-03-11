@@ -20,7 +20,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::inertia('/', 'Home')->name('home');
+// Route::inertia('/', 'Home')->name('home');
 
 Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 

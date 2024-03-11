@@ -6,7 +6,6 @@ import FreeEvaluation from "@/frontend/ui/FreeEvaluation";
 import OurNetworkService from "@/frontend/ui/OurNetworkService";
 import WhyChooseUs from "@/frontend/ui/WhyChooseUs";
 import YourNetwork from "@/frontend/ui/YourNetwork";
-import Contact from "@/frontend/ui/contact";
 import FrontendLayout from "@/frontend/Layout/FrontendLayout";
 import { Head } from "@inertiajs/react";
 
@@ -30,7 +29,7 @@ const Home = ({ auth }) => {
             <FreeEvaluation />
             <CustomItService />
             <YourNetwork />
-            <Contact />
+            {/* <Contact /> */}
         </FrontendLayout>
     );
 };
