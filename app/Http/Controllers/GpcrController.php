@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use App\Http\Requests\StoreGpcrRequest;
 use App\Http\Requests\UpdateGpcrRequest;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class GpcrController extends Controller
@@ -158,24 +160,29 @@ class GpcrController extends Controller
         return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
     }
 
-    public function summaryReport($id)
+    public function summaryReport()
     {
-        $startDate = request()->input('start_date');
-        $endDate = request()->input('end_date');
+        $startDate = Request::input('start_date');
+        $endDate = Request::input('end_date');
 
-        $query = Gpcr::where('id', $id);
+        $query = Gpcr::query();
 
         if ($startDate && $endDate) {
-            // Make sure to convert the string dates to DateTime objects
-            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
-            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
 
             $query->whereBetween('entry_date', [$startDate, $endDate]);
         }
 
-        $data = $query->first();
+        $data = $query->get();
 
-        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', ['data' => $data]);
+        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', [
+            'data' => $data,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
     }
+
+
 
 }

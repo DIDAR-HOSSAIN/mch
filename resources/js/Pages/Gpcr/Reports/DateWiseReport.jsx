@@ -1,3 +1,4 @@
+// DateWiseReport.jsx
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -7,26 +8,26 @@ const DateWiseReport = ({ datas, onSearch }) => {
     const [endDate, setEndDate] = useState(null);
 
     const handleSearch = () => {
-        // Filter datas based on the date range
+        console.log("Searching...");
+        if (!datas) {
+            return; // Ensure datas is not undefined or null
+        }
+
         const filteredData = datas.filter((data) => {
             const entryDate = new Date(data.entry_date);
 
-            // Perform filtering based on the date range logic
             return (
                 (!startDate || entryDate >= startDate) &&
                 (!endDate ||
-                    entryDate <= new Date(endDate.getTime() + 86400000)) // Add one day to the end date
+                    entryDate <= new Date(endDate.getTime() + 86400000))
             );
         });
 
-        // Inform the parent component about the filtered data
-        onSearch(filteredData);
+        onSearch(filteredData, startDate, endDate);
     };
 
-
     useEffect(() => {
-        // Perform initial search when component mounts
-        handleSearch();
+        handleSearch(); // Perform initial search when component mounts
     }, [startDate, endDate]);
 
     return (

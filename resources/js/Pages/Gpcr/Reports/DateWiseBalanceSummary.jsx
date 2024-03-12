@@ -1,40 +1,27 @@
-import React from 'react';
-import { useState } from 'react';
-import DateWiseReport from './DatewiseReport';
-import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { Head } from '@inertiajs/react';
+// DateWiseBalanceSummary.jsx
+import React, { useState } from "react";
+import DateWiseReport from "./DateWiseReport";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { Head } from "@inertiajs/react";
 
-const DateWiseBalanceSummary = ({ auth, datas }) => {
-      const [filteredData, setFilteredData] = useState(datas);
-      const [startDate, setStartDate] = useState(null);
-      const [endDate, setEndDate] = useState(null);
+const DateWiseBalanceSummary = ({ auth, data }) => {
+     console.log("Datas:", data);
+    const [filteredData, setFilteredData] = useState(data);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
-      const handleSearch = (searchTerm) => {
-          const filtered = datas.filter((data) => {
-              const matchesSearchTerm =
-                  data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  data.patient_id
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase());
-
-              const isWithinDateRange =
-                  (!startDate || new Date(data.entry_date) >= startDate) &&
-                  (!endDate || new Date(data.entry_date) <= endDate);
-
-              return matchesSearchTerm && isWithinDateRange;
-          });
-
-          setFilteredData(filtered);
-      };
+    const handleSearch = (filteredData, start, end) => {
+        setFilteredData(filteredData);
+        setStartDate(start);
+        setEndDate(end);
+    };
 
     // Calculate summary totals
-    const summaryTotal = filteredData.reduce(
+    const summaryTotal = (filteredData ?? []).reduce(
         (totals, data) => {
             totals.totalPaid += parseFloat(data.paid || 0);
             totals.totalDue += parseFloat(data.due || 0);
             totals.totalDiscount += parseFloat(data.discount || 0);
-            // Add more fields as needed
-            // ...
 
             return totals;
         },
@@ -42,8 +29,6 @@ const DateWiseBalanceSummary = ({ auth, datas }) => {
             totalPaid: 0,
             totalDue: 0,
             totalDiscount: 0,
-            // Add more fields as needed
-            // ...
         }
     );
 
@@ -61,18 +46,32 @@ const DateWiseBalanceSummary = ({ auth, datas }) => {
             <div className="py-2">
                 <div className="mx-auto">
                     <div className="flex items-center justify-between mb-6">
-                        <DateWiseReport datas={datas} onSearch={handleSearch} />
+                        <DateWiseReport
+                            datas={data}
+                            onSearch={(filteredData, start, end) =>
+                                handleSearch(filteredData, start, end)
+                            }
+                        />
 
                         {/* Display the summary totals */}
-                        <div className="text-right">
+                        <div>
+                            <p>
+                                Date Range:{" "}
+                                {startDate && endDate
+                                    ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
+                                    : "All Dates"}
+                            </p>
+
+                            {/* Display the summary details */}
                             <p>Total Paid: {summaryTotal.totalPaid}</p>
                             <p>Total Due: {summaryTotal.totalDue}</p>
                             <p>Total Discount: {summaryTotal.totalDiscount}</p>
+
                             {/* Add more fields as needed */}
                             {/* ... */}
                         </div>
                     </div>
-                    // ... rest of your component
+                    {/* ... rest of your component */}
                 </div>
             </div>
         </AdminDashboardLayout>

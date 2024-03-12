@@ -42,7 +42,8 @@ Route::get('/dashboard', function () {
 Route::resource('pcr', GpcrController::class);
 Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
 
-Route::get('summary/{id}', [GpcrController::class, 'summaryReport'])->name('summary');
+Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
+
 
 
 
