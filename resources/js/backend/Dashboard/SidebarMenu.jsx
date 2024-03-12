@@ -49,7 +49,7 @@ const SidebarMenu = () => {
             </div>
             {report && (
                 <div className="flex flex-col items-center">
-                    <Link href="/registers">User List</Link>
+                    <Link href="/summary">Date Wise Summary</Link>
                 </div>
             )}
         </div>
