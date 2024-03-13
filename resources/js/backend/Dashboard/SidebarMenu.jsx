@@ -32,17 +32,6 @@ const SidebarMenu = () => {
             )}
 
             <div className="flex items-center">
-                <button onClick={SettingsToggle} className="">
-                    {settings ? "Settings ▲" : "Settings ▼"}
-                </button>
-            </div>
-            {settings && (
-                <div className="flex flex-col items-center">
-                    <Link href="/registers">User List</Link>
-                </div>
-            )}
-
-            <div className="flex items-center">
                 <button onClick={ReportToggle} className="">
                     {report ? "Report ▲" : "Report ▼"}
                 </button>
@@ -50,6 +39,17 @@ const SidebarMenu = () => {
             {report && (
                 <div className="flex flex-col items-center">
                     <Link href="/summary">Date Wise Summary</Link>
+                </div>
+            )}
+
+            <div className="flex items-center">
+                <button onClick={SettingsToggle} className="">
+                    {settings ? "Settings ▲" : "Settings ▼"}
+                </button>
+            </div>
+            {settings && (
+                <div className="flex flex-col items-center">
+                    <Link href="/registers">User List</Link>
                 </div>
             )}
         </div>
