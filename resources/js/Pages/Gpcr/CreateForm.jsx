@@ -4,8 +4,7 @@ import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import React from "react";
+import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 

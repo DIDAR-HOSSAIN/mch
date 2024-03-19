@@ -11,7 +11,8 @@ use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class GpcrController extends Controller
@@ -127,21 +128,32 @@ class GpcrController extends Controller
     public function edit($id)
     {
         $gpcr = Gpcr::find($id);
-        return Inertia::render('Gpcr/CreateForm', ['gpcr' => $gpcr]);
+        return Inertia::render('Gpcr/EditForm', ['gpcr' => $gpcr]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateGpcrRequest $request, Gpcr $gpcr)
+   public function update($id, Request $request)
     {
-        try {
-            $data = $request->all();
-            $gpcr->update($data);
-            return redirect()->route('pcr.index')->with('message', 'Data Updated Successfully');
-        } catch (QueryException $e) {
-            return redirect()->back()->withInput()->withErrors($e->getMessage());
+        // Validator::make($request->all(), [
+        //     'title' => ['required'],
+        //     'body' => ['required'],
+        // ])->validate();
+
+        // Parse and convert date fields to a compatible format
+        $dateFields = ['dob', 'first_dose_date', 'second_dose_date', 'booster_dose_date', 'entry_date'];
+        foreach ($dateFields as $field) {
+            if ($request->has($field)) {
+                $request->merge([$field => Carbon::parse($request->input($field))->toDateString()]);
+            }
         }
+
+        // Update the Gpcr record with the modified request data
+        Gpcr::find($id)->update($request->all());
+
+        // Redirect the user to the index page after the update
+        return redirect()->route('pcr.index');
     }
 
     /**

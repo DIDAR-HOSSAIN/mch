@@ -8,6 +8,8 @@ const CustomDatePicker = ({ selectedDate, handleDateChange }) => {
             selected={selectedDate}
             onChange={handleDateChange}
             dateFormat="dd/MM/yyyy"
+            isClearable // This allows clearing the date
+            placeholderText="Select Date" // Placeholder text when no date is selected
         />
     );
 };
