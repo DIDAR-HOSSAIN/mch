@@ -2,20 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gpcr;
-use Illuminate\Http\Request;
-use App\Http\Requests\StoreGpcrRequest;
-use App\Http\Requests\UpdateGpcrRequest;
+use App\Models\Dope;
+use App\Http\Requests\StoreDopeRequest;
+use App\Http\Requests\UpdateDopeRequest;
 use Carbon\Carbon;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
-use Inertia\Inertia;
 
-class GpcrController extends Controller
+class DopeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,7 +22,7 @@ class GpcrController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Dope::query();
 
         if ($startDate && $endDate) {
             // Make sure to convert the string dates to DateTime objects
@@ -37,7 +34,7 @@ class GpcrController extends Controller
 
         $datas = $query->get();
 
-        return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
+        return Inertia::render('Dope/ViewList', ['datas' => $datas]);
     }
 
     /**
@@ -45,13 +42,13 @@ class GpcrController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Gpcr/CreateForm');
+        return Inertia::render('Dope/CreateForm');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreGpcrRequest $request)
+    public function store(StoreDopeRequest $request)
     {
         // Retrieve all data from the request
         $data = $request->all();
@@ -69,30 +66,35 @@ class GpcrController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
 
-        $data['dob'] = $data['dob'] ?? now()->toDateString();
+        // Convert dob date string to a format that MySQL accepts
+        if (isset($data['dob'])) {
+            $date = new \DateTime($data['dob']);
+            $formattedDate = $date->format('Y-m-d');
+            $data['dob'] = $formattedDate;
+        }
 
         // Set entry_date to current date if not provided
         $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
 
-        // Create Gpcr record
-        $gpcr = Gpcr::create($data);
+        // Create Dope record
+        $dope = Dope::create($data);
 
         // Redirect to the money invoice route with the ID
-        return Redirect::route('invoice', ['id' => $gpcr->id]);
+        return Redirect::route('dope-inv', ['id' => $dope->id]);
     }
 
 
     private function generatePatientId()
     {
-        $prefix = 'MCH';
+        $prefix = 'MCHD';
         $currentDate = now()->format('ymd');
 
         // Loop until a unique patient_id is generated
         do {
             // Get the maximum patient_id for the current date
-            $latestPatientId = DB::table('gpcrs')
-                ->where('patient_id', 'like', "MCH-$currentDate-%")
-                ->max('patient_id');
+            $latestPatientId = DB::table('dopes')
+            ->where('patient_id', 'like', "MCHD-$currentDate-%")
+            ->max('patient_id');
 
             // If there are existing records for the current date, extract the serial number and increment
             $serialNumber = $latestPatientId ? intval(substr($latestPatientId, -3)) + 1 : 1;
@@ -102,40 +104,36 @@ class GpcrController extends Controller
 
             // Generate the new patient_id
             $newPatientId = $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
-        } while (Gpcr::where('patient_id', $newPatientId)->exists());
+        } while (Dope::where('patient_id', $newPatientId)->exists());
 
         return $newPatientId;
+
     }
-
-
 
     /**
      * Display the specified resource.
      */
-
     public function show($id)
     {
-        $gpcr = Gpcr::find($id);
+        $dope = Dope::find($id);
 
         // dd($gpcr); // Uncomment this line for debugging
-        return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
+        return Inertia::render('Dope/ShowDetails', ['dope' => $dope]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
      */
-
     public function edit($id)
     {
-        $gpcr = Gpcr::find($id);
-        return Inertia::render('Gpcr/EditForm', ['gpcr' => $gpcr]);
+        $dope = Dope::find($id);
+        return Inertia::render('Dope/EditForm', ['dope' => $dope]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-   public function update($id, Request $request)
+    public function update($id, Request $request)
     {
         // Validator::make($request->all(), [
         //     'title' => ['required'],
@@ -151,26 +149,25 @@ class GpcrController extends Controller
         }
 
         // Update the Gpcr record with the modified request data
-        Gpcr::find($id)->update($request->all());
+        Dope::find($id)->update($request->all());
 
         // Redirect the user to the index page after the update
-        return redirect()->route('pcr.index');
+        return redirect()->route('dope.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Gpcr $gpcr)
+    public function destroy(Dope $dope)
     {
         //
     }
 
-
     public function moneyReceipt($id)
     {
-        $data = Gpcr::find($id);
+        $data = Dope::find($id);
 
-        return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
+        return Inertia::render('Dope/MoneyReceipt', ['data' => $data]);
     }
 
     public function summaryReport(Request $request)
@@ -178,7 +175,7 @@ class GpcrController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Dope::query();
 
         if ($startDate && $endDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
@@ -189,11 +186,10 @@ class GpcrController extends Controller
 
         $data = $query->get();
 
-        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', [
+        return Inertia::render('Dope/Reports/DateWiseBalanceSummary', [
             'data' => $data
         ]);
     }
-
 
 
 }

@@ -38,11 +38,11 @@ const ViewList = ({ auth, datas }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Manage PCR
+                    Manage Dope
                 </h2>
             }
         >
-            <Head title="Manage PCR" />
+            <Head title="Manage Dope" />
 
             <div className="py-2">
                 <div className="mx-auto">
@@ -51,9 +51,9 @@ const ViewList = ({ auth, datas }) => {
                             <div className="flex items-center justify-between mb-6">
                                 <Link
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
-                                    href={route("pcr.create")}
+                                    href={route("dope.create")}
                                 >
-                                    Create PCR
+                                    Create Dope
                                 </Link>
 
                                 <CSVLink
@@ -193,7 +193,7 @@ const ViewList = ({ auth, datas }) => {
                                                             tabIndex="1"
                                                             className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(
-                                                                "pcr.edit",
+                                                                "dope.edit",
                                                                 id
                                                             )}
                                                         >

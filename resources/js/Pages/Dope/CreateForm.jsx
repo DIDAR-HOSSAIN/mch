@@ -32,7 +32,7 @@ const CreateForm = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
-        reg_fee: 3500,
+        reg_fee: "900",
         total: "",
         dob: null, // Ensure dob is initialized as null
         age: 0, // Initialize age with 0
@@ -42,9 +42,9 @@ const CreateForm = ({ auth }) => {
     const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
     const [entryDate, setEntryDate] = useState(new Date());
-    const [firstDoseDate, setFirstDoseDate] = useState(null);
-    const [secondDoseDate, setSecondDoseDate] = useState(null);
-    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
+    const [brtaFormDate, setBrtaFormDate] = useState(new Date());
+    const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
+    const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
 
     const handleRegFeeChange = (value) => {
         const regFee = parseFloat(value) || 0;
@@ -102,14 +102,14 @@ const CreateForm = ({ auth }) => {
             case "entry_date":
                 setEntryDate(date);
                 break;
-            case "first_dose_date":
-                setFirstDoseDate(date);
+            case "brta_form_date":
+                setBrtaFormDate(date);
                 break;
-            case "second_dose_date":
-                setSecondDoseDate(date);
+            case "brta_serial_date":
+                setBrtaSerialDate(date);
                 break;
-            case "booster_dose_date":
-                setBoosterDoseDate(date);
+            case "sample_collection_date":
+                setSampleCollectionDate(date);
                 break;
             default:
                 break;
@@ -121,12 +121,12 @@ const CreateForm = ({ auth }) => {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route("pcr.store"), {
+        post(route("dope.store"), {
             onSuccess: ({ data }) => {
                 const patientId = data.patient_id;
 
                 // Redirect to the invoice route with the patient_id from the response
-                Inertia.visit(route("invoice", { id: patientId }));
+                Inertia.visit(route("dope-inv", { id: patientId }));
             },
         });
     };
@@ -136,14 +136,77 @@ const CreateForm = ({ auth }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    General PCR
+                    Dope Registration
                 </h1>
             }
         >
-            <Head title="General PCR" />
+            <Head title="Dope Registration" />
             <div className="py-2">
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <InputLabel
+                                htmlFor="brta_form_date"
+                                value="BRTA Form Date"
+                            />
+
+                            <CustomDatePicker
+                                selectedDate={brtaFormDate || new Date()}
+                                handleDateChange={(date) =>
+                                    handleDateChange(date, "brta_form_date")
+                                }
+                            />
+
+                            <InputError
+                                message={errors.brta_form_date}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="brta_serial_no"
+                                value="BRTA Serial No"
+                            />
+
+                            <TextInput
+                                id="brta_serial_no"
+                                type="number"
+                                name="brta_serial_no"
+                                value={data.brta_serial_no}
+                                className="mt-1 block w-full"
+                                autoComplete="brta_serial_no"
+                                onChange={(e) =>
+                                    setData("brta_serial_no", e.target.value)
+                                }
+                                required
+                            />
+
+                            <InputError
+                                message={errors.brta_serial_no}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="brta_serial_date"
+                                value="BRTA Serial Date"
+                            />
+
+                            <CustomDatePicker
+                                selectedDate={brtaSerialDate || new Date()}
+                                handleDateChange={(date) =>
+                                    handleDateChange(date, "brta_serial_date")
+                                }
+                            />
+
+                            <InputError
+                                message={errors.brta_serial_date}
+                                className="mt-2"
+                            />
+                        </div>
+
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
 
@@ -165,24 +228,136 @@ const CreateForm = ({ auth }) => {
                                 className="mt-2"
                             />
                         </div>
-
                         <div>
-                            <InputLabel htmlFor="email" value="Email" />
+                            <InputLabel
+                                htmlFor="fathers_name"
+                                value="Fathers Name"
+                            />
 
                             <TextInput
-                                id="email"
-                                type="email"
-                                name="email"
-                                value={data.email}
+                                id="fathers_name"
+                                name="fathers_name"
+                                value={data.fathers_name}
                                 className="mt-1 block w-full"
-                                autoComplete="username"
+                                autoComplete="fathers_name"
+                                isFocused={true}
                                 onChange={(e) =>
-                                    setData("email", e.target.value)
+                                    setData("fathers_name", e.target.value)
+                                }
+                                required
+                            />
+
+                            <InputError
+                                message={errors.fathers_name}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div>
+                            <InputLabel
+                                htmlFor="mothers_name"
+                                value="Mothers Name"
+                            />
+
+                            <TextInput
+                                id="mothers_name"
+                                name="mothers_name"
+                                value={data.mothers_name}
+                                className="mt-1 block w-full"
+                                autoComplete="mothers_name"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("mothers_name", e.target.value)
+                                }
+                                required
+                            />
+
+                            <InputError
+                                message={errors.mothers_name}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="nid" value="Nid No" />
+
+                            <TextInput
+                                id="nid"
+                                type="number"
+                                name="nid"
+                                value={data.nid}
+                                className="mt-1 block w-full"
+                                autoComplete="nid"
+                                onChange={(e) => setData("nid", e.target.value)}
+                            />
+
+                            <InputError message={errors.nid} className="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="passport_no"
+                                value="Passport No"
+                            />
+
+                            <TextInput
+                                id="passport_no"
+                                name="passport_no"
+                                value={data.passport_no}
+                                className="mt-1 block w-full"
+                                autoComplete="passport_no"
+                                onChange={(e) =>
+                                    setData("passport_no", e.target.value)
                                 }
                             />
 
                             <InputError
-                                message={errors.email}
+                                message={errors.passport_no}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="contact_no"
+                                value="Contact No"
+                            />
+
+                            <TextInput
+                                id="contact_no"
+                                type="number"
+                                name="contact_no"
+                                value={data.contact_no}
+                                className="mt-1 block w-full"
+                                autoComplete="contact_no"
+                                onChange={(e) =>
+                                    setData("contact_no", e.target.value)
+                                }
+                                required
+                            />
+
+                            <InputError
+                                message={errors.contact_no}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="address" value="Address" />
+
+                            <TextInput
+                                id="address"
+                                name="address"
+                                value={data.address}
+                                className="mt-1 block w-full"
+                                autoComplete="address"
+                                onChange={(e) =>
+                                    setData("address", e.target.value)
+                                }
+                                required
+                            />
+
+                            <InputError
+                                message={errors.address}
                                 className="mt-2"
                             />
                         </div>
@@ -234,52 +409,6 @@ const CreateForm = ({ auth }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="address" value="Address" />
-
-                            <TextInput
-                                id="address"
-                                name="address"
-                                value={data.address}
-                                className="mt-1 block w-full"
-                                autoComplete="address"
-                                onChange={(e) =>
-                                    setData("address", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.address}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="contact_no"
-                                value="Contact No"
-                            />
-
-                            <TextInput
-                                id="contact_no"
-                                type="number"
-                                name="contact_no"
-                                value={data.contact_no}
-                                className="mt-1 block w-full"
-                                autoComplete="contact_no"
-                                onChange={(e) =>
-                                    setData("contact_no", e.target.value)
-                                }
-                                required
-                            />
-
-                            <InputError
-                                message={errors.contact_no}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
                             <InputLabel
                                 htmlFor="entry_date"
                                 value="Entry Date"
@@ -294,6 +423,24 @@ const CreateForm = ({ auth }) => {
 
                             <InputError
                                 message={errors.entry_date}
+                                className="mt-2"
+                            />
+                        </div>
+                        <div>
+                            <InputLabel
+                                htmlFor="sample_collection_date"
+                                value="Entry Date"
+                            />
+
+                            <CustomDatePicker
+                                selectedDate={sampleCollectionDate || new Date()}
+                                handleDateChange={(date) =>
+                                    handleDateChange(date, "sample_collection_date")
+                                }
+                            />
+
+                            <InputError
+                                message={errors.sample_collection_date}
                                 className="mt-2"
                             />
                         </div>
@@ -337,6 +484,27 @@ const CreateForm = ({ auth }) => {
 
                             <InputError
                                 message={errors.district}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="email" value="Email" />
+
+                            <TextInput
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
+                            />
+
+                            <InputError
+                                message={errors.email}
                                 className="mt-2"
                             />
                         </div>
@@ -451,164 +619,6 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="discount_reference"
-                                value="Discount Reference"
-                            />
-
-                            <TextInput
-                                id="discount_reference"
-                                name="discount_reference"
-                                value={data.discount_reference}
-                                className="mt-1 block w-full"
-                                autoComplete="discount_reference"
-                                onChange={(e) =>
-                                    setData(
-                                        "discount_reference",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.discount_reference}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="vaccine_name"
-                                value="Vaccine Name"
-                            />
-
-                            <TextInput
-                                id="vaccine_name"
-                                name="vaccine_name"
-                                value={data.vaccine_name}
-                                className="mt-1 block w-full"
-                                autoComplete="vaccine_name"
-                                onChange={(e) =>
-                                    setData("vaccine_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="vaccine_certificate_no"
-                                value="Vaccine Certificate No"
-                            />
-
-                            <TextInput
-                                id="vaccine_certificate_no"
-                                name="vaccine_certificate_no"
-                                value={data.vaccine_certificate_no}
-                                className="mt-1 block w-full"
-                                autoComplete="vaccine_certificate_no"
-                                onChange={(e) =>
-                                    setData(
-                                        "vaccine_certificate_no",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_certificate_no}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="first_dose_date"
-                                value="First Dose Date"
-                            />
-
-                            <CustomDatePicker
-                                selectedDate={firstDoseDate || new Date()}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "first_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.first_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="second_dose_date"
-                                value="Second Dose Date"
-                            />
-
-                            <CustomDatePicker
-                                selectedDate={secondDoseDate || new Date()}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "second_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.second_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="booster_dose_date"
-                                value="Booster Dose Date"
-                            />
-
-                            <CustomDatePicker
-                                selectedDate={boosterDoseDate || new Date()}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "booster_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.booster_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="contact_no_relation"
-                                value="Contact No Relation"
-                            />
-
-                            <TextInput
-                                id="contact_no_relation"
-                                name="contact_no_relation"
-                                value={data.contact_no_relation}
-                                className="mt-1 block w-full"
-                                autoComplete="contact_no_relation"
-                                onChange={(e) =>
-                                    setData(
-                                        "contact_no_relation",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.contact_no_relation}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
                                 htmlFor="sample_collected_by"
                                 value="Sample Collected By"
                             />
@@ -635,17 +645,17 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="hospital_name"
-                                value="Hospital Name"
+                                htmlFor="Reference_name"
+                                value="Reference Name"
                             />
 
                             <select
-                                id="hospital_name"
-                                name="hospital_name"
-                                value={data.hospital_name}
+                                id="Reference_name"
+                                name="Reference_name"
+                                value={data.Reference_name}
                                 className="mt-1 block w-full"
                                 onChange={(e) =>
-                                    setData("hospital_name", e.target.value)
+                                    setData("Reference_name", e.target.value)
                                 }
                             >
                                 <option value="">Select Hospital</option>
@@ -674,50 +684,7 @@ const CreateForm = ({ auth }) => {
                             </select>
 
                             <InputError
-                                message={errors.hospital_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="hospital_name"
-                                value="Hospital Name"
-                            />
-
-                            <TextInput
-                                id="hospital_name"
-                                name="hospital_name"
-                                value={data.hospital_name}
-                                className="mt-1 block w-full"
-                                autoComplete="hospital_name"
-                                onChange={(e) =>
-                                    setData("hospital_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.hospital_name}
-                                className="mt-2"
-                            />
-                        </div> */}
-
-                        <div>
-                            <InputLabel htmlFor="ticket_no" value="Ticket No" />
-
-                            <TextInput
-                                id="ticket_no"
-                                name="ticket_no"
-                                value={data.ticket_no}
-                                className="mt-1 block w-full"
-                                autoComplete="ticket_no"
-                                onChange={(e) =>
-                                    setData("ticket_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.ticket_no}
+                                message={errors.Reference_name}
                                 className="mt-2"
                             />
                         </div>
@@ -747,52 +714,6 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="payment_type"
-                                value="Payment Type"
-                            />
-
-                            <TextInput
-                                id="payment_type"
-                                name="payment_type"
-                                value={data.payment_type}
-                                className="mt-1 block w-full"
-                                autoComplete="payment_type"
-                                onChange={(e) =>
-                                    setData("payment_type", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.payment_type}
-                                className="mt-2"
-                            />
-                        </div> */}
-
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="account_head"
-                                value="Account Head"
-                            />
-
-                            <TextInput
-                                id="account_head"
-                                name="account_head"
-                                value={data.account_head}
-                                className="mt-1 block w-full"
-                                autoComplete="account_head"
-                                onChange={(e) =>
-                                    setData("account_head", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.account_head}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
                             <InputLabel
                                 htmlFor="account_head"
@@ -812,45 +733,6 @@ const CreateForm = ({ auth }) => {
 
                             <InputError
                                 message={errors.account_head}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="nid" value="Nid No" />
-
-                            <TextInput
-                                id="nid"
-                                type="number"
-                                name="nid"
-                                value={data.nid}
-                                className="mt-1 block w-full"
-                                autoComplete="nid"
-                                onChange={(e) => setData("nid", e.target.value)}
-                            />
-
-                            <InputError message={errors.nid} className="mt-2" />
-                            </div>
-
-                            <div>
-                            <InputLabel
-                                htmlFor="passport_no"
-                                value="Passport No"
-                            />
-
-                            <TextInput
-                                id="passport_no"
-                                name="passport_no"
-                                value={data.passport_no}
-                                className="mt-1 block w-full"
-                                autoComplete="passport_no"
-                                onChange={(e) =>
-                                    setData("passport_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.passport_no}
                                 className="mt-2"
                             />
                         </div>

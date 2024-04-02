@@ -66,21 +66,21 @@ const EditForm = ({ auth, gpcr }) => {
 
     const { data, setData, patch, processing, errors } = useForm(initialData);
 
-    useEffect(() => {
-        // Calculate age when DOB changes
-        setData((prevData) => ({
-            ...prevData,
-            age: calculateAge(prevData.dob),
-        }));
-    }, [data.dob]);
+     useEffect(() => {
+         // Calculate age when DOB changes
+         setData((prevData) => ({
+             ...prevData,
+             age: calculateAge(prevData.dob),
+         }));
+     }, [data.dob]);
 
-    const handleDateChange = (date, field) => {
-        setData((prevData) => ({
-            ...prevData,
-            [field]: date,
-            age: calculateAge(date), // Calculate age when DOB changes
-        }));
-    };
+     const handleDateChange = (date, field) => {
+         setData((prevData) => ({
+             ...prevData,
+             [field]: date,
+             age: field === "dob" ? calculateAge(date) : prevData.age,
+         }));
+     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -92,11 +92,11 @@ const EditForm = ({ auth, gpcr }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    General PCR
+                    Update PCR
                 </h1>
             }
         >
-            <Head title="General PCR" />
+            <Head title="Update PCR" />
             <div className="py-2">
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -1,22 +1,20 @@
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, useForm } from "@inertiajs/react";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { useEffect } from "react";
 
 const calculateAge = (dob) => {
+    if (!dob) return ""; // Return empty string if DOB is not set
     const currentDate = new Date();
     const birthDate = new Date(dob);
-
     let age = currentDate.getFullYear() - birthDate.getFullYear();
-
     const currentMonth = currentDate.getMonth();
     const birthMonth = birthDate.getMonth();
-
     if (
         currentMonth < birthMonth ||
         (currentMonth === birthMonth &&
@@ -24,111 +22,69 @@ const calculateAge = (dob) => {
     ) {
         age--;
     }
-
     return age;
 };
 
-const CreateForm = ({ auth }) => {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
-        email: "",
-        reg_fee: 3500,
-        total: "",
-        dob: null, // Ensure dob is initialized as null
-        age: 0, // Initialize age with 0
-        // other form fields...
-    });
-
-    const [total, setTotal] = useState(data.reg_fee || 0);
-    const [dob, setDob] = useState(null);
-    const [entryDate, setEntryDate] = useState(new Date());
-    const [firstDoseDate, setFirstDoseDate] = useState(null);
-    const [secondDoseDate, setSecondDoseDate] = useState(null);
-    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
-
-    const handleRegFeeChange = (value) => {
-        const regFee = parseFloat(value) || 0;
-        const calculatedTotal = regFee - parseFloat(data.discount);
-
-        setTotal(calculatedTotal);
-        setData({ ...data, reg_fee: regFee, total: calculatedTotal });
+const EditForm = ({ auth, dope }) => {
+    const initialData = {
+        name: dope.name || "",
+        email: dope.email || "",
+        dob: dope.dob ? new Date(dope.dob) : null,
+        age: dope.age || "", // Initialize age field
+        sex: dope.sex || "",
+        address: dope.address || "",
+        contact_no: dope.contact_no || "",
+        entry_date: dope.entry_date ? new Date(dope.entry_date) : null,
+        police_station: dope.police_station || "",
+        district: dope.district || "",
+        reg_fee: dope.reg_fee || "",
+        discount: dope.discount || "",
+        paid: dope.paid || "",
+        due: dope.due || "",
+        total: dope.total || "",
+        discount_reference: dope.discount_reference || "",
+        vaccine_name: dope.vaccine_name || "",
+        vaccine_certificate_no: dope.vaccine_certificate_no || "",
+        first_dose_date: dope.first_dose_date
+            ? new Date(dope.first_dose_date)
+            : null,
+        second_dose_date: dope.second_dose_date
+            ? new Date(dope.second_dose_date)
+            : null,
+        booster_dose_date: dope.booster_dose_date
+            ? new Date(dope.booster_dose_date)
+            : null,
+        contact_no_relation: dope.contact_no_relation || "",
+        sample_collected_by: dope.sample_collected_by || "",
+        hospital_name: dope.hospital_name || "",
+        ticket_no: dope.ticket_no || "",
+        payment_type: dope.payment_type || "",
+        account_head: dope.account_head || "",
+        nid: dope.nid || "",
+        passport_no: dope.passport_no || "",
     };
 
-    const handleDiscountChange = (value) => {
-        const discount = value === "" ? "" : parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
+    const { data, setData, patch, processing, errors } = useForm(initialData);
 
-        let calculatedTotal = regFee - discount;
-        calculatedTotal = Math.max(calculatedTotal, 0); // Ensure the total doesn't go below zero
-
-        setTotal(calculatedTotal);
+    useEffect(() => {
+        // Calculate age when DOB changes
         setData((prevData) => ({
             ...prevData,
-            discount,
-            total: calculatedTotal,
+            age: calculateAge(prevData.dob),
         }));
-    };
-
-    const handlePaidChange = (value) => {
-        const paid = parseFloat(value) || 0;
-        const calculatedDue = (parseFloat(total) || 0) - paid;
-
-        setTotal(total); // No change to total
-        setData({ ...data, paid: paid, due: calculatedDue }); // Update paid and due in the form data
-    };
-
-    const handleDueChange = (value) => {
-        const due = parseFloat(value) || 0;
-        const calculatedTotal = (parseFloat(total) || 0) + due;
-        setTotal(calculatedTotal);
-        setData("due", due);
-    };
-
-    const handleDobChange = (date) => {
-        // Update the state variable
-        setDob(date);
-
-        // Update the form data with the selected date
-        const isoDate = date ? date.toISOString().split("T")[0] : null;
-        setData((prevData) => ({
-            ...prevData,
-            dob: isoDate,
-            age: isoDate ? calculateAge(isoDate) : 0,
-        }));
-    };
+    }, [data.dob]);
 
     const handleDateChange = (date, field) => {
-        switch (field) {
-            case "entry_date":
-                setEntryDate(date);
-                break;
-            case "first_dose_date":
-                setFirstDoseDate(date);
-                break;
-            case "second_dose_date":
-                setSecondDoseDate(date);
-                break;
-            case "booster_dose_date":
-                setBoosterDoseDate(date);
-                break;
-            default:
-                break;
-        }
-
-        setData(field, date ? date.toISOString().split("T")[0] : null);
+        setData((prevData) => ({
+            ...prevData,
+            [field]: date,
+            age: field === "dob" ? calculateAge(date) : prevData.age,
+        }));
     };
 
-    const submit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-
-        post(route("pcr.store"), {
-            onSuccess: ({ data }) => {
-                const patientId = data.patient_id;
-
-                // Redirect to the invoice route with the patient_id from the response
-                Inertia.visit(route("invoice", { id: patientId }));
-            },
-        });
+        patch(route("pcr.update", { pcr: dope.id }), data);
     };
 
     return (
@@ -136,28 +92,26 @@ const CreateForm = ({ auth }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    General PCR
+                    Update Dope
                 </h1>
             }
         >
-            <Head title="General PCR" />
+            <Head title="Update Dope" />
             <div className="py-2">
-                <form onSubmit={submit}>
+                <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
 
                             <TextInput
-                                id="name"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Name"
                                 name="name"
                                 value={data.name}
-                                className="mt-1 block w-full"
-                                autoComplete="name"
-                                isFocused={true}
                                 onChange={(e) =>
                                     setData("name", e.target.value)
                                 }
-                                required
                             />
 
                             <InputError
@@ -170,12 +124,11 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="email" value="Email" />
 
                             <TextInput
-                                id="email"
-                                type="email"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Email"
                                 name="email"
                                 value={data.email}
-                                className="mt-1 block w-full"
-                                autoComplete="username"
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
@@ -189,27 +142,24 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
-
                             <CustomDatePicker
-                                selectedDate={dob || new Date()}
+                                selectedDate={data.dob}
                                 handleDateChange={(date) =>
-                                    handleDobChange(date)
+                                    handleDateChange(date, "dob")
                                 }
                             />
-
                             <InputError message={errors.dob} className="mt-2" />
                         </div>
 
                         <div>
                             <InputLabel htmlFor="age" value="Age" />
                             <TextInput
-                                id="age"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Age"
                                 name="age"
                                 value={data.age}
-                                className="mt-1 block w-full"
-                                autoComplete="age"
                                 onChange={(e) => setData("age", e.target.value)}
-                                required
                             />
                             <InputError message={errors.age} className="mt-2" />
                         </div>
@@ -218,12 +168,12 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="sex" value="Sex" />
 
                             <select
-                                id="sex"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Sex"
                                 name="sex"
                                 value={data.sex}
-                                className="mt-1 block w-full"
                                 onChange={(e) => setData("sex", e.target.value)}
-                                required
                             >
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
@@ -237,15 +187,14 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="address" value="Address" />
 
                             <TextInput
-                                id="address"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Address"
                                 name="address"
                                 value={data.address}
-                                className="mt-1 block w-full"
-                                autoComplete="address"
                                 onChange={(e) =>
                                     setData("address", e.target.value)
                                 }
-                                required
                             />
 
                             <InputError
@@ -261,16 +210,14 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="contact_no"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Contact No"
                                 name="contact_no"
                                 value={data.contact_no}
-                                className="mt-1 block w-full"
-                                autoComplete="contact_no"
                                 onChange={(e) =>
                                     setData("contact_no", e.target.value)
                                 }
-                                required
                             />
 
                             <InputError
@@ -286,7 +233,7 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={entryDate || new Date()}
+                                selectedDate={data.entry_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
                                 }
@@ -305,11 +252,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="police_station"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Police Station"
                                 name="police_station"
                                 value={data.police_station}
-                                className="mt-1 block w-full"
-                                autoComplete="police_station"
                                 onChange={(e) =>
                                     setData("police_station", e.target.value)
                                 }
@@ -325,11 +272,11 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="district" value="District" />
 
                             <TextInput
-                                id="district"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="District"
                                 name="district"
                                 value={data.district}
-                                className="mt-1 block w-full"
-                                autoComplete="district"
                                 onChange={(e) =>
                                     setData("district", e.target.value)
                                 }
@@ -345,17 +292,14 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="reg_fee" value="Reg Fee" />
 
                             <TextInput
-                                id="reg_fee"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Reg Fee"
                                 name="reg_fee"
-                                value={data.reg_fee || 3500}
-                                className="mt-1 block w-full"
-                                autoComplete="reg_fee"
+                                value={data.reg_fee}
                                 onChange={(e) =>
-                                    handleRegFeeChange(e.target.value)
+                                    setData("reg_fee", e.target.value)
                                 }
-                                required
-                                readOnly
                             />
 
                             <InputError
@@ -368,14 +312,13 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="discount" value="Discount" />
 
                             <TextInput
-                                id="discount"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Discount"
                                 name="discount"
                                 value={data.discount}
-                                className="mt-1 block w-full"
-                                autoComplete="discount"
                                 onChange={(e) =>
-                                    handleDiscountChange(e.target.value)
+                                    setData("discount", e.target.value)
                                 }
                             />
                             <InputError
@@ -393,14 +336,13 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="paid" value="Paid" />
 
                             <TextInput
-                                id="paid"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Paid"
                                 name="paid"
                                 value={data.paid}
-                                className="mt-1 block w-full"
-                                autoComplete="paid"
                                 onChange={(e) =>
-                                    handlePaidChange(e.target.value)
+                                    setData("paid", e.target.value)
                                 }
                             />
 
@@ -414,16 +356,12 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="due" value="Due" />
 
                             <TextInput
-                                id="due"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Due"
                                 name="due"
                                 value={data.due}
-                                className="mt-1 block w-full"
-                                autoComplete="due"
-                                onChange={(e) =>
-                                    handleDueChange(e.target.value)
-                                }
-                                readOnly
+                                onChange={(e) => setData("due", e.target.value)}
                             />
 
                             <InputError message={errors.due} className="mt-2" />
@@ -433,14 +371,14 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="total" value="Total" />
 
                             <TextInput
-                                id="total"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Total"
                                 name="total"
                                 value={data.total}
-                                className="mt-1 block w-full"
-                                autoComplete="total"
-                                onChange={(e) => setTotal(e.target.value)}
-                                readOnly
+                                onChange={(e) =>
+                                    setData("total", e.target.value)
+                                }
                             />
 
                             <InputError
@@ -456,11 +394,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="discount_reference"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Discount Reference"
                                 name="discount_reference"
                                 value={data.discount_reference}
-                                className="mt-1 block w-full"
-                                autoComplete="discount_reference"
                                 onChange={(e) =>
                                     setData(
                                         "discount_reference",
@@ -482,11 +420,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="vaccine_name"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Vaccine Name"
                                 name="vaccine_name"
                                 value={data.vaccine_name}
-                                className="mt-1 block w-full"
-                                autoComplete="vaccine_name"
                                 onChange={(e) =>
                                     setData("vaccine_name", e.target.value)
                                 }
@@ -505,11 +443,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="vaccine_certificate_no"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Vaccine Certificate No"
                                 name="vaccine_certificate_no"
                                 value={data.vaccine_certificate_no}
-                                className="mt-1 block w-full"
-                                autoComplete="vaccine_certificate_no"
                                 onChange={(e) =>
                                     setData(
                                         "vaccine_certificate_no",
@@ -531,7 +469,7 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={firstDoseDate || new Date()}
+                                selectedDate={data.first_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "first_dose_date")
                                 }
@@ -550,7 +488,7 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={secondDoseDate || new Date()}
+                                selectedDate={data.second_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "second_dose_date")
                                 }
@@ -569,7 +507,7 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={boosterDoseDate || new Date()}
+                                selectedDate={data.booster_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "booster_dose_date")
                                 }
@@ -588,11 +526,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="contact_no_relation"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Contact No Relation"
                                 name="contact_no_relation"
                                 value={data.contact_no_relation}
-                                className="mt-1 block w-full"
-                                autoComplete="contact_no_relation"
                                 onChange={(e) =>
                                     setData(
                                         "contact_no_relation",
@@ -614,11 +552,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="sample_collected_by"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Sample Collected By"
                                 name="sample_collected_by"
                                 value={data.sample_collected_by}
-                                className="mt-1 block w-full"
-                                autoComplete="sample_collected_by"
                                 onChange={(e) =>
                                     setData(
                                         "sample_collected_by",
@@ -640,10 +578,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <select
-                                id="hospital_name"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Hospital Name"
                                 name="hospital_name"
                                 value={data.hospital_name}
-                                className="mt-1 block w-full"
                                 onChange={(e) =>
                                     setData("hospital_name", e.target.value)
                                 }
@@ -679,38 +618,15 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="hospital_name"
-                                value="Hospital Name"
-                            />
-
-                            <TextInput
-                                id="hospital_name"
-                                name="hospital_name"
-                                value={data.hospital_name}
-                                className="mt-1 block w-full"
-                                autoComplete="hospital_name"
-                                onChange={(e) =>
-                                    setData("hospital_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.hospital_name}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
                             <InputLabel htmlFor="ticket_no" value="Ticket No" />
 
                             <TextInput
-                                id="ticket_no"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Ticket No"
                                 name="ticket_no"
                                 value={data.ticket_no}
-                                className="mt-1 block w-full"
-                                autoComplete="ticket_no"
                                 onChange={(e) =>
                                     setData("ticket_no", e.target.value)
                                 }
@@ -729,10 +645,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <select
-                                id="payment_type"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Payment Type"
                                 name="payment_type"
                                 value={data.payment_type}
-                                className="mt-1 block w-full"
                                 onChange={(e) =>
                                     setData("payment_type", e.target.value)
                                 }
@@ -747,52 +664,6 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="payment_type"
-                                value="Payment Type"
-                            />
-
-                            <TextInput
-                                id="payment_type"
-                                name="payment_type"
-                                value={data.payment_type}
-                                className="mt-1 block w-full"
-                                autoComplete="payment_type"
-                                onChange={(e) =>
-                                    setData("payment_type", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.payment_type}
-                                className="mt-2"
-                            />
-                        </div> */}
-
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="account_head"
-                                value="Account Head"
-                            />
-
-                            <TextInput
-                                id="account_head"
-                                name="account_head"
-                                value={data.account_head}
-                                className="mt-1 block w-full"
-                                autoComplete="account_head"
-                                onChange={(e) =>
-                                    setData("account_head", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.account_head}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
                             <InputLabel
                                 htmlFor="account_head"
@@ -800,11 +671,11 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <TextInput
-                                id="account_head"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Account Head"
                                 name="account_head"
-                                value={data.account_head || "Cash in hand"} // Set default value here
-                                className="mt-1 block w-full"
-                                autoComplete="account_head"
+                                value={data.account_head}
                                 onChange={(e) =>
                                     setData("account_head", e.target.value)
                                 }
@@ -820,30 +691,27 @@ const CreateForm = ({ auth }) => {
                             <InputLabel htmlFor="nid" value="Nid No" />
 
                             <TextInput
-                                id="nid"
-                                type="number"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Nid No"
                                 name="nid"
                                 value={data.nid}
-                                className="mt-1 block w-full"
-                                autoComplete="nid"
                                 onChange={(e) => setData("nid", e.target.value)}
                             />
 
                             <InputError message={errors.nid} className="mt-2" />
-                            </div>
 
-                            <div>
                             <InputLabel
                                 htmlFor="passport_no"
                                 value="Passport No"
                             />
 
                             <TextInput
-                                id="passport_no"
+                                type="text"
+                                className="w-full px-4 py-2"
+                                label="Passport No"
                                 name="passport_no"
                                 value={data.passport_no}
-                                className="mt-1 block w-full"
-                                autoComplete="passport_no"
                                 onChange={(e) =>
                                     setData("passport_no", e.target.value)
                                 }
@@ -856,10 +724,11 @@ const CreateForm = ({ auth }) => {
                         </div>
                     </div>
                     <PrimaryButton
+                        type="submit"
                         className="mx-auto block w-full mt-2"
                         disabled={processing}
                     >
-                        Register
+                        {processing ? "Updating..." : "Update"}
                     </PrimaryButton>
                 </form>
             </div>
@@ -867,4 +736,4 @@ const CreateForm = ({ auth }) => {
     );
 };
 
-export default CreateForm;
+export default EditForm;

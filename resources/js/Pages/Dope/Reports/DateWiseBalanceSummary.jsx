@@ -1,8 +1,8 @@
 // DateWiseBalanceSummary.jsx
 import React, { useState } from "react";
-import DateWiseReport from "./DateWiseReport";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
+import DateWiseReport from "@/Pages/Gpcr/Reports/DateWiseReport";
 
 const DateWiseBalanceSummary = ({ auth, data }) => {
     console.log("Datas:", data);
@@ -37,11 +37,11 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary PCR
+                    Date Wise Balance Summary (Dope)
                 </h2>
             }
         >
-            <Head title="Date Wise Balance Summary" />
+            <Head title="Dope Summary" />
 
             <div className="py-2">
                 <div className="mx-auto">
