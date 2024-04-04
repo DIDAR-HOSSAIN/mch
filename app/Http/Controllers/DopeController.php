@@ -141,7 +141,7 @@ class DopeController extends Controller
         // ])->validate();
 
         // Parse and convert date fields to a compatible format
-        $dateFields = ['dob', 'first_dose_date', 'second_dose_date', 'booster_dose_date', 'entry_date'];
+        $dateFields = ['brta_form_date', 'brta_serial_date','dob','entry_date', 'sample_collection_date',''];
         foreach ($dateFields as $field) {
             if ($request->has($field)) {
                 $request->merge([$field => Carbon::parse($request->input($field))->toDateString()]);

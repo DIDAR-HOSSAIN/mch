@@ -10,6 +10,11 @@ const MoneyReceipt = ({ auth, data }) => {
     console.log("from money receipt", data);
     console.log("from money auth", auth);
 
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
+
     // Destructure relevant data
     const {
         patient_id,
@@ -156,7 +161,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 Date :
                             </span>
                             <span className="info-value">
-                                {entry_date || "N/A"}
+                                {formatDate(entry_date || "N/A")}
                             </span>
                         </div>
                     </div>
@@ -179,7 +184,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3">1</td>
                                 <td className="p-3 text-center">{test_name}</td>
                                 <td className="p-3 text-center">
-                                    {entry_date}
+                                    {formatDate(entry_date)}
                                 </td>
                                 <td className="p-3 text-right">{reg_fee}.00</td>
                             </tr>

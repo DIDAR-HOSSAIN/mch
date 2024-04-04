@@ -36,7 +36,7 @@ class Dope extends Model
         'total',
         'test_name',
         'sample_collected_by',
-        'Reference_name',
+        'reference_name',
         'payment_type',
         'account_head',
         'user_name',

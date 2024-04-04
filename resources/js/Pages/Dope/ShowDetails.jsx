@@ -3,6 +3,15 @@ import { Head } from "@inertiajs/react";
 import React from "react";
 
 const ShowDetails = ({ auth, dope }) => {
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
+
+    const formatFieldName = (fieldName) => {
+        return fieldName.replace(/_/g, " "); // Remove underscores and capitalize words
+    };
+
     return (
         <AdminDashboardLayout
             user={auth.user}
@@ -33,7 +42,9 @@ const ShowDetails = ({ auth, dope }) => {
                                         {formatFieldName(key)}:
                                     </strong>
                                     <span className="text-xl text-indigo-900 ml-2">
-                                        {value || "N/A"}
+                                        {key === "dob" || key.includes("date")
+                                            ? formatDate(value)
+                                            : value || "N/A"}
                                     </span>
                                 </div>
                             )
@@ -42,10 +53,6 @@ const ShowDetails = ({ auth, dope }) => {
             </div>
         </AdminDashboardLayout>
     );
-};
-
-const formatFieldName = (fieldName) => {
-    return fieldName.replace(/_/g, " "); // Remove underscores and capitalize words
 };
 
 export default ShowDetails;

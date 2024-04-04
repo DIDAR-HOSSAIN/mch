@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('total');
             $table->string('test_name')->default('Dope Test');
             $table->string('sample_collected_by')->nullable();
-            $table->string('Reference_name')->nullable();
+            $table->string('reference_name')->nullable();
             $table->string('payment_type')->default('Cash');
             $table->string('account_head')->default('Cash in hand');
             $table->string('user_name');

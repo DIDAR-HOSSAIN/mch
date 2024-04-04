@@ -7,6 +7,11 @@ import DateWiseReport from "./Reports/DateWiseReport";
 const ViewList = ({ auth, datas }) => {
     const [filteredData, setFilteredData] = useState(datas);
 
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
+
     const handleDatewiseSearch = (filteredData) => {
         setFilteredData(filteredData);
     };
@@ -142,7 +147,7 @@ const ViewList = ({ auth, datas }) => {
                                                         {patient_id}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {entry_date}
+                                                        {formatDate(entry_date)}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {name}

@@ -5,6 +5,12 @@ import { useState } from "react";
 import DateWiseReport from "./Reports/DateWiseReport";
 
 const ViewList = ({ auth, datas }) => {
+
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
+
     const [filteredData, setFilteredData] = useState(datas);
 
     const handleDatewiseSearch = (filteredData) => {
@@ -142,7 +148,7 @@ const ViewList = ({ auth, datas }) => {
                                                         {patient_id}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {entry_date}
+                                                        {formatDate(entry_date)}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {name}
@@ -173,7 +179,7 @@ const ViewList = ({ auth, datas }) => {
                                                             tabIndex="1"
                                                             className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
                                                             href={route(
-                                                                "pcr.show",
+                                                                "dope.show",
                                                                 id
                                                             )}
                                                         >
@@ -183,7 +189,7 @@ const ViewList = ({ auth, datas }) => {
                                                             tabIndex="1"
                                                             className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
                                                             href={route(
-                                                                "invoice",
+                                                                "dope-inv",
                                                                 id
                                                             )}
                                                         >
