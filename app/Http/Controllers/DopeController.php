@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class DopeController extends Controller
 {
@@ -50,6 +51,21 @@ class DopeController extends Controller
      */
     public function store(StoreDopeRequest $request)
     {
+        Validator::make($request->all(), [
+            'brta_serial_no' => ['required'],
+            'brta_serial_date' => ['required'],
+            'name' => ['required'],
+            'fathers_name' => ['required'],
+            'mothers_name' => ['required'],
+            'contact_no' => ['required'],
+            'dob' => ['required'],
+            'sex' => ['required'],
+            'sample_collection_date' => ['required'],
+            'reg_fee' => ['required'],
+            'paid' => ['required'],
+            'total' => ['required'],
+        ])->validate();
+
         // Retrieve all data from the request
         $data = $request->all();
 

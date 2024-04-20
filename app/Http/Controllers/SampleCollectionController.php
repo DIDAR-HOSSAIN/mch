@@ -6,6 +6,7 @@ use App\Models\SampleCollection;
 use App\Http\Requests\StoreSampleCollectionRequest;
 use App\Http\Requests\UpdateSampleCollectionRequest;
 use App\Models\Dope;
+use App\Models\Result;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -28,7 +29,9 @@ class SampleCollectionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Dope/Sample/CreateForm');
+        $dopeIds = Dope::all();
+        // dd($dopeIds);
+        return Inertia::render('Dope/Sample/CreateForm', ['dopeIds' => $dopeIds]);
     }
 
     /**
@@ -36,30 +39,20 @@ class SampleCollectionController extends Controller
      */
     public function store(StoreSampleCollectionRequest $request)
     {
-        $validatedData = $request->validate([
-            'patient_id' => ['required'],
-            'name' => ['required'],
-            'sample_collection_date' => ['required'],
-            'status' => ['required'],
-            // 'remarks' => ['required'],
-        ]);
 
-        // Check if the patient_id exists in the dopes table
-        if (!Dope::where('patient_id', $validatedData['patient_id'])->exists()) {
-            return redirect()->back()->withErrors(['patient_id' => 'The patient ID is invalid.']);
-        }
+        // Validator::make($request->all(), [
+        //     'patient_id' => ['required'],
+        //     'name' => ['required'],
+        //     'sample_collection_date' => ['required'],
+        //     'status' => ['required'],
+        // ])->validate();
 
-        // Add user_name to data
-        if ($user = Auth::user()) {
-            $validatedData['user_name'] = $user->name;
-        } else {
-            return response()->json(['error' => 'User not authenticated'], 401);
-        }
+        // $request->validate([
+        //     'name' => 'required',
+        //     'detail' => 'required',
+        // ]);
 
-        // Create SampleCollection record
-        SampleCollection::create($validatedData);
-
-        return Redirect::back()->with('message', 'Operation Successful !');
+        SampleCollection::create($request->all());
     }
 
     /**

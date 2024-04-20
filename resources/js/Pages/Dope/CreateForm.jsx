@@ -41,6 +41,7 @@ const CreateForm = ({ auth }) => {
 
     const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
+     const [dobError, setDobError] = useState("");
     const [entryDate, setEntryDate] = useState(new Date());
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
@@ -55,27 +56,40 @@ const CreateForm = ({ auth }) => {
     };
 
     const handleDiscountChange = (value) => {
-        const discount = value === "" ? "" : parseFloat(value) || 0;
+        const discount = parseFloat(value) || 0;
         const regFee = parseFloat(data.reg_fee) || 0;
+        const calculatedTotal = regFee - discount;
+        const paid = parseFloat(data.paid) || 0;
+        const calculatedDue = calculatedTotal - paid;
 
-        let calculatedTotal = regFee - discount;
-        calculatedTotal = Math.max(calculatedTotal, 0); // Ensure the total doesn't go below zero
-
-        setTotal(calculatedTotal);
         setData((prevData) => ({
             ...prevData,
-            discount,
+            discount: discount,
             total: calculatedTotal,
+            due: calculatedDue,
         }));
     };
 
-    const handlePaidChange = (value) => {
-        const paid = parseFloat(value) || 0;
-        const calculatedDue = (parseFloat(total) || 0) - paid;
 
-        setTotal(total); // No change to total
-        setData({ ...data, paid: paid, due: calculatedDue }); // Update paid and due in the form data
-    };
+    
+
+const handlePaidChange = (value) => {
+    const paid = parseFloat(value) || 0;
+    const regFee = parseFloat(data.reg_fee) || 0;
+    const total = data.discount ? regFee - parseFloat(data.discount) : regFee;
+    const calculatedDue = total - paid;
+
+    setData((prevData) => ({
+        ...prevData,
+        paid: paid,
+        due: calculatedDue,
+        total: regFee, // Show reg_fee in total if no discount
+    }));
+};
+
+
+
+
 
     const handleDueChange = (value) => {
         const due = parseFloat(value) || 0;
@@ -85,6 +99,11 @@ const CreateForm = ({ auth }) => {
     };
 
     const handleDobChange = (date) => {
+          if (!date) {
+              setDobError("Date of birth is required");
+          } else {
+              setDobError("");
+          }
         // Update the state variable
         setDob(date);
 
@@ -120,6 +139,11 @@ const CreateForm = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
+
+        if (!dob) {
+            setDobError("Date of birth is required");
+            return;
+        }
 
         post(route("dope.store"), {
             onSuccess: ({ data }) => {
@@ -173,7 +197,7 @@ const CreateForm = ({ auth }) => {
                                 id="brta_serial_no"
                                 type="number"
                                 name="brta_serial_no"
-                                value={data.brta_serial_no}
+                                value={data.brta_serial_no || ""}
                                 className="mt-1 block w-full"
                                 autoComplete="brta_serial_no"
                                 onChange={(e) =>
@@ -370,9 +394,9 @@ const CreateForm = ({ auth }) => {
                                 handleDateChange={(date) =>
                                     handleDobChange(date)
                                 }
+                                required:true
                             />
-
-                            <InputError message={errors.dob} className="mt-2" />
+                             {dobError && <span className="error">{dobError}</span>}
                         </div>
 
                         <div>
@@ -426,7 +450,7 @@ const CreateForm = ({ auth }) => {
                                 className="mt-2"
                             />
                         </div>
-                        
+
                         <div>
                             <InputLabel
                                 htmlFor="sample_collection_date"
@@ -434,9 +458,14 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={sampleCollectionDate || new Date()}
+                                selectedDate={
+                                    sampleCollectionDate || new Date()
+                                }
                                 handleDateChange={(date) =>
-                                    handleDateChange(date, "sample_collection_date")
+                                    handleDateChange(
+                                        date,
+                                        "sample_collection_date"
+                                    )
                                 }
                             />
 
@@ -517,7 +546,7 @@ const CreateForm = ({ auth }) => {
                                 id="reg_fee"
                                 type="number"
                                 name="reg_fee"
-                                value={data.reg_fee || 3500}
+                                value={data.reg_fee || 900}
                                 className="mt-1 block w-full"
                                 autoComplete="reg_fee"
                                 onChange={(e) =>
@@ -547,6 +576,7 @@ const CreateForm = ({ auth }) => {
                                     handleDiscountChange(e.target.value)
                                 }
                             />
+
                             <InputError
                                 message={
                                     errors.discount ||
@@ -571,6 +601,7 @@ const CreateForm = ({ auth }) => {
                                 onChange={(e) =>
                                     handlePaidChange(e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -610,6 +641,7 @@ const CreateForm = ({ auth }) => {
                                 autoComplete="total"
                                 onChange={(e) => setTotal(e.target.value)}
                                 readOnly
+                                required
                             />
 
                             <InputError

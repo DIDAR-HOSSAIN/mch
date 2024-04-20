@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('status');
             $table->string('remarks')->nullable();
             $table->string('user_name');
-            $table->foreign('patient_id')->references('patient_id')->on('dopes');
+            $table->foreign('patient_id')->references('patient_id')->on('dopes')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('patient_id')->unique();
             $table->date('brta_form_date')->default(now());
-            $table->string('brta_serial_no');
+            $table->string('brta_serial_no')->unique();
             $table->date('brta_serial_date')->default(now());
-            $table->string('name');
-            $table->string('fathers_name');
-            $table->string('mothers_name');
-            $table->string('nid')->nullable(false);
-            $table->string('passport_no')->nullable();
+            $table->string('name')->nullable(false);
+            $table->string('fathers_name')->nullable(false);
+            $table->string('mothers_name')->nullable(false);
+            $table->string('nid')->unique();
+            $table->string('passport_no')->unique();
             $table->string('contact_no')->nullable(false);
             $table->string('address')->nullable(false);
             $table->date('dob')->nullable(false);
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->string('paid')->default('0');
             $table->string('due')->default('0');
-            $table->string('total');
+            $table->string('total')->nullable(false);
             $table->string('test_name')->default('Dope Test');
             $table->string('sample_collected_by')->nullable();
             $table->string('reference_name')->nullable();

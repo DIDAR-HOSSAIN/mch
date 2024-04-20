@@ -5,13 +5,29 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-const CreateForm = ({ auth }) => {
+const CreateForm = ({ auth, dopeIds }) => {
+    console.log("dope head", dopeIds);
     const [sampleCollectionDate, setSampleCollectionDate] = useState(
         new Date()
     );
+    const [selectedPatientId, setSelectedPatientId] = useState(""); // Add this line
+    const [selectedPatientName, setSelectedPatientName] = useState("");
+
+    useEffect(() => {
+        // Find the selected patient object from dopeIds array based on selectedPatientId
+        const selectedPatient = dopeIds.find(
+            (patient) => patient.patient_id === selectedPatientId
+        );
+        // Update the selected patient name
+        if (selectedPatient) {
+            setSelectedPatientName(selectedPatient.name);
+        } else {
+            setSelectedPatientName(""); // Reset name if no patient is selected
+        }
+    }, [selectedPatientId, dopeIds]);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         patient_id: "",
@@ -21,6 +37,17 @@ const CreateForm = ({ auth }) => {
         remarks: "",
         // other form fields...
     });
+
+    const handlePatientChange = (e) => {
+        setSelectedPatientId(e.target.value);
+        // Automatically populate the name field when a patient is selected
+        const selectedPatient = dopeIds.find(
+            (patient) => patient.patient_id === e.target.value
+        );
+        if (selectedPatient) {
+            setData("name", selectedPatient.name);
+        }
+    };
 
     console.log("from sample create", data);
 
@@ -65,45 +92,26 @@ const CreateForm = ({ auth }) => {
             <div className="py-2">
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {/* <div>
-                            <InputLabel htmlFor="sample_id" value="Sample ID" />
-                            <TextInput
-                                id="sample_id"
-                                name="sample_id"
-                                value={data.sample_id}
-                                className="mt-1 block w-full"
-                                autoComplete="sample_id"
-                                onChange={(e) =>
-                                    setData("sample_id", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError
-                                message={errors.sample_id}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
-                            <InputLabel
-                                htmlFor="patient_id"
-                                value="Patient ID"
-                            />
-                            <TextInput
+                            <InputLabel htmlFor="patient_id">
+                                Patient ID:
+                            </InputLabel>
+                            <select
                                 id="patient_id"
-                                name="patient_id"
-                                value={data.patient_id}
-                                className="mt-1 block w-full"
-                                autoComplete="patient_id"
-                                onChange={(e) =>
-                                    setData("patient_id", e.target.value)
-                                }
-                                required
-                            />
-                            <InputError
-                                message={errors.patient_id}
-                                className="mt-2"
-                            />
+                                onChange={handlePatientChange}
+                                value={selectedPatientId}
+                            >
+                                <option value="">Select a patient</option>
+                                {dopeIds.map((dope) => (
+                                    <option
+                                        key={dope.id}
+                                        value={dope.patient_id}
+                                    >
+                                        {dope.patient_id}
+                                        {/* Display both patient_id and id */}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
@@ -111,9 +119,10 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="name"
                                 name="name"
-                                value={data.name}
+                                value={selectedPatientName}
                                 className="mt-1 block w-full"
                                 autoComplete="name"
+                                readOnly
                                 onChange={(e) =>
                                     setData("name", e.target.value)
                                 }

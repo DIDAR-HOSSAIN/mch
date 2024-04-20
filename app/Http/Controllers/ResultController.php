@@ -7,6 +7,7 @@ use App\Http\Requests\StoreResultRequest;
 use App\Http\Requests\UpdateResultRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class ResultController extends Controller
