@@ -9,27 +9,29 @@ import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
 const CreateForm = ({ auth, dopeIds }) => {
-    console.log("dope head", dopeIds);
     const [sampleCollectionDate, setSampleCollectionDate] = useState(
         new Date()
     );
-    const [selectedPatientId, setSelectedPatientId] = useState(""); // Add this line
+    const [selectedPatientId, setSelectedPatientId] = useState("");
     const [selectedPatientName, setSelectedPatientName] = useState("");
 
     useEffect(() => {
-        // Find the selected patient object from dopeIds array based on selectedPatientId
-        const selectedPatient = dopeIds.find(
-            (patient) => patient.patient_id === selectedPatientId
-        );
-        // Update the selected patient name
-        if (selectedPatient) {
-            setSelectedPatientName(selectedPatient.name);
-        } else {
-            setSelectedPatientName(""); // Reset name if no patient is selected
+        // Ensure that dopeIds is an array before using the find function
+        if (Array.isArray(dopeIds)) {
+            // Find the selected patient object from dopeIds array based on selectedPatientId
+            const selectedPatient = dopeIds.find(
+                (patient) => patient.patient_id === selectedPatientId
+            );
+            // Update the selected patient name
+            if (selectedPatient) {
+                setSelectedPatientName(selectedPatient.name);
+            } else {
+                setSelectedPatientName(""); // Reset name if no patient is selected
+            }
         }
     }, [selectedPatientId, dopeIds]);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         patient_id: "",
         name: "",
         sample_collection_date: "",
@@ -39,44 +41,37 @@ const CreateForm = ({ auth, dopeIds }) => {
     });
 
     const handlePatientChange = (e) => {
-        setSelectedPatientId(e.target.value);
-        // Automatically populate the name field when a patient is selected
+        const selectedPatientId = e.target.value;
+        setSelectedPatientId(selectedPatientId);
+        setData((prevData) => ({
+            ...prevData,
+            patient_id: selectedPatientId,
+        }));
         const selectedPatient = dopeIds.find(
-            (patient) => patient.patient_id === e.target.value
+            (patient) => patient.patient_id === selectedPatientId
         );
         if (selectedPatient) {
-            setData("name", selectedPatient.name);
+            setData((prevData) => ({
+                ...prevData,
+                name: selectedPatient.name,
+            }));
         }
     };
 
-    console.log("from sample create", data);
-
     const handleDateChange = (date, field) => {
         switch (field) {
-            case "entry_date":
-                setEntryDate(date);
-                break;
-            case "brta_form_date":
-                setBrtaFormDate(date);
-                break;
-            case "brta_serial_date":
-                setBrtaSerialDate(date);
-                break;
             case "sample_collection_date":
                 setSampleCollectionDate(date);
                 break;
             default:
                 break;
         }
-
         setData(field, date ? date.toISOString().split("T")[0] : null);
     };
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route("sample.store"));
-        // Inertia.visit(route("sample.store"));
     };
 
     return (
@@ -102,18 +97,17 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 value={selectedPatientId}
                             >
                                 <option value="">Select a patient</option>
-                                {dopeIds.map((dope) => (
-                                    <option
-                                        key={dope.id}
-                                        value={dope.patient_id}
-                                    >
-                                        {dope.patient_id}
-                                        {/* Display both patient_id and id */}
-                                    </option>
-                                ))}
+                                {Array.isArray(dopeIds) &&
+                                    dopeIds.map((dope) => (
+                                        <option
+                                            key={dope.id}
+                                            value={dope.patient_id}
+                                        >
+                                            {dope.patient_id}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
-
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
                             <TextInput
@@ -133,17 +127,13 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 className="mt-2"
                             />
                         </div>
-
                         <div>
                             <InputLabel
                                 htmlFor="sample_collection_date"
                                 value="Sample Collection Date"
                             />
-
                             <CustomDatePicker
-                                selectedDate={
-                                    sampleCollectionDate || new Date()
-                                }
+                                selectedDate={sampleCollectionDate}
                                 handleDateChange={(date) =>
                                     handleDateChange(
                                         date,
@@ -151,13 +141,11 @@ const CreateForm = ({ auth, dopeIds }) => {
                                     )
                                 }
                             />
-
                             <InputError
                                 message={errors.sample_collection_date}
                                 className="mt-2"
                             />
                         </div>
-
                         <div>
                             <InputLabel htmlFor="status" value="Status" />
                             <div className="mt-1">
@@ -165,9 +153,9 @@ const CreateForm = ({ auth, dopeIds }) => {
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
-                                        value={1} // Set value to integer 1 for collected
+                                        value={1}
                                         checked={data.status === 1}
-                                        onChange={() => setData("status", 1)} // Set status to 1 when selected
+                                        onChange={() => setData("status", 1)}
                                     />
                                     <span className="ml-2">Collected</span>
                                 </label>
@@ -175,9 +163,9 @@ const CreateForm = ({ auth, dopeIds }) => {
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
-                                        value={0} // Set value to integer 0 for not collected
+                                        value={0}
                                         checked={data.status === 0}
-                                        onChange={() => setData("status", 0)} // Set status to 0 when selected
+                                        onChange={() => setData("status", 0)}
                                     />
                                     <span className="ml-2">Not Collected</span>
                                 </label>
@@ -187,7 +175,6 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 className="mt-2"
                             />
                         </div>
-
                         <div>
                             <InputLabel htmlFor="remarks" value="Remarks" />
                             <TextInput

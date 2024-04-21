@@ -3,18 +3,29 @@ import { Link } from "@inertiajs/react";
 
 const SidebarMenu = () => {
     const [pcrDropdown, setPcrDropdown] = useState(false);
+    const [dopeDropdown, setDopeDropdown] = useState(false);
+    const [sampleDropdown, setSampleDropdown] = useState(false);
+    const [resultDropdown, setResultDropdown] = useState(false);
     const [settings, setSettings] = useState(false);
-    const [report, setReport] = useState(false);
 
     const TogglePcrDropdown = () => {
         setPcrDropdown(!pcrDropdown);
     };
 
+    const ToggleDopeDropdown = () => {
+        setDopeDropdown(!dopeDropdown);
+    };
+
+    const ToggleSampleDropdown = () => {
+        setSampleDropdown(!sampleDropdown);
+    };
+
+    const ToggleResultDropdown = () => {
+        setResultDropdown(!resultDropdown);
+    };
+
     const SettingsToggle = () => {
         setSettings(!settings);
-    };
-    const ReportToggle = () => {
-        setReport(!report);
     };
 
     return (
@@ -31,19 +42,19 @@ const SidebarMenu = () => {
                 <div className="flex flex-col gap-1">
                     <Link
                         href="/pcr/create"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Registration
                     </Link>
                     <Link
                         href="/pcr"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Manage Pcr
                     </Link>
                     <Link
                         href="/summary"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Date Wise Summary
                     </Link>
@@ -52,29 +63,93 @@ const SidebarMenu = () => {
 
             <div className="flex">
                 <button
-                    onClick={ReportToggle}
-                    className="bg-blue-400 hover:bg-white font-bold btn w-full rounded"
+                    onClick={ToggleDopeDropdown}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {report ? "Dope ▲" : "Dope ▼"}
+                    {dopeDropdown ? "Dope Reg. ▲" : "Dope Reg. ▼"}
                 </button>
             </div>
-            {report && (
+            {dopeDropdown && (
                 <div className="flex flex-col gap-1">
                     <Link
                         href="/dope/create"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Registration
                     </Link>
                     <Link
                         href="/dope"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Manage Dope
                     </Link>
                     <Link
                         href="/dope-summary"
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Date Wise Summary
+                    </Link>
+                </div>
+            )}
+
+            <div className="flex">
+                <button
+                    onClick={ToggleSampleDropdown}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {sampleDropdown
+                        ? "Sample Collection (Dope) ▲"
+                        : "Sample Collection (Dope) ▼"}
+                </button>
+            </div>
+            {sampleDropdown && (
+                <div className="flex flex-col gap-1">
+                    <Link
+                        href="/sample/create"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Sample Receive
+                    </Link>
+                    <Link
+                        href="/sample"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Manage Sample
+                    </Link>
+                    <Link
+                        href="/dope-summary"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Date Wise Summary
+                    </Link>
+                </div>
+            )}
+
+            <div className="flex">
+                <button
+                    onClick={ToggleResultDropdown}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {resultDropdown ? "Result Entry (Dope) ▲" : "Result Entry (Dope) ▼"}
+                </button>
+            </div>
+            {resultDropdown && (
+                <div className="flex flex-col gap-1">
+                    <Link
+                        href="/result/create"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Result Input
+                    </Link>
+                    <Link
+                        href="/result"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Manage Result
+                    </Link>
+                    <Link
+                        href="/dope-summary"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Date Wise Summary
                     </Link>
@@ -84,7 +159,7 @@ const SidebarMenu = () => {
             <div className="flex">
                 <button
                     onClick={SettingsToggle}
-                    className="bg-blue-400 hover:bg-white font-bold btn w-full rounded"
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
                     {settings ? "Settings ▲" : "Settings ▼"}
                 </button>
@@ -92,7 +167,7 @@ const SidebarMenu = () => {
             {settings && (
                 <div className="flex flex-col">
                     <Link
-                        className="hover:bg-blue-500 hover:text-white font-bold btn btn-blue rounded"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                         href="/registers"
                     >
                         User List

@@ -54,11 +54,11 @@ const CreateForm = ({ auth }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Result Entry
+                    Result Entry (Manual)
                 </h1>
             }
         >
-            <Head title="Result Entry" />
+            <Head title="Result Entry (Manual)" />
             <div className="py-2">
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

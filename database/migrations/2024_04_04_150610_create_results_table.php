@@ -13,20 +13,20 @@ return new class extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->string('result_id')->unique();
-            $table->string('sample_id')->unique();
+            $table->unsignedBigInteger('sample_id')->unique(); // Change data type to unsignedBigInteger
             $table->string('patient_id')->unique();
             $table->string('name');
             $table->date('result_date');
-            $table->boolean('alcohol')->default('Negative');
-            $table->boolean('benzodiazepines')->default('Negative');
-            $table->boolean('cannabinoids')->default('Negative');
-            $table->boolean('amphetamine')->default('Negative');
-            $table->boolean('opiates')->default('Negative');
+            $table->boolean('alcohol')->default(1);
+            $table->boolean('benzodiazepines')->default(1);
+            $table->boolean('cannabinoids')->default(1);
+            $table->boolean('amphetamine')->default(1);
+            $table->boolean('opiates')->default(1);
             $table->boolean('status')->nullable();
             $table->string('remarks')->nullable();
             $table->string('user_name');
             $table->timestamps();
+            $table->foreign('sample_id')->references('id')->on('sample_collections')->onDelete('cascade');
         });
     }
 

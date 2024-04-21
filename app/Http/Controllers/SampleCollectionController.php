@@ -29,9 +29,17 @@ class SampleCollectionController extends Controller
      */
     public function create()
     {
-        $dopeIds = Dope::all();
-        // dd($dopeIds);
+
+        $existingPatientIds = SampleCollection::pluck('patient_id')->toArray();
+
+        // Fetch all patient IDs from the Dope model that are not in sample_collections
+        $dopeIds = Dope::whereNotIn('patient_id', $existingPatientIds)->get();
+
         return Inertia::render('Dope/Sample/CreateForm', ['dopeIds' => $dopeIds]);
+
+        // $dopeIds = Dope::all();
+        // // dd($dopeIds);
+        // return Inertia::render('Dope/Sample/CreateForm', ['dopeIds' => $dopeIds]);
     }
 
     /**
@@ -40,19 +48,51 @@ class SampleCollectionController extends Controller
     public function store(StoreSampleCollectionRequest $request)
     {
 
-        // Validator::make($request->all(), [
-        //     'patient_id' => ['required'],
-        //     'name' => ['required'],
-        //     'sample_collection_date' => ['required'],
-        //     'status' => ['required'],
-        // ])->validate();
+        Validator::make($request->all(), [
+            'patient_id' => ['required'],
+            'name' => ['required'],
+            'sample_collection_date' => ['required'],
+            'status' => ['required'],
+        ])->validate();
 
         // $request->validate([
         //     'name' => 'required',
         //     'detail' => 'required',
         // ]);
 
-        SampleCollection::create($request->all());
+        $data = $request->all();
+
+        // Check if there is an authenticated user
+        if ($user = Auth::user()) {
+            // Access user properties safely
+            $data['user_name'] = $user->name;
+        } else {
+            // Handle the case where there is no authenticated user
+            // For example, you could set a default value or return an error response
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $sampleCollection = SampleCollection::create($data);
+
+         // Create Result record with default values
+        $result = new Result([
+            'sample_id' => $sampleCollection->id,
+            'patient_id' => $sampleCollection->patient_id,
+            'name' => $sampleCollection->name,
+            'result_date' => $sampleCollection->sample_collection_date,
+            'alcohol' => 1,
+            'benzodiazepines' => 1,
+            'cannabinoids' => 1,
+            'amphetamine' => 1,
+            'opiates' => 1,
+            'user_name' => $sampleCollection->user_name,
+        ]);
+
+        $result->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('message', 'Operation Successful!');
+        
     }
 
     /**

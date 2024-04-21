@@ -10,9 +10,7 @@ class Result extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'result_id','sample_id', 'patient_id', 'name','result_date', 'alcohol', 'benzodiazepines', 'cannabinoids', 'amphetamine', 'opiates', 'status', 'remarks', 'user_name'
-    ];
+    protected $fillable = ['sample_id', 'patient_id', 'name', 'result_date', 'alcohol', 'benzodiazepines', 'cannabinoids', 'amphetamine', 'opiates', 'status', 'remarks', 'user_name'];
 
     public function sampleCollection()
     {

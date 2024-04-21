@@ -454,7 +454,7 @@ const handlePaidChange = (value) => {
                         <div>
                             <InputLabel
                                 htmlFor="sample_collection_date"
-                                value="Entry Date"
+                                value="Sample Collection Date"
                             />
 
                             <CustomDatePicker
