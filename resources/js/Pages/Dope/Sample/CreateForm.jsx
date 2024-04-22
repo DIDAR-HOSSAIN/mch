@@ -146,6 +146,7 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 className="mt-2"
                             />
                         </div>
+
                         <div>
                             <InputLabel htmlFor="status" value="Status" />
                             <div className="mt-1">
@@ -175,6 +176,7 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 className="mt-2"
                             />
                         </div>
+                        
                         <div>
                             <InputLabel htmlFor="remarks" value="Remarks" />
                             <TextInput

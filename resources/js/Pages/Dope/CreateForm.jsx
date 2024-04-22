@@ -39,7 +39,7 @@ const CreateForm = ({ auth }) => {
         // other form fields...
     });
 
-    const [total, setTotal] = useState(data.reg_fee || 0);
+    // const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
      const [dobError, setDobError] = useState("");
     const [entryDate, setEntryDate] = useState(new Date());
@@ -58,7 +58,7 @@ const CreateForm = ({ auth }) => {
     const handleDiscountChange = (value) => {
         const discount = parseFloat(value) || 0;
         const regFee = parseFloat(data.reg_fee) || 0;
-        const calculatedTotal = regFee - discount;
+        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
         const paid = parseFloat(data.paid) || 0;
         const calculatedDue = calculatedTotal - paid;
 
@@ -70,22 +70,21 @@ const CreateForm = ({ auth }) => {
         }));
     };
 
+    const handlePaidChange = (value) => {
+        const paid = parseFloat(value) || 0;
+        const regFee = parseFloat(data.reg_fee) || 0;
+        const discount = parseFloat(data.discount) || 0;
+        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+        const calculatedDue = calculatedTotal - paid;
 
-    
+        setData((prevData) => ({
+            ...prevData,
+            paid: paid,
+            due: calculatedDue,
+            total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
+        }));
+    };
 
-const handlePaidChange = (value) => {
-    const paid = parseFloat(value) || 0;
-    const regFee = parseFloat(data.reg_fee) || 0;
-    const total = data.discount ? regFee - parseFloat(data.discount) : regFee;
-    const calculatedDue = total - paid;
-
-    setData((prevData) => ({
-        ...prevData,
-        paid: paid,
-        due: calculatedDue,
-        total: regFee, // Show reg_fee in total if no discount
-    }));
-};
 
 
 

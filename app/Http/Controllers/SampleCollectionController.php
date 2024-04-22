@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSampleCollectionRequest;
 use App\Http\Requests\UpdateSampleCollectionRequest;
 use App\Models\Dope;
 use App\Models\Result;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -98,32 +99,49 @@ class SampleCollectionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SampleCollection $sampleCollection)
+    public function show(SampleCollection $sample)
     {
-        //
+        // dd($sample);
+        return Inertia::render('Dope/Sample/ShowDetails', ['sample' => $sample]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SampleCollection $sampleCollection)
+    public function edit(SampleCollection $sample)
     {
-        //
+        $sampleEdit = SampleCollection::find($sample->id);
+        // dd($sampleEdit);
+    return Inertia::render('Dope/Sample/EditForm', ['sampleEdit' => $sampleEdit]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSampleCollectionRequest $request, SampleCollection $sampleCollection)
+    public function update(UpdateSampleCollectionRequest $request, SampleCollection $sample)
     {
-        //
+        // Parse date fields if present
+        $dateFields = ['sample_collection_date'];
+
+        foreach ($dateFields as $field) {
+            if ($request->has($field)) {
+                $request->merge([$field => Carbon::parse($request->input($field))->toDateString()]);
+            }
+        }
+
+        // Update the sample collection record
+        $sample->update($request->all());
+
+        // Redirect the user to the index page after the update
+        return redirect()->route('sample.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SampleCollection $sampleCollection)
+    public function destroy($id)
     {
-        //
+        SampleCollection::find($id)->delete();
+        return redirect()->route('sample.index');
     }
 }

@@ -2,13 +2,10 @@
 
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SampleCollectionController;
-use App\Models\SampleCollection;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,11 +51,6 @@ Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope
 Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
 Route::resource('sample', SampleCollectionController::class);
 Route::resource('result', ResultController::class);
-
-
-
-
-
 
 
 
