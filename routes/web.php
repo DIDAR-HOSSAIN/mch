@@ -51,6 +51,7 @@ Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope
 Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
 Route::resource('sample', SampleCollectionController::class);
 Route::resource('result', ResultController::class);
+Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
 
 
 

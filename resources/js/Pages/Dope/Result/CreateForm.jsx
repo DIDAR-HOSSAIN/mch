@@ -46,7 +46,7 @@ const CreateForm = ({ auth }) => {
         e.preventDefault();
 
         post(route("result.store"));
-        Inertia.visit(route("result.index"));
+        // Inertia.visit(route("result.index"));
     };
 
     return (
@@ -137,6 +137,177 @@ const CreateForm = ({ auth }) => {
 
                             <InputError
                                 message={errors.result_date}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="alcohol" value="Alcohol" />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={1}
+                                        checked={data.alcohol === 1}
+                                        onChange={() => setData("alcohol", 1)}
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={0}
+                                        checked={data.alcohol === 0}
+                                        onChange={() => setData("alcohol", 0)}
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.alcohol}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="benzodiazepines"
+                                value="Benzodiazepines"
+                            />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={1}
+                                        checked={data.benzodiazepines === 1}
+                                        onChange={() =>
+                                            setData("benzodiazepines", 1)
+                                        }
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={0}
+                                        checked={data.benzodiazepines === 0}
+                                        onChange={() =>
+                                            setData("benzodiazepines", 0)
+                                        }
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.benzodiazepines}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="cannabinoids"
+                                value="Cannabinoids"
+                            />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={1}
+                                        checked={data.cannabinoids === 1}
+                                        onChange={() =>
+                                            setData("cannabinoids", 1)
+                                        }
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={0}
+                                        checked={data.cannabinoids === 0}
+                                        onChange={() =>
+                                            setData("cannabinoids", 0)
+                                        }
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.cannabinoids}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="amphetamine"
+                                value="Amphetamine"
+                            />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={1}
+                                        checked={data.amphetamine === 1}
+                                        onChange={() =>
+                                            setData("amphetamine", 1)
+                                        }
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={0}
+                                        checked={data.amphetamine === 0}
+                                        onChange={() =>
+                                            setData("amphetamine", 0)
+                                        }
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.amphetamine}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="opiates" value="Opiates" />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={1}
+                                        checked={data.opiates === 1}
+                                        onChange={() => setData("opiates", 1)}
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value={0}
+                                        checked={data.opiates === 0}
+                                        onChange={() => setData("opiates", 0)}
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.opiates}
                                 className="mt-2"
                             />
                         </div>

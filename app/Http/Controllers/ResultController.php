@@ -39,13 +39,19 @@ class ResultController extends Controller
             'sample_id' => ['required'],
             'patient_id' => ['required'],
             'name' => ['required'],
-            'sample_collection_date' => ['required'],
+            'result_date' => ['required'],
+            'alcohol' => ['required'],
+            'benzodiazepines' => ['required'],
+            'cannabinoids' => ['required'],
+            'amphetamine' => ['required'],
+            'opiates' => ['required'],
             'status' => ['required'],
             'remarks' => ['required'],
         ])->validate();
 
         $data = $request->all();
 
+        // Check if there is an authenticated user
         if ($user = Auth::user()) {
             // Access user properties safely
             $data['user_name'] = $user->name;
@@ -55,7 +61,6 @@ class ResultController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
 
-        // Create Dope record
         Result::create($data);
 
         // Redirect to the money invoice route with the ID
@@ -69,7 +74,7 @@ class ResultController extends Controller
      */
     public function show(Result $result)
     {
-        //
+        return Inertia::render('Dope/Result/ShowDetails', ['result' => $result]);
     }
 
     /**
@@ -95,4 +100,12 @@ class ResultController extends Controller
     {
         //
     }
+
+    public function dopeReport($id)
+    {
+        $report = Result::find($id);
+
+        return Inertia::render('Dope/Result/Report', ['report' => $report]);
+    }
+
 }
