@@ -63,14 +63,14 @@ const Report = ({ auth, report }) => {
                     01883077569, Email : mchctg.rtpcrlab@gmail.com
                 </p>
 
-                <h1 className="text-2xl font-bold mb-4 text-center mt-4">
+                <h1 className="text-2xl font-bold my-2 text-center">
                     Dope Test Report
                 </h1>
 
                 <div className="p-4">
                     {/* Patient Information */}
                     <div className="bg-gray-100 p-4 mb-4 rounded-md">
-                        <h2 className="text-lg font-semibold mb-2">
+                        <h2 className="text-lg font-semibold">
                             Patient Information
                         </h2>
                         <div className="grid grid-cols-2 gap-4">
@@ -142,15 +142,29 @@ const Report = ({ auth, report }) => {
                                 </tr>
                             </tbody>
                         </table>
-                        <div className="text-center my-4">
+                        <div className="text-center mt-4">
                             <div className="mx-auto" style={{ width: "256px" }}>
-                                <QRCode value={report.patient_id || "N/A"} size={256} />
+                                <QRCode
+                                    value={report.patient_id || "N/A"}
+                                    size={256}
+                                />
                             </div>
                         </div>
+
+                        <div className="text-left mt-16">
+                            <hr className="border-black border-solid border-1 w-1/3" />
+                            <strong className="text-xl">Dr. Md. Zakir Hossain</strong>
+                            <p>Head</p>
+                            <p>Dept. of Microbiology & Immunology</p>
+                            <p>Supervisor</p>
+                            <p>Rodolphe Merieux Laboratory</p>
+                            <p>BITID, Fouzderhat, Chattogram.</p>
+                        </div>
+
                     </div>
                 </div>
 
-                <h3>Prepared By : {auth.user.name}</h3>
+                <h3 className="text-right">Prepared By : {auth.user.name}</h3>
             </div>
         </AdminDashboardLayout>
     );
