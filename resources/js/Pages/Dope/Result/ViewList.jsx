@@ -14,13 +14,30 @@ const ViewList = ({ auth, results }) => {
 
     const [filteredData, setFilteredData] = useState(results);
 
-    const handleDatewiseSearch = (filteredData) => {
-        setFilteredData(filteredData);
-    };
+     const handleDateWiseSearch = (startDate, endDate) => {
+         // If either start or end date is not set, return all data
+         if (!startDate || !endDate) {
+             setFilteredData(results);
+             return;
+         }
+
+         // Filter the data based on the date range
+         const filteredData = results.filter((data) => {
+             const entryDate = new Date(data.result_date);
+             return (
+                 entryDate >= startDate &&
+                 entryDate <= new Date(endDate.getTime() + 86400000)
+             );
+         });
+
+         // Set the filtered data state
+         setFilteredData(filteredData);
+     };
+
 
      const handleSearch = (searchTerm) => {
     // Filter the data based on the search term
-    const filtered = samples.filter((data) => {
+    const filtered = results.filter((data) => {
         // Customize the conditions for searching
         return (
             data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -67,7 +84,7 @@ const ViewList = ({ auth, results }) => {
 
                                 <CSVLink
                                     data={filteredData}
-                                    filename={"General PCR Report.csv"}
+                                    filename={"Result Report.csv"}
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                 >
                                     Export
@@ -76,8 +93,10 @@ const ViewList = ({ auth, results }) => {
 
                             <div className="flex items-center justify-between mb-6">
                                 <DateWiseReport
-                                    results={results}
-                                    onSearch={handleDatewiseSearch}
+                                    data={results}
+                                    onSearch={handleDateWiseSearch}
+                                    startDateField="result_date"
+                                    endDateField="result_date"
                                 />
 
                                 <div className="relative">
@@ -193,8 +212,8 @@ const ViewList = ({ auth, results }) => {
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {status === 1
-                                                            ? "Fit"
-                                                            : "Unfit"}
+                                                            ? "Approve"
+                                                            : "Pending"}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {remarks}

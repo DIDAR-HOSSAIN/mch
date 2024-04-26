@@ -3,6 +3,7 @@ import { Head, Link } from "@inertiajs/react";
 import { CSVLink } from "react-csv";
 import { useState } from "react";
 import DateWiseReport from "./Reports/DateWiseReport";
+import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, datas }) => {
 
@@ -13,7 +14,23 @@ const ViewList = ({ auth, datas }) => {
 
     const [filteredData, setFilteredData] = useState(datas);
 
-    const handleDatewiseSearch = (filteredData) => {
+    const handleDateWiseSearch = (startDate, endDate) => {
+        // If either start or end date is not set, return all data
+        if (!startDate || !endDate) {
+            setFilteredData(datas);
+            return;
+        }
+
+        // Filter the data based on the date range
+        const filteredData = datas.filter((data) => {
+            const entryDate = new Date(data.entry_date);
+            return (
+                entryDate >= startDate &&
+                entryDate <= new Date(endDate.getTime() + 86400000)
+            );
+        });
+
+        // Set the filtered data state
         setFilteredData(filteredData);
     };
 
@@ -33,11 +50,12 @@ const ViewList = ({ auth, datas }) => {
 };
 
 
-    function destroy(e) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            // Your delete logic here
+    const destroy = (id) => {
+        if (confirm("Are you sure you want to delete this Patient?")) {
+            // Send a DELETE request to delete the sample
+            Inertia.delete(route("dope.destroy", id));
         }
-    }
+    };
 
     return (
         <AdminDashboardLayout
@@ -64,7 +82,7 @@ const ViewList = ({ auth, datas }) => {
 
                                 <CSVLink
                                     data={filteredData}
-                                    filename={"General PCR Report.csv"}
+                                    filename={"Dope Report.csv"}
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                 >
                                     Export
@@ -73,8 +91,10 @@ const ViewList = ({ auth, datas }) => {
 
                             <div className="flex items-center justify-between mb-6">
                                 <DateWiseReport
-                                    datas={datas}
-                                    onSearch={handleDatewiseSearch}
+                                    data={datas}
+                                    onSearch={handleDateWiseSearch}
+                                    startDateField="entry_date"
+                                    endDateField="entry_date"
                                 />
 
                                 <div className="relative">
@@ -206,8 +226,9 @@ const ViewList = ({ auth, datas }) => {
                                                             Edit
                                                         </Link>
                                                         <button
-                                                            onClick={destroy}
-                                                            id={id}
+                                                            onClick={() =>
+                                                                destroy(id)
+                                                            }
                                                             tabIndex="-1"
                                                             type="button"
                                                             className="px-4 py-2 text-sm text-white bg-red-500 rounded"
@@ -225,7 +246,7 @@ const ViewList = ({ auth, datas }) => {
                                                     className="px-6 py-4 border-t"
                                                     colSpan="6"
                                                 >
-                                                    No contacts found.
+                                                    No Patient found.
                                                 </td>
                                             </tr>
                                         )}

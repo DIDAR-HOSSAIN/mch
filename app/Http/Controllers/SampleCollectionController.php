@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateSampleCollectionRequest;
 use App\Models\Dope;
 use App\Models\Result;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -18,10 +19,27 @@ class SampleCollectionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $samples = SampleCollection::all();
-        // dd($samples);
+        // $samples = SampleCollection::all();
+        // // dd($samples);
+        // return Inertia::render('Dope/Sample/ViewList', ['samples' => $samples]);
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = SampleCollection::query();
+
+        if ($startDate && $endDate) {
+            // Make sure to convert the string dates to DateTime objects
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('sample_collection_date', [$startDate, $endDate]);
+        }
+
+        $samples = $query->get();
+
         return Inertia::render('Dope/Sample/ViewList', ['samples' => $samples]);
     }
 
@@ -86,13 +104,12 @@ class SampleCollectionController extends Controller
             'cannabinoids' => 1,
             'amphetamine' => 1,
             'opiates' => 1,
+            'status' => 0,
             'user_name' => $sampleCollection->user_name,
         ]);
 
         $result->save();
-
-        // Redirect back with success message
-        return redirect()->back()->with('message', 'Operation Successful!');
+        return Redirect::route('barcode', ['id' => $sampleCollection->id]);
         
     }
 
@@ -110,8 +127,8 @@ class SampleCollectionController extends Controller
      */
     public function edit(SampleCollection $sample)
     {
-        $sampleEdit = SampleCollection::find($sample->id);
-        // dd($sampleEdit);
+    $sampleEdit = SampleCollection::find($sample->id);
+    // dd($sampleEdit);
     return Inertia::render('Dope/Sample/EditForm', ['sampleEdit' => $sampleEdit]);
     }
 
@@ -143,5 +160,13 @@ class SampleCollectionController extends Controller
     {
         SampleCollection::find($id)->delete();
         return redirect()->route('sample.index');
+    }
+
+    public function barcodeGenerate($id)
+    {
+        $barcodeData = SampleCollection::find($id);
+        // dd($barcodeData);
+
+        return Inertia::render('Dope/Sample/BarcodeGenerate', ['barcodeData' => $barcodeData]);
     }
 }

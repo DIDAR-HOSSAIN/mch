@@ -176,7 +176,9 @@ class DopeController extends Controller
      */
     public function destroy(Dope $dope)
     {
-        //
+        Dope::find($dope->id)->delete();
+        return redirect()->route('dope.index');
+        
     }
 
     public function moneyReceipt($id)

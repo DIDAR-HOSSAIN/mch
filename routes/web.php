@@ -50,8 +50,13 @@ Route::resource('dope', DopeController::class);
 Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
 Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
 Route::resource('sample', SampleCollectionController::class);
+Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
 Route::resource('result', ResultController::class);
 Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
+Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
+Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
+// Route::put('/update-results', 'ResultsController@update');
+
 
 
 

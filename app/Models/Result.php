@@ -12,6 +12,10 @@ class Result extends Model
 
     protected $fillable = ['sample_id', 'patient_id', 'name', 'result_date', 'alcohol', 'benzodiazepines', 'cannabinoids', 'amphetamine', 'opiates', 'status', 'remarks', 'user_name'];
 
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+
     public function sampleCollection()
     {
         return $this->belongsTo(SampleCollection::class);

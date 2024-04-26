@@ -6,6 +6,7 @@ const SidebarMenu = () => {
     const [dopeDropdown, setDopeDropdown] = useState(false);
     const [sampleDropdown, setSampleDropdown] = useState(false);
     const [resultDropdown, setResultDropdown] = useState(false);
+    const [reportApproveDropdown, setReportApproveDropdown] = useState(false);
     const [settings, setSettings] = useState(false);
 
     const TogglePcrDropdown = () => {
@@ -22,6 +23,10 @@ const SidebarMenu = () => {
 
     const ToggleResultDropdown = () => {
         setResultDropdown(!resultDropdown);
+    };
+
+    const ToggleReportApproveDropdown = () => {
+        setReportApproveDropdown(!reportApproveDropdown);
     };
 
     const SettingsToggle = () => {
@@ -130,7 +135,9 @@ const SidebarMenu = () => {
                     onClick={ToggleResultDropdown}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {resultDropdown ? "Result Entry (Dope) ▲" : "Result Entry (Dope) ▼"}
+                    {resultDropdown
+                        ? "Result Entry (Dope) ▲"
+                        : "Result Entry (Dope) ▼"}
                 </button>
             </div>
             {resultDropdown && (
@@ -152,6 +159,27 @@ const SidebarMenu = () => {
                         className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                     >
                         Date Wise Summary
+                    </Link>
+                </div>
+            )}
+
+            <div className="flex">
+                <button
+                    onClick={ToggleReportApproveDropdown}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {reportApproveDropdown
+                        ? "Approve Report(Dope) ▲"
+                        : "Approve Report (Dope) ▼"}
+                </button>
+            </div>
+            {reportApproveDropdown && (
+                <div className="flex flex-col gap-1">
+                    <Link
+                        href="/update-report"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Approve Report
                     </Link>
                 </div>
             )}

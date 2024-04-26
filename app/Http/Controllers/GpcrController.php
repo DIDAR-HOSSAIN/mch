@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreGpcrRequest;
-use App\Http\Requests\UpdateGpcrRequest;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class GpcrController extends Controller
@@ -116,8 +113,6 @@ class GpcrController extends Controller
     public function show($id)
     {
         $gpcr = Gpcr::find($id);
-
-        // dd($gpcr); // Uncomment this line for debugging
         return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
     }
 
@@ -160,9 +155,10 @@ class GpcrController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Gpcr $gpcr)
+    public function destroy(Gpcr $pcr)
     {
-        //
+        Gpcr::find($pcr->id)->delete();
+        return redirect()->route('pcr.index');
     }
 
 

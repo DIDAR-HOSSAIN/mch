@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('results', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sample_id')->unique(); // Change data type to unsignedBigInteger
+            $table->unsignedBigInteger('sample_id')->unique();
             $table->string('patient_id')->unique();
             $table->string('name');
             $table->date('result_date');
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('cannabinoids')->default(1);
             $table->boolean('amphetamine')->default(1);
             $table->boolean('opiates')->default(1);
-            $table->boolean('status')->nullable();
+            $table->boolean('status')->default(0);
             $table->string('remarks')->nullable();
             $table->string('user_name');
             $table->timestamps();
