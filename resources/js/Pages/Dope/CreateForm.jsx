@@ -257,7 +257,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="fathers_name"
                                 name="fathers_name"
-                                value={data.fathers_name.toUpperCase()}
+                                value={data.fathers_name}
                                 className="mt-1 block w-full"
                                 autoComplete="fathers_name"
                                 isFocused={true}
@@ -284,7 +284,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="mothers_name"
                                 name="mothers_name"
-                                value={data.mothers_name.toUpperCase()}
+                                value={data.mothers_name}
                                 className="mt-1 block w-full"
                                 autoComplete="mothers_name"
                                 isFocused={true}
@@ -373,7 +373,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="address"
                                 name="address"
-                                value={data.address}
+                                value={data.address ? data.address : ""}
                                 className="mt-1 block w-full"
                                 autoComplete="address"
                                 onChange={(e) =>
@@ -663,7 +663,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="sample_collected_by"
                                 name="sample_collected_by"
-                                value={data.sample_collected_by.toUpperCase()}
+                                value={data.sample_collected_by}
                                 className="mt-1 block w-full"
                                 autoComplete="sample_collected_by"
                                 onChange={(e) =>
@@ -689,10 +689,13 @@ const CreateForm = ({ auth }) => {
                             <select
                                 id="Reference_name"
                                 name="Reference_name"
-                                value={data.Reference_name.toUpperCase()}
+                                value={data.Reference_name}
                                 className="mt-1 block w-full"
                                 onChange={(e) =>
-                                    setData("Reference_name", e.target.value.toUpperCase())
+                                    setData(
+                                        "Reference_name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
                             >
                                 <option value="">Select Hospital</option>

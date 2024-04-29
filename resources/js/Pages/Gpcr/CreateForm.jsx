@@ -249,7 +249,7 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="address"
                                 name="address"
-                                value={data.address}
+                                value={data.address ? data.address : ""}
                                 className="mt-1 block w-full"
                                 autoComplete="address"
                                 onChange={(e) =>
