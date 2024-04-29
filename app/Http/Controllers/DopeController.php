@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Dope;
 use App\Http\Requests\StoreDopeRequest;
-use App\Http\Requests\UpdateDopeRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,7 +32,7 @@ class DopeController extends Controller
             $query->whereBetween('entry_date', [$startDate, $endDate]);
         }
 
-        $datas = $query->get();
+        $datas = $query->orderBy('id', 'desc')->latest()->get();
 
         return Inertia::render('Dope/ViewList', ['datas' => $datas]);
     }

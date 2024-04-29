@@ -19,10 +19,6 @@ class ResultController extends Controller
      */
     public function index(Request $request)
     {
-        // $results = Result::all();
-        // // dd($results);
-        // return Inertia::render('Dope/Result/ViewList', ['results' => $results]);
-
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
@@ -36,7 +32,7 @@ class ResultController extends Controller
             $query->whereBetween('result_date', [$startDate, $endDate]);
         }
 
-        $results = $query->get();
+        $results = $query->orderBy('id', 'desc')->latest()->get();
 
         return Inertia::render('Dope/Result/ViewList', ['results' => $results]);
     }

@@ -32,7 +32,7 @@ class GpcrController extends Controller
             $query->whereBetween('entry_date', [$startDate, $endDate]);
         }
 
-        $datas = $query->get();
+        $datas = $query->orderBy('id', 'desc')->latest()->get();
 
         return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
     }

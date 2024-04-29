@@ -1,27 +1,47 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, Link } from "@inertiajs/react";
 import { CSVLink } from "react-csv";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateWiseReport from "./Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, datas }) => {
+    
+    const [filteredData, setFilteredData] = useState(datas);
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const handlePerPageChange = (e) => {
+        const value = e.target.value;
+        setPerPage(value === "all" ? datas.length : parseInt(value));
+        setCurrentPage(1);
+    };
+
+    const totalPages =
+        perPage === "all" ? 1 : Math.ceil(datas.length / perPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    useEffect(() => {
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = Math.min(startIndex + perPage, datas.length);
+        const displayedData = datas.slice(startIndex, endIndex);
+        setFilteredData(displayedData);
+    }, [datas, currentPage, perPage]);
 
     const formatDate = (dateString) => {
         const options = { day: "numeric", month: "short", year: "numeric" };
         return new Date(dateString).toLocaleDateString("en-GB", options);
     };
 
-    const [filteredData, setFilteredData] = useState(datas);
-
     const handleDateWiseSearch = (startDate, endDate) => {
-        // If either start or end date is not set, return all data
         if (!startDate || !endDate) {
             setFilteredData(datas);
             return;
         }
 
-        // Filter the data based on the date range
         const filteredData = datas.filter((data) => {
             const entryDate = new Date(data.entry_date);
             return (
@@ -30,24 +50,19 @@ const ViewList = ({ auth, datas }) => {
             );
         });
 
-        // Set the filtered data state
         setFilteredData(filteredData);
     };
 
-     const handleSearch = (searchTerm) => {
-    // Filter the data based on the search term
-    const filtered = datas.filter((data) => {
-        // Customize the conditions for searching
-        return (
-            data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
-            // Add more fields as needed
-            // ...
-        );
-    });
+    const handleSearch = (searchTerm) => {
+        const filtered = datas.filter((data) => {
+            return (
+                data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
 
-    setFilteredData(filtered);
-};
+        setFilteredData(filtered);
+    };
 
 
     const destroy = (id) => {
@@ -252,6 +267,48 @@ const ViewList = ({ auth, datas }) => {
                                         )}
                                     </tbody>
                                 </table>
+
+                                {/* Pagination select controls */}
+                                <div className="flex items-center justify-evenly mt-6">
+                                    <select
+                                        value={perPage}
+                                        onChange={handlePerPageChange}
+                                        className="px- py-2 border rounded-md"
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={20}>20</option>
+                                        <option value={30}>30</option>
+                                        <option value={50}>50</option>
+                                        <option value={100}>100</option>
+                                        <option value="all">All</option>
+                                    </select>
+
+                                    {/* Pagination buttons */}
+                                    <div className="flex">
+                                        {Array.from(
+                                            { length: totalPages },
+                                            (_, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`px-3 py-1 border ${
+                                                        currentPage ===
+                                                        index + 1
+                                                            ? "bg-blue-500 text-white"
+                                                            : ""
+                                                    }`}
+                                                    onClick={() =>
+                                                        handlePageChange(
+                                                            index + 1
+                                                        )
+                                                    }
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

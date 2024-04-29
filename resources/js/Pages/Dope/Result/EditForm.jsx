@@ -288,7 +288,7 @@ const EditForm = ({ auth, result }) => {
                                         checked={data.status == 1}
                                         onChange={() => setData("status", 1)}
                                     />
-                                    <span className="ml-2">Fit</span>
+                                    <span className="ml-2">Approve</span>
                                 </label>
                                 <label className="inline-flex items-center ml-6">
                                     <input
@@ -298,7 +298,7 @@ const EditForm = ({ auth, result }) => {
                                         checked={data.status == 0}
                                         onChange={() => setData("status", 0)}
                                     />
-                                    <span className="ml-2">Unfit</span>
+                                    <span className="ml-2">Pending</span>
                                 </label>
                             </div>
                             <InputError

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 import { Link } from "@inertiajs/react";
@@ -7,44 +7,64 @@ import { CSVLink } from "react-csv";
 
 const ViewList = ({ auth, samples }) => {
     // State for filtered data
-    const [filteredData, setFilteredData] = useState(samples);
+       const [filteredData, setFilteredData] = useState(samples);
+       const [perPage, setPerPage] = useState(10);
+       const [currentPage, setCurrentPage] = useState(1);
 
-    // Event handler for searching by name or ID
-    const handleSearch = (searchTerm) => {
-        const filtered = samples.filter((data) => {
-            return (
-                data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        });
-        setFilteredData(filtered);
-    };
+       const handlePerPageChange = (e) => {
+           const value = e.target.value;
+           setPerPage(value === "all" ? samples.length : parseInt(value));
+           setCurrentPage(1);
+       };
 
-    const formatDate = (dateString) => {
-        const options = { day: "numeric", month: "short", year: "numeric" };
-        return new Date(dateString).toLocaleDateString("en-GB", options);
-    };
+       const totalPages =
+           perPage === "all" ? 1 : Math.ceil(samples.length / perPage);
 
-    const handleDateWiseSearch = (startDate, endDate) => {
-        // If either start or end date is not set, return all data
-        if (!startDate || !endDate) {
-            setFilteredData(samples);
-            return;
-        }
+       const handlePageChange = (pageNumber) => {
+           setCurrentPage(pageNumber);
+       };
 
-        // Filter the data based on the date range
-        const filteredData = samples.filter((data) => {
-            const entryDate = new Date(data.sample_collection_date);
-            return (
-                entryDate >= startDate &&
-                entryDate <= new Date(endDate.getTime() + 86400000)
-            );
-        });
+       useEffect(() => {
+           const startIndex = (currentPage - 1) * perPage;
+           const endIndex = Math.min(startIndex + perPage, samples.length);
+           const displayedData = samples.slice(startIndex, endIndex);
+           setFilteredData(displayedData);
+       }, [samples, currentPage, perPage]);
 
-        // Set the filtered data state
-        setFilteredData(filteredData);
-    };
+       const formatDate = (dateString) => {
+           const options = { day: "numeric", month: "short", year: "numeric" };
+           return new Date(dateString).toLocaleDateString("en-GB", options);
+       };
 
+       const handleDateWiseSearch = (startDate, endDate) => {
+           if (!startDate || !endDate) {
+               setFilteredData(samples);
+               return;
+           }
+
+           const filteredData = samples.filter((data) => {
+               const entryDate = new Date(data.sample_collection_date);
+               return (
+                   entryDate >= startDate &&
+                   entryDate <= new Date(endDate.getTime() + 86400000)
+               );
+           });
+
+           setFilteredData(filteredData);
+       };
+
+       const handleSearch = (searchTerm) => {
+           const filtered = samples.filter((data) => {
+               return (
+                   data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                   data.patient_id
+                       .toLowerCase()
+                       .includes(searchTerm.toLowerCase())
+               );
+           });
+
+           setFilteredData(filtered);
+       };
 
     // Event handler for deleting a sample
     const destroy = (id) => {
@@ -227,6 +247,45 @@ const ViewList = ({ auth, samples }) => {
                                     )}
                                 </tbody>
                             </table>
+
+                            {/* Pagination select controls */}
+                            <div className="flex items-center justify-evenly mt-6">
+                                <select
+                                    value={perPage}
+                                    onChange={handlePerPageChange}
+                                    className="px- py-2 border rounded-md"
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={30}>30</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                    <option value="all">All</option>
+                                </select>
+
+                                {/* Pagination buttons */}
+                                <div className="flex">
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, index) => (
+                                            <button
+                                                key={index}
+                                                className={`px-3 py-1 border ${
+                                                    currentPage === index + 1
+                                                        ? "bg-blue-500 text-white"
+                                                        : ""
+                                                }`}
+                                                onClick={() =>
+                                                    handlePageChange(index + 1)
+                                                }
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

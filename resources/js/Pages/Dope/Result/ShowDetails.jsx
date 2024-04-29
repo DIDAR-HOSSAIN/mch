@@ -41,7 +41,7 @@ const ShowDetails = ({ auth, result }) => {
                                         {formatFieldName(key)}:
                                     </strong>
                                     <span className="text-xl text-indigo-900 ml-2">
-                                        {key === 'result_date' ? formatDate(value) : (key === 'status' ? (value === 1 ? 'Fit' : 'Unfit') : (key === 'alcohol' || key === 'benzodiazepines' || key === 'cannabinoids' || key === 'amphetamine' || key === 'opiates' ? formatBooleanField(value) : value))}
+                                        {key === 'result_date' ? formatDate(value) : (key === 'status' ? (value === true ? 'Approve' : 'Pending') : (key === 'alcohol' || key === 'benzodiazepines' || key === 'cannabinoids' || key === 'amphetamine' || key === 'opiates' ? formatBooleanField(value) : value))}
                                     </span>
                                 </div>
                             );

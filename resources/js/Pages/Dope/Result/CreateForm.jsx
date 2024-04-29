@@ -350,12 +350,12 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
                     </div>
-                    <PrimaryButton
-                        className="mx-auto block w-full mt-2"
+                    <button
+                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
                         disabled={processing}
                     >
-                        Register
-                    </PrimaryButton>
+                        Submit
+                    </button>
                 </form>
             </div>
         </AdminDashboardLayout>

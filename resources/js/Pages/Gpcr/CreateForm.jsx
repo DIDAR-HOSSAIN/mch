@@ -39,50 +39,56 @@ const CreateForm = ({ auth }) => {
         // other form fields...
     });
 
-    const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
     const [entryDate, setEntryDate] = useState(new Date());
     const [firstDoseDate, setFirstDoseDate] = useState(null);
     const [secondDoseDate, setSecondDoseDate] = useState(null);
     const [boosterDoseDate, setBoosterDoseDate] = useState(null);
 
-    const handleRegFeeChange = (value) => {
-        const regFee = parseFloat(value) || 0;
-        const calculatedTotal = regFee - parseFloat(data.discount);
+   const handleRegFeeChange = (value) => {
+       const regFee = parseFloat(value) || 0;
+       const calculatedTotal = regFee - parseFloat(data.discount);
 
-        setTotal(calculatedTotal);
-        setData({ ...data, reg_fee: regFee, total: calculatedTotal });
-    };
+       setTotal(calculatedTotal);
+       setData({ ...data, reg_fee: regFee, total: calculatedTotal });
+   };
 
-    const handleDiscountChange = (value) => {
-        const discount = value === "" ? "" : parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
+   const handleDiscountChange = (value) => {
+       const discount = parseFloat(value) || 0;
+       const regFee = parseFloat(data.reg_fee) || 0;
+       const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+       const paid = parseFloat(data.paid) || 0;
+       const calculatedDue = calculatedTotal - paid;
 
-        let calculatedTotal = regFee - discount;
-        calculatedTotal = Math.max(calculatedTotal, 0); // Ensure the total doesn't go below zero
+       setData((prevData) => ({
+           ...prevData,
+           discount: discount,
+           total: calculatedTotal,
+           due: calculatedDue,
+       }));
+   };
 
-        setTotal(calculatedTotal);
-        setData((prevData) => ({
-            ...prevData,
-            discount,
-            total: calculatedTotal,
-        }));
-    };
+   const handlePaidChange = (value) => {
+       const paid = parseFloat(value) || 0;
+       const regFee = parseFloat(data.reg_fee) || 0;
+       const discount = parseFloat(data.discount) || 0;
+       const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+       const calculatedDue = calculatedTotal - paid;
 
-    const handlePaidChange = (value) => {
-        const paid = parseFloat(value) || 0;
-        const calculatedDue = (parseFloat(total) || 0) - paid;
+       setData((prevData) => ({
+           ...prevData,
+           paid: paid,
+           due: calculatedDue,
+           total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
+       }));
+   };
 
-        setTotal(total); // No change to total
-        setData({ ...data, paid: paid, due: calculatedDue }); // Update paid and due in the form data
-    };
-
-    const handleDueChange = (value) => {
-        const due = parseFloat(value) || 0;
-        const calculatedTotal = (parseFloat(total) || 0) + due;
-        setTotal(calculatedTotal);
-        setData("due", due);
-    };
+   const handleDueChange = (value) => {
+       const due = parseFloat(value) || 0;
+       const calculatedTotal = (parseFloat(total) || 0) + due;
+       setTotal(calculatedTotal);
+       setData("due", due);
+   };
 
     const handleDobChange = (date) => {
         // Update the state variable
@@ -150,12 +156,16 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="name"
                                 name="name"
-                                value={data.name}
+                                value={data.name.toUpperCase()}
                                 className="mt-1 block w-full"
                                 autoComplete="name"
+                                autoCapitalize="name"
                                 isFocused={true}
                                 onChange={(e) =>
-                                    setData("name", e.target.value)
+                                    setData(
+                                        "name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
                                 required
                             />
@@ -378,6 +388,7 @@ const CreateForm = ({ auth }) => {
                                     handleDiscountChange(e.target.value)
                                 }
                             />
+
                             <InputError
                                 message={
                                     errors.discount ||
@@ -402,6 +413,7 @@ const CreateForm = ({ auth }) => {
                                 onChange={(e) =>
                                     handlePaidChange(e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -441,6 +453,7 @@ const CreateForm = ({ auth }) => {
                                 autoComplete="total"
                                 onChange={(e) => setTotal(e.target.value)}
                                 readOnly
+                                required
                             />
 
                             <InputError
@@ -464,7 +477,7 @@ const CreateForm = ({ auth }) => {
                                 onChange={(e) =>
                                     setData(
                                         "discount_reference",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -596,7 +609,7 @@ const CreateForm = ({ auth }) => {
                                 onChange={(e) =>
                                     setData(
                                         "contact_no_relation",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -622,7 +635,7 @@ const CreateForm = ({ auth }) => {
                                 onChange={(e) =>
                                     setData(
                                         "sample_collected_by",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -679,29 +692,6 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="hospital_name"
-                                value="Hospital Name"
-                            />
-
-                            <TextInput
-                                id="hospital_name"
-                                name="hospital_name"
-                                value={data.hospital_name}
-                                className="mt-1 block w-full"
-                                autoComplete="hospital_name"
-                                onChange={(e) =>
-                                    setData("hospital_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.hospital_name}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
                             <InputLabel htmlFor="ticket_no" value="Ticket No" />
 
@@ -747,52 +737,6 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
 
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="payment_type"
-                                value="Payment Type"
-                            />
-
-                            <TextInput
-                                id="payment_type"
-                                name="payment_type"
-                                value={data.payment_type}
-                                className="mt-1 block w-full"
-                                autoComplete="payment_type"
-                                onChange={(e) =>
-                                    setData("payment_type", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.payment_type}
-                                className="mt-2"
-                            />
-                        </div> */}
-
-                        {/* <div>
-                            <InputLabel
-                                htmlFor="account_head"
-                                value="Account Head"
-                            />
-
-                            <TextInput
-                                id="account_head"
-                                name="account_head"
-                                value={data.account_head}
-                                className="mt-1 block w-full"
-                                autoComplete="account_head"
-                                onChange={(e) =>
-                                    setData("account_head", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.account_head}
-                                className="mt-2"
-                            />
-                        </div> */}
-
                         <div>
                             <InputLabel
                                 htmlFor="account_head"
@@ -830,9 +774,9 @@ const CreateForm = ({ auth }) => {
                             />
 
                             <InputError message={errors.nid} className="mt-2" />
-                            </div>
+                        </div>
 
-                            <div>
+                        <div>
                             <InputLabel
                                 htmlFor="passport_no"
                                 value="Passport No"

@@ -1,63 +1,78 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, Link } from "@inertiajs/react";
 import { CSVLink } from "react-csv";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, results }) => {
+        const [filteredData, setFilteredData] = useState(results);
+        const [perPage, setPerPage] = useState(10);
+        const [currentPage, setCurrentPage] = useState(1);
 
-    const formatDate = (dateString) => {
-        const options = { day: "numeric", month: "short", year: "numeric" };
-        return new Date(dateString).toLocaleDateString("en-GB", options);
+        const handlePerPageChange = (e) => {
+            const value = e.target.value;
+            setPerPage(value === "all" ? results.length : parseInt(value));
+            setCurrentPage(1);
+        };
+
+        const totalPages =
+            perPage === "all" ? 1 : Math.ceil(results.length / perPage);
+
+        const handlePageChange = (pageNumber) => {
+            setCurrentPage(pageNumber);
+        };
+
+        useEffect(() => {
+            const startIndex = (currentPage - 1) * perPage;
+            const endIndex = Math.min(startIndex + perPage, results.length);
+            const displayedData = results.slice(startIndex, endIndex);
+            setFilteredData(displayedData);
+        }, [results, currentPage, perPage]);
+
+        const formatDate = (dateString) => {
+            const options = { day: "numeric", month: "short", year: "numeric" };
+            return new Date(dateString).toLocaleDateString("en-GB", options);
+        };
+
+        const handleDateWiseSearch = (startDate, endDate) => {
+            if (!startDate || !endDate) {
+                setFilteredData(results);
+                return;
+            }
+
+            const filteredData = results.filter((data) => {
+                const entryDate = new Date(data.result_date);
+                return (
+                    entryDate >= startDate &&
+                    entryDate <= new Date(endDate.getTime() + 86400000)
+                );
+            });
+
+            setFilteredData(filteredData);
+        };
+
+        const handleSearch = (searchTerm) => {
+            const filtered = results.filter((data) => {
+                return (
+                    data.name
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()) ||
+                    data.patient_id
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase())
+                );
+            });
+
+            setFilteredData(filtered);
+        };
+
+    const destroy = (id) => {
+        if (confirm("Are you sure you want to delete this Sample?")) {
+            // Send a DELETE request to delete the sample
+            Inertia.delete(route("result.destroy", id));
+        }
     };
-
-    const [filteredData, setFilteredData] = useState(results);
-
-     const handleDateWiseSearch = (startDate, endDate) => {
-         // If either start or end date is not set, return all data
-         if (!startDate || !endDate) {
-             setFilteredData(results);
-             return;
-         }
-
-         // Filter the data based on the date range
-         const filteredData = results.filter((data) => {
-             const entryDate = new Date(data.result_date);
-             return (
-                 entryDate >= startDate &&
-                 entryDate <= new Date(endDate.getTime() + 86400000)
-             );
-         });
-
-         // Set the filtered data state
-         setFilteredData(filteredData);
-     };
-
-
-     const handleSearch = (searchTerm) => {
-    // Filter the data based on the search term
-    const filtered = results.filter((data) => {
-        // Customize the conditions for searching
-        return (
-            data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
-            // Add more fields as needed
-            // ...
-        );
-    });
-
-    setFilteredData(filtered);
-};
-
-
-   const destroy = (id) => {
-       if (confirm("Are you sure you want to delete this Sample?")) {
-           // Send a DELETE request to delete the sample
-           Inertia.delete(route("result.destroy", id));
-       }
-   };
-
 
     return (
         <AdminDashboardLayout
@@ -210,11 +225,18 @@ const ViewList = ({ auth, results }) => {
                                                             ? "Negative"
                                                             : "Positive"}
                                                     </td>
-                                                    <td className="border px-4 py-2">
-                                                        {status === 1
+                                                    <td
+                                                        className={`border px-4 py-2 ${
+                                                            status
+                                                                ? "text-green-500"
+                                                                : "text-red-500"
+                                                        }`}
+                                                    >
+                                                        {status
                                                             ? "Approve"
                                                             : "Pending"}
                                                     </td>
+
                                                     <td className="border px-4 py-2">
                                                         {remarks}
                                                     </td>
@@ -229,16 +251,24 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Show
                                                         </Link>
-                                                        <Link
-                                                            tabIndex="1"
-                                                            className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
-                                                            href={route(
-                                                                "dope-report",
-                                                                id
-                                                            )}
-                                                        >
-                                                            Report
-                                                        </Link>
+
+                                                        {status === true ? (
+                                                            <Link
+                                                                tabIndex="1"
+                                                                className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
+                                                                href={route(
+                                                                    "dope-report",
+                                                                    id
+                                                                )}
+                                                            >
+                                                                Report
+                                                            </Link>
+                                                        ) : (
+                                                            <span className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded opacity-50 cursor-not-allowed">
+                                                                Report
+                                                            </span>
+                                                        )}
+
                                                         <Link
                                                             tabIndex="1"
                                                             className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
@@ -276,6 +306,48 @@ const ViewList = ({ auth, results }) => {
                                         )}
                                     </tbody>
                                 </table>
+
+                                {/* Pagination select controls */}
+                                <div className="flex items-center justify-evenly mt-6">
+                                    <select
+                                        value={perPage}
+                                        onChange={handlePerPageChange}
+                                        className="px- py-2 border rounded-md"
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={20}>20</option>
+                                        <option value={30}>30</option>
+                                        <option value={50}>50</option>
+                                        <option value={100}>100</option>
+                                        <option value="all">All</option>
+                                    </select>
+
+                                    {/* Pagination buttons */}
+                                    <div className="flex">
+                                        {Array.from(
+                                            { length: totalPages },
+                                            (_, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`px-3 py-1 border ${
+                                                        currentPage ===
+                                                        index + 1
+                                                            ? "bg-blue-500 text-white"
+                                                            : ""
+                                                    }`}
+                                                    onClick={() =>
+                                                        handlePageChange(
+                                                            index + 1
+                                                        )
+                                                    }
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

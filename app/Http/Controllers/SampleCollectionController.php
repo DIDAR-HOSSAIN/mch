@@ -21,10 +21,6 @@ class SampleCollectionController extends Controller
      */
     public function index(Request $request)
     {
-        // $samples = SampleCollection::all();
-        // // dd($samples);
-        // return Inertia::render('Dope/Sample/ViewList', ['samples' => $samples]);
-
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
@@ -38,7 +34,7 @@ class SampleCollectionController extends Controller
             $query->whereBetween('sample_collection_date', [$startDate, $endDate]);
         }
 
-        $samples = $query->get();
+        $samples = $query->orderBy('id', 'desc')->latest()->get();
 
         return Inertia::render('Dope/Sample/ViewList', ['samples' => $samples]);
     }

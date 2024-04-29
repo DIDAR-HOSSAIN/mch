@@ -47,6 +47,7 @@ Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary')
 
 // Dope route
 Route::resource('dope', DopeController::class);
+// Route::resource('dope-test', DopeController::class);
 Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
 Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
 Route::resource('sample', SampleCollectionController::class);

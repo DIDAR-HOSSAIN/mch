@@ -1,7 +1,6 @@
 import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
@@ -39,7 +38,6 @@ const CreateForm = ({ auth }) => {
         // other form fields...
     });
 
-    // const [total, setTotal] = useState(data.reg_fee || 0);
     const [dob, setDob] = useState(null);
      const [dobError, setDobError] = useState("");
     const [entryDate, setEntryDate] = useState(new Date());
@@ -84,10 +82,6 @@ const CreateForm = ({ auth }) => {
             total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
         }));
     };
-
-
-
-
 
 
     const handleDueChange = (value) => {
@@ -236,12 +230,15 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="name"
                                 name="name"
-                                value={data.name}
+                                value={data.name.toUpperCase()}
                                 className="mt-1 block w-full"
                                 autoComplete="name"
                                 isFocused={true}
                                 onChange={(e) =>
-                                    setData("name", e.target.value)
+                                    setData(
+                                        "name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
                                 required
                             />
@@ -260,12 +257,15 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="fathers_name"
                                 name="fathers_name"
-                                value={data.fathers_name}
+                                value={data.fathers_name.toUpperCase()}
                                 className="mt-1 block w-full"
                                 autoComplete="fathers_name"
                                 isFocused={true}
                                 onChange={(e) =>
-                                    setData("fathers_name", e.target.value)
+                                    setData(
+                                        "fathers_name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
                                 required
                             />
@@ -284,12 +284,15 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="mothers_name"
                                 name="mothers_name"
-                                value={data.mothers_name}
+                                value={data.mothers_name.toUpperCase()}
                                 className="mt-1 block w-full"
                                 autoComplete="mothers_name"
                                 isFocused={true}
                                 onChange={(e) =>
-                                    setData("mothers_name", e.target.value)
+                                    setData(
+                                        "mothers_name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
                                 required
                             />
@@ -395,7 +398,9 @@ const CreateForm = ({ auth }) => {
                                 }
                                 required:true
                             />
-                             {dobError && <span className="error">{dobError}</span>}
+                            {dobError && (
+                                <span className="error">{dobError}</span>
+                            )}
                         </div>
 
                         <div>
@@ -658,13 +663,13 @@ const CreateForm = ({ auth }) => {
                             <TextInput
                                 id="sample_collected_by"
                                 name="sample_collected_by"
-                                value={data.sample_collected_by}
+                                value={data.sample_collected_by.toUpperCase()}
                                 className="mt-1 block w-full"
                                 autoComplete="sample_collected_by"
                                 onChange={(e) =>
                                     setData(
                                         "sample_collected_by",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -684,10 +689,10 @@ const CreateForm = ({ auth }) => {
                             <select
                                 id="Reference_name"
                                 name="Reference_name"
-                                value={data.Reference_name}
+                                value={data.Reference_name.toUpperCase()}
                                 className="mt-1 block w-full"
                                 onChange={(e) =>
-                                    setData("Reference_name", e.target.value)
+                                    setData("Reference_name", e.target.value.toUpperCase())
                                 }
                             >
                                 <option value="">Select Hospital</option>
@@ -769,12 +774,12 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
                     </div>
-                    <PrimaryButton
-                        className="mx-auto block w-full mt-2"
+                    <button
+                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
                         disabled={processing}
                     >
                         Register
-                    </PrimaryButton>
+                    </button>
                 </form>
             </div>
         </AdminDashboardLayout>
