@@ -51,10 +51,6 @@ class SampleCollectionController extends Controller
         $dopeIds = Dope::whereNotIn('patient_id', $existingPatientIds)->get();
 
         return Inertia::render('Dope/Sample/CreateForm', ['dopeIds' => $dopeIds]);
-
-        // $dopeIds = Dope::all();
-        // // dd($dopeIds);
-        // return Inertia::render('Dope/Sample/CreateForm', ['dopeIds' => $dopeIds]);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dope;
 use App\Http\Requests\StoreDopeRequest;
+use App\Models\District;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -42,7 +43,8 @@ class DopeController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Dope/CreateForm');
+        $districts = District::with('thanas')->get();
+        return Inertia::render('Dope/CreateForm', ['districts' => $districts]);
     }
 
     /**

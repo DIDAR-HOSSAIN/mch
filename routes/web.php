@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SampleCollectionController;
+use App\Models\Thana;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,7 +49,6 @@ Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary')
 
 // Dope route
 Route::resource('dope', DopeController::class);
-// Route::resource('dope-test', DopeController::class);
 Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
 Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
 Route::resource('sample', SampleCollectionController::class);
@@ -56,7 +57,10 @@ Route::resource('result', ResultController::class);
 Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
 Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
 Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
-// Route::put('/update-results', 'ResultsController@update');
+Route::resource('district', DistrictController::class);
+Route::resource('thana', DistrictController::class);
+Route::get('/district', [DistrictController::class, 'index']);
+Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
 
 
 

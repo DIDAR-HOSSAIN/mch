@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Gpcr;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreGpcrRequest;
+use App\Models\District;
+use App\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -42,8 +44,11 @@ class GpcrController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Gpcr/CreateForm');
+        $districts = District::with('thanas')->get();
+
+        return Inertia::render('Gpcr/CreateForm', ['districts' => $districts]);
     }
+
 
     /**
      * Store a newly created resource in storage.

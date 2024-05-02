@@ -27,7 +27,17 @@ const calculateAge = (dob) => {
     return age;
 };
 
-const CreateForm = ({ auth }) => {
+const CreateForm = ({ auth, districts }) => {
+    const [dob, setDob] = useState(null);
+    const [dobError, setDobError] = useState("");
+    const [entryDate, setEntryDate] = useState(new Date());
+    const [brtaFormDate, setBrtaFormDate] = useState(new Date());
+    const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
+    const [sampleCollectionDate, setSampleCollectionDate] = useState(
+        new Date()
+    );
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -38,12 +48,15 @@ const CreateForm = ({ auth }) => {
         // other form fields...
     });
 
-    const [dob, setDob] = useState(null);
-     const [dobError, setDobError] = useState("");
-    const [entryDate, setEntryDate] = useState(new Date());
-    const [brtaFormDate, setBrtaFormDate] = useState(new Date());
-    const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
-    const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
+    // Function to handle district change
+    const handleDistrictChange = (e) => {
+        const districtId = e.target.value;
+        const district = districts.find(
+            (district) => district.id === parseInt(districtId)
+        );
+        setSelectedDistrict(district);
+        setData("district", districtId);
+    };
 
     const handleRegFeeChange = (value) => {
         const regFee = parseFloat(value) || 0;
@@ -83,7 +96,6 @@ const CreateForm = ({ auth }) => {
         }));
     };
 
-
     const handleDueChange = (value) => {
         const due = parseFloat(value) || 0;
         const calculatedTotal = (parseFloat(total) || 0) + due;
@@ -92,11 +104,11 @@ const CreateForm = ({ auth }) => {
     };
 
     const handleDobChange = (date) => {
-          if (!date) {
-              setDobError("Date of birth is required");
-          } else {
-              setDobError("");
-          }
+        if (!date) {
+            setDobError("Date of birth is required");
+        } else {
+            setDobError("");
+        }
         // Update the state variable
         setDob(date);
 
@@ -480,46 +492,52 @@ const CreateForm = ({ auth }) => {
                         </div>
 
                         <div>
-                            <InputLabel
-                                htmlFor="police_station"
-                                value="Police Station"
-                            />
-
-                            <TextInput
-                                id="police_station"
-                                name="police_station"
-                                value={data.police_station}
-                                className="mt-1 block w-full"
-                                autoComplete="police_station"
-                                onChange={(e) =>
-                                    setData("police_station", e.target.value)
-                                }
-                            />
-
+                            <InputLabel htmlFor="districts">
+                                District:
+                            </InputLabel>
+                            <select
+                                id="district"
+                                onChange={handleDistrictChange}
+                                value={data.district}
+                            >
+                                <option value="">Select a District</option>
+                                {districts.map((district) => (
+                                    <option
+                                        key={district.id}
+                                        value={district.id}
+                                    >
+                                        {district.name}
+                                    </option>
+                                ))}
+                            </select>
                             <InputError
-                                message={errors.police_station}
+                                message={errors.district}
                                 className="mt-2"
                             />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="district" value="District" />
-
-                            <TextInput
-                                id="district"
-                                name="district"
-                                value={data.district}
-                                className="mt-1 block w-full"
-                                autoComplete="district"
+                            <InputLabel htmlFor="police_station">
+                                Police Station:
+                            </InputLabel>
+                            <select
+                                id="police_station"
                                 onChange={(e) =>
-                                    setData("district", e.target.value)
+                                    setData("police_station", e.target.value)
                                 }
-                            />
-
-                            <InputError
-                                message={errors.district}
-                                className="mt-2"
-                            />
+                                value={data.police_station}
+                            >
+                                <option value="">
+                                    Select a Police Station
+                                </option>
+                                {selectedDistrict &&
+                                    selectedDistrict.thanas &&
+                                    selectedDistrict.thanas.map((thana) => (
+                                        <option key={thana.id} value={thana.id}>
+                                            {thana.name}
+                                        </option>
+                                    ))}
+                            </select>
                         </div>
 
                         <div>

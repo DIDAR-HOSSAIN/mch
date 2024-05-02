@@ -28,7 +28,17 @@ const calculateAge = (dob) => {
     return age;
 };
 
-const CreateForm = ({ auth }) => {
+const CreateForm = ({ auth, districts }) => {
+     console.log("district from gpcr create", districts);
+
+    const [dob, setDob] = useState(null);
+    const [entryDate, setEntryDate] = useState(new Date());
+    const [firstDoseDate, setFirstDoseDate] = useState(null);
+    const [secondDoseDate, setSecondDoseDate] = useState(null);
+    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+    console.log("selectedDistrict", selectedDistrict);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
@@ -39,56 +49,63 @@ const CreateForm = ({ auth }) => {
         // other form fields...
     });
 
-    const [dob, setDob] = useState(null);
-    const [entryDate, setEntryDate] = useState(new Date());
-    const [firstDoseDate, setFirstDoseDate] = useState(null);
-    const [secondDoseDate, setSecondDoseDate] = useState(null);
-    const [boosterDoseDate, setBoosterDoseDate] = useState(null);
+    // Function to handle district change
+        const handleDistrictChange = (e) => {
+            const districtId = e.target.value;
+            const district = districts.find(
+                (district) => district.id === parseInt(districtId)
+            );
+            setSelectedDistrict(district);
+            setData("district", district ? district.name : ""); // Store the district name
+        };
 
-   const handleRegFeeChange = (value) => {
-       const regFee = parseFloat(value) || 0;
-       const calculatedTotal = regFee - parseFloat(data.discount);
 
-       setTotal(calculatedTotal);
-       setData({ ...data, reg_fee: regFee, total: calculatedTotal });
-   };
 
-   const handleDiscountChange = (value) => {
-       const discount = parseFloat(value) || 0;
-       const regFee = parseFloat(data.reg_fee) || 0;
-       const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
-       const paid = parseFloat(data.paid) || 0;
-       const calculatedDue = calculatedTotal - paid;
 
-       setData((prevData) => ({
-           ...prevData,
-           discount: discount,
-           total: calculatedTotal,
-           due: calculatedDue,
-       }));
-   };
+    const handleRegFeeChange = (value) => {
+        const regFee = parseFloat(value) || 0;
+        const calculatedTotal = regFee - parseFloat(data.discount);
 
-   const handlePaidChange = (value) => {
-       const paid = parseFloat(value) || 0;
-       const regFee = parseFloat(data.reg_fee) || 0;
-       const discount = parseFloat(data.discount) || 0;
-       const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
-       const calculatedDue = calculatedTotal - paid;
+        setTotal(calculatedTotal);
+        setData({ ...data, reg_fee: regFee, total: calculatedTotal });
+    };
 
-       setData((prevData) => ({
-           ...prevData,
-           paid: paid,
-           due: calculatedDue,
-           total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
-       }));
-   };
+    const handleDiscountChange = (value) => {
+        const discount = parseFloat(value) || 0;
+        const regFee = parseFloat(data.reg_fee) || 0;
+        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+        const paid = parseFloat(data.paid) || 0;
+        const calculatedDue = calculatedTotal - paid;
 
-   const handleDueChange = (value) => {
-       const due = parseFloat(value) || 0;
-       const calculatedTotal = (parseFloat(total) || 0) + due;
-       setTotal(calculatedTotal);
-       setData("due", due);
-   };
+        setData((prevData) => ({
+            ...prevData,
+            discount: discount,
+            total: calculatedTotal,
+            due: calculatedDue,
+        }));
+    };
+
+    const handlePaidChange = (value) => {
+        const paid = parseFloat(value) || 0;
+        const regFee = parseFloat(data.reg_fee) || 0;
+        const discount = parseFloat(data.discount) || 0;
+        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+        const calculatedDue = calculatedTotal - paid;
+
+        setData((prevData) => ({
+            ...prevData,
+            paid: paid,
+            due: calculatedDue,
+            total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
+        }));
+    };
+
+    const handleDueChange = (value) => {
+        const due = parseFloat(value) || 0;
+        const calculatedTotal = (parseFloat(total) || 0) + due;
+        setTotal(calculatedTotal);
+        setData("due", due);
+    };
 
     const handleDobChange = (date) => {
         // Update the state variable
@@ -309,46 +326,59 @@ const CreateForm = ({ auth }) => {
                         </div>
 
                         <div>
-                            <InputLabel
-                                htmlFor="police_station"
-                                value="Police Station"
-                            />
-
-                            <TextInput
-                                id="police_station"
-                                name="police_station"
-                                value={data.police_station}
-                                className="mt-1 block w-full"
-                                autoComplete="police_station"
-                                onChange={(e) =>
-                                    setData("police_station", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.police_station}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="district" value="District" />
-
-                            <TextInput
+                            <InputLabel htmlFor="districts">
+                                District:
+                            </InputLabel>
+                            <select
                                 id="district"
-                                name="district"
-                                value={data.district}
-                                className="mt-1 block w-full"
-                                autoComplete="district"
-                                onChange={(e) =>
-                                    setData("district", e.target.value)
+                                onChange={handleDistrictChange}
+                                value={
+                                    selectedDistrict ? selectedDistrict.id : ""
                                 }
-                            />
+                            >
+                                <option value="">Select a District</option>
+                                {districts.map((district) => (
+                                    <option
+                                        key={district.id}
+                                        value={district.id}
+                                    >
+                                        {district.name}
+                                    </option>
+                                ))}
+                            </select>
 
                             <InputError
                                 message={errors.district}
                                 className="mt-2"
                             />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="police_station">
+                                Police Station:
+                            </InputLabel>
+                            <select
+                                id="police_station"
+                                onChange={(e) =>
+                                    setData("police_station", e.target.value)
+                                }
+                                value={data.police_station}
+                            >
+                                <option value="">
+                                    Select a Police Station
+                                </option>
+                                {selectedDistrict &&
+                                    Array.isArray(selectedDistrict.thanas) &&
+                                    selectedDistrict.thanas.map((thana) => (
+                                        <option
+                                            key={thana.id}
+                                            value={thana.name}
+                                        >
+                                            {thana.name}{" "}
+                                            {/* Render the thana name */}
+                                        </option>
+                                    ))}
+                            </select>
                         </div>
 
                         <div>
