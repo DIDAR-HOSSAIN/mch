@@ -6,6 +6,7 @@ import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, results }) => {
+    console.log('result view', results);
         const [filteredData, setFilteredData] = useState(results);
         const [perPage, setPerPage] = useState(10);
         const [currentPage, setCurrentPage] = useState(1);

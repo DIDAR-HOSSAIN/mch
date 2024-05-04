@@ -42,25 +42,32 @@ Route::get('/dashboard', function () {
 // Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 // Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
-// General pcr route
-Route::resource('pcr', GpcrController::class);
-Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
-Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
+Route::middleware(['auth'])->group(function(){
 
-// Dope route
-Route::resource('dope', DopeController::class);
-Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
-Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
-Route::resource('sample', SampleCollectionController::class);
-Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
-Route::resource('result', ResultController::class);
-Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
-Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
-Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
-Route::resource('district', DistrictController::class);
-Route::resource('thana', DistrictController::class);
-Route::get('/district', [DistrictController::class, 'index']);
-Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
+    // General pcr route
+    Route::resource('pcr', GpcrController::class);
+    Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
+    Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
+
+    // Dope route
+    Route::resource('dope', DopeController::class);
+    Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
+    Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
+    Route::resource('sample', SampleCollectionController::class);
+    Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
+    Route::resource('result', ResultController::class);
+    Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
+    Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
+    Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
+    Route::resource('district', DistrictController::class);
+    Route::resource('thana', DistrictController::class);
+    Route::get('/district', [DistrictController::class, 'index']);
+    Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
+
+
+});
+
+
 
 
 

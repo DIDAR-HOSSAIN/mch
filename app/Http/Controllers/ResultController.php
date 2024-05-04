@@ -33,6 +33,7 @@ class ResultController extends Controller
         }
 
         $results = $query->orderBy('id', 'desc')->latest()->get();
+        // dd($results);
 
         return Inertia::render('Dope/Result/ViewList', ['results' => $results]);
     }
@@ -134,6 +135,7 @@ class ResultController extends Controller
 
     public function dopeReport($id)
     {
+        $report = Result::with('sample_collections')->get();
         $report = Result::find($id);
 
         return Inertia::render('Dope/Result/Report', ['report' => $report]);
