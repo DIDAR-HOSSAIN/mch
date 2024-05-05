@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sample_id')->unique();
             $table->string('patient_id')->unique();
             $table->string('name');
+            $table->date('sample_collection_date');
             $table->date('result_date');
             $table->boolean('alcohol')->default(1);
             $table->boolean('benzodiazepines')->default(1);
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->string('user_name');
             $table->timestamps();
             $table->foreign('sample_id')->references('id')->on('sample_collections')->onDelete('cascade');
+            $table->foreign('patient_id')->references('patient_id')->on('dopes')->onDelete('cascade');
         });
     }
 

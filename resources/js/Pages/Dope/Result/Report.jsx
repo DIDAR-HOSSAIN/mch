@@ -5,8 +5,9 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import QRCode from "qrcode.react";
 
-const Report = ({ auth, report }) => {
-    console.log("from Result report", report);
+const Report = ({ auth, reports }) => {
+    console.log("from Result report", reports);
+   console.log("from Result report-dope", reports.dope.age);
 
     const formatDate = (dateString) => {
         const options = { day: "numeric", month: "short", year: "numeric" };
@@ -15,7 +16,7 @@ const Report = ({ auth, report }) => {
 
     const contentToPrint = useRef(null);
     const handlePrint = useReactToPrint({
-        documentTitle: `${report.patient_id || "N/A"}`,
+        documentTitle: `${reports.patient_id || "N/A"}`,
         onBeforePrint: () => console.log("before printing..."),
         onAfterPrint: () => console.log("after printing..."),
         removeAfterPrint: true,
@@ -77,12 +78,20 @@ const Report = ({ auth, report }) => {
                             <div>
                                 <span className="font-semibold">
                                     Patient ID:
-                                </span>{" "}
-                                {report.patient_id}
+                                </span>
+                                {reports.patient_id}
                             </div>
                             <div>
-                                <span className="font-semibold">Name:</span>{" "}
-                                {report.name}
+                                <span className="font-semibold">Name: </span>
+                                {reports.name}
+                            </div>
+                            <div>
+                                <span className="font-semibold">Date of Birth: </span>
+                                {formatDate(reports.dope.dob)}
+                            </div>
+                            <div>
+                                <span className="font-semibold">Sample Collection Date: </span>
+                                {formatDate(reports.sample_collection_date)}
                             </div>
                             {/* Add more patient information fields as needed */}
                         </div>
@@ -101,7 +110,7 @@ const Report = ({ auth, report }) => {
                                 <tr>
                                     <td className="py-2 px-4">Alcohol</td>
                                     <td className="py-2 px-4">
-                                        {report.alcohol
+                                        {reports.alcohol
                                             ? "Negative"
                                             : "Positive"}
                                     </td>
@@ -111,7 +120,7 @@ const Report = ({ auth, report }) => {
                                         Benzodiazepines
                                     </td>
                                     <td className="py-2 px-4">
-                                        {report.benzodiazepines
+                                        {reports.benzodiazepines
                                             ? "Negative"
                                             : "Positive"}
                                     </td>
@@ -119,7 +128,7 @@ const Report = ({ auth, report }) => {
                                 <tr>
                                     <td className="py-2 px-4">Cannabinoids</td>
                                     <td className="py-2 px-4">
-                                        {report.cannabinoids
+                                        {reports.cannabinoids
                                             ? "Negative"
                                             : "Positive"}
                                     </td>
@@ -127,7 +136,7 @@ const Report = ({ auth, report }) => {
                                 <tr>
                                     <td className="py-2 px-4">Amphetamine</td>
                                     <td className="py-2 px-4">
-                                        {report.amphetamine
+                                        {reports.amphetamine
                                             ? "Negative"
                                             : "Positive"}
                                     </td>
@@ -135,7 +144,7 @@ const Report = ({ auth, report }) => {
                                 <tr>
                                     <td className="py-2 px-4">Opiates</td>
                                     <td className="py-2 px-4">
-                                        {report.opiates
+                                        {reports.opiates
                                             ? "Negative"
                                             : "Positive"}
                                     </td>
@@ -145,7 +154,7 @@ const Report = ({ auth, report }) => {
                         <div className="text-center mt-4">
                             <div className="mx-auto" style={{ width: "256px" }}>
                                 <QRCode
-                                    value={report.patient_id || "N/A"}
+                                    value={reports.patient_id || "N/A"}
                                     size={256}
                                 />
                             </div>
@@ -153,14 +162,15 @@ const Report = ({ auth, report }) => {
 
                         <div className="text-left mt-16">
                             <hr className="border-black border-solid border-1 w-1/3" />
-                            <strong className="text-xl">Dr. Md. Zakir Hossain</strong>
+                            <strong className="text-xl">
+                                Dr. Md. Zakir Hossain
+                            </strong>
                             <p>Head</p>
                             <p>Dept. of Microbiology & Immunology</p>
                             <p>Supervisor</p>
                             <p>Rodolphe Merieux Laboratory</p>
                             <p>BITID, Fouzderhat, Chattogram.</p>
                         </div>
-
                     </div>
                 </div>
 

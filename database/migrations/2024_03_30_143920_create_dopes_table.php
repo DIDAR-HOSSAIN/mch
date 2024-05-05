@@ -28,9 +28,8 @@ return new class extends Migration
             $table->string('age')->default('0');
             $table->string('sex')->nullable(false);
             $table->date('entry_date')->default(now());
-            $table->date('sample_collection_date')->default(now());
-            $table->string('police_station')->nullable();
             $table->string('district')->nullable();
+            $table->string('police_station')->nullable();
             $table->string('email')->nullable();
             $table->string('reg_fee')->default('900');
             $table->string('discount')->nullable();
@@ -38,7 +37,6 @@ return new class extends Migration
             $table->string('due')->default('0');
             $table->string('total')->nullable(false);
             $table->string('test_name')->default('Dope Test');
-            $table->string('sample_collected_by')->nullable();
             $table->string('reference_name')->nullable();
             $table->string('payment_type')->default('Cash');
             $table->string('account_head')->default('Cash in hand');

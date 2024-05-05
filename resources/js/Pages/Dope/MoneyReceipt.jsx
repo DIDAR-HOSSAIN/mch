@@ -24,10 +24,11 @@ const MoneyReceipt = ({ auth, data }) => {
         age,
         sex,
         address,
+        district,
+        police_station,
         test_name,
         entry_date,
         reg_fee,
-        total,
         discount,
         paid,
         due,
@@ -130,7 +131,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 Address :
                             </span>
                             <span className="info-value">
-                                {address || "N/A"}
+                                {address || "N/A"}, {police_station || "N/A"}, {district || "N/A"}
                             </span>
                         </div>
                     </div>

@@ -90,6 +90,7 @@ class SampleCollectionController extends Controller
             'sample_id' => $sampleCollection->id,
             'patient_id' => $sampleCollection->patient_id,
             'name' => $sampleCollection->name,
+            'sample_collection_date' => $sampleCollection->sample_collection_date,
             'result_date' => $sampleCollection->sample_collection_date,
             'alcohol' => 1,
             'benzodiazepines' => 1,

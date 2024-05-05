@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Result;
 
 class Dope extends Model
 {
@@ -25,7 +26,6 @@ class Dope extends Model
         'age',
         'sex',
         'entry_date',
-        'sample_collection_date',
         'police_station',
         'district',
         'email',
@@ -35,10 +35,14 @@ class Dope extends Model
         'due',
         'total',
         'test_name',
-        'sample_collected_by',
         'reference_name',
         'payment_type',
         'account_head',
         'user_name',
     ];
+
+    public function report()
+    {
+        return $this->hasOne(Result::class);
+    }
 }

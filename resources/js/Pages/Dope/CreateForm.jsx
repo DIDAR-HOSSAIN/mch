@@ -28,6 +28,7 @@ const calculateAge = (dob) => {
 };
 
 const CreateForm = ({ auth, districts }) => {
+    console.log('dope create form district',districts);
     const [dob, setDob] = useState(null);
     const [dobError, setDobError] = useState("");
     const [entryDate, setEntryDate] = useState(new Date());
@@ -55,7 +56,7 @@ const CreateForm = ({ auth, districts }) => {
             (district) => district.id === parseInt(districtId)
         );
         setSelectedDistrict(district);
-        setData("district", districtId);
+        setData("district", district ? district.name : ""); // Store the district name
     };
 
     const handleRegFeeChange = (value) => {
@@ -388,6 +389,7 @@ const CreateForm = ({ auth, districts }) => {
                                 value={data.address ? data.address : ""}
                                 className="mt-1 block w-full"
                                 autoComplete="address"
+                                placeholder="House Name, Union/Pourashava"
                                 onChange={(e) =>
                                     setData("address", e.target.value)
                                 }
@@ -468,37 +470,15 @@ const CreateForm = ({ auth, districts }) => {
                         </div>
 
                         <div>
-                            <InputLabel
-                                htmlFor="sample_collection_date"
-                                value="Sample Collection Date"
-                            />
-
-                            <CustomDatePicker
-                                selectedDate={
-                                    sampleCollectionDate || new Date()
-                                }
-                                handleDateChange={(date) =>
-                                    handleDateChange(
-                                        date,
-                                        "sample_collection_date"
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.sample_collection_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
                             <InputLabel htmlFor="districts">
                                 District:
                             </InputLabel>
                             <select
                                 id="district"
                                 onChange={handleDistrictChange}
-                                value={data.district}
+                                value={
+                                    selectedDistrict ? selectedDistrict.id : ""
+                                }
                             >
                                 <option value="">Select a District</option>
                                 {districts.map((district) => (
@@ -510,6 +490,7 @@ const CreateForm = ({ auth, districts }) => {
                                     </option>
                                 ))}
                             </select>
+
                             <InputError
                                 message={errors.district}
                                 className="mt-2"
@@ -531,10 +512,14 @@ const CreateForm = ({ auth, districts }) => {
                                     Select a Police Station
                                 </option>
                                 {selectedDistrict &&
-                                    selectedDistrict.thanas &&
+                                    Array.isArray(selectedDistrict.thanas) &&
                                     selectedDistrict.thanas.map((thana) => (
-                                        <option key={thana.id} value={thana.id}>
-                                            {thana.name}
+                                        <option
+                                            key={thana.id}
+                                            value={thana.name}
+                                        >
+                                            {thana.name}{" "}
+                                            {/* Render the thana name */}
                                         </option>
                                     ))}
                             </select>
@@ -668,32 +653,6 @@ const CreateForm = ({ auth, districts }) => {
 
                             <InputError
                                 message={errors.total}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="sample_collected_by"
-                                value="Sample Collected By"
-                            />
-
-                            <TextInput
-                                id="sample_collected_by"
-                                name="sample_collected_by"
-                                value={data.sample_collected_by}
-                                className="mt-1 block w-full"
-                                autoComplete="sample_collected_by"
-                                onChange={(e) =>
-                                    setData(
-                                        "sample_collected_by",
-                                        e.target.value.toUpperCase()
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.sample_collected_by}
                                 className="mt-2"
                             />
                         </div>

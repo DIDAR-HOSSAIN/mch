@@ -135,10 +135,10 @@ class ResultController extends Controller
 
     public function dopeReport($id)
     {
-        $report = Result::with('sample_collections')->get();
-        $report = Result::find($id);
-
-        return Inertia::render('Dope/Result/Report', ['report' => $report]);
+        // $report = Result::find($id);
+        $reports = Result::with('dope')->find($id);
+        // dd($report);
+        return Inertia::render('Dope/Result/Report', ['reports' => $reports]);
     }
 
     public function updateReport()

@@ -44,6 +44,7 @@ class DopeController extends Controller
     public function create()
     {
         $districts = District::with('thanas')->get();
+        // dd($districts);
         return Inertia::render('Dope/CreateForm', ['districts' => $districts]);
     }
 
@@ -61,7 +62,6 @@ class DopeController extends Controller
             'contact_no' => ['required'],
             'dob' => ['required'],
             'sex' => ['required'],
-            'sample_collection_date' => ['required'],
             'reg_fee' => ['required'],
             'paid' => ['required'],
             'total' => ['required'],
