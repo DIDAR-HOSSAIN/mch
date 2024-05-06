@@ -62,7 +62,7 @@ class DopeController extends Controller
             'contact_no' => ['required'],
             'dob' => ['required'],
             'sex' => ['required'],
-            'reg_fee' => ['required'],
+            'test_fee' => ['required'],
             'paid' => ['required'],
             'total' => ['required'],
         ])->validate();

@@ -41,19 +41,15 @@ const EditForm = ({ auth, dope }) => {
         age: dope.age || "", // Initialize age field
         sex: dope.sex || "",
         entry_date: dope.entry_date ? new Date(dope.entry_date) : null,
-        sample_collection_date: dope.entry_date
-            ? new Date(dope.sample_collection_date)
-            : null,
         police_station: dope.police_station || "",
         district: dope.district || "",
         email: dope.email || "",
-        reg_fee: dope.reg_fee || "",
+        test_fee: dope.test_fee || "",
         discount: dope.discount || "",
         paid: dope.paid || "",
         due: dope.due || "",
         total: dope.total || "",
         test_name: dope.test_name || "",
-        sample_collected_by: dope.sample_collected_by || "",
         reference_name: dope.reference_name || "",
         payment_type: dope.payment_type || "",
         account_head: dope.account_head || "",
@@ -471,21 +467,21 @@ const EditForm = ({ auth, dope }) => {
                             </div>
                             
                             <div>
-                                <InputLabel htmlFor="reg_fee" value="Reg Fee" />
+                                <InputLabel htmlFor="test_fee" value="Reg Fee" />
 
                                 <TextInput
                                     type="text"
                                     className="w-full px-4 py-2"
                                     label="Reg Fee"
-                                    name="reg_fee"
-                                    value={data.reg_fee}
+                                    name="test_fee"
+                                    value={data.test_fee}
                                     onChange={(e) =>
-                                        setData("reg_fee", e.target.value)
+                                        setData("test_fee", e.target.value)
                                     }
                                 />
 
                                 <InputError
-                                    message={errors.reg_fee}
+                                    message={errors.test_fee}
                                     className="mt-2"
                                 />
                             </div>
@@ -509,7 +505,7 @@ const EditForm = ({ auth, dope }) => {
                                 <InputError
                                     message={
                                         errors.discount ||
-                                        (data.discount >= data.reg_fee
+                                        (data.discount >= data.test_fee
                                             ? "Discount cannot be greater than or equal to Reg Fee"
                                             : "")
                                     }

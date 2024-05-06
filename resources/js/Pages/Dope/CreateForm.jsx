@@ -34,15 +34,12 @@ const CreateForm = ({ auth, districts }) => {
     const [entryDate, setEntryDate] = useState(new Date());
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
-    const [sampleCollectionDate, setSampleCollectionDate] = useState(
-        new Date()
-    );
     const [selectedDistrict, setSelectedDistrict] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
-        reg_fee: "900",
+        test_fee: "900",
         total: "",
         dob: null, // Ensure dob is initialized as null
         age: 0, // Initialize age with 0
@@ -59,18 +56,70 @@ const CreateForm = ({ auth, districts }) => {
         setData("district", district ? district.name : ""); // Store the district name
     };
 
-    const handleRegFeeChange = (value) => {
-        const regFee = parseFloat(value) || 0;
-        const calculatedTotal = regFee - parseFloat(data.discount);
+    //this function is only reg fee apply same below function is test_fee+reg_fee+online_fee
 
+    // const handleRegFeeChange = (value) => {
+    //     const testFee = parseFloat(value) || 0;
+    //     const calculatedTotal = testFee - parseFloat(data.discount);
+    //     setTotal(calculatedTotal);
+    //     setData({ ...data, test_fee: testFee, total: calculatedTotal });
+    // };
+
+    // const handleDiscountChange = (value) => {
+    //     const discount = parseFloat(value) || 0;
+    //     const testFee = parseFloat(data.test_fee) || 0;
+    //     const calculatedTotal = discount ? testFee - discount : testFee;
+    //     const paid = parseFloat(data.paid) || 0;
+    //     const calculatedDue = calculatedTotal - paid;
+
+    //     setData((prevData) => ({
+    //         ...prevData,
+    //         discount: discount,
+    //         total: calculatedTotal,
+    //         due: calculatedDue,
+    //     }));
+    // };
+
+    // const handlePaidChange = (value) => {
+    //     const paid = parseFloat(value) || 0;
+    //     const testFee = parseFloat(data.test_fee) || 0;
+    //     const discount = parseFloat(data.discount) || 0;
+    //     const calculatedTotal = discount ? testFee - discount : testFee;
+    //     const calculatedDue = calculatedTotal - paid;
+
+    //     setData((prevData) => ({
+    //         ...prevData,
+    //         paid: paid,
+    //         due: calculatedDue,
+    //         total: discount ? calculatedTotal : testFee,
+    //     }));
+    // };
+
+    // const handleDueChange = (value) => {
+    //     const due = parseFloat(value) || 0;
+    //     const calculatedTotal = (parseFloat(total) || 0) + due;
+    //     setTotal(calculatedTotal);
+    //     setData("due", due);
+    // };
+
+    const handleRegFeeChange = (value) => {
+        const testFee = parseFloat(value) || 0;
+        const regFee = 300; // assuming reg_fee is always included
+        const onlineFee = 300; // assuming online_fee is always included
+        const calculatedTotal =
+            testFee + regFee + onlineFee - parseFloat(data.discount);
         setTotal(calculatedTotal);
-        setData({ ...data, reg_fee: regFee, total: calculatedTotal });
+        setData({ ...data, test_fee: testFee, total: calculatedTotal });
     };
 
     const handleDiscountChange = (value) => {
         const discount = parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
-        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+        const testFee = parseFloat(data.test_fee) || 0;
+        const regFee = 300; // assuming reg_fee is always included
+        const onlineFee = 300; // assuming online_fee is always included
+        const calculatedTotal = discount
+            ? testFee + regFee + onlineFee - discount
+            : testFee + regFee + onlineFee;
         const paid = parseFloat(data.paid) || 0;
         const calculatedDue = calculatedTotal - paid;
 
@@ -84,25 +133,34 @@ const CreateForm = ({ auth, districts }) => {
 
     const handlePaidChange = (value) => {
         const paid = parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
+        const testFee = parseFloat(data.test_fee) || 0;
         const discount = parseFloat(data.discount) || 0;
-        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
+        const regFee = 300; // assuming reg_fee is always included
+        const onlineFee = 300; // assuming online_fee is always included
+        const calculatedTotal = discount
+            ? testFee + regFee + onlineFee - discount
+            : testFee + regFee + onlineFee;
         const calculatedDue = calculatedTotal - paid;
 
         setData((prevData) => ({
             ...prevData,
             paid: paid,
             due: calculatedDue,
-            total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
+            total: discount ? calculatedTotal : testFee + regFee + onlineFee,
         }));
     };
 
     const handleDueChange = (value) => {
         const due = parseFloat(value) || 0;
-        const calculatedTotal = (parseFloat(total) || 0) + due;
+        const testFee = parseFloat(data.test_fee) || 0;
+        const regFee = 300; // assuming reg_fee is always included
+        const onlineFee = 300; // assuming online_fee is always included
+        const calculatedTotal =
+            (parseFloat(total) || 0) + testFee + regFee + onlineFee + due;
         setTotal(calculatedTotal);
         setData("due", due);
     };
+
 
     const handleDobChange = (date) => {
         if (!date) {
@@ -547,15 +605,15 @@ const CreateForm = ({ auth, districts }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="reg_fee" value="Reg Fee" />
+                            <InputLabel htmlFor="test_fee" value="Test Fee" />
 
                             <TextInput
-                                id="reg_fee"
+                                id="test_fee"
                                 type="number"
-                                name="reg_fee"
-                                value={data.reg_fee || 900}
+                                name="test_fee"
+                                value={data.test_fee || 900}
                                 className="mt-1 block w-full"
-                                autoComplete="reg_fee"
+                                autoComplete="test_fee"
                                 onChange={(e) =>
                                     handleRegFeeChange(e.target.value)
                                 }
@@ -564,7 +622,7 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <InputError
-                                message={errors.reg_fee}
+                                message={errors.test_fee}
                                 className="mt-2"
                             />
                         </div>
@@ -587,8 +645,8 @@ const CreateForm = ({ auth, districts }) => {
                             <InputError
                                 message={
                                     errors.discount ||
-                                    (data.discount >= data.reg_fee
-                                        ? "Discount cannot be greater than or equal to Reg Fee"
+                                    (data.discount >= data.test_fee
+                                        ? "Discount cannot be greater than or equal to Test Fee"
                                         : "")
                                 }
                                 className="mt-2"

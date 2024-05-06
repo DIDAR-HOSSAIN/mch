@@ -56,7 +56,7 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
                         {/* Display the summary totals */}
                         <div>
                             <p>
-                                Date Range:{" "}
+                                Date Range:
                                 {startDate && endDate
                                     ? `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`
                                     : "All Dates"}

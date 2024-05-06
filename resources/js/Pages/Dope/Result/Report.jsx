@@ -71,13 +71,13 @@ const Report = ({ auth, reports }) => {
                 <div className="p-4">
                     {/* Patient Information */}
                     <div className="bg-gray-100 p-4 mb-4 rounded-md">
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-semibold mb-3">
                             Patient Information
                         </h2>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <span className="font-semibold">
-                                    Patient ID:
+                                    Patient ID:{" "}
                                 </span>
                                 {reports.patient_id}
                             </div>
@@ -86,11 +86,19 @@ const Report = ({ auth, reports }) => {
                                 {reports.name}
                             </div>
                             <div>
-                                <span className="font-semibold">Date of Birth: </span>
+                                <span className="font-semibold">Sex: </span>
+                                {reports.dope.sex}
+                            </div>
+                            <div>
+                                <span className="font-semibold">
+                                    Date of Birth:{" "}
+                                </span>
                                 {formatDate(reports.dope.dob)}
                             </div>
                             <div>
-                                <span className="font-semibold">Sample Collection Date: </span>
+                                <span className="font-semibold">
+                                    Sample Collection Date:{" "}
+                                </span>
                                 {formatDate(reports.sample_collection_date)}
                             </div>
                             {/* Add more patient information fields as needed */}
@@ -151,30 +159,45 @@ const Report = ({ auth, reports }) => {
                                 </tr>
                             </tbody>
                         </table>
-                        <div className="text-center mt-4">
-                            <div className="mx-auto" style={{ width: "256px" }}>
+    
+                            <div className="">
                                 <QRCode
+                                    className="mx-auto"
                                     value={reports.patient_id || "N/A"}
-                                    size={256}
+                                    // size={256}
                                 />
                             </div>
-                        </div>
+                        
 
-                        <div className="text-left mt-16">
-                            <hr className="border-black border-solid border-1 w-1/3" />
-                            <strong className="text-xl">
-                                Dr. Md. Zakir Hossain
-                            </strong>
-                            <p>Head</p>
-                            <p>Dept. of Microbiology & Immunology</p>
-                            <p>Supervisor</p>
-                            <p>Rodolphe Merieux Laboratory</p>
-                            <p>BITID, Fouzderhat, Chattogram.</p>
+                        <div className="flex gap-6 px-4">
+                            <div className="text-left mt-16">
+                                <hr className="border-black border-solid border-1 w-full" />
+                                <strong className="text-xl">
+                                    Dr. Md. Zakir Hossain
+                                </strong>
+                                <p>Head</p>
+                                <p>Dept. of Microbiology & Immunology</p>
+                                <p>Supervisor</p>
+                                <p>Rodolphe Merieux Laboratory</p>
+                                <p>BITID, Fouzderhat, Chattogram.</p>
+                            </div>
+
+                            <div className="text-right mt-16">
+                                <hr className="border-black border-solid border-1 w-full" />
+                                <strong className="text-xl">
+                                    Johirul Islam
+                                </strong>
+                                <p>Head</p>
+                                <p>Dept. of Microbiology & Immunology</p>
+                                <p>Supervisor</p>
+                                <p>Rodolphe Merieux Laboratory</p>
+                                <p>BITID, Fouzderhat, Chattogram.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 <h3 className="text-right">Prepared By : {auth.user.name}</h3>
+
             </div>
         </AdminDashboardLayout>
     );

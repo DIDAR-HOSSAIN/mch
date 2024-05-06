@@ -31,7 +31,9 @@ return new class extends Migration
             $table->string('district')->nullable();
             $table->string('police_station')->nullable();
             $table->string('email')->nullable();
-            $table->string('reg_fee')->default('900');
+            $table->string('test_fee')->default('900');
+            $table->string('reg_fee')->default('300');
+            $table->string('online_fee')->default('300');
             $table->string('discount')->nullable();
             $table->string('paid')->default('0');
             $table->string('due')->default('0');

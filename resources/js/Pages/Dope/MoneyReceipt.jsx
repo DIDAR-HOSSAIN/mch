@@ -28,10 +28,13 @@ const MoneyReceipt = ({ auth, data }) => {
         police_station,
         test_name,
         entry_date,
+        test_fee,
         reg_fee,
+        online_fee,
         discount,
         paid,
         due,
+        total,
     } = data;
 
     const contentToPrint = useRef(null);
@@ -187,7 +190,25 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3 text-center">
                                     {formatDate(entry_date)}
                                 </td>
+                                <td className="p-3 text-right">{test_fee}.00</td>
+                            </tr>
+
+                            <tr className="border-b">
+                                <td className="p-3">2</td>
+                                <td className="p-3 text-center">Reg Fee</td>
+                                <td className="p-3 text-center">
+                                    
+                                </td>
                                 <td className="p-3 text-right">{reg_fee}.00</td>
+                            </tr>
+
+                            <tr className="border-b">
+                                <td className="p-3">3</td>
+                                <td className="p-3 text-center">Online Fee</td>
+                                <td className="p-3 text-center">
+                                    
+                                </td>
+                                <td className="p-3 text-right">{online_fee}.00</td>
                             </tr>
 
                             {/* Additional rows (replace 'placeholder' with actual data) */}
@@ -195,7 +216,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Subtotal :</td>
-                                <td className="p-3 text-right">{reg_fee}.00</td>
+                                <td className="p-3 text-right">{parseFloat(test_fee) + parseFloat(reg_fee) + parseFloat(online_fee)}.00</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-3"></td>
@@ -212,7 +233,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                     Net Payable :
                                 </td>
                                 <td className="p-3 text-right">
-                                    {reg_fee - discount || 0}.00
+                                    {total || 0}.00
                                 </td>
                             </tr>
                             <tr className="border-b">
@@ -226,7 +247,7 @@ const MoneyReceipt = ({ auth, data }) => {
                             <tr className="border-b">
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
-                                <td className="p-3 text-right">Due :</td>
+                                <td className="p-3 text-right bg-black text-white text-xl">Due :</td>
                                 <td className="p-3 text-right font-extrabold">
                                     {due || 0}.00
                                 </td>
@@ -234,9 +255,7 @@ const MoneyReceipt = ({ auth, data }) => {
                         </tbody>
                     </table>
                     <p>
-                        {" "}
-                        In Word: {convertToWords(paid || 0)} Tk. Receive from{" "}
-                        {name}
+                        In Word: {convertToWords(paid || 0)} Tk. Receive from {name}
                     </p>
                     <h3>Prepared By : {auth.user.name}</h3>
                 </div>

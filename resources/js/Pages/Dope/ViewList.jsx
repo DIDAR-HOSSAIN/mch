@@ -144,7 +144,7 @@ const ViewList = ({ auth, datas }) => {
                                                 Contact no
                                             </th>
                                             <th className="px-4 py-2">
-                                                Reg Fee
+                                                Test Fee
                                             </th>
                                             <th className="px-4 py-2">
                                                 Discount
@@ -167,7 +167,7 @@ const ViewList = ({ auth, datas }) => {
                                                     name,
                                                     age,
                                                     contact_no,
-                                                    reg_fee,
+                                                    test_fee,
                                                     discount,
                                                     paid,
                                                     due,
@@ -195,7 +195,7 @@ const ViewList = ({ auth, datas }) => {
                                                         {contact_no}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {reg_fee}
+                                                        {test_fee}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {discount}
