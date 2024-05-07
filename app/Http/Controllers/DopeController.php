@@ -210,5 +210,26 @@ class DopeController extends Controller
         ]);
     }
 
+    public function summaryDetails(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Dope::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Dope/Reports/DateWiseBalanceSummaryDetails', [
+            'data' => $data
+        ]);
+    }
+
 
 }

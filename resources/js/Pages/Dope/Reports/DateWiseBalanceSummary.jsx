@@ -10,9 +10,6 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
     const [endDate, setEndDate] = useState(null);
 
     useEffect(() => {
-        console.log("Selected User:", selectedUser);
-        console.log("Start Date:", startDate);
-        console.log("End Date:", endDate);
         filterData(selectedUser, startDate, endDate);
     }, [selectedUser, startDate, endDate]);
 
@@ -21,53 +18,29 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
     };
 
     const handleDateRangeChange = (startDate, endDate) => {
-        console.log("Start Date:", startDate);
-        console.log("End Date:", endDate);
         setStartDate(startDate);
         setEndDate(endDate);
         filterData(selectedUser, startDate, endDate);
     };
 
+    const filterData = (user, start, end) => {
+        const filteredData = data.filter((item) => {
+            const entryDate = new Date(item.entry_date);
+            const isUserMatch = user ? item.user_name === user : true;
+            const isDateRangeMatch =
+                (!start || entryDate >= start) &&
+                (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
+            return isUserMatch && isDateRangeMatch;
+        });
+        setFilteredData(filteredData);
+    };
 
-
-
-   const filterData = (user, start, end) => {
-       console.log("Filtering Data...");
-       console.log("User:", user);
-       console.log("Start Date:", start);
-       console.log("End Date:", end);
-
-       const filteredData = data.filter((item) => {
-           const entryDate = new Date(item.entry_date);
-           const isUserMatch = user ? item.user_name === user : true;
-           const isDateRangeMatch =
-               (!start || entryDate >= start) &&
-               (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
-           return isUserMatch && isDateRangeMatch;
-       });
-
-       console.log("Filtered Data:", filteredData);
-       setFilteredData(filteredData);
-   };
-
-
-
-
-    const summaryTotal = filteredData.reduce(
-        (totals, data) => {
-            totals.totalBill += parseFloat(data.total || 0);
-            totals.totalPaid += parseFloat(data.paid || 0);
-            totals.totalDue += parseFloat(data.due || 0);
-            totals.totalDiscount += parseFloat(data.discount || 0);
-            return totals;
-        },
-        {
-            totalBill: 0,
-            totalPaid: 0,
-            totalDue: 0,
-            totalDiscount: 0,
-        }
-    );
+    const getColumnSummary = (key) => {
+        const count = filteredData.reduce((acc, curr) => {
+            return acc + parseFloat(curr[key] || 0);
+        }, 0);
+        return count;
+    };
 
     return (
         <AdminDashboardLayout
@@ -80,15 +53,15 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
         >
             <Head title="Dope Summary" />
 
-            <div className="py-2">
-                <div className="mx-auto">
-                    <div className="flex items-center justify-between mb-6">
+            <div className="py-4">
+                <div className="mx-auto max-w-4xl">
+                    <div className="flex items-center justify-between mb-4">
                         <select
                             value={selectedUser}
                             onChange={handleUserChange}
                             className="form-select w-64 rounded-md"
                         >
-                            <option value="">All</option>
+                            <option value="">All Users</option>
                             {Array.from(
                                 new Set(data.map((item) => item.user_name))
                             ).map((user, index) => (
@@ -102,20 +75,69 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
                             data={data}
                             onSearch={handleDateRangeChange}
                         />
-
-                        <div>
-                            <p>
-                                Date Wise Report:{" "}
-                                {startDate &&
-                                    endDate &&
-                                    `${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`}
-                            </p>
-                            <p>Total Bill: {summaryTotal.totalBill}</p>
-                            <p>Total Discount: {summaryTotal.totalDiscount}</p>
-                            <p>Total Due: {summaryTotal.totalDue}</p>
-                            <p>Total Paid: {summaryTotal.totalPaid}</p>
-                        </div>
                     </div>
+
+                    {filteredData.length > 0 ? (
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Summary
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Total
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Total Bill
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {getColumnSummary("total")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Total Discount
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {getColumnSummary("discount")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Total Due
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {getColumnSummary("due")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Total Paid
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {getColumnSummary("paid")}
+                                    </td>
+                                </tr>
+                                <tr className="bg-gray-100">
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Total Count
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {filteredData.length}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p className="text-gray-500">
+                            No data available for the selected user and date
+                            range.
+                        </p>
+                    )}
                 </div>
             </div>
         </AdminDashboardLayout>

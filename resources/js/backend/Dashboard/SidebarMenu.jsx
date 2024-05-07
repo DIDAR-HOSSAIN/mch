@@ -94,6 +94,12 @@ const SidebarMenu = () => {
                     >
                         Date Wise Summary
                     </Link>
+                    <Link
+                        href="/summary-details"
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                    >
+                        Date Wise Summary Details
+                    </Link>
                 </div>
             )}
 
