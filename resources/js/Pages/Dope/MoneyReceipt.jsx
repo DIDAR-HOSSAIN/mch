@@ -134,7 +134,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 Address :
                             </span>
                             <span className="info-value">
-                                {address || "N/A"}, {police_station || "N/A"}, {district || "N/A"}
+                                {address || "N/A"}, {police_station || "N/A"}, {district || "N/A"}.
                             </span>
                         </div>
                     </div>

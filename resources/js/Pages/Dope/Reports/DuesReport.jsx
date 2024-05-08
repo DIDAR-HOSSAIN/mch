@@ -3,7 +3,7 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
 import DateWiseReport from "./DateWiseReport";
 
-const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
+const DuesReport = ({ auth, data }) => {
     const [filteredData, setFilteredData] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
     const [startDate, setStartDate] = useState(null);
@@ -30,10 +30,13 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
             const isDateRangeMatch =
                 (!start || entryDate >= start) &&
                 (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
-            return isUserMatch && isDateRangeMatch;
+            const isDueNotNullOrZero =
+                item.due !== null && parseFloat(item.due) !== 0; // Filter out null or zero dues
+            return isUserMatch && isDateRangeMatch && isDueNotNullOrZero;
         });
         setFilteredData(filteredData);
     };
+
 
     const getColumnSummary = (key) => {
         const count = filteredData.reduce((acc, curr) => {
@@ -47,11 +50,11 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary (Dope)
+                    Dues Report (Dope)
                 </h2>
             }
         >
-            <Head title="Dope Summary" />
+            <Head title="Dues Report" />
 
             <div className="py-4">
                 <div className="mx-auto max-w-4xl">
@@ -98,25 +101,7 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                             scope="col"
                                             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
-                                            Bill
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
-                                            Discount
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
                                             Due
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
-                                            Paid
                                         </th>
                                     </tr>
                                 </thead>
@@ -130,16 +115,7 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                                 {item.patient_id}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.total}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.discount}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.due}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.paid}
                                             </td>
                                         </tr>
                                     ))}
@@ -149,16 +125,7 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                             Total
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                            {getColumnSummary("total")}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                            {getColumnSummary("discount")}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
                                             {getColumnSummary("due")}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                            {getColumnSummary("paid")}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -176,4 +143,4 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
     );
 };
 
-export default DateWiseBalanceSummaryDetails;
+export default DuesReport;

@@ -35,6 +35,7 @@ const CreateForm = ({ auth, districts }) => {
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
     const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [error, setError] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
@@ -45,6 +46,8 @@ const CreateForm = ({ auth, districts }) => {
         age: 0, // Initialize age with 0
         // other form fields...
     });
+
+    console.log('Dope Create Form', data);
 
     // Function to handle district change
     const handleDistrictChange = (e) => {
@@ -204,17 +207,20 @@ const CreateForm = ({ auth, districts }) => {
     const submit = (e) => {
         e.preventDefault();
 
-        if (!dob) {
-            setDobError("Date of birth is required");
-            return;
-        }
-
         post(route("dope.store"), {
-            onSuccess: ({ data }) => {
+            onSuccess: () => {
                 const patientId = data.patient_id;
-
-                // Redirect to the invoice route with the patient_id from the response
                 Inertia.visit(route("dope-inv", { id: patientId }));
+            },
+            onError: (error) => {
+                // Handle error response from backend
+                setError(error.error);
+                console.log(error);
+                // Clear the error message after 10 seconds
+                    setTimeout(() => {
+                        setError(null);
+                    }, 3000); // 10 seconds in milliseconds
+
             },
         });
     };
@@ -230,6 +236,7 @@ const CreateForm = ({ auth, districts }) => {
         >
             <Head title="Dope Registration" />
             <div className="py-2">
+                {error && <div className="text-red-500">{error}</div>}
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
@@ -270,10 +277,11 @@ const CreateForm = ({ auth, districts }) => {
                                 required
                             />
 
-                            <InputError
-                                message={errors.brta_serial_no}
-                                className="mt-2"
-                            />
+                            {errors.brta_serial_no && (
+                                <div className="error-message">
+                                    {errors.brta_serial_no}
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -319,6 +327,7 @@ const CreateForm = ({ auth, districts }) => {
                                 className="mt-2"
                             />
                         </div>
+
                         <div>
                             <InputLabel
                                 htmlFor="fathers_name"
@@ -346,6 +355,7 @@ const CreateForm = ({ auth, districts }) => {
                                 className="mt-2"
                             />
                         </div>
+
                         <div>
                             <InputLabel
                                 htmlFor="mothers_name"

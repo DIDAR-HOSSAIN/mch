@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
     Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
     Route::get('summary-details', [DopeController::class, 'summaryDetails'])->name('summary-details');
+    Route::get('dues-details', [DopeController::class, 'duesCheck'])->name('dues-details');
     Route::resource('sample', SampleCollectionController::class);
     Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
     Route::resource('result', ResultController::class);

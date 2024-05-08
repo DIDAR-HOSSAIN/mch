@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class DopeController extends Controller
 {
@@ -53,51 +54,65 @@ class DopeController extends Controller
      */
     public function store(StoreDopeRequest $request)
     {
-        Validator::make($request->all(), [
-            'brta_serial_no' => ['required'],
-            'brta_serial_date' => ['required'],
-            'name' => ['required'],
-            'fathers_name' => ['required'],
-            'mothers_name' => ['required'],
-            'contact_no' => ['required'],
-            'dob' => ['required'],
-            'sex' => ['required'],
-            'test_fee' => ['required'],
-            'paid' => ['required'],
-            'total' => ['required'],
-        ])->validate();
+        try {
+            $validator = Validator::make($request->all(), [
+                'brta_serial_no' => ['required', 'unique:dopes,brta_serial_no'],
+                'brta_serial_date' => ['required'],
+                'name' => ['required'],
+                'fathers_name' => ['required'],
+                'mothers_name' => ['required'],
+                'contact_no' => ['required'],
+                'dob' => ['required'],
+                'sex' => ['required'],
+                'test_fee' => ['required'],
+                'paid' => ['required'],
+                'total' => ['required'],
+            ], [
+                'brta_serial_no.required' => 'BRTA Serial No is required.',
+                'brta_serial_no.unique' => 'BRTA Serial No already exists.',
+                // Add error messages for other fields as needed
+            ]);
 
-        // Retrieve all data from the request
-        $data = $request->all();
+            if ($validator->fails()) {
+                throw ValidationException::withMessages($validator->errors()->toArray());
+            }
 
-        // Generate patient_id
-        $data['patient_id'] = $this->generatePatientId();
+            // Retrieve all data from the request
+            $data = $request->all();
 
-        // Check if there is an authenticated user
-        if ($user = Auth::user()) {
-            // Access user properties safely
-            $data['user_name'] = $user->name;
-        } else {
-            // Handle the case where there is no authenticated user
-            // For example, you could set a default value or return an error response
-            return response()->json(['error' => 'User not authenticated'], 401);
+            // Generate patient_id
+            $data['patient_id'] = $this->generatePatientId();
+
+            // Check if there is an authenticated user
+            if ($user = Auth::user()) {
+                // Access user properties safely
+                $data['user_name'] = $user->name;
+            } else {
+                // Handle the case where there is no authenticated user
+                // For example, you could set a default value or throw an exception
+                throw new \Exception('User not authenticated');
+            }
+
+            // Convert dob date string to a format that MySQL accepts
+            if (isset($data['dob'])) {
+                $date = new \DateTime($data['dob']);
+                $formattedDate = $date->format('Y-m-d');
+                $data['dob'] = $formattedDate;
+            }
+
+            // Set entry_date to current date if not provided
+            $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
+
+            // Create Dope record
+            $dope = Dope::create($data);
+
+            // Redirect to the money invoice route with the ID
+            return Redirect::route('dope-inv', ['id' => $dope->id]);
+        } catch (\Exception $e) {
+            // Catch any exceptions thrown during the process
+            // Return error response with status code 422 (Unprocessable Entity)
+            throw ValidationException::withMessages(['error' => $e->getMessage()]);
         }
-
-        // Convert dob date string to a format that MySQL accepts
-        if (isset($data['dob'])) {
-            $date = new \DateTime($data['dob']);
-            $formattedDate = $date->format('Y-m-d');
-            $data['dob'] = $formattedDate;
-        }
-
-        // Set entry_date to current date if not provided
-        $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
-
-        // Create Dope record
-        $dope = Dope::create($data);
-
-        // Redirect to the money invoice route with the ID
-        return Redirect::route('dope-inv', ['id' => $dope->id]);
     }
 
 
@@ -227,6 +242,27 @@ class DopeController extends Controller
         $data = $query->get();
 
         return Inertia::render('Dope/Reports/DateWiseBalanceSummaryDetails', [
+            'data' => $data
+        ]);
+    }
+
+    public function duesCheck(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Dope::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Dope/Reports/DuesReport', [
             'data' => $data
         ]);
     }
