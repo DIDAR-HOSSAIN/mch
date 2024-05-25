@@ -4,6 +4,8 @@ import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receip
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import QRCode from "qrcode.react";
+import sign1 from "@/assets/images/sign/zakir_sign.png";
+import sign2 from "@/assets/images/sign/zohir_sign.png";
 
 const Report = ({ auth, reports }) => {
     console.log("from Result report", reports);
@@ -97,11 +99,22 @@ const Report = ({ auth, reports }) => {
                             </div>
                             <div>
                                 <span className="font-semibold">
-                                    Sample Collection Date:{" "}
+                                    Collection Date:{" "}
                                 </span>
                                 {formatDate(reports.sample_collection_date)}
                             </div>
+                            <div>
+                                <span className="font-semibold">
+                                    Sample Name: Urine
+                                </span>
+                            </div>
+
                             {/* Add more patient information fields as needed */}
+                        </div>
+                        <div>
+                            <span className="font-semibold">
+                                Method: Immunochromatography(ICT)
+                            </span>
                         </div>
                     </div>
 
@@ -159,45 +172,49 @@ const Report = ({ auth, reports }) => {
                                 </tr>
                             </tbody>
                         </table>
-    
-                            <div className="">
-                                <QRCode
-                                    className="mx-auto"
-                                    value={reports.patient_id || "N/A"}
-                                    // size={256}
-                                />
-                            </div>
-                        
+
+                        <div className="">
+                            <QRCode
+                                className="mx-auto"
+                                value={reports.patient_id || "N/A"}
+                                // size={256}
+                            />
+                        </div>
 
                         <div className="flex gap-6 px-4">
                             <div className="text-left mt-16">
+                                <img
+                                    className="mx-auto"
+                                    src={sign1}
+                                    alt="Jahanara Trading Logo"
+                                />
                                 <hr className="border-black border-solid border-1 w-full" />
                                 <strong className="text-xl">
                                     Dr. Md. Zakir Hossain
                                 </strong>
-                                <p>Head</p>
-                                <p>Dept. of Microbiology & Immunology</p>
-                                <p>Supervisor</p>
-                                <p>Rodolphe Merieux Laboratory</p>
-                                <p>BITID, Fouzderhat, Chattogram.</p>
+                                <p>Asst. Professor (Microbiology)</p>
+                                <p>Consultant</p>
+                                <p>Medical Centre Hospital Chattogram.</p>
                             </div>
 
                             <div className="text-right mt-16">
+                                <img
+                                    className="mx-auto"
+                                    src={sign2}
+                                    alt="Jahanara Trading Logo"
+                                />
                                 <hr className="border-black border-solid border-1 w-full" />
                                 <strong className="text-xl">
-                                    Johirul Islam
+                                    Zahirul Islam
                                 </strong>
-                                <p>Head</p>
-                                <p>Dept. of Microbiology & Immunology</p>
-                                <p>Supervisor</p>
-                                <p>Rodolphe Merieux Laboratory</p>
-                                <p>BITID, Fouzderhat, Chattogram.</p>
+                                <p>Senior Research Officer</p>
+                                <p>Molecular Biologist</p>
+                                <p>Medical Centre Hospital Chattogram.</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <h3 className="text-right">Prepared By : {auth.user.name}</h3>
-
             </div>
         </AdminDashboardLayout>
     );

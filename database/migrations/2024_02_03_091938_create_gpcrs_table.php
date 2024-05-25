@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('passport_no')->nullable();
             $table->string('police_station')->nullable();
             $table->string('district')->nullable();
-            $table->string('reg_fee')->default('3500');
+            $table->string('reg_fee')->default('3000');
             $table->string('discount')->nullable();
             $table->string('paid')->default('0');
             $table->string('due')->default('0');
