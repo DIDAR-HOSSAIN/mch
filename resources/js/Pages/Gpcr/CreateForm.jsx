@@ -388,14 +388,13 @@ const CreateForm = ({ auth, districts }) => {
                                 id="reg_fee"
                                 type="number"
                                 name="reg_fee"
-                                value={data.reg_fee || 3500}
+                                value={data.reg_fee || 3000}
                                 className="mt-1 block w-full"
                                 autoComplete="reg_fee"
                                 onChange={(e) =>
                                     handleRegFeeChange(e.target.value)
                                 }
                                 required
-                                readOnly
                             />
 
                             <InputError
