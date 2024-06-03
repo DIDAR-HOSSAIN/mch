@@ -42,7 +42,7 @@ const CreateForm = ({ auth, districts }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
-        reg_fee: 3500,
+        reg_fee: 3000,
         total: "",
         dob: null, // Ensure dob is initialized as null
         age: 0, // Initialize age with 0
