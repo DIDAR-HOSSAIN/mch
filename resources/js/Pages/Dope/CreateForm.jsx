@@ -628,7 +628,6 @@ const CreateForm = ({ auth, districts }) => {
                                     handleRegFeeChange(e.target.value)
                                 }
                                 required
-                                readOnly
                             />
 
                             <InputError
