@@ -141,7 +141,9 @@ const ViewList = ({ auth, samples }) => {
                                         <th className="px-4 py-2">
                                             Sample Collection Date
                                         </th>
-                                        <th className="px-4 py-2">Status</th>
+                                        <th className="px-4 py-2">
+                                            Sample Status
+                                        </th>
                                         <th className="px-4 py-2">Remarks</th>
                                         <th className="px-4 py-2">Action</th>
                                     </tr>
@@ -156,7 +158,7 @@ const ViewList = ({ auth, samples }) => {
                                                 patient_id,
                                                 name,
                                                 sample_collection_date,
-                                                status,
+                                                sample_status,
                                                 remarks,
                                             },
                                             index
@@ -176,10 +178,9 @@ const ViewList = ({ auth, samples }) => {
                                                         sample_collection_date
                                                     )}
                                                 </td>
+                                        
                                                 <td className="border px-4 py-2">
-                                                    {status === 1
-                                                        ? "Collected"
-                                                        : "Not Collected"}
+                                                    {sample_status}
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {remarks}
@@ -285,7 +286,6 @@ const ViewList = ({ auth, samples }) => {
                                     )}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

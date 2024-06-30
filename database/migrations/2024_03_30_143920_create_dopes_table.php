@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('dopes', function (Blueprint $table) {
             $table->id();
             $table->string('patient_id')->unique();
-            $table->date('brta_form_date')->default(now());
+            $table->date('brta_form_date')->default(now())->nullable(false);
             $table->string('brta_serial_no')->unique();
             $table->date('brta_serial_date')->default(now());
             $table->string('name')->nullable(false);
             $table->string('fathers_name')->nullable(false);
             $table->string('mothers_name')->nullable(false);
-            $table->string('nid')->unique();
-            $table->string('passport_no')->unique();
+            $table->string('nid')->unique()->nullable();
+            $table->string('passport_no')->unique()->nullable();
             $table->string('contact_no')->nullable(false);
             $table->string('address')->nullable(false);
             $table->date('dob')->nullable(false);

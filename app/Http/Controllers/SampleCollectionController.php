@@ -63,13 +63,8 @@ class SampleCollectionController extends Controller
             'patient_id' => ['required'],
             'name' => ['required'],
             'sample_collection_date' => ['required'],
-            'status' => ['required'],
+            'sample_status' => ['required'],
         ])->validate();
-
-        // $request->validate([
-        //     'name' => 'required',
-        //     'detail' => 'required',
-        // ]);
 
         $data = $request->all();
 
@@ -92,12 +87,11 @@ class SampleCollectionController extends Controller
             'name' => $sampleCollection->name,
             'sample_collection_date' => $sampleCollection->sample_collection_date,
             'result_date' => $sampleCollection->sample_collection_date,
-            'alcohol' => 1,
-            'benzodiazepines' => 1,
-            'cannabinoids' => 1,
-            'amphetamine' => 1,
-            'opiates' => 1,
-            'status' => 0,
+            'alcohol' => 'Negative',
+            'benzodiazepines' => 'Negative',
+            'cannabinoids' => 'Negative',
+            'amphetamine' => 'Negative',
+            'opiates' => 'Negative',
             'user_name' => $sampleCollection->user_name,
         ]);
 

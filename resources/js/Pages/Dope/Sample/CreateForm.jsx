@@ -15,18 +15,12 @@ const CreateForm = ({ auth, dopeIds }) => {
     const [selectedPatientName, setSelectedPatientName] = useState("");
 
     useEffect(() => {
-        // Ensure that dopeIds is an array before using the find function
-        if (Array.isArray(dopeIds)) {
-            // Find the selected patient object from dopeIds array based on selectedPatientId
+        // Update the selected patient name when selectedPatientId changes
+        if (Array.isArray(dopeIds) && selectedPatientId) {
             const selectedPatient = dopeIds.find(
                 (patient) => patient.patient_id === selectedPatientId
             );
-            // Update the selected patient name
-            if (selectedPatient) {
-                setSelectedPatientName(selectedPatient.name);
-            } else {
-                setSelectedPatientName(""); // Reset name if no patient is selected
-            }
+            setSelectedPatientName(selectedPatient ? selectedPatient.name : "");
         }
     }, [selectedPatientId, dopeIds]);
 
@@ -34,9 +28,8 @@ const CreateForm = ({ auth, dopeIds }) => {
         patient_id: "",
         name: "",
         sample_collection_date: "",
-        status: "",
+        sample_status: "",
         remarks: "",
-        // other form fields...
     });
 
     const handlePatientChange = (e) => {
@@ -57,15 +50,12 @@ const CreateForm = ({ auth, dopeIds }) => {
         }
     };
 
-    const handleDateChange = (date, field) => {
-        switch (field) {
-            case "sample_collection_date":
-                setSampleCollectionDate(date);
-                break;
-            default:
-                break;
-        }
-        setData(field, date ? date.toISOString().split("T")[0] : null);
+    const handleDateChange = (date) => {
+        setSampleCollectionDate(date);
+        setData(
+            "sample_collection_date",
+            date ? date.toISOString().split("T")[0] : null
+        );
     };
 
     const submit = (e) => {
@@ -83,9 +73,12 @@ const CreateForm = ({ auth, dopeIds }) => {
             }
         >
             <Head title="Sample Entry" />
-            <div className="py-2">
-                <form onSubmit={submit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="py-4 max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <form
+                    onSubmit={submit}
+                    className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div>
                             <InputLabel htmlFor="patient_id">
                                 Patient ID:
@@ -94,6 +87,7 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 id="patient_id"
                                 onChange={handlePatientChange}
                                 value={selectedPatientId}
+                                className="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             >
                                 <option value="">Select a patient</option>
                                 {Array.isArray(dopeIds) &&
@@ -109,7 +103,7 @@ const CreateForm = ({ auth, dopeIds }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="name" value="Name" />
+                            <InputLabel htmlFor="name">Name:</InputLabel>
                             <TextInput
                                 id="name"
                                 name="name"
@@ -127,19 +121,14 @@ const CreateForm = ({ auth, dopeIds }) => {
                                 className="mt-2"
                             />
                         </div>
+
                         <div>
-                            <InputLabel
-                                htmlFor="sample_collection_date"
-                                value="Sample Collection Date"
-                            />
+                            <InputLabel htmlFor="sample_collection_date">
+                                Sample Collection Date:
+                            </InputLabel>
                             <CustomDatePicker
                                 selectedDate={sampleCollectionDate}
-                                handleDateChange={(date) =>
-                                    handleDateChange(
-                                        date,
-                                        "sample_collection_date"
-                                    )
-                                }
+                                handleDateChange={handleDateChange}
                             />
                             <InputError
                                 message={errors.sample_collection_date}
@@ -148,37 +137,55 @@ const CreateForm = ({ auth, dopeIds }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="status" value="Status" />
+                            <InputLabel htmlFor="sample_status">
+                                Sample Status:
+                            </InputLabel>
                             <div className="mt-1">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
-                                        value={1}
-                                        checked={data.status === 1}
-                                        onChange={() => setData("status", 1)}
+                                        value="Collected"
+                                        checked={
+                                            data.sample_status === "Collected"
+                                        }
+                                        onChange={() =>
+                                            setData(
+                                                "sample_status",
+                                                "Collected"
+                                            )
+                                        }
                                     />
                                     <span className="ml-2">Collected</span>
                                 </label>
+
                                 <label className="inline-flex items-center ml-6">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
-                                        value={0}
-                                        checked={data.status === 0}
-                                        onChange={() => setData("status", 0)}
+                                        value="Not Collected"
+                                        checked={
+                                            data.sample_status ===
+                                            "Not Collected"
+                                        }
+                                        onChange={() =>
+                                            setData(
+                                                "sample_status",
+                                                "Not Collected"
+                                            )
+                                        }
                                     />
                                     <span className="ml-2">Not Collected</span>
                                 </label>
                             </div>
                             <InputError
-                                message={errors.status}
+                                message={errors.sample_status}
                                 className="mt-2"
                             />
                         </div>
 
-                        <div>
-                            <InputLabel htmlFor="remarks" value="Remarks" />
+                        <div className="md:col-span-2 lg:col-span-4">
+                            <InputLabel htmlFor="remarks">Remarks:</InputLabel>
                             <TextInput
                                 id="remarks"
                                 name="remarks"
@@ -195,12 +202,15 @@ const CreateForm = ({ auth, dopeIds }) => {
                             />
                         </div>
                     </div>
-                    <button
-                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
-                        disabled={processing}
-                    >
-                        Submit
-                    </button>
+                    <div className="flex items-center justify-center mt-6">
+                        <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            disabled={processing}
+                        >
+                            {processing ? "Submitting..." : "Submit"}
+                        </button>
+                    </div>
                 </form>
             </div>
         </AdminDashboardLayout>

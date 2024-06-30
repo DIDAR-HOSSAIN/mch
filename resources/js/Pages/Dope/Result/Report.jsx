@@ -131,9 +131,7 @@ const Report = ({ auth, reports }) => {
                                 <tr>
                                     <td className="py-2 px-4">Alcohol</td>
                                     <td className="py-2 px-4">
-                                        {reports.alcohol
-                                            ? "Negative"
-                                            : "Positive"}
+                                        {reports.alcohol}
                                     </td>
                                 </tr>
                                 <tr>
@@ -141,33 +139,25 @@ const Report = ({ auth, reports }) => {
                                         Benzodiazepines
                                     </td>
                                     <td className="py-2 px-4">
-                                        {reports.benzodiazepines
-                                            ? "Negative"
-                                            : "Positive"}
+                                        {reports.benzodiazepines}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className="py-2 px-4">Cannabinoids</td>
                                     <td className="py-2 px-4">
-                                        {reports.cannabinoids
-                                            ? "Negative"
-                                            : "Positive"}
+                                        {reports.cannabinoids}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className="py-2 px-4">Amphetamine</td>
                                     <td className="py-2 px-4">
-                                        {reports.amphetamine
-                                            ? "Negative"
-                                            : "Positive"}
+                                        {reports.amphetamine}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className="py-2 px-4">Opiates</td>
                                     <td className="py-2 px-4">
-                                        {reports.opiates
-                                            ? "Negative"
-                                            : "Positive"}
+                                        {reports.opiates}
                                     </td>
                                 </tr>
                             </tbody>

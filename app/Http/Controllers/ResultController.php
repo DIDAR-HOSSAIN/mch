@@ -61,7 +61,6 @@ class ResultController extends Controller
             'cannabinoids' => ['required'],
             'amphetamine' => ['required'],
             'opiates' => ['required'],
-            'status' => ['required'],
             'remarks' => ['required'],
         ])->validate();
 
@@ -146,26 +145,54 @@ class ResultController extends Controller
         return Inertia::render('Dope/Result/ApproveReport');
     }
 
+    // public function updateStatus(Request $request)
+    // {
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
+    //     $status = $request->input('status');
+
+    //     // Fetch records between the specified dates
+    //     $results = Result::whereBetween('result_date', [$startDate, $endDate])->get();
+
+    //     // Update each record with the new status while keeping other fields intact
+    //     foreach ($results as $result) {
+    //         // Update status only if it's different from the new status
+    //         if ($result->status != $status) {
+    //             $result->status = $status; // Update status
+    //             $result->save(); // Save the changes
+    //         }
+    //     }
+
+    //     return response()->json(['success' => true]);
+    // }
+
+
     public function updateStatus(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $status = $request->input('status');
+        $result_status = $request->input('result_status');
 
         // Fetch records between the specified dates
         $results = Result::whereBetween('result_date', [$startDate, $endDate])->get();
 
-        // Update each record with the new status while keeping other fields intact
+        if ($results->isEmpty()) {
+            return response()->json(['error' => true, 'message' => 'No data found for the given date range.']);
+        }
+
+        // Update each record with the new result_status while keeping other fields intact
         foreach ($results as $result) {
-            // Update status only if it's different from the new status
-            if ($result->status != $status) {
-                $result->status = $status; // Update status
+            // Update result_status only if it's different from the new result_status
+            if ($result->result_status != $result_status) {
+                $result->result_status = $result_status; // Update status
                 $result->save(); // Save the changes
             }
         }
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'message' => 'Results updated successfully']);
     }
+
+
 
 
 

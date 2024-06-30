@@ -62,56 +62,62 @@ class DopeController extends Controller
                 'fathers_name' => ['required'],
                 'mothers_name' => ['required'],
                 'contact_no' => ['required'],
-                'dob' => ['required'],
+                'dob' => ['required', 'date'],
                 'sex' => ['required'],
-                'test_fee' => ['required'],
-                'paid' => ['required'],
-                'total' => ['required'],
+                'test_fee' => ['required', 'numeric'],
+                'paid' => ['required', 'numeric'],
+                'total' => ['required', 'numeric'],
+                // Custom validation for either nid or passport_no
+                'nid' => ['nullable', 'required_without:passport_no'],
+                'nid' => ['nullable', 'unique:dopes,nid'],
+                'passport_no' => ['nullable', 'required_without:nid'],
             ], [
                 'brta_serial_no.required' => 'BRTA Serial No is required.',
                 'brta_serial_no.unique' => 'BRTA Serial No already exists.',
-                // Add error messages for other fields as needed
-            ]);
+                'name.required' => 'Name is required.',
+                'fathers_name.required' => 'Father\'s name is required.',
+                'mothers_name.required' => 'Mother\'s name is required.',
+                'contact_no.required' => 'Contact number is required.',
+                'dob.required' => 'Date of birth is required.',
+                'dob.date' => 'Date of birth must be a valid date.',
+                'sex.required' => 'Sex is required.',
+                'test_fee.required' => 'Test fee is required.',
+                'test_fee.numeric' => 'Test fee must be a number.',
+                'paid.required' => 'Paid amount is required.',
+                'paid.numeric' => 'Paid amount must be a number.',
+                'total.required' => 'Total amount is required.',
+                'total.numeric' => 'Total amount must be a number.',
+                'nid.required_without' => 'Either NID or Passport Number is required.',
+                'passport_no.required_without' => 'Either Passport Number or NID is required.',
+                ]);
 
+            // Check if validation fails
             if ($validator->fails()) {
-                throw ValidationException::withMessages($validator->errors()->toArray());
+                // Return validation errors as JSON response
+                return back()->withErrors($validator)->withInput();
             }
 
-            // Retrieve all data from the request
+            // If validation passes, proceed with data processing
             $data = $request->all();
-
             // Generate patient_id
             $data['patient_id'] = $this->generatePatientId();
-
             // Check if there is an authenticated user
             if ($user = Auth::user()) {
                 // Access user properties safely
                 $data['user_name'] = $user->name;
             } else {
                 // Handle the case where there is no authenticated user
-                // For example, you could set a default value or throw an exception
                 throw new \Exception('User not authenticated');
             }
-
-            // Convert dob date string to a format that MySQL accepts
-            if (isset($data['dob'])) {
-                $date = new \DateTime($data['dob']);
-                $formattedDate = $date->format('Y-m-d');
-                $data['dob'] = $formattedDate;
-            }
-
-            // Set entry_date to current date if not provided
-            $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
-
             // Create Dope record
             $dope = Dope::create($data);
 
-            // Redirect to the money invoice route with the ID
-            return Redirect::route('dope-inv', ['id' => $dope->id]);
-        } catch (\Exception $e) {
-            // Catch any exceptions thrown during the process
-            // Return error response with status code 422 (Unprocessable Entity)
-            throw ValidationException::withMessages(['error' => $e->getMessage()]);
+            // Return success response or any additional data as needed
+            return redirect()->route('dope-inv', ['id' => $dope->id])->with('success', 'Dope record created successfully.');
+        }
+         catch (\Exception $e) {
+            // Handle exceptions and return appropriate error response
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
 

@@ -1,13 +1,12 @@
 import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { Inertia } from "@inertiajs/inertia";
+
 
 const CreateForm = ({ auth }) => {
     const [resultDate, setResultDate] = useState(new Date());
@@ -44,9 +43,7 @@ const CreateForm = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route("result.store"));
-        // Inertia.visit(route("result.index"));
     };
 
     return (
@@ -59,9 +56,9 @@ const CreateForm = ({ auth }) => {
             }
         >
             <Head title="Result Entry (Manual)" />
-            <div className="py-2">
-                <form onSubmit={submit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="py-4">
+                <form onSubmit={submit} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
                             <InputLabel htmlFor="sample_id" value="Sample ID" />
                             <TextInput
@@ -127,14 +124,12 @@ const CreateForm = ({ auth }) => {
                                 htmlFor="result_date"
                                 value="Result Date"
                             />
-
                             <CustomDatePicker
                                 selectedDate={resultDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "result_date")
                                 }
                             />
-
                             <InputError
                                 message={errors.result_date}
                                 className="mt-2"
@@ -143,21 +138,21 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel htmlFor="alcohol" value="Alcohol" />
-                            <div className="mt-1">
-                                <label className="inline-flex items-center">
+                            <div className="mt-1 flex items-center space-x-4">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={1}
                                         checked={data.alcohol === 1}
                                         onChange={() => setData("alcohol", 1)}
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
-                                <label className="inline-flex items-center ml-6">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={0}
                                         checked={data.alcohol === 0}
                                         onChange={() => setData("alcohol", 0)}
@@ -176,11 +171,11 @@ const CreateForm = ({ auth }) => {
                                 htmlFor="benzodiazepines"
                                 value="Benzodiazepines"
                             />
-                            <div className="mt-1">
-                                <label className="inline-flex items-center">
+                            <div className="mt-1 flex items-center space-x-4">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={1}
                                         checked={data.benzodiazepines === 1}
                                         onChange={() =>
@@ -189,10 +184,10 @@ const CreateForm = ({ auth }) => {
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
-                                <label className="inline-flex items-center ml-6">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={0}
                                         checked={data.benzodiazepines === 0}
                                         onChange={() =>
@@ -213,11 +208,11 @@ const CreateForm = ({ auth }) => {
                                 htmlFor="cannabinoids"
                                 value="Cannabinoids"
                             />
-                            <div className="mt-1">
-                                <label className="inline-flex items-center">
+                            <div className="mt-1 flex items-center space-x-4">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={1}
                                         checked={data.cannabinoids === 1}
                                         onChange={() =>
@@ -226,10 +221,10 @@ const CreateForm = ({ auth }) => {
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
-                                <label className="inline-flex items-center ml-6">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={0}
                                         checked={data.cannabinoids === 0}
                                         onChange={() =>
@@ -250,11 +245,11 @@ const CreateForm = ({ auth }) => {
                                 htmlFor="amphetamine"
                                 value="Amphetamine"
                             />
-                            <div className="mt-1">
-                                <label className="inline-flex items-center">
+                            <div className="mt-1 flex items-center space-x-4">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={1}
                                         checked={data.amphetamine === 1}
                                         onChange={() =>
@@ -263,10 +258,10 @@ const CreateForm = ({ auth }) => {
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
-                                <label className="inline-flex items-center ml-6">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={0}
                                         checked={data.amphetamine === 0}
                                         onChange={() =>
@@ -284,21 +279,21 @@ const CreateForm = ({ auth }) => {
 
                         <div>
                             <InputLabel htmlFor="opiates" value="Opiates" />
-                            <div className="mt-1">
-                                <label className="inline-flex items-center">
+                            <div className="mt-1 flex items-center space-x-4">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={1}
                                         checked={data.opiates === 1}
                                         onChange={() => setData("opiates", 1)}
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
-                                <label className="inline-flex items-center ml-6">
+                                <label className="flex items-center">
                                     <input
                                         type="radio"
-                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        className="form-radio h-5 w-5 text-indigo-600"
                                         value={0}
                                         checked={data.opiates === 0}
                                         onChange={() => setData("opiates", 0)}
@@ -350,12 +345,14 @@ const CreateForm = ({ auth }) => {
                             />
                         </div>
                     </div>
-                    <button
-                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
-                        disabled={processing}
-                    >
-                        Submit
-                    </button>
+                    <div className="flex justify-center">
+                        <button
+                            className="block w-full md:w-auto bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 disabled:opacity-50"
+                            disabled={processing}
+                        >
+                            Submit
+                        </button>
+                    </div>
                 </form>
             </div>
         </AdminDashboardLayout>

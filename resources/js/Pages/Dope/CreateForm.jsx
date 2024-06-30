@@ -7,35 +7,13 @@ import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-const calculateAge = (dob) => {
-    const currentDate = new Date();
-    const birthDate = new Date(dob);
-
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-
-    const currentMonth = currentDate.getMonth();
-    const birthMonth = birthDate.getMonth();
-
-    if (
-        currentMonth < birthMonth ||
-        (currentMonth === birthMonth &&
-            currentDate.getDate() < birthDate.getDate())
-    ) {
-        age--;
-    }
-
-    return age;
-};
-
 const CreateForm = ({ auth, districts }) => {
-    console.log('dope create form district',districts);
-    const [dob, setDob] = useState(null);
-    const [dobError, setDobError] = useState("");
-    const [entryDate, setEntryDate] = useState(new Date());
+    console.log("dope create form district", districts);
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
+    const [dob, setDob] = useState(new Date());
+    const [entryDate, setEntryDate] = useState(new Date());
     const [selectedDistrict, setSelectedDistrict] = useState(null);
-    const [error, setError] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
@@ -47,7 +25,28 @@ const CreateForm = ({ auth, districts }) => {
         // other form fields...
     });
 
-    console.log('Dope Create Form', data);
+    console.log("Dope Create Form", data);
+    console.log("Dope Create Form", errors);
+
+    const calculateAge = (dob) => {
+        const currentDate = new Date();
+        const birthDate = new Date(dob);
+
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        const currentMonth = currentDate.getMonth();
+        const birthMonth = birthDate.getMonth();
+
+        if (
+            currentMonth < birthMonth ||
+            (currentMonth === birthMonth &&
+                currentDate.getDate() < birthDate.getDate())
+        ) {
+            age--;
+        }
+
+        return age;
+    };
 
     // Function to handle district change
     const handleDistrictChange = (e) => {
@@ -61,56 +60,9 @@ const CreateForm = ({ auth, districts }) => {
 
     //this function is only reg fee apply same below function is test_fee+reg_fee+online_fee
 
-    // const handleRegFeeChange = (value) => {
-    //     const testFee = parseFloat(value) || 0;
-    //     const calculatedTotal = testFee - parseFloat(data.discount);
-    //     setTotal(calculatedTotal);
-    //     setData({ ...data, test_fee: testFee, total: calculatedTotal });
-    // };
-
-    // const handleDiscountChange = (value) => {
-    //     const discount = parseFloat(value) || 0;
-    //     const testFee = parseFloat(data.test_fee) || 0;
-    //     const calculatedTotal = discount ? testFee - discount : testFee;
-    //     const paid = parseFloat(data.paid) || 0;
-    //     const calculatedDue = calculatedTotal - paid;
-
-    //     setData((prevData) => ({
-    //         ...prevData,
-    //         discount: discount,
-    //         total: calculatedTotal,
-    //         due: calculatedDue,
-    //     }));
-    // };
-
-    // const handlePaidChange = (value) => {
-    //     const paid = parseFloat(value) || 0;
-    //     const testFee = parseFloat(data.test_fee) || 0;
-    //     const discount = parseFloat(data.discount) || 0;
-    //     const calculatedTotal = discount ? testFee - discount : testFee;
-    //     const calculatedDue = calculatedTotal - paid;
-
-    //     setData((prevData) => ({
-    //         ...prevData,
-    //         paid: paid,
-    //         due: calculatedDue,
-    //         total: discount ? calculatedTotal : testFee,
-    //     }));
-    // };
-
-    // const handleDueChange = (value) => {
-    //     const due = parseFloat(value) || 0;
-    //     const calculatedTotal = (parseFloat(total) || 0) + due;
-    //     setTotal(calculatedTotal);
-    //     setData("due", due);
-    // };
-
     const handleRegFeeChange = (value) => {
         const testFee = parseFloat(value) || 0;
-        const regFee = 300; // assuming reg_fee is always included
-        const onlineFee = 300; // assuming online_fee is always included
-        const calculatedTotal =
-            testFee + regFee + onlineFee - parseFloat(data.discount);
+        const calculatedTotal = testFee - parseFloat(data.discount);
         setTotal(calculatedTotal);
         setData({ ...data, test_fee: testFee, total: calculatedTotal });
     };
@@ -118,11 +70,7 @@ const CreateForm = ({ auth, districts }) => {
     const handleDiscountChange = (value) => {
         const discount = parseFloat(value) || 0;
         const testFee = parseFloat(data.test_fee) || 0;
-        const regFee = 300; // assuming reg_fee is always included
-        const onlineFee = 300; // assuming online_fee is always included
-        const calculatedTotal = discount
-            ? testFee + regFee + onlineFee - discount
-            : testFee + regFee + onlineFee;
+        const calculatedTotal = discount ? testFee - discount : testFee;
         const paid = parseFloat(data.paid) || 0;
         const calculatedDue = calculatedTotal - paid;
 
@@ -138,71 +86,56 @@ const CreateForm = ({ auth, districts }) => {
         const paid = parseFloat(value) || 0;
         const testFee = parseFloat(data.test_fee) || 0;
         const discount = parseFloat(data.discount) || 0;
-        const regFee = 300; // assuming reg_fee is always included
-        const onlineFee = 300; // assuming online_fee is always included
-        const calculatedTotal = discount
-            ? testFee + regFee + onlineFee - discount
-            : testFee + regFee + onlineFee;
+        const calculatedTotal = discount ? testFee - discount : testFee;
         const calculatedDue = calculatedTotal - paid;
 
         setData((prevData) => ({
             ...prevData,
             paid: paid,
             due: calculatedDue,
-            total: discount ? calculatedTotal : testFee + regFee + onlineFee,
+            total: discount ? calculatedTotal : testFee,
         }));
     };
 
     const handleDueChange = (value) => {
         const due = parseFloat(value) || 0;
-        const testFee = parseFloat(data.test_fee) || 0;
-        const regFee = 300; // assuming reg_fee is always included
-        const onlineFee = 300; // assuming online_fee is always included
-        const calculatedTotal =
-            (parseFloat(total) || 0) + testFee + regFee + onlineFee + due;
+        const calculatedTotal = (parseFloat(total) || 0) + due;
         setTotal(calculatedTotal);
         setData("due", due);
     };
 
-
     const handleDobChange = (date) => {
-        if (!date) {
-            setDobError("Date of birth is required");
-        } else {
-            setDobError("");
-        }
-        // Update the state variable
-        setDob(date);
+        setDob(date); // Update the local state for date of birth
 
-        // Update the form data with the selected date
+        // Update the form data with the selected date and calculated age
         const isoDate = date ? date.toISOString().split("T")[0] : null;
         setData((prevData) => ({
             ...prevData,
             dob: isoDate,
-            age: isoDate ? calculateAge(isoDate) : 0,
+            age: isoDate ? calculateAge(isoDate) : 0, // Calculate age based on new dob
         }));
     };
 
     const handleDateChange = (date, field) => {
+        // Update the selected date in state based on the field
         switch (field) {
-            case "entry_date":
-                setEntryDate(date);
-                break;
             case "brta_form_date":
                 setBrtaFormDate(date);
                 break;
             case "brta_serial_date":
                 setBrtaSerialDate(date);
                 break;
-            case "sample_collection_date":
-                setSampleCollectionDate(date);
+            case "entry_date":
+                setEntryDate(date);
                 break;
             default:
                 break;
         }
 
+        // Update the form data with the selected date
         setData(field, date ? date.toISOString().split("T")[0] : null);
     };
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -211,17 +144,7 @@ const CreateForm = ({ auth, districts }) => {
             onSuccess: () => {
                 const patientId = data.patient_id;
                 Inertia.visit(route("dope-inv", { id: patientId }));
-            },
-            onError: (error) => {
-                // Handle error response from backend
-                setError(error.error);
-                console.log(error);
-                // Clear the error message after 10 seconds
-                    setTimeout(() => {
-                        setError(null);
-                    }, 3000); // 10 seconds in milliseconds
-
-            },
+            }
         });
     };
 
@@ -236,7 +159,6 @@ const CreateForm = ({ auth, districts }) => {
         >
             <Head title="Dope Registration" />
             <div className="py-2">
-                {error && <div className="text-red-500">{error}</div>}
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
@@ -246,14 +168,14 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={brtaFormDate || new Date()}
+                                selectedDate={brtaFormDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_form_date")
                                 }
                             />
 
                             <InputError
-                                message={errors.brta_form_date}
+                                message={errors?.brta_form_date}
                                 className="mt-2"
                             />
                         </div>
@@ -276,12 +198,10 @@ const CreateForm = ({ auth, districts }) => {
                                 }
                                 required
                             />
-
-                            {errors.brta_serial_no && (
-                                <div className="error-message">
-                                    {errors.brta_serial_no}
-                                </div>
-                            )}
+                            <InputError
+                                message={errors?.brta_serial_no}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
@@ -291,14 +211,14 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={brtaSerialDate || new Date()}
+                                selectedDate={brtaSerialDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_serial_date")
                                 }
                             />
 
                             <InputError
-                                message={errors.brta_serial_date}
+                                message={errors?.brta_serial_date}
                                 className="mt-2"
                             />
                         </div>
@@ -474,15 +394,11 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="dob" value="Date of Birth" />
 
                             <CustomDatePicker
-                                selectedDate={dob || new Date()}
-                                handleDateChange={(date) =>
-                                    handleDobChange(date)
-                                }
-                                required:true
+                                selectedDate={dob}
+                                handleDateChange={handleDobChange}
                             />
-                            {dobError && (
-                                <span className="error">{dobError}</span>
-                            )}
+
+                            <InputError message={errors.dob} className="mt-2" />
                         </div>
 
                         <div>
@@ -525,7 +441,7 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <CustomDatePicker
-                                selectedDate={entryDate || new Date()}
+                                selectedDate={entryDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
                                 }

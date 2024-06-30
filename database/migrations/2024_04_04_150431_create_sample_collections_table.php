@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('patient_id')->unique();
             $table->string('name');
             $table->date('sample_collection_date');
-            $table->boolean('status');
+            $table->string('sample_status');
             $table->string('remarks')->nullable();
             $table->string('user_name');
             $table->foreign('patient_id')->references('patient_id')->on('dopes')->onDelete('cascade');

@@ -1,5 +1,5 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receipt_Header.png";
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -68,14 +68,23 @@ const MoneyReceipt = ({ auth, data }) => {
         >
             <Head title="Dope Money Receipt" />
 
-            <button
-                onClick={() => {
-                    handlePrint(null, () => contentToPrint.current);
-                }}
-                className="mx-auto mt-2 block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-                Print
-            </button>
+            <div className="flex justify-center space-x-4 mt-2">
+                <Link
+                    className="px-6 py-2 text-white bg-blue-500 rounded-md focus:outline-none"
+                    href={route("dope.create")}
+                >
+                    Dope Registration
+                </Link>
+
+                <button
+                    onClick={() => {
+                        handlePrint(null, () => contentToPrint.current);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Print
+                </button>
+            </div>
 
             <div
                 ref={contentToPrint}
@@ -134,7 +143,8 @@ const MoneyReceipt = ({ auth, data }) => {
                                 Address :
                             </span>
                             <span className="info-value">
-                                {address || "N/A"}, {police_station || "N/A"}, {district || "N/A"}.
+                                {address || "N/A"}, {police_station || "N/A"},{" "}
+                                {district || "N/A"}.
                             </span>
                         </div>
                     </div>
@@ -190,25 +200,25 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3 text-center">
                                     {formatDate(entry_date)}
                                 </td>
-                                <td className="p-3 text-right">{test_fee}.00</td>
+                                <td className="p-3 text-right">
+                                    {test_fee}.00
+                                </td>
                             </tr>
 
                             <tr className="border-b">
                                 <td className="p-3">2</td>
                                 <td className="p-3 text-center">Reg Fee</td>
-                                <td className="p-3 text-center">
-                                    
-                                </td>
+                                <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">{reg_fee}.00</td>
                             </tr>
 
                             <tr className="border-b">
                                 <td className="p-3">3</td>
                                 <td className="p-3 text-center">Online Fee</td>
-                                <td className="p-3 text-center">
-                                    
+                                <td className="p-3 text-center"></td>
+                                <td className="p-3 text-right">
+                                    {online_fee}.00
                                 </td>
-                                <td className="p-3 text-right">{online_fee}.00</td>
                             </tr>
 
                             {/* Additional rows (replace 'placeholder' with actual data) */}
@@ -216,7 +226,12 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Subtotal :</td>
-                                <td className="p-3 text-right">{parseFloat(test_fee) + parseFloat(reg_fee) + parseFloat(online_fee)}.00</td>
+                                <td className="p-3 text-right">
+                                    {parseFloat(test_fee) +
+                                        parseFloat(reg_fee) +
+                                        parseFloat(online_fee)}
+                                    .00
+                                </td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-3"></td>
@@ -247,7 +262,9 @@ const MoneyReceipt = ({ auth, data }) => {
                             <tr className="border-b">
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
-                                <td className="p-3 text-right bg-black text-white text-xl">Due :</td>
+                                <td className="p-3 text-right bg-black text-white text-xl">
+                                    Due :
+                                </td>
                                 <td className="p-3 text-right font-extrabold">
                                     {due || 0}.00
                                 </td>
@@ -255,7 +272,8 @@ const MoneyReceipt = ({ auth, data }) => {
                         </tbody>
                     </table>
                     <p>
-                        In Word: {convertToWords(paid || 0)} Tk. Receive from {name}
+                        In Word: {convertToWords(paid || 0)} Tk. Receive from{" "}
+                        {name}
                     </p>
                     <h3>Prepared By : {auth.user.name}</h3>
                 </div>

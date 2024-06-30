@@ -6,67 +6,64 @@ import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, results }) => {
-    console.log('result view', results);
-        const [filteredData, setFilteredData] = useState(results);
-        const [perPage, setPerPage] = useState(10);
-        const [currentPage, setCurrentPage] = useState(1);
+    const [filteredData, setFilteredData] = useState(results);
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
 
-        const handlePerPageChange = (e) => {
-            const value = e.target.value;
-            setPerPage(value === "all" ? results.length : parseInt(value));
-            setCurrentPage(1);
-        };
+    console.log('results ViewList', filteredData);
 
-        const totalPages =
-            perPage === "all" ? 1 : Math.ceil(results.length / perPage);
+    const handlePerPageChange = (e) => {
+        const value = e.target.value;
+        setPerPage(value === "all" ? results.length : parseInt(value));
+        setCurrentPage(1);
+    };
 
-        const handlePageChange = (pageNumber) => {
-            setCurrentPage(pageNumber);
-        };
+    const totalPages =
+        perPage === "all" ? 1 : Math.ceil(results.length / perPage);
 
-        useEffect(() => {
-            const startIndex = (currentPage - 1) * perPage;
-            const endIndex = Math.min(startIndex + perPage, results.length);
-            const displayedData = results.slice(startIndex, endIndex);
-            setFilteredData(displayedData);
-        }, [results, currentPage, perPage]);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
-        const formatDate = (dateString) => {
-            const options = { day: "numeric", month: "short", year: "numeric" };
-            return new Date(dateString).toLocaleDateString("en-GB", options);
-        };
+    useEffect(() => {
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = Math.min(startIndex + perPage, results.length);
+        const displayedData = results.slice(startIndex, endIndex);
+        setFilteredData(displayedData);
+    }, [results, currentPage, perPage]);
 
-        const handleDateWiseSearch = (startDate, endDate) => {
-            if (!startDate || !endDate) {
-                setFilteredData(results);
-                return;
-            }
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
 
-            const filteredData = results.filter((data) => {
-                const entryDate = new Date(data.result_date);
-                return (
-                    entryDate >= startDate &&
-                    entryDate <= new Date(endDate.getTime() + 86400000)
-                );
-            });
+    const handleDateWiseSearch = (startDate, endDate) => {
+        if (!startDate || !endDate) {
+            setFilteredData(results);
+            return;
+        }
 
-            setFilteredData(filteredData);
-        };
+        const filteredData = results.filter((data) => {
+            const entryDate = new Date(data.result_date);
+            return (
+                entryDate >= startDate &&
+                entryDate <= new Date(endDate.getTime() + 86400000)
+            );
+        });
 
-        const handleSearch = (searchTerm) => {
-            const filtered = results.filter((data) => {
-                return (
-                    data.name
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase()) ||
-                    data.patient_id
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                );
-            });
+        setFilteredData(filteredData);
+    };
 
-            setFilteredData(filtered);
-        };
+    const handleSearch = (searchTerm) => {
+        const filtered = results.filter((data) => {
+            return (
+                data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
+
+        setFilteredData(filtered);
+    };
 
     const destroy = (id) => {
         if (confirm("Are you sure you want to delete this Sample?")) {
@@ -181,7 +178,7 @@ const ViewList = ({ auth, results }) => {
                                                     cannabinoids,
                                                     amphetamine,
                                                     opiates,
-                                                    status,
+                                                    result_status,
                                                     remarks,
                                                 },
                                                 index
@@ -202,40 +199,29 @@ const ViewList = ({ auth, results }) => {
                                                         )}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {alcohol === 1
-                                                            ? "Negative"
-                                                            : "Positive"}
+                                                        {alcohol}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {benzodiazepines === 1
-                                                            ? "Negative"
-                                                            : "Positive"}
+                                                        {benzodiazepines}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {cannabinoids === 1
-                                                            ? "Negative"
-                                                            : "Positive"}
+                                                        {cannabinoids}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {amphetamine === 1
-                                                            ? "Negative"
-                                                            : "Positive"}
+                                                        {amphetamine}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {opiates === 1
-                                                            ? "Negative"
-                                                            : "Positive"}
+                                                        {opiates}
                                                     </td>
                                                     <td
                                                         className={`border px-4 py-2 ${
-                                                            status
+                                                            result_status ===
+                                                            "Approve"
                                                                 ? "text-green-500"
                                                                 : "text-red-500"
                                                         }`}
                                                     >
-                                                        {status
-                                                            ? "Approve"
-                                                            : "Pending"}
+                                                        {result_status}
                                                     </td>
 
                                                     <td className="border px-4 py-2">
@@ -252,8 +238,8 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Show
                                                         </Link>
-
-                                                        {status === true ? (
+                                                        {result_status ===
+                                                        "Approve" ? (
                                                             <Link
                                                                 tabIndex="1"
                                                                 className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
@@ -269,7 +255,6 @@ const ViewList = ({ auth, results }) => {
                                                                 Report
                                                             </span>
                                                         )}
-
                                                         <Link
                                                             tabIndex="1"
                                                             className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
@@ -294,7 +279,6 @@ const ViewList = ({ auth, results }) => {
                                                 </tr>
                                             )
                                         )}
-
                                         {filteredData.length === 0 && (
                                             <tr>
                                                 <td
@@ -348,7 +332,6 @@ const ViewList = ({ auth, results }) => {
                                         )}
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->date('sample_collection_date');
             $table->date('result_date');
-            $table->boolean('alcohol')->default(1);
-            $table->boolean('benzodiazepines')->default(1);
-            $table->boolean('cannabinoids')->default(1);
-            $table->boolean('amphetamine')->default(1);
-            $table->boolean('opiates')->default(1);
-            $table->boolean('status')->default(0);
+            $table->string('alcohol')->default('Negative');
+            $table->string('benzodiazepines')->default('Negative');
+            $table->string('cannabinoids')->default('Negative');
+            $table->string('amphetamine')->default('Negative');
+            $table->string('opiates')->default('Negative');
+             $table->enum('result_status', ['Pending', 'Approve'])->default('Pending');
             $table->string('remarks')->nullable();
             $table->string('user_name');
             $table->timestamps();
