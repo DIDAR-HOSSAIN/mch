@@ -214,6 +214,18 @@ const SidebarMenu = () => {
                     </Link>
                 </div>
             )}
+
+            {settings && (
+                <div className="flex flex-col">
+                    <Link
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        href="/references"
+                    >
+                        Manage Reference
+                    </Link>
+                </div>
+            )}
+
         </div>
     );
 };

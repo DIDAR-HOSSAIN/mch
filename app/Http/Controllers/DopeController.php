@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Dope;
 use App\Http\Requests\StoreDopeRequest;
 use App\Models\District;
+use App\Models\Reference;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 
 class DopeController extends Controller
 {
@@ -45,8 +44,9 @@ class DopeController extends Controller
     public function create()
     {
         $districts = District::with('thanas')->get();
-        // dd($districts);
-        return Inertia::render('Dope/CreateForm', ['districts' => $districts]);
+        $references = Reference::all();
+        // dd($references);
+        return Inertia::render('Dope/CreateForm', ['districts' => $districts, 'references' => $references]);
     }
 
     /**
@@ -56,6 +56,7 @@ class DopeController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'brta_form_date' => ['required'],
                 'brta_serial_no' => ['required', 'unique:dopes,brta_serial_no'],
                 'brta_serial_date' => ['required'],
                 'name' => ['required'],
@@ -164,8 +165,13 @@ class DopeController extends Controller
      */
     public function edit($id)
     {
-        $dope = Dope::find($id);
-        return Inertia::render('Dope/EditForm', ['dope' => $dope]);
+        $districts = District::with('thanas')->get();
+        $dope = Dope::findOrFail($id);
+
+        return Inertia::render('Dope/EditForm', [
+            'dope' => $dope,
+            'districts' => $districts,
+        ]);
     }
 
     /**
@@ -173,10 +179,6 @@ class DopeController extends Controller
      */
     public function update($id, Request $request)
     {
-        // Validator::make($request->all(), [
-        //     'title' => ['required'],
-        //     'body' => ['required'],
-        // ])->validate();
 
         // Parse and convert date fields to a compatible format
         $dateFields = ['brta_form_date', 'brta_serial_date','dob','entry_date', 'sample_collection_date',''];

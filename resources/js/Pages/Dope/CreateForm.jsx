@@ -7,8 +7,9 @@ import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-const CreateForm = ({ auth, districts }) => {
+const CreateForm = ({ auth, districts, references }) => {
     console.log("dope create form district", districts);
+    console.log("dope create form references", references);
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
     const [dob, setDob] = useState(new Date());
@@ -18,8 +19,10 @@ const CreateForm = ({ auth, districts }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
-        test_fee: "900",
-        total: "",
+        test_fee: 900,
+        reg_fee: 300,
+        online_fee: 300,
+        
         dob: null, // Ensure dob is initialized as null
         age: 0, // Initialize age with 0
         // other form fields...
@@ -58,51 +61,65 @@ const CreateForm = ({ auth, districts }) => {
         setData("district", district ? district.name : ""); // Store the district name
     };
 
-    //this function is only reg fee apply same below function is test_fee+reg_fee+online_fee
+        const handleRegFeeChange = (value) => {
+            const testFee = parseFloat(value) || 0;
+            const regFee = 300; // assuming reg_fee is always included
+            const onlineFee = 300; // assuming online_fee is always included
+            const calculatedTotal =
+                testFee + regFee + onlineFee - parseFloat(data.discount);
+            setTotal(calculatedTotal);
+            setData({ ...data, test_fee: testFee, total: calculatedTotal });
+        };
 
-    const handleRegFeeChange = (value) => {
-        const testFee = parseFloat(value) || 0;
-        const calculatedTotal = testFee - parseFloat(data.discount);
-        setTotal(calculatedTotal);
-        setData({ ...data, test_fee: testFee, total: calculatedTotal });
-    };
+        const handleDiscountChange = (value) => {
+            const discount = parseFloat(value) || 0;
+            const testFee = parseFloat(data.test_fee) || 0;
+            const regFee = 300; // assuming reg_fee is always included
+            const onlineFee = 300; // assuming online_fee is always included
+            const calculatedTotal = discount
+                ? testFee + regFee + onlineFee - discount
+                : testFee + regFee + onlineFee;
+            const paid = parseFloat(data.paid) || 0;
+            const calculatedDue = calculatedTotal - paid;
 
-    const handleDiscountChange = (value) => {
-        const discount = parseFloat(value) || 0;
-        const testFee = parseFloat(data.test_fee) || 0;
-        const calculatedTotal = discount ? testFee - discount : testFee;
-        const paid = parseFloat(data.paid) || 0;
-        const calculatedDue = calculatedTotal - paid;
+            setData((prevData) => ({
+                ...prevData,
+                discount: discount,
+                total: calculatedTotal,
+                due: calculatedDue,
+            }));
+        };
 
-        setData((prevData) => ({
-            ...prevData,
-            discount: discount,
-            total: calculatedTotal,
-            due: calculatedDue,
-        }));
-    };
+        const handlePaidChange = (value) => {
+            const paid = parseFloat(value) || 0;
+            const testFee = parseFloat(data.test_fee) || 0;
+            const discount = parseFloat(data.discount) || 0;
+            const regFee = 300; // assuming reg_fee is always included
+            const onlineFee = 300; // assuming online_fee is always included
+            const calculatedTotal = discount
+                ? testFee + regFee + onlineFee - discount
+                : testFee + regFee + onlineFee;
+            const calculatedDue = calculatedTotal - paid;
 
-    const handlePaidChange = (value) => {
-        const paid = parseFloat(value) || 0;
-        const testFee = parseFloat(data.test_fee) || 0;
-        const discount = parseFloat(data.discount) || 0;
-        const calculatedTotal = discount ? testFee - discount : testFee;
-        const calculatedDue = calculatedTotal - paid;
+            setData((prevData) => ({
+                ...prevData,
+                paid: paid,
+                due: calculatedDue,
+                total: discount ? calculatedTotal : testFee + regFee + onlineFee,
+            }));
+        };
 
-        setData((prevData) => ({
-            ...prevData,
-            paid: paid,
-            due: calculatedDue,
-            total: discount ? calculatedTotal : testFee,
-        }));
-    };
+        const handleDueChange = (value) => {
+            const due = parseFloat(value) || 0;
+            const testFee = parseFloat(data.test_fee) || 0;
+            const regFee = 300; // assuming reg_fee is always included
+            const onlineFee = 300; // assuming online_fee is always included
+            const calculatedTotal =
+                (parseFloat(total) || 0) + testFee + regFee + onlineFee + due;
+            setTotal(calculatedTotal);
+            setData("due", due);
+        };
 
-    const handleDueChange = (value) => {
-        const due = parseFloat(value) || 0;
-        const calculatedTotal = (parseFloat(total) || 0) + due;
-        setTotal(calculatedTotal);
-        setData("due", due);
-    };
 
     const handleDobChange = (date) => {
         setDob(date); // Update the local state for date of birth
@@ -136,7 +153,6 @@ const CreateForm = ({ auth, districts }) => {
         setData(field, date ? date.toISOString().split("T")[0] : null);
     };
 
-
     const submit = (e) => {
         e.preventDefault();
 
@@ -144,7 +160,7 @@ const CreateForm = ({ auth, districts }) => {
             onSuccess: () => {
                 const patientId = data.patient_id;
                 Inertia.visit(route("dope-inv", { id: patientId }));
-            }
+            },
         });
     };
 
@@ -544,6 +560,7 @@ const CreateForm = ({ auth, districts }) => {
                                     handleRegFeeChange(e.target.value)
                                 }
                                 required
+                                readOnly
                             />
 
                             <InputError
@@ -570,7 +587,7 @@ const CreateForm = ({ auth, districts }) => {
                             <InputError
                                 message={
                                     errors.discount ||
-                                    (data.discount >= data.test_fee
+                                    (data.discount >= data.total
                                         ? "Discount cannot be greater than or equal to Test Fee"
                                         : "")
                                 }
@@ -595,7 +612,12 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <InputError
-                                message={errors.paid}
+                                message={
+                                    errors.paid ||
+                                    (data.paid > data.total
+                                        ? "Paid cannot be greater than or equal to Total Fee"
+                                        : "")
+                                }
                                 className="mt-2"
                             />
                         </div>
@@ -642,47 +664,27 @@ const CreateForm = ({ auth, districts }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="Reference_name"
+                                htmlFor="reference_name"
                                 value="Reference Name"
                             />
 
                             <select
-                                id="Reference_name"
-                                name="Reference_name"
-                                value={data.Reference_name}
-                                className="mt-1 block w-full"
+                                id="reference_name"
                                 onChange={(e) =>
-                                    setData(
-                                        "Reference_name",
-                                        e.target.value.toUpperCase()
-                                    )
+                                    setData("reference_name", e.target.value)
                                 }
+                                value={data.reference_name}
                             >
-                                <option value="">Select Hospital</option>
-                                <option value="Metropolitan Hospital">
-                                    Metropolitan Hospital
-                                </option>
-                                <option value="Parkview Hospital">
-                                    Parkview Hospital
-                                </option>
-                                <option value="Medical Center Hospital">
-                                    Medical Center Hospital
-                                </option>
-                                <option value="Diabetic Hospital">
-                                    Diabetic Hospital
-                                </option>
-                                <option value="Royal Hospital">
-                                    Royal Hospital
-                                </option>
-                                <option value="Royal Hospital">
-                                    Ekushey Hospital
-                                </option>
-                                <option value="Royal Hospital">
-                                    CSCR Hospital
-                                </option>
-                                <option value="Royal Hospital">Others</option>
+                                <option value="">Select Reference</option>
+                                {references.map((reference) => (
+                                    <option
+                                        key={reference.id}
+                                        value={reference.reference_name}
+                                    >
+                                        {reference.reference_name}
+                                    </option>
+                                ))}
                             </select>
-
                             <InputError
                                 message={errors.Reference_name}
                                 className="mt-2"

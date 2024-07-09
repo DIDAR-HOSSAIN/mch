@@ -5,10 +5,11 @@ use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SampleCollectionController;
 use App\Models\Thana;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,7 +24,11 @@ use Inertia\Inertia;
 |
 */
 
-// Route::inertia('/', 'Home')->name('home');
+Route::get('/', function () {
+    return Inertia::render('Home');
+})->name('home');
+
+Route::post('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 
@@ -35,7 +40,6 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::inertia('/whoweare', 'WhoWeAre')->name('whoweare');
 
 // Route::inertia('/about', 'About')->name('about');
 
@@ -58,6 +62,8 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('sample', SampleCollectionController::class);
     Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
     Route::resource('result', ResultController::class);
+    Route::get('/results/fetch/{patient_id}', [ResultController::class, 'fetchByPatientId'])->name('result.fetch');
+    Route::patch('/resultUpdate/{result}', [ResultController::class, 'updateData'])->name('result.updateData');
     Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
     Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
     Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
@@ -65,6 +71,8 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('thana', DistrictController::class);
     Route::get('/district', [DistrictController::class, 'index']);
     Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
+    Route::resource('references', ReferenceController::class);
+
 
 
 });

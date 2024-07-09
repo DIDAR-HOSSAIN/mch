@@ -11,6 +11,13 @@ const ViewList = ({ auth, results }) => {
     const [currentPage, setCurrentPage] = useState(1);
 
     console.log('results ViewList', filteredData);
+    
+    const duesArray = results.map((result) => parseInt(result.dope.due));
+    console.log("duesArray", duesArray);
+
+    // Check if any due is greater than 0
+    const isAnyDueGreaterThanZero = duesArray.some((due) => due > 0);
+    console.log("Is any due greater than 0?", isAnyDueGreaterThanZero);
 
     const handlePerPageChange = (e) => {
         const value = e.target.value;
@@ -180,6 +187,7 @@ const ViewList = ({ auth, results }) => {
                                                     opiates,
                                                     result_status,
                                                     remarks,
+                                                    dope,
                                                 },
                                                 index
                                             ) => (
@@ -194,9 +202,7 @@ const ViewList = ({ auth, results }) => {
                                                         {name}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {formatDate(
-                                                            result_date
-                                                        )}
+                                                        {result_date}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {alcohol}
@@ -223,7 +229,6 @@ const ViewList = ({ auth, results }) => {
                                                     >
                                                         {result_status}
                                                     </td>
-
                                                     <td className="border px-4 py-2">
                                                         {remarks}
                                                     </td>
@@ -239,7 +244,8 @@ const ViewList = ({ auth, results }) => {
                                                             Show
                                                         </Link>
                                                         {result_status ===
-                                                        "Approve" ? (
+                                                            "Approve" &&
+                                                        dope.due <= 0 ? (
                                                             <Link
                                                                 tabIndex="1"
                                                                 className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
@@ -257,7 +263,7 @@ const ViewList = ({ auth, results }) => {
                                                         )}
                                                         <Link
                                                             tabIndex="1"
-                                                            className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                                                            className="mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
                                                             href={route(
                                                                 "result.edit",
                                                                 id
@@ -279,11 +285,11 @@ const ViewList = ({ auth, results }) => {
                                                 </tr>
                                             )
                                         )}
-                                        {filteredData.length === 0 && (
+                                        {results.length === 0 && (
                                             <tr>
                                                 <td
                                                     className="px-6 py-4 border-t"
-                                                    colSpan="6"
+                                                    colSpan="12"
                                                 >
                                                     No contacts found.
                                                 </td>

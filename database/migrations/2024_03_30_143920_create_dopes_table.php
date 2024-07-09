@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('brta_serial_no')->unique();
             $table->date('brta_serial_date')->default(now());
             $table->string('name')->nullable(false);
-            $table->string('fathers_name')->nullable(false);
-            $table->string('mothers_name')->nullable(false);
+            $table->string('fathers_name')->nullable();
+            $table->string('mothers_name')->nullable();
             $table->string('nid')->unique()->nullable();
             $table->string('passport_no')->unique()->nullable();
             $table->string('contact_no')->nullable(false);
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->string('paid')->default('0');
             $table->string('due')->default('0');
-            $table->string('total')->nullable(false);
+            $table->string('total')->nullable();
             $table->string('test_name')->default('Dope Test');
             $table->string('reference_name')->nullable();
             $table->string('payment_type')->default('Cash');

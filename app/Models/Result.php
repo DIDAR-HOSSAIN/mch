@@ -14,7 +14,7 @@ class Result extends Model
     protected $fillable = ['sample_id', 'patient_id', 'name', 'sample_collection_date', 'result_date', 'alcohol', 'benzodiazepines', 'cannabinoids', 'amphetamine', 'opiates', 'result_status', 'remarks', 'user_name'];
 
     protected $casts = [
-        'status' => 'boolean',
+        'result_status' => 'boolean',
     ];
 
     public function sampleCollection()

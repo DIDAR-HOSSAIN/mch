@@ -1,5 +1,5 @@
 import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import React, { useRef } from 'react';
 import Barcode from "react-barcode";
 import { useReactToPrint } from 'react-to-print';
@@ -33,14 +33,24 @@ const BarcodeGenerate = ({auth, barcodeData}) => {
         >
             <Head title="Barcode Generate" />
 
-            <button
-                onClick={() => {
-                    handlePrint(null, () => contentToPrint.current);
-                }}
-                className="mx-auto mt-2 block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-                Print
-            </button>
+            <div className="flex justify-center mt-2 space-x-4">
+                <Link
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    href={route("sample.create")}
+                >
+                    Sample Input
+                </Link>
+
+                <button
+                    onClick={() => {
+                        handlePrint(null, () => contentToPrint.current);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Print
+                </button>
+            </div>
+
             <div className="text-center my-4" ref={contentToPrint}>
                 <div className="mx-auto" style={{ width: "200px" }}>
                     <Barcode

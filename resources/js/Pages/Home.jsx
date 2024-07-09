@@ -8,8 +8,9 @@ import WhyChooseUs from "@/frontend/ui/WhyChooseUs";
 import YourNetwork from "@/frontend/ui/YourNetwork";
 import FrontendLayout from "@/frontend/Layout/FrontendLayout";
 import { Head } from "@inertiajs/react";
+import HomeSearch from "@/frontend/ui/HomeSearch";
 
-const Home = ({ auth }) => {
+const Home = ({ auth, results }) => {
     console.log("from home", auth.user);
     return (
         <FrontendLayout
@@ -22,14 +23,16 @@ const Home = ({ auth }) => {
         >
             <Head title="Home" />
 
-            <Carousel />
+            <HomeSearch results={results} />
+           
+
+            {/* <Carousel />
             <OurNetworkService />
             <Fold />
             <WhyChooseUs />
             <FreeEvaluation />
             <CustomItService />
-            <YourNetwork />
-            {/* <Contact /> */}
+            <YourNetwork /> */}
         </FrontendLayout>
     );
 };

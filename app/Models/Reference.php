@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Reference extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name', 'description','patient_id'
-    ];
+    protected $fillable = ['reference_name'];
 }

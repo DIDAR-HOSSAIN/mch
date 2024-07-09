@@ -36,6 +36,7 @@ class Dope extends Model
         'paid',
         'due',
         'total',
+        'reference_name',
         'test_name',
         'reference_name',
         'payment_type',
@@ -46,5 +47,10 @@ class Dope extends Model
     public function report()
     {
         return $this->hasOne(Result::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class);
     }
 }

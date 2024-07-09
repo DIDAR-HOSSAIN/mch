@@ -7,9 +7,6 @@ use App\Http\Requests\StoreResultRequest;
 use App\Http\Requests\UpdateResultRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class ResultController extends Controller
@@ -22,7 +19,8 @@ class ResultController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Result::query();
+        // $query = Result::query();
+        $query = Result::with('dope');
 
         if ($startDate && $endDate) {
             // Make sure to convert the string dates to DateTime objects
@@ -51,37 +49,7 @@ class ResultController extends Controller
      */
     public function store(StoreResultRequest $request)
     {
-        Validator::make($request->all(), [
-            'sample_id' => ['required'],
-            'patient_id' => ['required'],
-            'name' => ['required'],
-            'result_date' => ['required'],
-            'alcohol' => ['required'],
-            'benzodiazepines' => ['required'],
-            'cannabinoids' => ['required'],
-            'amphetamine' => ['required'],
-            'opiates' => ['required'],
-            'remarks' => ['required'],
-        ])->validate();
-
-        $data = $request->all();
-
-        // Check if there is an authenticated user
-        if ($user = Auth::user()) {
-            // Access user properties safely
-            $data['user_name'] = $user->name;
-        } else {
-            // Handle the case where there is no authenticated user
-            // For example, you could set a default value or return an error response
-            return response()->json(['error' => 'User not authenticated'], 401);
-        }
-
-        Result::create($data);
-
-        // Redirect to the money invoice route with the ID
-        // return Redirect::route('dope-inv', ['id' => $dope->id]);
-
-        return Redirect::back()->with('message', 'Operation Successful !');
+        //
     }
 
     /**
@@ -134,7 +102,6 @@ class ResultController extends Controller
 
     public function dopeReport($id)
     {
-        // $report = Result::find($id);
         $reports = Result::with('dope')->find($id);
         // dd($report);
         return Inertia::render('Dope/Result/Report', ['reports' => $reports]);
@@ -144,27 +111,6 @@ class ResultController extends Controller
     {
         return Inertia::render('Dope/Result/ApproveReport');
     }
-
-    // public function updateStatus(Request $request)
-    // {
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-    //     $status = $request->input('status');
-
-    //     // Fetch records between the specified dates
-    //     $results = Result::whereBetween('result_date', [$startDate, $endDate])->get();
-
-    //     // Update each record with the new status while keeping other fields intact
-    //     foreach ($results as $result) {
-    //         // Update status only if it's different from the new status
-    //         if ($result->status != $status) {
-    //             $result->status = $status; // Update status
-    //             $result->save(); // Save the changes
-    //         }
-    //     }
-
-    //     return response()->json(['success' => true]);
-    // }
 
 
     public function updateStatus(Request $request)
@@ -192,8 +138,40 @@ class ResultController extends Controller
         return response()->json(['success' => true, 'message' => 'Results updated successfully']);
     }
 
+    
+    public function fetchByPatientId($patient_id)
+    {
+        $result = Result::where('patient_id', $patient_id)->first();
+
+        if ($result) {
+            return response()->json(['result' => $result], 200);
+        } else {
+            return response()->json(['message' => 'No results found for this Patient ID'], 404);
+        }
+    }
 
 
+    public function updateData(Request $request, $result)
+    {
+        $result = Result::findOrFail($result);
+
+        $validatedData = $request->validate([
+            'sample_id' => 'required',
+            'patient_id' => 'required',
+            'name' => 'required',
+            'result_date' => 'required|date',
+            'alcohol' => 'required|in:Negative,Positive',
+            'benzodiazepines' => 'required|in:Negative,Positive',
+            'cannabinoids' => 'required|in:Negative,Positive',
+            'amphetamine' => 'required|in:Negative,Positive',
+            'opiates' => 'required|in:Negative,Positive',
+            'remarks' => 'nullable',
+        ]);
+
+        $result->update($validatedData);
+
+        return response()->json(['message' => 'Result updated successfully']);
+    }
 
 
 
