@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dope;
 use App\Models\Result;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -14,18 +14,38 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+
         $patient_id = $request->input('patient_id');
 
-        // Query results with related dope information
+        // Validate the input
+        $validator = Validator::make($request->all(), [
+            'patient_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
         $searchResult = Result::with('dope')
         ->where('patient_id', $patient_id)
-        ->get();
+            ->get();
 
-        // Return the search results
-        // return response()->json(['results' => $searchResult]);
+        if ($searchResult->isEmpty()) {
+            return back()->withErrors(['patient_id' => 'Attestation not done'])->withInput();
+        }
+
+        // Check if any due field is greater than 0
+        $hasDue = $searchResult->some(function ($result) {
+            return $result->dope->due > 0; // assuming due is a field in the dope table
+        });
+
+        // dd($hasDue);
+
+        if ($hasDue) {
+            return back()->withErrors(['patient_id' => 'Attestation not done !!'])->withInput();
+        }
+
         return Inertia::render('Home', ['results' => $searchResult]);
-
-        // dd($searchResult);
     }
 
 

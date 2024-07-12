@@ -3,7 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import { Link } from "@inertiajs/react";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import menu from "../../../../public/data/menus.json";
-import logo from "@/assets/images/Logo/logo-transparent.png";
+import logo from "@/assets/images/Logo/mch-logo.png";
 import UserDropdown from "@/SharedComponents/UserDropdown";
 
 const Navbar = ({ user }) => {

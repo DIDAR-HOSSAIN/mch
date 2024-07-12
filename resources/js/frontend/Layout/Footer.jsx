@@ -1,7 +1,7 @@
 import React from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "@inertiajs/react";
-import logo from "@/assets/images/Logo/logo-transparent.png";
+import logo from "@/assets/images/Logo/mch-logo.png";
 
 const Footer = () => {
     const redirectToExternalLink = (url) => {

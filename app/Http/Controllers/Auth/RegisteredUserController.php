@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
     {
         $users = User::all();
         // dd($contacts);
-        return Inertia::render('Users/ViewList', ['users' => $users]);
+        return Inertia::render('Auth/UserList', ['users' => $users]);
     }
 
     /**
