@@ -1,9 +1,182 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link, useHistory, useParams } from "react-router-dom";
 
 const EditUser = () => {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [roles, setRoles] = useState([]);
+    const [userRoles, setUserRoles] = useState([]);
+    const [allRoles, setAllRoles] = useState([]);
+    const [errors, setErrors] = useState([]);
+    const history = useHistory();
+    const { id } = useParams();
+
+    useEffect(() => {
+        fetchUser();
+        fetchRoles();
+    }, [id]);
+
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`/api/users/${id}`);
+            const user = response.data;
+            setName(user.name);
+            setEmail(user.email);
+            setUserRoles(user.roles.map((role) => role.id));
+        } catch (error) {
+            console.error("Error fetching user:", error);
+        }
+    };
+
+    const fetchRoles = async () => {
+        try {
+            const response = await axios.get("/api/roles");
+            setAllRoles(response.data);
+        } catch (error) {
+            console.error("Error fetching roles:", error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.patch(`/api/users/${id}`, {
+                name,
+                email,
+                password,
+                confirm_password: confirmPassword,
+                roles,
+            });
+            history.push("/users");
+        } catch (error) {
+            if (error.response && error.response.data.errors) {
+                setErrors(Object.values(error.response.data.errors).flat());
+            }
+        }
+    };
+
     return (
-        <div>
-            
+        <div className="container">
+            <div className="row">
+                <div className="col-lg-12 margin-tb">
+                    <div className="pull-left">
+                        <h2>Edit User</h2>
+                    </div>
+                    <div className="pull-right">
+                        <Link className="btn btn-primary" to="/users">
+                            Back
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            {errors.length > 0 && (
+                <div className="alert alert-danger">
+                    <strong>Whoops!</strong> There were some problems with your
+                    input.
+                    <br />
+                    <br />
+                    <ul>
+                        {errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+                <div className="row">
+                    <div className="col-xs-12 col-sm-12 col-md-12">
+                        <div className="form-group">
+                            <strong>Name:</strong>
+                            <input
+                                type="text"
+                                name="name"
+                                className="form-control"
+                                placeholder="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-xs-12 col-sm-12 col-md-12">
+                        <div className="form-group">
+                            <strong>Email:</strong>
+                            <input
+                                type="email"
+                                name="email"
+                                className="form-control"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-xs-12 col-sm-12 col-md-12">
+                        <div className="form-group">
+                            <strong>Password:</strong>
+                            <input
+                                type="password"
+                                name="password"
+                                className="form-control"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-xs-12 col-sm-12 col-md-12">
+                        <div className="form-group">
+                            <strong>Confirm Password:</strong>
+                            <input
+                                type="password"
+                                name="confirm-password"
+                                className="form-control"
+                                placeholder="Confirm Password"
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                            />
+                        </div>
+                    </div>
+                    <div className="col-xs-12 col-sm-12 col-md-12">
+                        <div className="form-group">
+                            <strong>Role:</strong>
+                            <select
+                                multiple
+                                className="form-control"
+                                value={roles}
+                                onChange={(e) =>
+                                    setRoles(
+                                        [...e.target.selectedOptions].map(
+                                            (option) => option.value
+                                        )
+                                    )
+                                }
+                            >
+                                {allRoles.map((role) => (
+                                    <option key={role.id} value={role.id}>
+                                        {role.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="col-xs-12 col-sm-12 col-md-12 text-center">
+                        <button type="submit" className="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <p className="text-center text-primary">
+                <small>Tutorial by ItSolutionStuff.com</small>
+            </p>
         </div>
     );
 };

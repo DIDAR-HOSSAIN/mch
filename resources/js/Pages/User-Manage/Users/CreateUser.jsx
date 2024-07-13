@@ -1,149 +1,153 @@
-import React from 'react';
+import { Link, useForm } from "@inertiajs/react";
+import React from "react";
 
-const CreateUser = () => {
-      const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [roles, setRoles] = useState([]);
-    const [allRoles, setAllRoles] = useState([]); // To store the list of roles from the server
-    const [errors, setErrors] = useState([]);
-    const history = useHistory();
+const CreateUser = ({ roles }) => {
+    const { data, setData, post, errors, reset } = useForm({
+        name: "",
+        email: "",
+        password: "",
+        roles: "",
+    });
 
-    // Fetch roles from the server on component mount
-    useEffect(() => {
-        fetchRoles();
-    }, []);
+    // const roles = [
+    //     { id: 1, name: "Admin" },
+    //     { id: 2, name: "User" },
+    //     // add more roles as needed
+    // ];
 
-    const fetchRoles = async () => {
-        try {
-            const response = await axios.get('/api/roles'); // Adjust the endpoint as needed
-            setAllRoles(response.data);
-        } catch (error) {
-            console.error('Error fetching roles:', error);
-        }
-    };
+    console.log("user create form", roles);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('/api/users', {
-                name,
-                email,
-                password,
-                confirm_password: confirmPassword,
-                roles,
-            });
-            history.push('/users');
-        } catch (error) {
-            if (error.response && error.response.data.errors) {
-                setErrors(Object.values(error.response.data.errors).flat());
-            }
-        }
+
+        post(route("users.store"), {
+            onSuccess: () => {
+                reset();
+            },
+        });
     };
 
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-12 margin-tb">
-                    <div className="pull-left">
-                        <h2>Create New User</h2>
-                    </div>
-                    <div className="pull-right">
-                        <Link className="btn btn-primary" to="/users">Back</Link>
-                    </div>
-                </div>
+        <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between py-4">
+                <h2 className="text-2xl font-bold">Create New User</h2>
+                <Link
+                    to="/users"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Back
+                </Link>
             </div>
 
-            {errors.length > 0 && (
-                <div className="alert alert-danger">
-                    <strong>Whoops!</strong> There were some problems with your input.<br /><br />
+            {Object.keys(errors).length > 0 && (
+                <div
+                    className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                    role="alert"
+                >
+                    <strong className="font-bold">Whoops!</strong>
+                    <span className="block sm:inline">
+                        There were some problems with your input.
+                    </span>
                     <ul>
-                        {errors.map((error, index) => (
-                            <li key={index}>{error}</li>
+                        {Object.keys(errors).map((key) => (
+                            <li key={key} className="text-sm">
+                                {errors[key]}
+                            </li>
                         ))}
                     </ul>
                 </div>
             )}
 
-            <form onSubmit={handleSubmit}>
-                <div className="row">
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Name:</strong>
-                            <input
-                                type="text"
-                                name="name"
-                                className="form-control"
-                                placeholder="Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
+            <form onSubmit={handleSubmit} className="mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Name:
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Name"
+                            value={data.name}
+                            onChange={(e) => setData("name", e.target.value)}
+                        />
                     </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Email:</strong>
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-control"
-                                placeholder="Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+                    <div>
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Email:
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                        />
                     </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Password:</strong>
-                            <input
-                                type="password"
-                                name="password"
-                                className="form-control"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
+                    <div>
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Password:
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                        />
                     </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Confirm Password:</strong>
-                            <input
-                                type="password"
-                                name="confirm-password"
-                                className="form-control"
-                                placeholder="Confirm Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </div>
+                    <div>
+                        <label
+                            htmlFor="roles"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Role:
+                        </label>
+                        <select
+                            id="roles"
+                            name="roles"
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            value={data.roles}
+                            onChange={(e) => setData("roles", e.target.value)}
+                        >
+                            <option value="">Select Role</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>
+                                    {role.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Role:</strong>
-                            <select
-                                multiple
-                                className="form-control"
-                                value={roles}
-                                onChange={(e) => setRoles([...e.target.selectedOptions].map(option => option.value))}
-                            >
-                                {allRoles.map(role => (
-                                    <option key={role.id} value={role.id}>
-                                        {role.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <button type="submit" className="btn btn-primary">Submit</button>
-                    </div>
+                </div>
+
+                <div className="mt-4 flex justify-center">
+                    <button
+                        type="submit"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Submit
+                    </button>
                 </div>
             </form>
 
-            <p className="text-center text-primary">
+            <p className="text-center text-primary mt-4">
                 <small>Tutorial by ItSolutionStuff.com</small>
             </p>
         </div>

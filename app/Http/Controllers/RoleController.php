@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
+use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -22,6 +23,7 @@ class RoleController extends Controller
         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
+
     /**
      * Display a listing of the resource.
      */
@@ -37,9 +39,12 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission = Permission::get();
-        return view('roles.create', compact('permission'));
+        $permissions = Permission::all();
+        // dd($permissions);
+        return Inertia::render('User-Manage/Roles/CreateRole', ['permissions' => $permissions]);
     }
+
+
 
     /**
      * Store a newly created resource in storage.

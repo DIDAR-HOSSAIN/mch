@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -16,8 +17,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $data = User::orderBy('id', 'DESC')->paginate(5);
-        return view('users.index', compact('data'))
+        $users = User::orderBy('id', 'DESC')->paginate(5);
+        return Inertia::render('User-Manage/Users/UserList', ['users' => $users])
         ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -26,8 +27,13 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name', 'name')->all();
-        return view('users.create', compact('roles'));
+        $roles = Role::pluck('name', 'name'); // Assuming this returns an associative array like ['Admin' => 'Admin', 'User' => 'User']
+
+        $rolesArray = collect($roles)->map(function ($name, $id) {
+            return ['id' => $id, 'name' => $name];
+        })->values()->all();
+
+        return Inertia::render('User-Manage/Users/CreateUser', ['roles' => $rolesArray]);
     }
 
     /**
@@ -38,7 +44,8 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
+            'password' => 'required',
+            // 'password' => 'required|same:confirm-password',
             'roles' => 'required'
         ]);
 
@@ -58,7 +65,7 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::find($id);
-        return view('users.show', compact('user'));
+        return Inertia::render('users.show', compact('user'));
     }
 
     /**
@@ -70,7 +77,7 @@ class UserController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
 
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+        return Inertia::render('users.edit', compact('user', 'roles', 'userRole'));
     }
 
     /**
