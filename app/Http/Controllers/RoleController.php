@@ -15,7 +15,7 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function __construct()
+    public function __construct()
     {
         $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
         $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
@@ -29,9 +29,9 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = Role::orderBy('id', 'DESC')->paginate(5);
-        return view('roles.index', compact('roles'))
-        ->with('i', ($request->input('page', 1) - 1) * 5);
+        $roles = Role::all();
+        // dd($roles, $permission);
+        return Inertia::render('User-Manage/Roles/RoleList', ['roles' => $roles]);
     }
 
     /**
@@ -40,7 +40,6 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        // dd($permissions);
         return Inertia::render('User-Manage/Roles/CreateRole', ['permissions' => $permissions]);
     }
 
@@ -51,16 +50,15 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|unique:roles,name',
-            'permission' => 'required',
+            'permissions' => 'required|array',
         ]);
 
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($request->input('permission'));
+        $role = Role::create(['name' => $request->name]);
+        $role->syncPermissions($request->permissions);
 
-        return redirect()->route('roles.index')
-        ->with('success', 'Role created successfully');
+        return redirect()->route('roles.index')->with('success', 'Role created successfully');
     }
 
     /**
@@ -73,7 +71,7 @@ class RoleController extends Controller
         ->where("role_has_permissions.role_id", $id)
         ->get();
 
-        return view('roles.show', compact('role', 'rolePermissions'));
+        return Inertia::render('User-Manage/Roles/ShowRole', compact('role', 'rolePermissions'));
     }
 
     /**
@@ -82,29 +80,27 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::find($id);
-        $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
-        ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
-        ->all();
+        $permissions = Permission::all();
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-        return view('roles.edit', compact('role', 'permission', 'rolePermissions'));
+        return Inertia::render('User-Manage/Roles/EditRole', compact('role', 'permission', 'rolePermissions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
             'name' => 'required',
-            'permission' => 'required',
+            'permissions' => 'required',
         ]);
 
         $role = Role::find($id);
-        $role->name = $request->input('name');
+        $role->name = $request->name;
         $role->save();
 
-        $role->syncPermissions($request->input('permission'));
+        $role->syncPermissions($request->permissions);
 
         return redirect()->route('roles.index')
         ->with('success', 'Role updated successfully');
@@ -113,9 +109,9 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        DB::table("roles")->where('id', $id)->delete();
+        Role::destroy($id);
         return redirect()->route('roles.index')
         ->with('success', 'Role deleted successfully');
     }

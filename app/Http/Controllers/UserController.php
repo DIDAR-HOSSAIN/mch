@@ -12,14 +12,21 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $users = User::orderBy('id', 'DESC')->paginate(5);
-        return Inertia::render('User-Manage/Users/UserList', ['users' => $users])
-        ->with('i', ($request->input('page', 1) - 1) * 5);
+        $users = User::with('roles')->orderBy('id', 'DESC')->paginate(5);
+        return Inertia::render('User-Manage/Users/UserList', ['users' => $users]);
     }
 
     /**
@@ -27,13 +34,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::pluck('name', 'name'); // Assuming this returns an associative array like ['Admin' => 'Admin', 'User' => 'User']
-
-        $rolesArray = collect($roles)->map(function ($name, $id) {
-            return ['id' => $id, 'name' => $name];
-        })->values()->all();
-
-        return Inertia::render('User-Manage/Users/CreateUser', ['roles' => $rolesArray]);
+        $roles = Role::all();
+        return Inertia::render('User-Manage/Users/CreateUser', ['roles' => $roles]);
     }
 
     /**
@@ -44,15 +46,16 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required',
-            // 'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'password' => 'required|confirmed',
+            'roles' => 'required|array'
         ]);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $user = User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+        ]);
 
-        $user = User::create($input);
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')
@@ -65,7 +68,7 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::find($id);
-        return Inertia::render('users.show', compact('user'));
+        return Inertia::render('User-Manage/Users/ShowUser', compact('user'));
     }
 
     /**
@@ -74,10 +77,10 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
+        $roles = Role::all();
+        $userRoles = $user->roles->pluck('id')->toArray();
 
-        return Inertia::render('users.edit', compact('user', 'roles', 'userRole'));
+        return Inertia::render('User-Manage/Users/EditUser', compact('user', 'roles', 'userRole'));
     }
 
     /**
@@ -88,22 +91,13 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'same:confirm-password',
+            'password' => 'sometimes|confirmed',
             'roles' => 'required'
         ]);
 
-        $input = $request->all();
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
-        } else {
-            $input = Arr::except($input, array('password'));
-        }
-
         $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        $user->assignRole($request->input('roles'));
+        $user->update($request->all());
+        $user->syncRoles($request->input('roles'));
 
         return redirect()->route('users.index')
         ->with('success', 'User updated successfully');

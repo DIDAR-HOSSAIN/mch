@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RoleController;
@@ -42,6 +43,7 @@ Route::post('register', [RegisteredUserController::class, 'store'])->middleware(
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    Route::resource('permissions', PermissionController::class);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
