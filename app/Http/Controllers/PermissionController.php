@@ -22,7 +22,8 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('User-Manage/Permissions/CreatePermission');
+        $permissions = Permission::all();
+        return Inertia::render('User-Manage/Permissions/CreatePermission', ['permissions'=> $permissions]);
     }
 
     /**
@@ -36,7 +37,7 @@ class PermissionController extends Controller
 
         Permission::create(['name' => $request->name]);
 
-        return redirect()->route('permissions.index')->with('success', 'Permission created successfully');
+        return redirect()->route('permissions.create')->with('success', 'Permission created successfully');
     }
 
     /**
@@ -66,8 +67,10 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        Permission::destroy($id);
+        return redirect()->route('permissions.create')
+        ->with('success', 'Permissions deleted successfully');
     }
 }

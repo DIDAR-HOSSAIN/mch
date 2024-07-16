@@ -83,7 +83,7 @@ class RoleController extends Controller
         $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-        return Inertia::render('User-Manage/Roles/EditRole', compact('role', 'permission', 'rolePermissions'));
+        return Inertia::render('User-Manage/Roles/EditRole', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**

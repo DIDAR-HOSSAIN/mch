@@ -1,30 +1,71 @@
-import React, { useState } from "react";
-import { useForm } from "@inertiajs/inertia-react";
+import React from "react";
+import { useForm } from "@inertiajs/react";
+import { Inertia } from "@inertiajs/inertia-react";
+import PermissionList from "./PermissionList";
 
 const CreatePermission = () => {
-    const { data, setData, post } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
     });
+
+    const handleDelete = (id) => {
+        if (confirm("Are you sure you want to delete this permission?")) {
+            Inertia.delete(route("permissions.destroy", id));
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route("permissions.store"));
+        reset();
     };
 
     return (
-        <div>
-            <h1>Create Permission</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Permission Name</label>
-                    <input
-                        type="text"
-                        value={data.name}
-                        onChange={(e) => setData("name", e.target.value)}
-                    />
+        <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
+            <div className="flex flex-col md:flex-row">
+                {/* Create Permission Form */}
+                <div className="w-full md:w-1/3 bg-white p-6 rounded-lg shadow-md mb-6 md:mb-0 md:mr-6">
+                    <h1 className="text-2xl font-bold text-center mb-6">
+                        Create Permission
+                    </h1>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label
+                                htmlFor="name"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Permission Name
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData("name", e.target.value)
+                                }
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            />
+                            {errors.name && (
+                                <div className="text-red-600 text-sm mt-2">
+                                    {errors.name}
+                                </div>
+                            )}
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                            {processing ? "Creating..." : "Create"}
+                        </button>
+                    </form>
                 </div>
-                <button type="submit">Create</button>
-            </form>
+
+                {/* Permission List */}
+
+                <PermissionList />
+
+            </div>
         </div>
     );
 };

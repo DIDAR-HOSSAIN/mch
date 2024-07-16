@@ -1,133 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import React from "react";
+import { useForm, Inertia } from "@inertiajs/inertia-react";
 
-const EditRole = () => {
-    const [name, setName] = useState('');
-    const [permissions, setPermissions] = useState([]);
-    const [selectedPermissions, setSelectedPermissions] = useState([]);
-    const [errors, setErrors] = useState({});
-    const { id } = useParams();
-    const history = useHistory();
+const EditRole = ({ role, permissions, rolePermissions }) => {
+    console.log('role edit page' , rolePermissions);
+    const { data, setData, put, processing, errors } = useForm({
+        _method: "put",
+        name: role.name,
+        permissions: role.permissions.map((p) => p.id),
+    });
 
-    useEffect(() => {
-        fetchRoleData();
-        fetchPermissions();
-    }, []);
-
-    const fetchRoleData = async () => {
-        try {
-            const response = await axios.get(`/api/roles/${id}`);
-            setName(response.data.name);
-            setSelectedPermissions(response.data.permissions.map(perm => perm.id));
-        } catch (error) {
-            console.error('Error fetching role data:', error);
-        }
-    };
-
-    const fetchPermissions = async () => {
-        try {
-            const response = await axios.get('/api/permissions');
-            setPermissions(response.data.permissions);
-        } catch (error) {
-            console.error('Error fetching permissions:', error);
-        }
-    };
-
-    const handleCheckboxChange = (e) => {
-        const value = parseInt(e.target.value);
-        setSelectedPermissions((prevSelected) =>
-            prevSelected.includes(value)
-                ? prevSelected.filter((perm) => perm !== value)
-                : [...prevSelected, value]
-        );
-    };
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setErrors({});
-        try {
-            await axios.patch(`/api/roles/${id}`, {
-                name,
-                permissions: selectedPermissions
-            });
-            history.push('/roles');
-        } catch (error) {
-            if (error.response && error.response.data.errors) {
-                setErrors(error.response.data.errors);
-            } else {
-                console.error('Error updating role:', error);
-            }
-        }
+        put(route("roles.update", role.id), {
+            onSuccess: () => {
+                // Handle success (optional)
+                Inertia.reload();
+            },
+        });
     };
 
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-12 margin-tb">
-                    <div className="pull-left">
-                        <h2>Edit Role</h2>
-                    </div>
-                    <div className="pull-right">
-                        <Link className="btn btn-primary" to="/roles">Back</Link>
-                    </div>
+        <div className="container mx-auto p-6">
+            <h1 className="text-2xl font-bold mb-6">Edit Role</h1>
+            <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+                <div className="mb-4">
+                    <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                    >
+                        Role Name
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        value={data.name}
+                        onChange={(e) => setData("name", e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        required
+                    />
+                    {errors.name && (
+                        <div className="text-red-600 text-sm mt-2">
+                            {errors.name}
+                        </div>
+                    )}
                 </div>
-            </div>
-
-            {Object.keys(errors).length > 0 && (
-                <div className="alert alert-danger">
-                    <strong>Whoops!</strong> There were some problems with your input.<br /><br />
-                    <ul>
-                        {Object.keys(errors).map((key) => (
-                            <li key={key}>{errors[key]}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-                <div className="row">
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Name:</strong>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Permissions
+                    </label>
+                    {permissions.map((permission) => (
+                        <div key={permission.id} className="flex items-center">
                             <input
-                                type="text"
-                                name="name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="form-control"
-                                placeholder="Name"
+                                type="checkbox"
+                                id={`permission-${permission.id}`}
+                                checked={data.permissions.includes(
+                                    permission.id
+                                )}
+                                onChange={() => {
+                                    const isChecked = data.permissions.includes(
+                                        permission.id
+                                    );
+                                    setData(
+                                        "permissions",
+                                        isChecked
+                                            ? data.permissions.filter(
+                                                  (id) => id !== permission.id
+                                              )
+                                            : [
+                                                  ...data.permissions,
+                                                  permission.id,
+                                              ]
+                                    );
+                                }}
+                                className="mr-2"
                             />
+                            <label htmlFor={`permission-${permission.id}`}>
+                                {permission.name}
+                            </label>
                         </div>
-                    </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12">
-                        <div className="form-group">
-                            <strong>Permission:</strong>
-                            <br />
-                            {permissions.map((permission) => (
-                                <label key={permission.id}>
-                                    <input
-                                        type="checkbox"
-                                        value={permission.id}
-                                        checked={selectedPermissions.includes(permission.id)}
-                                        onChange={handleCheckboxChange}
-                                        className="name"
-                                    />
-                                    {permission.name}
-                                <br />
-                                </label>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="col-xs-12 col-sm-12 col-md-12 text-center">
-                        <button type="submit" className="btn btn-primary">Submit</button>
-                    </div>
+                    ))}
                 </div>
+                <button
+                    type="submit"
+                    className={`bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 ${
+                        processing && "opacity-50 cursor-not-allowed"
+                    }`}
+                    disabled={processing}
+                >
+                    {processing ? "Updating..." : "Update"}
+                </button>
             </form>
-
-            <p className="text-center text-primary">
-                <small>Tutorial by ItSolutionStuff.com</small>
-            </p>
         </div>
     );
 };
