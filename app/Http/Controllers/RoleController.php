@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
+use function Laravel\Prompts\error;
+
 class RoleController extends Controller
 {
     /**
@@ -111,8 +113,14 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        Role::destroy($id);
-        return redirect()->route('roles.index')
-        ->with('success', 'Role deleted successfully');
+        $role = Role::find($id);
+        if ($role) {
+            $role->delete();
+            return redirect()->route('roles.index')->with('success', 'Role deleted successfully');
+        } else {
+            return redirect()->route('roles.index')->with('error', 'Role not found');
+        }
     }
+
+
 }

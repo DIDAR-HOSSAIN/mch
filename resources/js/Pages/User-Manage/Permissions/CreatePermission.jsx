@@ -1,18 +1,11 @@
 import React from "react";
 import { useForm } from "@inertiajs/react";
-import { Inertia } from "@inertiajs/inertia-react";
 import PermissionList from "./PermissionList";
 
 const CreatePermission = () => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
     });
-
-    const handleDelete = (id) => {
-        if (confirm("Are you sure you want to delete this permission?")) {
-            Inertia.delete(route("permissions.destroy", id));
-        }
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();

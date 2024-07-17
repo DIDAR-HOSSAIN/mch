@@ -43,6 +43,8 @@ Route::post('register', [RegisteredUserController::class, 'store'])->middleware(
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
+    Route::put('/users/{id}/toggle-active', [UserController::class, 'toggleActiveInactiveUser'])->name('users.toggleActive');
+
     Route::resource('permissions', PermissionController::class);
 });
 

@@ -1,8 +1,44 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { Inertia } from "@inertiajs/inertia";
+import Swal from "sweetalert2";
 
 const RoleList = () => {
     const { roles } = usePage().props;
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure role Delete ?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Inertia.delete(route("roles.destroy", { id: id }), {
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "role has been deleted.",
+                            icon: "success",
+                        }).then(() => {
+                            // Optional: reload the page or update the state to reflect the changes
+                            Inertia.visit(route("roles.index"));
+                        });
+                    },
+                    onError: () => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "There was an error deleting the role.",
+                            icon: "error",
+                        });
+                    },
+                });
+            }
+        });
+    };
 
     return (
         <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
@@ -59,12 +95,6 @@ const RoleList = () => {
             </div>
         </div>
     );
-};
-
-const handleDelete = (id) => {
-    if (confirm("Are you sure you want to delete this role?")) {
-        Inertia.delete(`/roles/${id}`);
-    }
 };
 
 export default RoleList;

@@ -1,22 +1,43 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { Inertia } from "@inertiajs/inertia-react";
+import { Inertia } from "@inertiajs/inertia";
+import Swal from "sweetalert2";
 
 const PermissionList = () => {
     const { permissions } = usePage().props;
 
-    const handleDelete = (id) => {
-        if (confirm("Are you sure you want to delete this permission?")) {
-            Inertia.delete(route("permissions.destroy", id))
-                .then(() => {
-                    console.log("Permission deleted successfully");
-                    // Optionally, perform actions after successful deletion
-                })
-                .catch((error) => {
-                    console.error("Error deleting permission:", error);
-                    // Handle errors if deletion fails
+    const destroy = (id) => {
+        Swal.fire({
+            title: "Are you sure permission Delete ?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Inertia.delete(route("permissions.destroy", { id: id }), {
+                    onSuccess: () => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Permission has been deleted.",
+                            icon: "success",
+                        }).then(() => {
+                            // Optional: reload the page or update the state to reflect the changes
+                            Inertia.visit(route("permissions.index"));
+                        });
+                    },
+                    onError: () => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "There was an error deleting the permission.",
+                            icon: "error",
+                        });
+                    },
                 });
-        }
+            }
+        });
     };
 
     return (
@@ -25,9 +46,9 @@ const PermissionList = () => {
                 <h1 className="text-3xl font-bold text-gray-700">
                     Permissions
                 </h1>
-                <Link href="/permissions/create">
+                <Link href="/roles/create">
                     <button className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                        Create Permission
+                        Create Role
                     </button>
                 </Link>
             </div>
@@ -63,10 +84,10 @@ const PermissionList = () => {
                                         Edit
                                     </Link>
                                     <button
-                                        onClick={() =>
-                                            handleDelete(permission.id)
-                                        }
-                                        className="text-red-500 hover:underline"
+                                        onClick={() => destroy(permission.id)}
+                                        tabIndex="-1"
+                                        type="button"
+                                        className="px-4 py-2 text-sm text-white bg-red-500 rounded"
                                     >
                                         Delete
                                     </button>

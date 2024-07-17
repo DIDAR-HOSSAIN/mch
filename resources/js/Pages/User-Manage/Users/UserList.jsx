@@ -1,8 +1,38 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { Inertia } from "@inertiajs/inertia-react";
+import { useForm } from "@inertiajs/inertia-react";
 
 const UserList = () => {
     const { users } = usePage().props;
+
+    const { data, setData, errors, put } = useForm();
+
+    const handleToggleActive = async (id, isActive) => {
+        try {
+            await put(route("users.toggleActive", { id: id }), {
+                user_status: !isActive,
+            });
+
+            console.log("User active status toggled successfully");
+            // Optionally handle success response here
+        } catch (error) {
+            console.error("Error toggling user active status:", errors);
+        }
+    };
+
+    const handleDelete = (id) => {
+        if (confirm("Are you sure you want to delete this user?")) {
+            Inertia.delete(route("users.destroy", { id: id }))
+                .then(() => {
+                    console.log("User deleted successfully");
+                    // Optionally handle success response here
+                })
+                .catch((error) => {
+                    console.error("Error deleting user:", error);
+                });
+        }
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -22,6 +52,7 @@ const UserList = () => {
                             <th className="py-2 px-4 border-b">Name</th>
                             <th className="py-2 px-4 border-b">Email</th>
                             <th className="py-2 px-4 border-b">Roles</th>
+                            <th className="py-2 px-4 border-b">Status</th>
                             <th className="py-2 px-4 border-b">Actions</th>
                         </tr>
                     </thead>
@@ -41,7 +72,27 @@ const UserList = () => {
                                               .join(", ")
                                         : "No roles assigned"}
                                 </td>
+                                <td className="py-2 px-4 border-b">
+                                    {user.user_status ? "Active" : "Inactive"}
+                                </td>
                                 <td className="py-2 px-4 border-b flex space-x-2">
+                                    <button
+                                        onClick={() =>
+                                            handleToggleActive(
+                                                user.id,
+                                                user.user_status
+                                            )
+                                        }
+                                        className={`px-4 py-2 rounded-lg shadow transition duration-200 ${
+                                            user.user_status
+                                                ? "bg-green-500 hover:bg-green-600 text-white"
+                                                : "bg-gray-500 hover:bg-gray-600 text-white"
+                                        }`}
+                                    >
+                                        {user.user_status
+                                            ? "Deactivate"
+                                            : "Activate"}
+                                    </button>
                                     <Link
                                         href={`/users/${user.id}/edit`}
                                         className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition duration-200"

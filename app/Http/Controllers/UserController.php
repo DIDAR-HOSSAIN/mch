@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -112,4 +109,16 @@ class UserController extends Controller
         return redirect()->route('users.index')
         ->with('success', 'User deleted successfully');
     }
+
+    public function toggleActiveInactiveUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->user_status = !$user->user_status; // Toggle the boolean value
+
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'User status updated successfully');
+    }
+
+
 }
