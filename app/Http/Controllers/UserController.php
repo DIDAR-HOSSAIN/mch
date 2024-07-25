@@ -9,20 +9,20 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+    //     $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+    //     $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+    //     $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    // }
 
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $users = User::with('roles')->orderBy('id', 'DESC')->paginate(5);
+        $users = User::with('roles')->orderBy('id', 'DESC')->paginate(15);
         return Inertia::render('User-Manage/Users/UserList', ['users' => $users]);
     }
 
@@ -73,11 +73,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::find($id);
+        $users = User::find($id);
         $roles = Role::all();
-        $userRoles = $user->roles->pluck('id')->toArray();
+        $userRoles = $users->roles->pluck('id')->toArray();
 
-        return Inertia::render('User-Manage/Users/EditUser', compact('user', 'roles', 'userRole'));
+        return Inertia::render('User-Manage/Users/EditUser', compact('users', 'roles', 'userRoles'));
     }
 
     /**
@@ -109,7 +109,9 @@ class UserController extends Controller
         return redirect()->route('users.index')
         ->with('success', 'User deleted successfully');
     }
-
+    
+    // User status active in Active 
+    
     public function toggleActiveInactiveUser($id)
     {
         $user = User::findOrFail($id);

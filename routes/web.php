@@ -44,7 +44,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::put('/users/{id}/toggle-active', [UserController::class, 'toggleActiveInactiveUser'])->name('users.toggleActive');
-
     Route::resource('permissions', PermissionController::class);
 });
 
@@ -54,7 +53,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 
 // Route::inertia('/about', 'About')->name('about');
-
 // Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 // Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
@@ -84,8 +82,6 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/district', [DistrictController::class, 'index']);
     Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
     Route::resource('references', ReferenceController::class);
-
-
 
 });
 
