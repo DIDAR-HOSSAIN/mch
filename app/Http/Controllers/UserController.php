@@ -9,13 +9,13 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
-    //     $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:user-delete', ['only' => ['destroy']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -73,11 +73,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $users = User::find($id);
+        $user = User::findOrFail($id);
         $roles = Role::all();
-        $userRoles = $users->roles->pluck('id')->toArray();
+        $userRoles = $user->roles->pluck('id')->toArray();
 
-        return Inertia::render('User-Manage/Users/EditUser', compact('users', 'roles', 'userRoles'));
+        return Inertia::render('User-Manage/Users/EditUser', compact('user', 'roles', 'userRoles'));
     }
 
     /**
@@ -89,15 +89,26 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'sometimes|confirmed',
-            'roles' => 'required'
+            'roles' => 'required|array'
         ]);
 
-        $user = User::find($id);
-        $user->update($request->all());
-        $user->syncRoles($request->input('roles'));
+        $user = User::findOrFail($id);
 
-        return redirect()->route('users.index')
-        ->with('success', 'User updated successfully');
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        $user->save();
+
+        // Convert role IDs to role names
+        $roleNames = Role::whereIn('id', $request->input('roles'))->pluck('name')->toArray();
+
+        $user->syncRoles($roleNames);
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully');
     }
 
     /**

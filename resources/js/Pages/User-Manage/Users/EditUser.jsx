@@ -1,109 +1,105 @@
-import React from "react";
-import { Inertia } from "@inertiajs/inertia";
+import React from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import { useForm } from '@inertiajs/react';
 
-const EditUser = ({ users, roles, userRoles }) => {
+const EditUser = ({ user, roles, userRoles }) => {
     const { data, setData, put, processing, errors } = useForm({
-        _method: "put",
-        name: role.name,
-        permissions: role.permissions.map((p) => p.id),
+        name: user.name,
+        email: user.email,
+        password: '',
+        password_confirmation: '',
+        roles: userRoles
     });
+
+    const handleChange = (e) => {
+        setData(e.target.name, e.target.value);
+    };
+
+    const handleRolesChange = (e) => {
+        const selectedRoles = Array.from(
+            e.target.selectedOptions,
+            (option) => option.value
+        );
+        setData('roles', selectedRoles);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(route("users.update", user.id), {
+        put(route('users.update', user.id), {
             onSuccess: () => {
                 // Handle success (optional)
                 Inertia.reload();
-            },
+            }
         });
     };
 
-    // const handleRolesChange = (e) => {
-    //     const selectedRoles = Array.from(
-    //         e.target.selectedOptions,
-    //         (option) => option.value
-    //     );
-    //     setForm({
-    //         ...form,
-    //         roles: selectedRoles,
-    //     });
-    // };
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     Inertia.post("/users", form);
-    // };
-
     return (
         <div className="container mx-auto px-4 py-8 max-w-2xl">
-            <h1 className="text-3xl font-bold mb-8 text-center">
-                Update User
-            </h1>
+            <h1 className="text-3xl font-bold mb-8 text-center">Update User</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col">
                     <label className="mb-2 text-lg font-semibold">Name</label>
                     <input
                         type="text"
                         name="name"
-                        value={form.name}
+                        value={data.name}
                         onChange={handleChange}
                         required
                         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     />
+                    {errors.name && <div className="text-red-500 mt-2">{errors.name}</div>}
                 </div>
                 <div className="flex flex-col">
                     <label className="mb-2 text-lg font-semibold">Email</label>
                     <input
                         type="email"
                         name="email"
-                        value={form.email}
+                        value={data.email}
                         onChange={handleChange}
                         required
                         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     />
+                    {errors.email && <div className="text-red-500 mt-2">{errors.email}</div>}
                 </div>
                 <div className="flex flex-col">
-                    <label className="mb-2 text-lg font-semibold">
-                        Password
-                    </label>
+                    <label className="mb-2 text-lg font-semibold">Password</label>
                     <input
                         type="password"
                         name="password"
-                        value={form.password}
+                        value={data.password}
                         onChange={handleChange}
-                        required
                         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     />
+                    {errors.password && <div className="text-red-500 mt-2">{errors.password}</div>}
                 </div>
                 <div className="flex flex-col">
-                    <label className="mb-2 text-lg font-semibold">
-                        Confirm Password
-                    </label>
+                    <label className="mb-2 text-lg font-semibold">Confirm Password</label>
                     <input
                         type="password"
                         name="password_confirmation"
-                        value={form.password_confirmation}
+                        value={data.password_confirmation}
                         onChange={handleChange}
-                        required
                         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     />
+                    {errors.password_confirmation && <div className="text-red-500 mt-2">{errors.password_confirmation}</div>}
                 </div>
                 <div className="flex flex-col">
                     <label className="mb-2 text-lg font-semibold">Roles</label>
                     <select
                         multiple
                         name="roles"
-                        value={form.roles}
+                        value={data.roles}
                         onChange={handleRolesChange}
                         required
                         className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                     >
                         {roles.map((role) => (
-                            <option key={role.id} value={role.name}>
+                            <option key={role.id} value={role.id}>
                                 {role.name}
                             </option>
                         ))}
                     </select>
+                    {errors.roles && <div className="text-red-500 mt-2">{errors.roles}</div>}
                 </div>
                 <button
                     type="submit"
