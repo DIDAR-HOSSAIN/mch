@@ -11,6 +11,19 @@ use Inertia\Inertia;
 
 class ResultController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:result-list|result-create|result-edit|result-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:result-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:result-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:result-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:result-dope-receipt', ['only' => ['dopeReport']]);
+        $this->middleware('permission:result-update-report', ['only' => ['updateReport']]);
+        $this->middleware('permission:result-update-status', ['only' => ['updateStatus']]);
+        $this->middleware('permission:result-fetch-patient-id', ['only' => ['fetchByPatientId']]);
+        $this->middleware('permission:result-update-data', ['only' => ['updateData']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */

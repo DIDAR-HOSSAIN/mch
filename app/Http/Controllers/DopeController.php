@@ -15,6 +15,17 @@ use Illuminate\Support\Facades\Validator;
 
 class DopeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:dope-list|dope-create|dope-edit|dope-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:dope-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:dope-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:dope-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:dope-money-receipt', ['only' => ['moneyReceipt']]);
+        $this->middleware('permission:dope-summary-report', ['only' => ['summaryReport']]);
+        $this->middleware('permission:dope-summary-details', ['only' => ['summaryDetails']]);
+        $this->middleware('permission:dope-due-check', ['only' => ['duesCheck']]);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -16,6 +16,18 @@ use Inertia\Inertia;
 
 class GpcrController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:pcr-list|pcr-create|pcr-edit|pcr-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:pcr-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:pcr-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:pcr-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:pcr-money-receipt', ['only' => ['moneyReceipt']]);
+        $this->middleware('permission:pcr-summary-report', ['only' => ['summaryReport']]);
+        $this->middleware('permission:pcr-summary-details', ['only' => ['summaryDetails']]);
+        $this->middleware('permission:pcr-due-check', ['only' => ['duesCheck']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

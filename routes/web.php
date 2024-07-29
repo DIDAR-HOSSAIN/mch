@@ -28,42 +28,67 @@ use Inertia\Inertia;
 |
 */
 
+//Frontend Route
 Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
+//Super admin route
+Route::middleware(['auth', 'check.roles:super-admin'])->group(function () {
 
-Route::get('register', [RegisteredUserController::class, 'create'])->middleware(['auth', 'verified'])->name('register');
+    Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 
-Route::post('register', [RegisteredUserController::class, 'store'])->middleware(['auth', 'verified']);
+    Route::get('register', [RegisteredUserController::class, 'create'])->middleware(['auth', 'verified'])->name('register');
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::resource('roles', RoleController::class);
+    Route::post('register', [RegisteredUserController::class, 'store'])->middleware(['auth', 'verified']);
     Route::resource('users', UserController::class);
-    Route::put('/users/{id}/toggle-active', [UserController::class, 'toggleActiveInactiveUser'])->name('users.toggleActive');
+    Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+    Route::put('/users/{id}/toggle-active', [UserController::class, 'toggleActiveInactiveUser'])->name('users.toggleActive');
+
+    Route::resource('references', ReferenceController::class);
+    Route::resource('district', DistrictController::class);
+    Route::resource('thana', DistrictController::class);
+    Route::get('/district', [DistrictController::class, 'index']);
+    Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
+    
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+//Admin route
+Route::middleware(['auth', 'check.roles:super-admin, admin'])->group(function () {
 
+    Route::resource('users', UserController::class);
+    Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 
-// Route::inertia('/about', 'About')->name('about');
-// Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
-// Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
+    Route::get('register', [RegisteredUserController::class, 'create'])->middleware(['auth', 'verified'])->name('register');
 
-Route::middleware(['auth'])->group(function(){
+    Route::post('register', [RegisteredUserController::class, 'store'])->middleware(['auth', 'verified']);
 
-    // General pcr route
+    Route::get('/results/fetch/{patient_id}', [ResultController::class, 'fetchByPatientId'])->name('result.fetch');
+    Route::patch('/resultUpdate/{result}', [ResultController::class, 'updateData'])->name('result.updateData');
+    Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
+    Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
+    Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+});
+
+//Sub Admin route
+Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin'])->group(function () {
+
+});
+
+//User route
+Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin, user'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
     Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
-
-    // Dope route
     Route::resource('dope', DopeController::class);
     Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
     Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
@@ -72,40 +97,26 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('sample', SampleCollectionController::class);
     Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
     Route::resource('result', ResultController::class);
-    Route::get('/results/fetch/{patient_id}', [ResultController::class, 'fetchByPatientId'])->name('result.fetch');
-    Route::patch('/resultUpdate/{result}', [ResultController::class, 'updateData'])->name('result.updateData');
-    Route::get('dope-report/{id}', [ResultController::class, 'dopeReport'])->name('dope-report');
-    Route::get('update-report', [ResultController::class, 'updateReport'])->name('update-report');
-    Route::put('/update-status', [ResultController::class, 'updateStatus'])->name('update-status');
-    Route::resource('district', DistrictController::class);
-    Route::resource('thana', DistrictController::class);
-    Route::get('/district', [DistrictController::class, 'index']);
-    Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
-    Route::resource('references', ReferenceController::class);
 
 });
 
+//General route
+Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin, user, general'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+});
+
+// Route::inertia('/about', 'About')->name('about');
+// Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+// Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
 
 
-
-
-
-
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', [
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]);
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 require __DIR__ . '/auth.php';

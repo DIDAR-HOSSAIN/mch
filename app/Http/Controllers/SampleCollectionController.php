@@ -16,6 +16,14 @@ use Inertia\Inertia;
 
 class SampleCollectionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:sample-list|sample-create|sample-edit|sample-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:sample-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:sample-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:sample-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:sample-barcode-generate', ['only' => ['barcodeGenerate']]);
+    }
     /**
      * Display a listing of the resource.
      */

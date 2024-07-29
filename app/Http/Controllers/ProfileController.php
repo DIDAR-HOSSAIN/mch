@@ -13,6 +13,14 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:profile-list|profile-create|profile-edit|profile-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:profile-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:profile-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:profile-delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display the user's profile form.
      */

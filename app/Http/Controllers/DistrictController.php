@@ -9,6 +9,15 @@ use App\Models\Thana;
 
 class DistrictController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:district-list|district-create|district-edit|district-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:district-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:district-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:district-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:district-get', ['only' => ['getByDistrict']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -9,6 +9,14 @@ use Inertia\Inertia;
 
 class ReferenceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:reference-list|reference-create|reference-edit|reference-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:reference-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:reference-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:reference-delete', ['only' => ['destroy']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

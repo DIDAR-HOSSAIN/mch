@@ -36,15 +36,27 @@ const UserList = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Users</h1>
+            <div className="flex justify-start items-center mb-6">
                 <Link
                     href="/users/create"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
                 >
                     Create New User
                 </Link>
+                <Link
+                    href="/roles/create"
+                    className="bg-red-600 text-white px-4 py-2 mx-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                >
+                    Manage Roles
+                </Link>
+                <Link
+                    href="/permissions/create"
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                >
+                    Manage Permissions
+                </Link>
             </div>
+            <h1 className="text-2xl font-bold">Users</h1>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-300">
                     <thead>
@@ -75,7 +87,7 @@ const UserList = () => {
                                 <td className="py-2 px-4 border-b">
                                     {user.user_status ? "Active" : "Inactive"}
                                 </td>
-                                <td className="py-2 px-4 border-b flex space-x-2">
+                                <td className="py-2 px-4 border-b flex justify-center space-x-2">
                                     <button
                                         onClick={() =>
                                             handleToggleActive(
