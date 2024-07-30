@@ -36,14 +36,8 @@ Route::get('/', function () {
 Route::post('/', [HomeController::class, 'index'])->name('home');
 
 //Super admin route
-Route::middleware(['auth', 'check.roles:super-admin'])->group(function () {
+Route::middleware(['auth', 'CheckRoles:super-admin'])->group(function () {
 
-    Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
-
-    Route::get('register', [RegisteredUserController::class, 'create'])->middleware(['auth', 'verified'])->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store'])->middleware(['auth', 'verified']);
-    Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
     Route::put('/users/{id}/toggle-active', [UserController::class, 'toggleActiveInactiveUser'])->name('users.toggleActive');
@@ -57,8 +51,8 @@ Route::middleware(['auth', 'check.roles:super-admin'])->group(function () {
 });
 
 //Admin route
-Route::middleware(['auth', 'check.roles:super-admin, admin'])->group(function () {
-
+Route::middleware(['auth', 'CheckRoles:super-admin, admin'])->group(function () {
+    
     Route::resource('users', UserController::class);
     Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 
@@ -78,14 +72,14 @@ Route::middleware(['auth', 'check.roles:super-admin, admin'])->group(function ()
 });
 
 //Sub Admin route
-Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin'])->group(function () {
+Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin'])->group(function () {
 
 });
 
 //User route
-Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin, user'])->group(function () {
+Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin, user'])->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
     Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
@@ -101,10 +95,10 @@ Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin, user'])->
 });
 
 //General route
-Route::middleware(['auth', 'check.roles:super-admin, admin, sub-admin, user, general'])->group(function () {
+Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin, user, general'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    
 });
 
 // Route::inertia('/about', 'About')->name('about');
