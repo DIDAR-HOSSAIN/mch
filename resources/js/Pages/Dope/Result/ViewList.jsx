@@ -9,15 +9,11 @@ const ViewList = ({ auth, results }) => {
     const [filteredData, setFilteredData] = useState(results);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-
-    console.log('results ViewList', filteredData);
     
     const duesArray = results.map((result) => parseInt(result.dope.due));
-    console.log("duesArray", duesArray);
 
     // Check if any due is greater than 0
     const isAnyDueGreaterThanZero = duesArray.some((due) => due > 0);
-    console.log("Is any due greater than 0?", isAnyDueGreaterThanZero);
 
     const handlePerPageChange = (e) => {
         const value = e.target.value;

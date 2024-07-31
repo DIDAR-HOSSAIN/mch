@@ -5,7 +5,7 @@ import "./../../../css/AdminDashboardLayout.css"; // Import your CSS file
 import Breadcrumbs from "@/SharedComponents/Breadcrumbs";
 
 const AdminDashboardLayout = ({user, header, children }) => {
-    console.log("User object in Layout:", user);
+
     // Set initial state based on screen size
     const isSidebarInitiallyOpen = window.innerWidth >= 768; // Adjust the breakpoint as needed
     const [isSidebarOpen, setIsSidebarOpen] = useState(isSidebarInitiallyOpen);

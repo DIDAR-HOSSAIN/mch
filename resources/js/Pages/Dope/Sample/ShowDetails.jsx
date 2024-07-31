@@ -3,7 +3,7 @@ import { Head } from "@inertiajs/react";
 import React from "react";
 
 const ShowDetails = ({ auth, sample }) => {
-    console.log('from sample details', sample);
+    
     const formatDate = (dateString) => {
         const options = { day: "numeric", month: "short", year: "numeric" };
         return new Date(dateString).toLocaleDateString("en-GB", options);

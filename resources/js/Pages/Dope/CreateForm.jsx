@@ -8,8 +8,7 @@ import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
 const CreateForm = ({ auth, districts, references }) => {
-    console.log("dope create form district", districts);
-    console.log("dope create form references", references);
+
     const [brtaFormDate, setBrtaFormDate] = useState(new Date());
     const [brtaSerialDate, setBrtaSerialDate] = useState(new Date());
     const [dob, setDob] = useState(new Date());
@@ -27,9 +26,6 @@ const CreateForm = ({ auth, districts, references }) => {
         age: 0, // Initialize age with 0
         // other form fields...
     });
-
-    console.log("Dope Create Form", data);
-    console.log("Dope Create Form", errors);
 
     const calculateAge = (dob) => {
         const currentDate = new Date();

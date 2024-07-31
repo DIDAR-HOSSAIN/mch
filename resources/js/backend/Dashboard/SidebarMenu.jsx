@@ -208,9 +208,31 @@ const SidebarMenu = () => {
                 <div className="flex flex-col">
                     <Link
                         className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                        href="/registers"
+                        href="/users"
                     >
-                        User List
+                        Manage User
+                    </Link>
+                </div>
+            )}
+
+            {settings && (
+                <div className="flex flex-col">
+                    <Link
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        href="/roles"
+                    >
+                        Manage roles
+                    </Link>
+                </div>
+            )}
+
+            {settings && (
+                <div className="flex flex-col">
+                    <Link
+                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        href="/permissions"
+                    >
+                        Manage Permissions
                     </Link>
                 </div>
             )}
@@ -225,7 +247,6 @@ const SidebarMenu = () => {
                     </Link>
                 </div>
             )}
-
         </div>
     );
 };

@@ -4,7 +4,6 @@ import { Head } from "@inertiajs/react";
 import HomeSearch from "@/frontend/ui/HomeSearch";
 
 const Home = ({ auth, results }) => {
-    console.log("from home", auth.user);
     return (
         <FrontendLayout
             user={auth.user}

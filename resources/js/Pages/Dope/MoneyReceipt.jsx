@@ -7,8 +7,6 @@ import numberToWords from "number-to-words";
 import Barcode from "react-barcode";
 
 const MoneyReceipt = ({ auth, data }) => {
-    console.log("from money receipt", data);
-    console.log("from money auth", auth);
 
     const formatDate = (dateString) => {
         const options = { day: "numeric", month: "short", year: "numeric" };

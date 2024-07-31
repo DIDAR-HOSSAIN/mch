@@ -5,7 +5,7 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
 
 const DateWiseBalanceSummary = ({ auth, data }) => {
-    console.log("Datas:", data);
+
     const [filteredData, setFilteredData] = useState(data);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);

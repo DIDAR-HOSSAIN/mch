@@ -8,8 +8,6 @@ import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
 
 const Report = ({ auth, reports }) => {
-    console.log("from Result report", reports);
-   console.log("from Result report-dope", reports.dope.age);
 
     const formatDate = (dateString) => {
         const options = { day: "numeric", month: "short", year: "numeric" };

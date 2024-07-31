@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
 const UpdateForm = ({ auth, districts, dope }) => {
-    console.log("dope update form existingData", dope);
+
     const [brtaFormDate, setBrtaFormDate] = useState(
         new Date(dope.brta_form_date)
     );
@@ -70,10 +70,6 @@ const UpdateForm = ({ auth, districts, dope }) => {
         );
         setSelectedDistrict(district);
     }, [districts, dope.district]);
-
-    console.log("Dope Update Form", data);
-    console.log("Dope Update Form", errors);
-
 
     const handleDistrictChange = (e) => {
         const districtId = e.target.value;

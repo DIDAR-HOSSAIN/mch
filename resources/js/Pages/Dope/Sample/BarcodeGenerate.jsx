@@ -6,7 +6,6 @@ import { useReactToPrint } from 'react-to-print';
 
 const BarcodeGenerate = ({auth, barcodeData}) => {
 
-    console.log("from barcode", barcodeData);
     const contentToPrint = useRef(null);
     const handlePrint = useReactToPrint({
         documentTitle: `${barcodeData.patient_id || "N/A"}`,

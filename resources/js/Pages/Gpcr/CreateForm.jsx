@@ -29,7 +29,6 @@ const calculateAge = (dob) => {
 };
 
 const CreateForm = ({ auth, districts }) => {
-     console.log("district from gpcr create", districts);
 
     const [dob, setDob] = useState(null);
     const [entryDate, setEntryDate] = useState(new Date());
@@ -37,7 +36,6 @@ const CreateForm = ({ auth, districts }) => {
     const [secondDoseDate, setSecondDoseDate] = useState(null);
     const [boosterDoseDate, setBoosterDoseDate] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
-    console.log("selectedDistrict", selectedDistrict);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",

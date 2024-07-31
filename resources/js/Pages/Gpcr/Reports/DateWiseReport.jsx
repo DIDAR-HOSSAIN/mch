@@ -8,7 +8,7 @@ const DateWiseReport = ({ datas, onSearch }) => {
     const [endDate, setEndDate] = useState(null);
 
     const handleSearch = () => {
-        console.log("Searching...");
+
         if (!datas) {
             return; // Ensure datas is not undefined or null
         }

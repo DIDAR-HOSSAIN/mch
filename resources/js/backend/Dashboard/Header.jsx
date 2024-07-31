@@ -1,8 +1,6 @@
 import UserDropdown from "@/SharedComponents/UserDropdown";
 
 const Header = ({user, isOpen, toggleSidebar }) => {
-    // In Header component
-console.log("User object in Header:", user);
 
     const handleSidebarToggle = () => {
         toggleSidebar(); // Toggle sidebar

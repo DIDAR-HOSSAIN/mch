@@ -6,7 +6,7 @@ import DateWiseReport from "../Dope/Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 
 const ViewList = ({ auth, datas }) => {
-    console.log("gpcr view list", datas.length);
+
     const [filteredData, setFilteredData] = useState(datas);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
