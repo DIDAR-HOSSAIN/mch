@@ -144,10 +144,6 @@ const EditRole = ({ auth }) => {
                         </div>
                     </div>
                 </form>
-
-                <p className="text-center text-primary">
-                    <small>Tutorial by ItSolutionStuff.com</small>
-                </p>
             </div>
         </AdminDashboardLayout>
     );

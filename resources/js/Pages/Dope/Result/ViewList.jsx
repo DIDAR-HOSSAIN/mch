@@ -4,12 +4,13 @@ import { CSVLink } from "react-csv";
 import { useEffect, useState } from "react";
 import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
+import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
 const ViewList = ({ auth, results }) => {
     const [filteredData, setFilteredData] = useState(results);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
-    
+
     const duesArray = results.map((result) => parseInt(result.dope.due));
 
     // Check if any due is greater than 0
@@ -239,24 +240,26 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Show
                                                         </Link>
-                                                        {result_status ===
-                                                            "Approve" &&
-                                                        dope.due <= 0 ? (
-                                                            <Link
-                                                                tabIndex="1"
-                                                                className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
-                                                                href={route(
-                                                                    "dope-report",
-                                                                    id
-                                                                )}
-                                                            >
-                                                                Report
-                                                            </Link>
-                                                        ) : (
-                                                            <span className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded opacity-50 cursor-not-allowed">
-                                                                Report
-                                                            </span>
-                                                        )}
+                                                        {hasAnyRole(auth.user, ["super-admin","admin","sub-admin",]) ? (
+                                                            result_status ==="Approve" && dope.due <= 0 ? (
+                                                                <Link
+                                                                    tabIndex="1"
+                                                                    className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
+                                                                    href={route(
+                                                                        "dope-report",
+                                                                        id
+                                                                    )}
+                                                                >
+                                                                    Report
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded opacity-50 cursor-not-allowed">
+                                                                    Report
+                                                                </span>
+                                                            )
+                                                        ) : null}
+
+                                                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
                                                         <Link
                                                             tabIndex="1"
                                                             className="mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
@@ -267,6 +270,9 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Edit
                                                         </Link>
+                                                    )}
+
+                                                    {hasRole(auth.user, "super-admin") && (
                                                         <button
                                                             onClick={() =>
                                                                 destroy(id)
@@ -277,10 +283,12 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Delete
                                                         </button>
+                                                    )}
                                                     </td>
                                                 </tr>
                                             )
                                         )}
+                                        
                                         {results.length === 0 && (
                                             <tr>
                                                 <td

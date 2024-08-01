@@ -3,6 +3,7 @@ import { Head, Link, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia-react";
 import { useForm } from "@inertiajs/inertia-react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { hasRole } from "@/backend/Utils/RoleCheck";
 
 const UserList = ({ auth }) => {
     const { users } = usePage().props;
@@ -46,6 +47,7 @@ const UserList = ({ auth }) => {
         >
             <Head title="Manage User" />
             <div className="container mx-auto px-4 py-8">
+                {hasRole(auth.user, "super-admin") && (
                 <div className="flex justify-start items-center mb-6">
                     <Link
                         href="/users/create"
@@ -66,6 +68,7 @@ const UserList = ({ auth }) => {
                         Manage Permissions
                     </Link>
                 </div>
+                )}
                 <h1 className="text-2xl font-bold">Users</h1>
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white border border-gray-300">

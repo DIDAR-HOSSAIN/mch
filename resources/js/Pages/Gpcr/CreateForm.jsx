@@ -8,26 +8,6 @@ import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-const calculateAge = (dob) => {
-    const currentDate = new Date();
-    const birthDate = new Date(dob);
-
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-
-    const currentMonth = currentDate.getMonth();
-    const birthMonth = birthDate.getMonth();
-
-    if (
-        currentMonth < birthMonth ||
-        (currentMonth === birthMonth &&
-            currentDate.getDate() < birthDate.getDate())
-    ) {
-        age--;
-    }
-
-    return age;
-};
-
 const CreateForm = ({ auth, districts }) => {
 
     const [dob, setDob] = useState(null);
@@ -40,12 +20,49 @@ const CreateForm = ({ auth, districts }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         email: "",
+        contact_no: "",
         reg_fee: 3000,
-        total: "",
-        dob: null, // Ensure dob is initialized as null
-        age: 0, // Initialize age with 0
+        discount: 0,
+        paid: 0,
+        total: 0,
+        due: 0,
+        dob: null,
+        age: 0,
         // other form fields...
     });
+
+    const calculateAge = (dob) => {
+        const currentDate = new Date();
+        const birthDate = new Date(dob);
+
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        const currentMonth = currentDate.getMonth();
+        const birthMonth = birthDate.getMonth();
+
+        if (
+            currentMonth < birthMonth ||
+            (currentMonth === birthMonth &&
+                currentDate.getDate() < birthDate.getDate())
+        ) {
+            age--;
+        }
+
+        return age;
+    };
+
+     const handleDobChange = (date) => {
+         // Update the state variable
+         setDob(date);
+
+         // Update the form data with the selected date
+         const isoDate = date ? date.toISOString().split("T")[0] : null;
+         setData((prevData) => ({
+             ...prevData,
+             dob: isoDate,
+             age: isoDate ? calculateAge(isoDate) : 0,
+         }));
+     };
 
     // Function to handle district change
         const handleDistrictChange = (e) => {
@@ -57,66 +74,61 @@ const CreateForm = ({ auth, districts }) => {
             setData("district", district ? district.name : ""); // Store the district name
         };
 
+        const handleRegFeeChange = (value) => {
+            const regFee = (value);
+            const discount = (data.discount) || 0;
+            const calculatedTotal = regFee - discount;
+            const paid = (data.paid) || 0;
+            const calculatedDue = calculatedTotal - paid;
 
+            setData((prevData) => ({
+                ...prevData,
+                reg_fee: regFee,
+                total: calculatedTotal,
+                due: calculatedDue,
+            }));
+        };
 
+        const handleDiscountChange = (value) => {
+            const discount = (value);
+            const regFee = (data.reg_fee) || 0;
+            const calculatedTotal = regFee - discount;
+            const paid = (data.paid) || 0;
+            const calculatedDue = calculatedTotal - paid;
 
-    const handleRegFeeChange = (value) => {
-        const regFee = parseFloat(value) || 0;
-        const calculatedTotal = regFee - parseFloat(data.discount);
+            setData((prevData) => ({
+                ...prevData,
+                discount: discount,
+                total: calculatedTotal,
+                due: calculatedDue,
+            }));
+        };
 
-        setTotal(calculatedTotal);
-        setData({ ...data, reg_fee: regFee, total: calculatedTotal });
-    };
+        const handlePaidChange = (value) => {
+            const paid = (value);
+            const regFee = (data.reg_fee) || 0;
+            const discount = (data.discount) || 0;
+            const calculatedTotal = regFee - discount;
+            const calculatedDue = calculatedTotal - paid;
 
-    const handleDiscountChange = (value) => {
-        const discount = parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
-        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
-        const paid = parseFloat(data.paid) || 0;
-        const calculatedDue = calculatedTotal - paid;
+            setData((prevData) => ({
+                ...prevData,
+                paid: paid,
+                due: calculatedDue,
+                total: calculatedTotal,
+            }));
+        };
 
-        setData((prevData) => ({
-            ...prevData,
-            discount: discount,
-            total: calculatedTotal,
-            due: calculatedDue,
-        }));
-    };
-
-    const handlePaidChange = (value) => {
-        const paid = parseFloat(value) || 0;
-        const regFee = parseFloat(data.reg_fee) || 0;
-        const discount = parseFloat(data.discount) || 0;
-        const calculatedTotal = discount ? regFee - discount : regFee; // If there is a discount, subtract it from the reg_fee, otherwise, keep reg_fee as total
-        const calculatedDue = calculatedTotal - paid;
-
-        setData((prevData) => ({
-            ...prevData,
-            paid: paid,
-            due: calculatedDue,
-            total: discount ? calculatedTotal : regFee, // If there is a discount, use calculatedTotal as total, otherwise, keep reg_fee as total
-        }));
-    };
-
-    const handleDueChange = (value) => {
-        const due = parseFloat(value) || 0;
-        const calculatedTotal = (parseFloat(total) || 0) + due;
-        setTotal(calculatedTotal);
-        setData("due", due);
-    };
-
-    const handleDobChange = (date) => {
-        // Update the state variable
-        setDob(date);
-
-        // Update the form data with the selected date
-        const isoDate = date ? date.toISOString().split("T")[0] : null;
-        setData((prevData) => ({
-            ...prevData,
-            dob: isoDate,
-            age: isoDate ? calculateAge(isoDate) : 0,
-        }));
-    };
+        const handleDueChange = (value) => {
+            const due = (value) || 0;
+            const total = (data.total) || 0;
+            const calculatedTotal = total + due;
+            setData((prevData) => ({
+                ...prevData,
+                due: due,
+                total: calculatedTotal,
+            }));
+        };
 
     const handleDateChange = (date, field) => {
         switch (field) {
@@ -287,7 +299,7 @@ const CreateForm = ({ auth, districts }) => {
 
                             <TextInput
                                 id="contact_no"
-                                type="number"
+                                type="text"
                                 name="contact_no"
                                 value={data.contact_no}
                                 className="mt-1 block w-full"
@@ -381,12 +393,11 @@ const CreateForm = ({ auth, districts }) => {
 
                         <div>
                             <InputLabel htmlFor="reg_fee" value="Reg Fee" />
-
                             <TextInput
                                 id="reg_fee"
                                 type="number"
                                 name="reg_fee"
-                                value={data.reg_fee || 3000}
+                                value={data.reg_fee}
                                 className="mt-1 block w-full"
                                 autoComplete="reg_fee"
                                 onChange={(e) =>
@@ -394,7 +405,6 @@ const CreateForm = ({ auth, districts }) => {
                                 }
                                 required
                             />
-
                             <InputError
                                 message={errors.reg_fee}
                                 className="mt-2"

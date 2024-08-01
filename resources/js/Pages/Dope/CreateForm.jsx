@@ -17,11 +17,17 @@ const CreateForm = ({ auth, districts, references }) => {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
+        fathers_name:"",
+        mothers_name:"",
         email: "",
+        contact_no: "",
         test_fee: 900,
         reg_fee: 300,
         online_fee: 300,
-        
+        discount: 0,
+        paid: 0,
+        total: 0,
+        due: 0,
         dob: null, // Ensure dob is initialized as null
         age: 0, // Initialize age with 0
         // other form fields...
@@ -47,6 +53,18 @@ const CreateForm = ({ auth, districts, references }) => {
         return age;
     };
 
+    const handleDobChange = (date) => {
+        setDob(date); // Update the local state for date of birth
+
+        // Update the form data with the selected date and calculated age
+        const isoDate = date ? date.toISOString().split("T")[0] : null;
+        setData((prevData) => ({
+            ...prevData,
+            dob: isoDate,
+            age: isoDate ? calculateAge(isoDate) : 0, // Calculate age based on new dob
+        }));
+    };
+
     // Function to handle district change
     const handleDistrictChange = (e) => {
         const districtId = e.target.value;
@@ -58,24 +76,24 @@ const CreateForm = ({ auth, districts, references }) => {
     };
 
         const handleRegFeeChange = (value) => {
-            const testFee = parseFloat(value) || 0;
+            const testFee = (value) || 0;
             const regFee = 300; // assuming reg_fee is always included
             const onlineFee = 300; // assuming online_fee is always included
             const calculatedTotal =
-                testFee + regFee + onlineFee - parseFloat(data.discount);
+                testFee + regFee + onlineFee - (data.discount);
             setTotal(calculatedTotal);
             setData({ ...data, test_fee: testFee, total: calculatedTotal });
         };
 
         const handleDiscountChange = (value) => {
-            const discount = parseFloat(value) || 0;
-            const testFee = parseFloat(data.test_fee) || 0;
+            const discount = (value);
+            const testFee = (data.test_fee) || 0;
             const regFee = 300; // assuming reg_fee is always included
             const onlineFee = 300; // assuming online_fee is always included
             const calculatedTotal = discount
                 ? testFee + regFee + onlineFee - discount
                 : testFee + regFee + onlineFee;
-            const paid = parseFloat(data.paid) || 0;
+            const paid = (data.paid) || 0;
             const calculatedDue = calculatedTotal - paid;
 
             setData((prevData) => ({
@@ -87,9 +105,9 @@ const CreateForm = ({ auth, districts, references }) => {
         };
 
         const handlePaidChange = (value) => {
-            const paid = parseFloat(value) || 0;
-            const testFee = parseFloat(data.test_fee) || 0;
-            const discount = parseFloat(data.discount) || 0;
+            const paid = (value);
+            const testFee = (data.test_fee) || 0;
+            const discount = (data.discount) || 0;
             const regFee = 300; // assuming reg_fee is always included
             const onlineFee = 300; // assuming online_fee is always included
             const calculatedTotal = discount
@@ -106,28 +124,15 @@ const CreateForm = ({ auth, districts, references }) => {
         };
 
         const handleDueChange = (value) => {
-            const due = parseFloat(value) || 0;
-            const testFee = parseFloat(data.test_fee) || 0;
+            const due = (value) || 0;
+            const testFee = (data.test_fee) || 0;
             const regFee = 300; // assuming reg_fee is always included
             const onlineFee = 300; // assuming online_fee is always included
             const calculatedTotal =
-                (parseFloat(total) || 0) + testFee + regFee + onlineFee + due;
+                ((total) || 0) + testFee + regFee + onlineFee + due;
             setTotal(calculatedTotal);
             setData("due", due);
         };
-
-
-    const handleDobChange = (date) => {
-        setDob(date); // Update the local state for date of birth
-
-        // Update the form data with the selected date and calculated age
-        const isoDate = date ? date.toISOString().split("T")[0] : null;
-        setData((prevData) => ({
-            ...prevData,
-            dob: isoDate,
-            age: isoDate ? calculateAge(isoDate) : 0, // Calculate age based on new dob
-        }));
-    };
 
     const handleDateChange = (date, field) => {
         // Update the selected date in state based on the field
@@ -363,7 +368,7 @@ const CreateForm = ({ auth, districts, references }) => {
 
                             <TextInput
                                 id="contact_no"
-                                type="number"
+                                type="text"
                                 name="contact_no"
                                 value={data.contact_no}
                                 className="mt-1 block w-full"

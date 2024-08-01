@@ -507,7 +507,6 @@ const UpdateForm = ({ auth, districts, dope }) => {
                                 }
                                 className="mt-1 block w-full"
                                 onChange={handleDistrictChange}
-                                required
                             >
                                 <option value="" disabled>
                                     Select a district

@@ -4,6 +4,7 @@ import { CSVLink } from "react-csv";
 import { useEffect, useState } from "react";
 import DateWiseReport from "./Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
+import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
 const ViewList = ({ auth, datas }) => {
     
@@ -212,7 +213,7 @@ const ViewList = ({ auth, datas }) => {
                                                     <td className="border px-4 py-2">
                                                         <Link
                                                             tabIndex="1"
-                                                            className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
+                                                            className="mr-1 px-4 py-2 text-sm text-white bg-blue-900 rounded"
                                                             href={route(
                                                                 "dope.show",
                                                                 id
@@ -230,6 +231,8 @@ const ViewList = ({ auth, datas }) => {
                                                         >
                                                             Money Receipt
                                                         </Link>
+
+                                                        {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin", "user"]) && (
                                                         <Link
                                                             tabIndex="1"
                                                             className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
@@ -240,6 +243,9 @@ const ViewList = ({ auth, datas }) => {
                                                         >
                                                             Edit
                                                         </Link>
+                                                        )}
+
+                                                        {hasRole(auth.user, "super-admin") && (
                                                         <button
                                                             onClick={() =>
                                                                 destroy(id)
@@ -250,6 +256,7 @@ const ViewList = ({ auth, datas }) => {
                                                         >
                                                             Delete
                                                         </button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             )

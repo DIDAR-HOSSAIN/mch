@@ -3,9 +3,10 @@ import { Head, Link, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import Swal from "sweetalert2";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { hasRole } from "@/backend/Utils/RoleCheck";
 
-const RoleList = ({ auth }) => {
-    const { roles } = usePage().props;
+const RoleList = () => {
+    const { auth, roles } = usePage().props;
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -52,12 +53,16 @@ const RoleList = ({ auth }) => {
             <Head title="Manage Roles" />
             <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-700">Manage Roles</h1>
-                    <Link href="/roles/create">
-                        <button className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                            Create Role
-                        </button>
-                    </Link>
+                    <h1 className="text-3xl font-bold text-gray-700">
+                        Manage Roles
+                    </h1>
+                    {hasRole(auth.user, "super-admin") && (
+                        <Link href="/roles/create">
+                            <button className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                Create Role
+                            </button>
+                        </Link>
+                    )}
                 </div>
                 <div className="overflow-x-auto bg-white shadow-md rounded-lg">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -77,28 +82,32 @@ const RoleList = ({ auth }) => {
                                     <td className="px-6 py-4 whitespace-nowrap text-lg font-medium text-gray-900">
                                         {role.name}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <Link
-                                            href={`/roles/${role.id}`}
-                                            className="bg-green-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                                        >
-                                            Show
-                                        </Link>
-                                        <Link
-                                            href={`/roles/${role.id}/edit`}
-                                            className=" mx-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                                        >
-                                            Edit
-                                        </Link>
-                                        <button
-                                            onClick={() =>
-                                                handleDelete(role.id)
-                                            }
-                                            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                                    {hasRole(auth.user, "super-admin") && (
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <Link
+                                                href={`/roles/${role.id}`}
+                                                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                            >
+                                                Show
+                                            </Link>
+
+                                            <Link
+                                                href={`/roles/${role.id}/edit`}
+                                                className=" mx-2 bg-blue-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                            >
+                                                Edit
+                                            </Link>
+
+                                            <button
+                                                onClick={() =>
+                                                    handleDelete(role.id)
+                                                }
+                                                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

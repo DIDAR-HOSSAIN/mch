@@ -2,9 +2,10 @@ import React from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import Swal from "sweetalert2";
+import { hasRole } from "@/backend/Utils/RoleCheck";
 
 const PermissionList = () => {
-    const { permissions } = usePage().props;
+    const { auth, permissions } = usePage().props;
 
     const destroy = (id) => {
         Swal.fire({
@@ -46,11 +47,13 @@ const PermissionList = () => {
                 <h1 className="text-3xl font-bold text-gray-700">
                     Permissions
                 </h1>
+                {hasRole(auth.user, "super-admin") && (
                 <Link href="/roles/create">
                     <button className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                         Create Role
                     </button>
                 </Link>
+                )}
             </div>
             <div className="overflow-x-auto bg-white shadow-md rounded-lg">
                 <table className="min-w-full divide-y divide-gray-200">
