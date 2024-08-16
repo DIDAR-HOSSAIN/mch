@@ -3,8 +3,7 @@ import { useForm, Inertia } from "@inertiajs/inertia-react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
 
-const EditRole = ({ auth, role, permissions, rolePermissions }) => {
-
+const EditRole = ({ auth, role, permissions }) => {
     const { data, setData, put, processing, errors } = useForm({
         _method: "put",
         name: role.name,
@@ -15,7 +14,6 @@ const EditRole = ({ auth, role, permissions, rolePermissions }) => {
         e.preventDefault();
         put(route("roles.update", role.id), {
             onSuccess: () => {
-                // Handle success (optional)
                 Inertia.reload();
             },
         });
@@ -33,7 +31,7 @@ const EditRole = ({ auth, role, permissions, rolePermissions }) => {
             <Head title="Edit Role" />
             <div className="container mx-auto p-6">
                 <h1 className="text-2xl font-bold mb-6">Edit Role</h1>
-                <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
+                <form onSubmit={handleSubmit} className="mx-auto">
                     <div className="mb-4">
                         <label
                             htmlFor="name"
@@ -59,42 +57,48 @@ const EditRole = ({ auth, role, permissions, rolePermissions }) => {
                         <label className="block text-sm font-medium text-gray-700">
                             Permissions
                         </label>
-                        {permissions.map((permission) => (
-                            <div
-                                key={permission.id}
-                                className="flex items-center"
-                            >
-                                <input
-                                    type="checkbox"
-                                    id={`permission-${permission.id}`}
-                                    checked={data.permissions.includes(
-                                        permission.id
-                                    )}
-                                    onChange={() => {
-                                        const isChecked =
-                                            data.permissions.includes(
-                                                permission.id
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            {permissions.map((permission) => (
+                                <div
+                                    key={permission.id}
+                                    className="flex items-center"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        id={`permission-${permission.id}`}
+                                        checked={data.permissions.includes(
+                                            permission.id
+                                        )}
+                                        onChange={() => {
+                                            const isChecked =
+                                                data.permissions.includes(
+                                                    permission.id
+                                                );
+                                            setData(
+                                                "permissions",
+                                                isChecked
+                                                    ? data.permissions.filter(
+                                                          (id) =>
+                                                              id !==
+                                                              permission.id
+                                                      )
+                                                    : [
+                                                          ...data.permissions,
+                                                          permission.id,
+                                                      ]
                                             );
-                                        setData(
-                                            "permissions",
-                                            isChecked
-                                                ? data.permissions.filter(
-                                                      (id) =>
-                                                          id !== permission.id
-                                                  )
-                                                : [
-                                                      ...data.permissions,
-                                                      permission.id,
-                                                  ]
-                                        );
-                                    }}
-                                    className="mr-2"
-                                />
-                                <label htmlFor={`permission-${permission.id}`}>
-                                    {permission.name}
-                                </label>
-                            </div>
-                        ))}
+                                        }}
+                                        className="mr-2"
+                                    />
+                                    <label
+                                        htmlFor={`permission-${permission.id}`}
+                                        className="text-gray-700"
+                                    >
+                                        {permission.name}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <button
                         type="submit"

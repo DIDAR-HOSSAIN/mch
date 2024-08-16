@@ -2,6 +2,7 @@ import React from "react";
 import { Head, Link, usePage } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Inertia } from "@inertiajs/inertia";
+import { hasRole } from "@/backend/Utils/RoleCheck";
 
 const IndexReference = ({ auth }) => {
     const { flash, references } = usePage().props;
@@ -75,11 +76,13 @@ const IndexReference = ({ auth }) => {
                                                                         "references.edit",
                                                                         id
                                                                     )}
-                                                                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline"
+                                                                    tabIndex="-1"
+                                                                    type="button"
+                                                                    className="mx-1 px-4 py-2 text-sm text-white bg-yellow-500 rounded"
                                                                 >
                                                                     Edit
                                                                 </Link>
-
+                                                            {hasRole(auth.user, "super-admin") && (
                                                                 <button
                                                                     onClick={
                                                                         destroy
@@ -91,6 +94,7 @@ const IndexReference = ({ auth }) => {
                                                                 >
                                                                     Delete
                                                                 </button>
+                                                            )}
                                                             </div>
                                                         </td>
                                                     </tr>

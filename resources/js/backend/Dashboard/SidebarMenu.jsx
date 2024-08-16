@@ -1,250 +1,357 @@
 import React, { useState } from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
+import { hasAnyRole, hasRole } from "../Utils/RoleCheck";
 
 const SidebarMenu = () => {
-    const [pcrDropdown, setPcrDropdown] = useState(false);
-    const [dopeDropdown, setDopeDropdown] = useState(false);
-    const [sampleDropdown, setSampleDropdown] = useState(false);
-    const [resultDropdown, setResultDropdown] = useState(false);
-    const [reportApproveDropdown, setReportApproveDropdown] = useState(false);
-    const [settings, setSettings] = useState(false);
+    const { auth } = usePage().props;
 
-    const TogglePcrDropdown = () => {
-        setPcrDropdown(!pcrDropdown);
-    };
+    const [dropdownState, setDropdownState] = useState({
+        pcrDropdown: false,
+        dopeDropdown: false,
+        sampleDropdown: false,
+        resultDropdown: false,
+        reportApproveDropdown: false,
+        settings: false,
+    });
 
-    const ToggleDopeDropdown = () => {
-        setDopeDropdown(!dopeDropdown);
-    };
-
-    const ToggleSampleDropdown = () => {
-        setSampleDropdown(!sampleDropdown);
-    };
-
-    const ToggleResultDropdown = () => {
-        setResultDropdown(!resultDropdown);
-    };
-
-    const ToggleReportApproveDropdown = () => {
-        setReportApproveDropdown(!reportApproveDropdown);
-    };
-
-    const SettingsToggle = () => {
-        setSettings(!settings);
+    const toggleDropdown = (dropdown) => {
+        setDropdownState((prevState) => ({
+            ...prevState,
+            [dropdown]: !prevState[dropdown],
+        }));
     };
 
     return (
         <div>
             <div className="flex">
                 <button
-                    onClick={TogglePcrDropdown}
+                    onClick={() => toggleDropdown("pcrDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {pcrDropdown ? "General PCR ▲" : "General PCR ▼"}
+                    {dropdownState.pcrDropdown
+                        ? "General PCR ▲"
+                        : "General PCR ▼"}
                 </button>
             </div>
-            {pcrDropdown && (
+            {dropdownState.pcrDropdown && (
                 <div className="flex flex-col gap-1">
-                    <Link
-                        href="/pcr/create"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Registration
-                    </Link>
-                    <Link
-                        href="/pcr"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Manage Pcr
-                    </Link>
-                    <Link
-                        href="/summary"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Summary
-                    </Link>
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/pcr/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                        <Link
+                            href="/pcr"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Pcr
+                        </Link>
+                    )}
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
             <div className="flex">
                 <button
-                    onClick={ToggleDopeDropdown}
+                    onClick={() => toggleDropdown("dopeDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {dopeDropdown ? "Dope Reg. ▲" : "Dope Reg. ▼"}
+                    {dropdownState.dopeDropdown ? "Dope Reg. ▲" : "Dope Reg. ▼"}
                 </button>
             </div>
-            {dopeDropdown && (
+            {dropdownState.dopeDropdown && (
                 <div className="flex flex-col gap-1">
-                    <Link
-                        href="/dope/create"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Registration
-                    </Link>
-                    <Link
-                        href="/dope"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Manage Dope
-                    </Link>
-                    <Link
-                        href="/dope-summary"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Summary
-                    </Link>
-                    <Link
-                        href="/summary-details"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Summary Details
-                    </Link>
-                    <Link
-                        href="/dues-details"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Dues Details
-                    </Link>
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/dope/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                        <Link
+                            href="/dope"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Dope
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/summary-details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary Details
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/dues-details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Dues Details
+                        </Link>
+                    )}
                 </div>
             )}
 
             <div className="flex">
                 <button
-                    onClick={ToggleSampleDropdown}
+                    onClick={() => toggleDropdown("sampleDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {sampleDropdown
+                    {dropdownState.sampleDropdown
                         ? "Sample Collection (Dope) ▲"
                         : "Sample Collection (Dope) ▼"}
                 </button>
             </div>
-            {sampleDropdown && (
+            {dropdownState.sampleDropdown && (
                 <div className="flex flex-col gap-1">
-                    <Link
-                        href="/sample/create"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Sample Receive
-                    </Link>
-                    <Link
-                        href="/sample"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Manage Sample
-                    </Link>
-                    <Link
-                        href="/dope-summary"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Summary
-                    </Link>
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/sample/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Sample Receive
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                        <Link
+                            href="/sample"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Sample
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
             <div className="flex">
                 <button
-                    onClick={ToggleResultDropdown}
+                    onClick={() => toggleDropdown("resultDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {resultDropdown
+                    {dropdownState.resultDropdown
                         ? "Result Entry (Dope) ▲"
                         : "Result Entry (Dope) ▼"}
                 </button>
             </div>
-            {resultDropdown && (
+            {dropdownState.resultDropdown && (
                 <div className="flex flex-col gap-1">
-                    <Link
-                        href="/result/create"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Result Input
-                    </Link>
-                    <Link
-                        href="/result"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Manage Result
-                    </Link>
-                    <Link
-                        href="/dope-summary"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Date Wise Summary
-                    </Link>
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                    ]) && (
+                        <Link
+                            href="/result/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Result Input
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/result"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Result
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
             <div className="flex">
                 <button
-                    onClick={ToggleReportApproveDropdown}
+                    onClick={() => toggleDropdown("reportApproveDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {reportApproveDropdown
+                    {dropdownState.reportApproveDropdown
                         ? "Approve Report(Dope) ▲"
                         : "Approve Report (Dope) ▼"}
                 </button>
             </div>
-            {reportApproveDropdown && (
+            {dropdownState.reportApproveDropdown && (
                 <div className="flex flex-col gap-1">
-                    <Link
-                        href="/update-report"
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                    >
-                        Approve Report
-                    </Link>
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/update-report"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Approve Report
+                        </Link>
+                    )}
                 </div>
             )}
 
             <div className="flex">
                 <button
-                    onClick={SettingsToggle}
+                    onClick={() => toggleDropdown("settings")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {settings ? "Settings ▲" : "Settings ▼"}
+                    {dropdownState.settings ? "Settings ▲" : "Settings ▼"}
                 </button>
             </div>
-            {settings && (
+            {dropdownState.settings && (
                 <div className="flex flex-col">
-                    <Link
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                        href="/users"
-                    >
-                        Manage User
-                    </Link>
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            href="/users"
+                        >
+                            Manage User
+                        </Link>
+                    )}
                 </div>
             )}
-
-            {settings && (
+            {dropdownState.settings && (
                 <div className="flex flex-col">
-                    <Link
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                        href="/roles"
-                    >
-                        Manage roles
-                    </Link>
+                    {hasRole(auth.user, "super-admin") && (
+                        <Link
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            href="/roles"
+                        >
+                            Manage roles
+                        </Link>
+                    )}
                 </div>
             )}
-
-            {settings && (
+            
+            {dropdownState.settings && (
                 <div className="flex flex-col">
-                    <Link
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                        href="/permissions"
-                    >
-                        Manage Permissions
-                    </Link>
+                    {hasRole(auth.user, "super-admin") && (
+                        <Link
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            href="/permissions"
+                        >
+                            Manage Permissions
+                        </Link>
+                    )}
                 </div>
             )}
-
-            {settings && (
+            {dropdownState.settings && (
                 <div className="flex flex-col">
-                    <Link
-                        className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                        href="/references"
-                    >
-                        Manage Reference
-                    </Link>
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            href="/references"
+                        >
+                            Manage Reference
+                        </Link>
+                    )}
                 </div>
             )}
         </div>

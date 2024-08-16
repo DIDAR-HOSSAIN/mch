@@ -48,26 +48,26 @@ const UserList = ({ auth }) => {
             <Head title="Manage User" />
             <div className="container mx-auto px-4 py-8">
                 {hasRole(auth.user, "super-admin") && (
-                <div className="flex justify-start items-center mb-6">
-                    <Link
-                        href="/users/create"
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
-                    >
-                        Create New User
-                    </Link>
-                    <Link
-                        href="/roles/create"
-                        className="bg-red-600 text-white px-4 py-2 mx-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
-                    >
-                        Manage Roles
-                    </Link>
-                    <Link
-                        href="/permissions/create"
-                        className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
-                    >
-                        Manage Permissions
-                    </Link>
-                </div>
+                    <div className="flex justify-start items-center mb-6">
+                        <Link
+                            href="/users/create"
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                        >
+                            Create New User
+                        </Link>
+                        <Link
+                            href="/roles"
+                            className="bg-red-600 text-white px-4 py-2 mx-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                        >
+                            Manage Roles
+                        </Link>
+                        <Link
+                            href="/permissions/create"
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-200"
+                        >
+                            Manage Permissions
+                        </Link>
+                    </div>
                 )}
                 <h1 className="text-2xl font-bold">Users</h1>
                 <div className="overflow-x-auto">
@@ -102,39 +102,41 @@ const UserList = ({ auth }) => {
                                             ? "Active"
                                             : "Inactive"}
                                     </td>
-                                    <td className="py-2 px-4 border-b flex justify-center space-x-2">
-                                        <button
-                                            onClick={() =>
-                                                handleToggleActive(
-                                                    user.id,
+                                    {hasRole(auth.user, "super-admin") && (
+                                        <td className="py-2 px-4 border-b flex justify-center space-x-2">
+                                            <button
+                                                onClick={() =>
+                                                    handleToggleActive(
+                                                        user.id,
+                                                        user.user_status
+                                                    )
+                                                }
+                                                className={`w-24 h-10 rounded-lg shadow transition duration-200 ${
                                                     user.user_status
-                                                )
-                                            }
-                                            className={`px-4 py-2 rounded-lg shadow transition duration-200 ${
-                                                user.user_status
-                                                    ? "bg-green-500 hover:bg-green-600 text-white"
-                                                    : "bg-gray-500 hover:bg-gray-600 text-white"
-                                            }`}
-                                        >
-                                            {user.user_status
-                                                ? "Deactivate"
-                                                : "Activate"}
-                                        </button>
-                                        <Link
-                                            href={`/users/${user.id}/edit`}
-                                            className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition duration-200"
-                                        >
-                                            Edit
-                                        </Link>
-                                        <button
-                                            onClick={() =>
-                                                handleDelete(user.id)
-                                            }
-                                            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition duration-200"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                                                        ? "bg-green-500 hover:bg-green-600 text-white"
+                                                        : "bg-gray-500 hover:bg-gray-600 text-white"
+                                                }`}
+                                            >
+                                                {user.user_status
+                                                    ? "Deactivate"
+                                                    : "Activate"}
+                                            </button>
+                                            <Link
+                                                href={`/users/${user.id}/edit`}
+                                                className="w-24 h-10 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 transition duration-200 flex items-center justify-center"
+                                            >
+                                                Edit
+                                            </Link>
+                                            <button
+                                                onClick={() =>
+                                                    handleDelete(user.id)
+                                                }
+                                                className="w-24 h-10 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition duration-200"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>
