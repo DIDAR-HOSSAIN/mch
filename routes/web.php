@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\ProfileController;
@@ -34,9 +35,12 @@ Route::get('/', function () {
 })->name('home');
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
+Route::inertia('/about', 'About')->name('about');
+Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
+Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
 //Super admin route
-Route::middleware(['auth', 'CheckRoles:super-admin'])->group(function () {
+Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin'])->group(function () {
 
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
@@ -47,12 +51,11 @@ Route::middleware(['auth', 'CheckRoles:super-admin'])->group(function () {
     Route::resource('thana', DistrictController::class);
     Route::get('/district', [DistrictController::class, 'index']);
     Route::get('/thana/{districtId}', [Thana::class, 'getByDistrict']);
-    
 });
 
 //Admin route
-Route::middleware(['auth', 'CheckRoles:super-admin, admin'])->group(function () {
-    
+Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin'])->group(function () {
+
     Route::resource('users', UserController::class);
     Route::get('registers', [RegisteredUserController::class, 'index'])->middleware(['auth', 'verified'])->name('registers');
 
@@ -68,18 +71,14 @@ Route::middleware(['auth', 'CheckRoles:super-admin, admin'])->group(function () 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
 });
 
 //Sub Admin route
-Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin'])->group(function () {
-
-});
+Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin'])->group(function () {});
 
 //User route
-Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin, user'])->group(function () {
+Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user'])->group(function () {
 
-    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
     Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');
@@ -91,21 +90,13 @@ Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin, user'])->g
     Route::resource('sample', SampleCollectionController::class);
     Route::get('barcode/{id}', [SampleCollectionController::class, 'barcodeGenerate'])->name('barcode');
     Route::resource('result', ResultController::class);
-
 });
 
 //General route
-Route::middleware(['auth', 'CheckRoles:super-admin, admin, sub-admin, user, general'])->group(function () {
+Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user, general'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
 });
-
-// Route::inertia('/about', 'About')->name('about');
-// Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
-// Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
-
-
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

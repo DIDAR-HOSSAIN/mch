@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckRole
+class CheckUserStatus
 {
     /**
      * Handle an incoming request.
@@ -18,21 +18,19 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // Ensure the user is authenticated
         if (!$user) {
             return redirect()->route('login')->withErrors(['msg' => 'User not authenticated']);
         }
 
-        $roles = ['super-admin', 'admin', 'sub-admin', 'user', 'general'];
-        foreach ($roles as $role) {
-            if ($user->hasRole($role)) {
-                return $next($request);
-            }
+        // Check if user_status is 0 or 1
+        if ($user->user_status == 0) {
+            Auth::logout();
+            return redirect()->route('login')->withErrors(['msg' => 'Your account is inactive or restricted.']);
         }
 
-        Auth::logout();
-        return redirect()->route('login')->withErrors(['msg' => 'User unauthorized']);
+        return $next($request);
     }
 }
