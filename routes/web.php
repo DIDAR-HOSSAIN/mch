@@ -93,7 +93,7 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
 });
 
 //General route
-Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user, general'])->group(function () {
+Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, general'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
