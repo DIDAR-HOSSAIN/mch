@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('dopes', function (Blueprint $table) {
             $table->id();
             $table->string('patient_id')->unique();
-            $table->date('brta_form_date')->default(now())->nullable(false);
+            $table->date('brta_form_date')->useCurrent()->nullable(false);
             $table->string('brta_serial_no')->unique();
-            $table->date('brta_serial_date')->default(now());
+            $table->date('brta_serial_date')->useCurrent();
             $table->string('name')->nullable(false);
             $table->string('fathers_name')->nullable();
             $table->string('mothers_name')->nullable();
@@ -25,9 +25,9 @@ return new class extends Migration
             $table->string('contact_no')->nullable(false);
             $table->string('address')->nullable(false);
             $table->date('dob')->nullable(false);
-            $table->integer('age')->default('0');
+            $table->integer('age')->default(0);
             $table->string('sex')->nullable(false);
-            $table->date('entry_date')->default(now());
+            $table->date('entry_date')->useCurrent();
             $table->string('district')->nullable();
             $table->string('police_station')->nullable();
             $table->string('email')->nullable();

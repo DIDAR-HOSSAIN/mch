@@ -21,6 +21,8 @@ const CreateForm = ({ auth }) => {
         cannabinoids: "",
         amphetamine: "",
         opiates: "",
+        cocaine: "",
+        methamphetamine: "",
         remarks: "",
     });
 
@@ -48,6 +50,8 @@ const CreateForm = ({ auth }) => {
                         cannabinoids: result.cannabinoids,
                         amphetamine: result.amphetamine,
                         opiates: result.opiates,
+                        cocaine: result.cocaine,
+                        methamphetamine: result.methamphetamine,
                         remarks: result.remarks,
                     });
 
@@ -186,6 +190,8 @@ const CreateForm = ({ auth }) => {
                             "cannabinoids",
                             "amphetamine",
                             "opiates",
+                            "cocaine",
+                            "methamphetamine",
                         ].map((drug) => (
                             <div key={drug}>
                                 <InputLabel

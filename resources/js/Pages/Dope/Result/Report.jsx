@@ -52,7 +52,7 @@ const Report = ({ auth, reports }) => {
 
             <div
                 ref={contentToPrint}
-                className="money-receipt bg-white rounded-lg mt-2 p-6 max-w-2xl mx-auto"
+                className="money-receipt bg-white rounded-lg p-6 max-w-2xl mx-auto"
             >
                 <img
                     className="w-full h-full object-contain"
@@ -64,20 +64,20 @@ const Report = ({ auth, reports }) => {
                     01883077569, Email : mchctg.rtpcrlab@gmail.com
                 </p>
 
-                <h1 className="text-2xl font-bold my-2 text-center">
+                <h1 className="text-2xl font-bold mt-2 text-center">
                     Dope Test Report
                 </h1>
 
                 <div className="p-4">
                     {/* Patient Information */}
-                    <div className="bg-gray-100 p-4 mb-4 rounded-md">
+                    <div className="bg-gray-100 p-4 mb-2 rounded-md">
                         <h2 className="text-lg font-semibold mb-3">
                             Patient Information
                         </h2>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <span className="font-semibold">
-                                    Patient ID:{" "}
+                                    Patient ID:
                                 </span>
                                 {reports.patient_id}
                             </div>
@@ -91,13 +91,13 @@ const Report = ({ auth, reports }) => {
                             </div>
                             <div>
                                 <span className="font-semibold">
-                                    Date of Birth:{" "}
+                                    Date of Birth:
                                 </span>
                                 {formatDate(reports.dope.dob)}
                             </div>
                             <div>
                                 <span className="font-semibold">
-                                    Collection Date:{" "}
+                                    Collection Date:
                                 </span>
                                 {formatDate(reports.sample_collection_date)}
                             </div>
@@ -158,6 +158,18 @@ const Report = ({ auth, reports }) => {
                                         {reports.opiates}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td className="py-2 px-4">Cocaine</td>
+                                    <td className="py-2 px-4">
+                                        {reports.cocaine}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="py-2 px-4">Methamphetamine</td>
+                                    <td className="py-2 px-4">
+                                        {reports.methamphetamine}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
 
@@ -170,7 +182,7 @@ const Report = ({ auth, reports }) => {
                         </div>
 
                         <div className="flex gap-6 px-4">
-                            <div className="text-left mt-16">
+                            <div className="text-left mt-2">
                                 <img
                                     className="mx-auto"
                                     src={sign1}
@@ -185,7 +197,7 @@ const Report = ({ auth, reports }) => {
                                 <p>Medical Centre Hospital Chattogram.</p>
                             </div>
 
-                            <div className="text-right mt-16">
+                            <div className="text-right mt-2">
                                 <img
                                     className="mx-auto"
                                     src={sign2}

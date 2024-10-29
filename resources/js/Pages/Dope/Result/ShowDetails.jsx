@@ -34,14 +34,40 @@ const ShowDetails = ({ auth, result }) => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {Object.entries(result).map(([key, value]) => {
-                        if (key === 'patient_id' || key === 'result_date' || key === 'alcohol' || key === 'benzodiazepines' || key === 'cannabinoids' || key === 'amphetamine' || key === 'opiates' || key === 'status' || key === 'remarks') {
+                        if (
+                            key === "patient_id" ||
+                            key === "result_date" ||
+                            key === "alcohol" ||
+                            key === "benzodiazepines" ||
+                            key === "cannabinoids" ||
+                            key === "amphetamine" ||
+                            key === "opiates" ||
+                            key === "cocaine" ||
+                            key === "methamphetamine" ||
+                            key === "status" ||
+                            key === "remarks"
+                        ) {
                             return (
                                 <div key={key} className="mb-4">
                                     <strong className="text-lg text-gray-700 capitalize">
                                         {formatFieldName(key)}:
                                     </strong>
                                     <span className="text-xl text-indigo-900 ml-2">
-                                        {key === 'result_date' ? formatDate(value) : (key === 'status' ? (value === true ? 'Approve' : 'Pending') : (key === 'alcohol' || key === 'benzodiazepines' || key === 'cannabinoids' || key === 'amphetamine' || key === 'opiates' ? formatBooleanField(value) : value))}
+                                        {key === "result_date"
+                                            ? formatDate(value)
+                                            : key === "status"
+                                            ? value === true
+                                                ? "Approve"
+                                                : "Pending"
+                                            : key === "alcohol" ||
+                                              key === "benzodiazepines" ||
+                                              key === "cannabinoids" ||
+                                              key === "amphetamine" ||
+                                              key === "opiates" ||
+                                              key === "cocaine" ||
+                                              key === "methamphetamine"
+                                            ? formatBooleanField(value)
+                                            : value}
                                     </span>
                                 </div>
                             );

@@ -159,6 +159,12 @@ const ViewList = ({ auth, results }) => {
                                                 Opiates
                                             </th>
                                             <th className="px-4 py-2">
+                                                Cocaine
+                                            </th>
+                                            <th className="px-4 py-2">
+                                                Methamphetamine
+                                            </th>
+                                            <th className="px-4 py-2">
                                                 Status
                                             </th>
                                             <th className="px-4 py-2">
@@ -182,6 +188,8 @@ const ViewList = ({ auth, results }) => {
                                                     cannabinoids,
                                                     amphetamine,
                                                     opiates,
+                                                    cocaine,
+                                                    methamphetamine,
                                                     result_status,
                                                     remarks,
                                                     dope,
@@ -216,6 +224,12 @@ const ViewList = ({ auth, results }) => {
                                                     <td className="border px-4 py-2">
                                                         {opiates}
                                                     </td>
+                                                    <td className="border px-4 py-2">
+                                                        {cocaine}
+                                                    </td>
+                                                    <td className="border px-4 py-2">
+                                                        {methamphetamine}
+                                                    </td>
                                                     <td
                                                         className={`border px-4 py-2 ${
                                                             result_status ===
@@ -240,8 +254,14 @@ const ViewList = ({ auth, results }) => {
                                                         >
                                                             Show
                                                         </Link>
-                                                        {hasAnyRole(auth.user, ["super-admin","admin","sub-admin",]) ? (
-                                                            result_status ==="Approve" && dope.due <= 0 ? (
+                                                        {hasAnyRole(auth.user, [
+                                                            "super-admin",
+                                                            "admin",
+                                                            "sub-admin",
+                                                        ]) ? (
+                                                            result_status ===
+                                                                "Approve" &&
+                                                            dope.due <= 0 ? (
                                                                 <Link
                                                                     tabIndex="1"
                                                                     className="px-4 py-2 mt-4 text-sm text-white bg-blue-900 rounded"
@@ -259,36 +279,42 @@ const ViewList = ({ auth, results }) => {
                                                             )
                                                         ) : null}
 
-                                                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
-                                                        <Link
-                                                            tabIndex="1"
-                                                            className="mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
-                                                            href={route(
-                                                                "result.edit",
-                                                                id
-                                                            )}
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                    )}
+                                                        {hasAnyRole(auth.user, [
+                                                            "super-admin",
+                                                            "admin",
+                                                        ]) && (
+                                                            <Link
+                                                                tabIndex="1"
+                                                                className="mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                                                                href={route(
+                                                                    "result.edit",
+                                                                    id
+                                                                )}
+                                                            >
+                                                                Edit
+                                                            </Link>
+                                                        )}
 
-                                                    {hasRole(auth.user, "super-admin") && (
-                                                        <button
-                                                            onClick={() =>
-                                                                destroy(id)
-                                                            }
-                                                            tabIndex="-1"
-                                                            type="button"
-                                                            className="px-4 py-2 text-sm text-white bg-red-500 rounded"
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    )}
+                                                        {hasRole(
+                                                            auth.user,
+                                                            "super-admin"
+                                                        ) && (
+                                                            <button
+                                                                onClick={() =>
+                                                                    destroy(id)
+                                                                }
+                                                                tabIndex="-1"
+                                                                type="button"
+                                                                className="px-4 py-2 text-sm text-white bg-red-500 rounded"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             )
                                         )}
-                                        
+
                                         {results.length === 0 && (
                                             <tr>
                                                 <td

@@ -18,6 +18,8 @@ const EditForm = ({ auth, result }) => {
         cannabinoids: result.cannabinoids || "",
         amphetamine: result.amphetamine || "",
         opiates: result.opiates || "",
+        cocaine: result.cocaine || "",
+        methamphetamine: result.methamphetamine || "",
         result_status: result.result_status || "",
         remarks: result.remarks || "",
     };
@@ -47,20 +49,31 @@ const EditForm = ({ auth, result }) => {
         >
             <Head title="Update Result" />
             <div className="py-2 max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+                >
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div>
-                            <InputLabel htmlFor="patient_id" value="Patient ID" />
+                            <InputLabel
+                                htmlFor="patient_id"
+                                value="Patient ID"
+                            />
                             <TextInput
                                 type="text"
                                 className="mt-1 block w-full"
                                 label="patient_id"
                                 name="patient_id"
                                 value={data.patient_id}
-                                onChange={(e) => setData("patient_id", e.target.value)}
+                                onChange={(e) =>
+                                    setData("patient_id", e.target.value)
+                                }
                                 readOnly
                             />
-                            <InputError message={errors.patient_id} className="mt-2" />
+                            <InputError
+                                message={errors.patient_id}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
@@ -71,18 +84,31 @@ const EditForm = ({ auth, result }) => {
                                 label="name"
                                 name="name"
                                 value={data.name}
-                                onChange={(e) => setData("name", e.target.value)}
+                                onChange={(e) =>
+                                    setData("name", e.target.value)
+                                }
                             />
-                            <InputError message={errors.name} className="mt-2" />
+                            <InputError
+                                message={errors.name}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="result_date" value="Result Date" />
+                            <InputLabel
+                                htmlFor="result_date"
+                                value="Result Date"
+                            />
                             <CustomDatePicker
                                 selectedDate={data.result_date}
-                                handleDateChange={(date) => handleDateChange(date, "result_date")}
+                                handleDateChange={(date) =>
+                                    handleDateChange(date, "result_date")
+                                }
                             />
-                            <InputError message={errors.result_date} className="mt-2" />
+                            <InputError
+                                message={errors.result_date}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
@@ -94,7 +120,9 @@ const EditForm = ({ auth, result }) => {
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Negative"
                                         checked={data.alcohol === "Negative"}
-                                        onChange={() => setData("alcohol", "Negative")}
+                                        onChange={() =>
+                                            setData("alcohol", "Negative")
+                                        }
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
@@ -104,24 +132,39 @@ const EditForm = ({ auth, result }) => {
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Positive"
                                         checked={data.alcohol === "Positive"}
-                                        onChange={() => setData("alcohol", "Positive")}
+                                        onChange={() =>
+                                            setData("alcohol", "Positive")
+                                        }
                                     />
                                     <span className="ml-2">Positive</span>
                                 </label>
                             </div>
-                            <InputError message={errors.alcohol} className="mt-2" />
+                            <InputError
+                                message={errors.alcohol}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="benzodiazepines" value="Benzodiazepines" />
+                            <InputLabel
+                                htmlFor="benzodiazepines"
+                                value="Benzodiazepines"
+                            />
                             <div className="mt-1">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Negative"
-                                        checked={data.benzodiazepines === "Negative"}
-                                        onChange={() => setData("benzodiazepines", "Negative")}
+                                        checked={
+                                            data.benzodiazepines === "Negative"
+                                        }
+                                        onChange={() =>
+                                            setData(
+                                                "benzodiazepines",
+                                                "Negative"
+                                            )
+                                        }
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
@@ -130,25 +173,42 @@ const EditForm = ({ auth, result }) => {
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Positive"
-                                        checked={data.benzodiazepines === "Positive"}
-                                        onChange={() => setData("benzodiazepines", "Positive")}
+                                        checked={
+                                            data.benzodiazepines === "Positive"
+                                        }
+                                        onChange={() =>
+                                            setData(
+                                                "benzodiazepines",
+                                                "Positive"
+                                            )
+                                        }
                                     />
                                     <span className="ml-2">Positive</span>
                                 </label>
                             </div>
-                            <InputError message={errors.benzodiazepines} className="mt-2" />
+                            <InputError
+                                message={errors.benzodiazepines}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="cannabinoids" value="Cannabinoids" />
+                            <InputLabel
+                                htmlFor="cannabinoids"
+                                value="Cannabinoids"
+                            />
                             <div className="mt-1">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Negative"
-                                        checked={data.cannabinoids === "Negative"}
-                                        onChange={() => setData("cannabinoids", "Negative")}
+                                        checked={
+                                            data.cannabinoids === "Negative"
+                                        }
+                                        onChange={() =>
+                                            setData("cannabinoids", "Negative")
+                                        }
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
@@ -157,25 +217,39 @@ const EditForm = ({ auth, result }) => {
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Positive"
-                                        checked={data.cannabinoids === "Positive"}
-                                        onChange={() => setData("cannabinoids", "Positive")}
+                                        checked={
+                                            data.cannabinoids === "Positive"
+                                        }
+                                        onChange={() =>
+                                            setData("cannabinoids", "Positive")
+                                        }
                                     />
                                     <span className="ml-2">Positive</span>
                                 </label>
                             </div>
-                            <InputError message={errors.cannabinoids} className="mt-2" />
+                            <InputError
+                                message={errors.cannabinoids}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="amphetamine" value="Amphetamine" />
+                            <InputLabel
+                                htmlFor="amphetamine"
+                                value="Amphetamine"
+                            />
                             <div className="mt-1">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Negative"
-                                        checked={data.amphetamine === "Negative"}
-                                        onChange={() => setData("amphetamine", "Negative")}
+                                        checked={
+                                            data.amphetamine === "Negative"
+                                        }
+                                        onChange={() =>
+                                            setData("amphetamine", "Negative")
+                                        }
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
@@ -184,13 +258,20 @@ const EditForm = ({ auth, result }) => {
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Positive"
-                                        checked={data.amphetamine === "Positive"}
-                                        onChange={() => setData("amphetamine", "Positive")}
+                                        checked={
+                                            data.amphetamine === "Positive"
+                                        }
+                                        onChange={() =>
+                                            setData("amphetamine", "Positive")
+                                        }
                                     />
                                     <span className="ml-2">Positive</span>
                                 </label>
                             </div>
-                            <InputError message={errors.amphetamine} className="mt-2" />
+                            <InputError
+                                message={errors.amphetamine}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
@@ -202,7 +283,9 @@ const EditForm = ({ auth, result }) => {
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Negative"
                                         checked={data.opiates === "Negative"}
-                                        onChange={() => setData("opiates", "Negative")}
+                                        onChange={() =>
+                                            setData("opiates", "Negative")
+                                        }
                                     />
                                     <span className="ml-2">Negative</span>
                                 </label>
@@ -212,24 +295,104 @@ const EditForm = ({ auth, result }) => {
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Positive"
                                         checked={data.opiates === "Positive"}
-                                        onChange={() => setData("opiates", "Positive")}
+                                        onChange={() =>
+                                            setData("opiates", "Positive")
+                                        }
                                     />
                                     <span className="ml-2">Positive</span>
                                 </label>
                             </div>
-                            <InputError message={errors.opiates} className="mt-2" />
+                            <InputError
+                                message={errors.opiates}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="result_status" value="Result Status" />
+                            <InputLabel htmlFor="cocaine" value="Cocaine" />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value="Negative"
+                                        checked={data.cocaine === "Negative"}
+                                        onChange={() =>
+                                            setData("cocaine", "Negative")
+                                        }
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value="Positive"
+                                        checked={data.cocaine === "Positive"}
+                                        onChange={() =>
+                                            setData("cocaine", "Positive")
+                                        }
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.cocaine}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="methamphetamine" value="Methamphetamine" />
+                            <div className="mt-1">
+                                <label className="inline-flex items-center">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value="Negative"
+                                        checked={data.methamphetamine === "Negative"}
+                                        onChange={() =>
+                                            setData("methamphetamine", "Negative")
+                                        }
+                                    />
+                                    <span className="ml-2">Negative</span>
+                                </label>
+                                <label className="inline-flex items-center ml-6">
+                                    <input
+                                        type="radio"
+                                        className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
+                                        value="Positive"
+                                        checked={data.methamphetamine === "Positive"}
+                                        onChange={() =>
+                                            setData("methamphetamine", "Positive")
+                                        }
+                                    />
+                                    <span className="ml-2">Positive</span>
+                                </label>
+                            </div>
+                            <InputError
+                                message={errors.methamphetamine}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                htmlFor="result_status"
+                                value="Result Status"
+                            />
                             <div className="mt-1">
                                 <label className="inline-flex items-center">
                                     <input
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Approve"
-                                        checked={data.result_status === "Approve"}
-                                        onChange={() => setData("result_status", "Approve")}
+                                        checked={
+                                            data.result_status === "Approve"
+                                        }
+                                        onChange={() =>
+                                            setData("result_status", "Approve")
+                                        }
                                     />
                                     <span className="ml-2">Approve</span>
                                 </label>
@@ -238,13 +401,20 @@ const EditForm = ({ auth, result }) => {
                                         type="radio"
                                         className="form-radio h-5 w-5 text-indigo-600 border-gray-300"
                                         value="Pending"
-                                        checked={data.result_status === "Pending"}
-                                        onChange={() => setData("result_status", "Pending")}
+                                        checked={
+                                            data.result_status === "Pending"
+                                        }
+                                        onChange={() =>
+                                            setData("result_status", "Pending")
+                                        }
                                     />
                                     <span className="ml-2">Pending</span>
                                 </label>
                             </div>
-                            <InputError message={errors.result_status} className="mt-2" />
+                            <InputError
+                                message={errors.result_status}
+                                className="mt-2"
+                            />
                         </div>
 
                         <div className="sm:col-span-2 lg:col-span-4">
@@ -255,12 +425,21 @@ const EditForm = ({ auth, result }) => {
                                 label="remarks"
                                 name="remarks"
                                 value={data.remarks}
-                                onChange={(e) => setData("remarks", e.target.value)}
+                                onChange={(e) =>
+                                    setData("remarks", e.target.value)
+                                }
                             />
-                            <InputError message={errors.remarks} className="mt-2" />
+                            <InputError
+                                message={errors.remarks}
+                                className="mt-2"
+                            />
                         </div>
                     </div>
-                    <PrimaryButton type="submit" className="mx-auto block w-full mt-4" disabled={processing}>
+                    <PrimaryButton
+                        type="submit"
+                        className="mx-auto block w-full mt-4"
+                        disabled={processing}
+                    >
                         {processing ? "Updating..." : "Update"}
                     </PrimaryButton>
                 </form>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sample_collections', function (Blueprint $table) {
-            $table->id(); // Auto-incrementing primary key
+            $table->id();
             $table->string('patient_id')->unique();
             $table->string('name');
             $table->date('sample_collection_date');

@@ -43,15 +43,6 @@ const PermissionList = () => {
     };
 
     return (
-        <AdminDashboardLayout
-            user={auth.user}
-            header={
-                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Manage Permissions
-                </h1>
-            }
-        >
-            <Head title="Manage User" />
             <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-700">
@@ -113,7 +104,6 @@ const PermissionList = () => {
                     </table>
                 </div>
             </div>
-        </AdminDashboardLayout>
     );
 };
 
