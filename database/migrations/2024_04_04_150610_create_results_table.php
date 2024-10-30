@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('cannabinoids')->default('Negative');
             $table->string('amphetamine')->default('Negative');
             $table->string('opiates')->default('Negative');
-            $table->string('cocaine')->default('Negative');
-            $table->string('methamphetamine')->default('Negative');
+            $table->string('cocaine')->nullable();
+            $table->string('methamphetamine')->nullable();
             $table->enum('result_status', ['Pending', 'Approve'])->default('Pending');
             $table->string('remarks')->nullable();
             $table->string('user_name');

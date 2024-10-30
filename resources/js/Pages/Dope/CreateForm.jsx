@@ -3,9 +3,10 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { Inertia } from "@inertiajs/inertia";
 
 const CreateForm = ({ auth, districts, references }) => {
 
@@ -744,7 +745,7 @@ const CreateForm = ({ auth, districts, references }) => {
                         className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
                         disabled={processing}
                     >
-                        Register
+                        Submit
                     </button>
                 </form>
             </div>

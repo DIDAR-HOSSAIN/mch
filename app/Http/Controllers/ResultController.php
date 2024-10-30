@@ -178,6 +178,8 @@ class ResultController extends Controller
             'cannabinoids' => 'required|in:Negative,Positive',
             'amphetamine' => 'required|in:Negative,Positive',
             'opiates' => 'required|in:Negative,Positive',
+            'cocaine' => 'required|in:Negative,Positive',
+            'methamphetamine' => 'required|in:Negative,Positive',
             'remarks' => 'nullable',
         ]);
 
