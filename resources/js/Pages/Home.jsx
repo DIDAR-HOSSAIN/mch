@@ -15,8 +15,7 @@ const Home = ({ auth, results }) => {
         >
             <Head title="Home" />
 
-            <HomeSearch results={results} />
-           
+            <HomeSearch results={results} />     
 
             {/* <Carousel />
             <OurNetworkService />

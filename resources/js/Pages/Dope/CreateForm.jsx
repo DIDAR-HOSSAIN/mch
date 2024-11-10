@@ -18,8 +18,8 @@ const CreateForm = ({ auth, districts, references }) => {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
-        fathers_name:"",
-        mothers_name:"",
+        fathers_name: "",
+        mothers_name: "",
         email: "",
         contact_no: "",
         test_fee: 900,
@@ -33,6 +33,8 @@ const CreateForm = ({ auth, districts, references }) => {
         age: 0, // Initialize age with 0
         // other form fields...
     });
+
+    console.log('dope reg data', data);
 
     const calculateAge = (dob) => {
         const currentDate = new Date();
@@ -327,9 +329,8 @@ const CreateForm = ({ auth, districts, references }) => {
 
                             <TextInput
                                 id="nid"
-                                type="number"
                                 name="nid"
-                                value={data.nid}
+                                value={data.nid || ""}
                                 className="mt-1 block w-full"
                                 autoComplete="nid"
                                 onChange={(e) => setData("nid", e.target.value)}
@@ -347,7 +348,7 @@ const CreateForm = ({ auth, districts, references }) => {
                             <TextInput
                                 id="passport_no"
                                 name="passport_no"
-                                value={data.passport_no}
+                                value={data.passport_no || ""}
                                 className="mt-1 block w-full"
                                 autoComplete="passport_no"
                                 onChange={(e) =>

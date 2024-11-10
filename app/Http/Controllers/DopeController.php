@@ -79,9 +79,7 @@ class DopeController extends Controller
                 'test_fee' => ['required', 'numeric'],
                 'paid' => ['required', 'numeric'],
                 'total' => ['required', 'numeric'],
-                // Custom validation for either nid or passport_no
-                'nid' => ['nullable', 'required_without:passport_no'],
-                'nid' => ['nullable', 'unique:dopes,nid'],
+                'nid' => ['nullable', 'unique:dopes,nid', 'required_without:passport_no'],
                 'passport_no' => ['nullable', 'required_without:nid'],
             ], [
                 'brta_serial_no.required' => 'BRTA Serial No is required.',
@@ -101,7 +99,7 @@ class DopeController extends Controller
                 'total.numeric' => 'Total amount must be a number.',
                 'nid.required_without' => 'Either NID or Passport Number is required.',
                 'passport_no.required_without' => 'Either Passport Number or NID is required.',
-                ]);
+            ]);
 
             // Check if validation fails
             if ($validator->fails()) {

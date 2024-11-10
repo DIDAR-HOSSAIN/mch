@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name')->nullable(false);
             $table->string('fathers_name')->nullable();
             $table->string('mothers_name')->nullable();
-            $table->integer('nid')->unique()->nullable();
+            $table->string('nid')->unique()->nullable();
             $table->string('passport_no')->unique()->nullable();
             $table->string('contact_no')->nullable(false);
             $table->string('address')->nullable(false);
@@ -31,12 +31,12 @@ return new class extends Migration
             $table->string('district')->nullable();
             $table->string('police_station')->nullable();
             $table->string('email')->nullable();
-            $table->float('test_fee')->default('900');
-            $table->float('reg_fee')->default('300');
-            $table->float('online_fee')->default('300');
+            $table->float('test_fee')->default(900);
+            $table->float('reg_fee')->default(300);
+            $table->float('online_fee')->default(300);
             $table->float('discount')->nullable();
-            $table->float('paid')->default('0');
-            $table->float('due')->default('0');
+            $table->float('paid')->default(0);
+            $table->float('due')->default(0);
             $table->float('total')->nullable();
             $table->string('test_name')->default('Dope Test');
             $table->string('reference_name')->nullable();
