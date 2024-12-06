@@ -14,6 +14,7 @@ use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SampleCollectionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MolecularRegController;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +34,8 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
+
+Route::resource('moleculars', MolecularRegController::class);
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'About')->name('about');
