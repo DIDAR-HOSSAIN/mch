@@ -689,7 +689,7 @@ const CreateForm = ({ auth, districts, references }) => {
                                 ))}
                             </select>
                             <InputError
-                                message={errors.Reference_name}
+                                message={errors.reference_name}
                                 className="mt-2"
                             />
                         </div>
