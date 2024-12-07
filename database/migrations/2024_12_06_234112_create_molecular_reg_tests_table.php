@@ -15,15 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('patient_id')->nullable();
             $table->unsignedBigInteger('test_id')->nullable();
-            $table->date('entry_date')->useCurrent();
-            $table->float('discount')->nullable();
-            $table->float('paid')->default(0);
-            $table->float('due')->default(0);
-            $table->float('total')->nullable();
-            $table->string('reference_name')->nullable();
-            $table->string('payment_type')->default('Cash');
-            $table->string('account_head')->default('Cash in hand');
-            $table->string('user_name');
+            $table->date('test_date')->useCurrent();
+            $table->string('test_name');
+            $table->float('test_fee');
             $table->foreign('patient_id')->references('patient_id')->on('molecular_regs')->onDelete('cascade');
             $table->foreign('test_id')->references('id')->on('molecular_tests')->onDelete('cascade');
             $table->timestamps();

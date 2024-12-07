@@ -18,6 +18,15 @@ return new class extends Migration
             $table->string('contact_no')->nullable(false);
             $table->integer('age')->default(0);
             $table->string('gender')->nullable(false);
+            $table->date('reg_date')->useCurrent();
+            $table->float('discount')->nullable();
+            $table->float('paid')->default(0);
+            $table->float('due')->default(0);
+            $table->float('total')->nullable();
+            $table->string('reference_name')->nullable();
+            $table->string('payment_type')->default('Cash');
+            $table->string('account_head')->default('Cash in hand');
+            $table->string('user_name');
             $table->timestamps();
         });
     }

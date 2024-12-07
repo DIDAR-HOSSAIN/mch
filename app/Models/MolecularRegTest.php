@@ -11,7 +11,7 @@ class MolecularRegTest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['patient_id', 'test_id', 'entry_date', 'discount', 'paid', 'due', 'total', 'user_name'];
+    protected $fillable = ['patient_id', 'test_id', 'entry_date', 'test_name', 'test_fee', 'test_date'];
 
     public function molecularReg()
 {

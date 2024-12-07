@@ -8,6 +8,7 @@ use App\Models\MolecularRegTest;
 use App\Http\Requests\StoreMolecularRegRequest;
 use App\Http\Requests\UpdateMolecularRegRequest;
 use Inertia\Inertia;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -38,19 +39,26 @@ class MolecularRegController extends Controller
      */
     public function store(StoreMolecularRegRequest $request)
     {
-        // Validate incoming request
+    // Validate incoming request
     $validatedData = $request->validated();
 
     try {
         Log::info('Molecular registration started', $validatedData);
 
-        // Start a database transaction to ensure consistency
+        // Start a database transaction
         DB::beginTransaction();
 
         // Step 1: Generate Molecular Registration ID
         $molecularRegId = $this->generateMolecularRegId();
 
-        // Step 2: Create MolecularReg record
+        // Step 2: Check if patient already has financial data recorded
+        $existingReg = MolecularReg::where('patient_id', $molecularRegId)->first();
+
+        if ($existingReg && ($existingReg->discount > 0 || $existingReg->paid > 0 || $existingReg->due > 0)) {
+            throw new Exception('Financial data for this patient has already been recorded and cannot be updated.');
+        }
+
+        // Step 3: Create MolecularReg record
         $molecularReg = MolecularReg::create([
             'patient_id' => $molecularRegId,
             'name' => $request->name,
@@ -59,52 +67,48 @@ class MolecularRegController extends Controller
             'gender' => $request->gender,
             'discount' => $request->discount,
             'paid' => $request->paid,
+            'total' => $request->total,
+            'due' => max($request->total - $request->paid - $request->discount, 0),
+            'reg_date' => Carbon::now()->format('Y-m-d'),
+            'user_name' => auth()->check() ? auth()->user()->name : 'demo user',
         ]);
 
         Log::info('Molecular Registration created', ['patient_id' => $molecularReg->patient_id]);
 
-        // Step 3: Iterate through tests and create MolecularRegTest records
+        // Step 4: Iterate through tests and create MolecularRegTest records
         foreach ($request->tests as $test) {
             $molecularTest = MolecularTest::find($test['test_id']);
             if (!$molecularTest) {
                 throw new Exception('Test not found: ' . $test['test_id']);
             }
 
-            $molecularRegTest = MolecularRegTest::create([
+            MolecularRegTest::create([
                 'patient_id' => $molecularReg->patient_id,
                 'test_id' => $test['test_id'],
                 'test_name' => $molecularTest->test_name,
-                'total' => $test['total'],
-                'discount' => $request->discount,
-                'paid' => $request->paid,
-                'due' => max($test['total'] - $request->paid - $request->discount, 0),
-                'entry_date' => now(),
-                'user_name' => auth()->check() ? auth()->user()->name : 'demo user',
+                'test_fee' => $molecularTest->test_fee,
+                'test_date' => $molecularReg->reg_date,
             ]);
 
-            Log::info('Molecular Test added to Registration', ['molecular_reg_test_id' => $molecularRegTest->id, 'patient_id' => $molecularReg->patient_id]);
+            Log::info('Molecular Test added', ['test_id' => $test['test_id'], 'patient_id' => $molecularReg->patient_id]);
         }
 
-        // Commit the transaction if all operations are successful
+        // Commit transaction
         DB::commit();
 
-        Log::info('Molecular Registration completed successfully!', ['patient_id' => $molecularReg->patient_id]);
-
-        // Return a JSON response with the molecular registration ID and success message
         return response()->json([
             'patient_id' => $molecularReg->patient_id,
-            'message' => 'Molecular Registration placed successfully!'
+            'message' => 'Molecular Registration completed successfully!',
         ], 201);
-
     } catch (Exception $e) {
-        // Rollback the transaction in case of an error
+        // Rollback transaction on error
         DB::rollBack();
-        Log::error('Molecular Registration Failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
-        // Return error response
+        Log::error('Molecular Registration Failed', ['error' => $e->getMessage()]);
+
         return response()->json([
-            'error' => 'Molecular Registration Failed!',
-            'message' => $e->getMessage()
+            'error' => 'Molecular Registration Failed',
+            'message' => $e->getMessage(),
         ], 500);
     }
 }
@@ -112,7 +116,7 @@ class MolecularRegController extends Controller
 // Generate a unique Molecular Registration ID
 private function generateMolecularRegId()
 {
-    $prefix = 'MR';
+    $prefix = 'MCHM';
     $currentDate = now()->format('ymd');
 
     // Loop until a unique patient_id is generated
