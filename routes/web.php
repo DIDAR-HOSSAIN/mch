@@ -15,6 +15,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SampleCollectionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
+use App\Http\Controllers\MolecularRegTestController;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +37,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('moleculars', MolecularRegController::class);
+Route::get('molecular-inv/{id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
+
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'About')->name('about');

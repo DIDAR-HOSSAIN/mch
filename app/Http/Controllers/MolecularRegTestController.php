@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MolecularRegTest;
 use App\Http\Requests\StoreMolecularRegTestRequest;
 use App\Http\Requests\UpdateMolecularRegTestRequest;
+use Inertia\Inertia;
+use App\Models\MolecularReg;
+use App\Models\MolecularRegTest;
 
 class MolecularRegTestController extends Controller
 {
@@ -62,5 +64,17 @@ class MolecularRegTestController extends Controller
     public function destroy(MolecularRegTest $molecularRegTest)
     {
         //
+    }
+
+    public function molecularMoneyReceipt($id)
+    {
+        // Fetch patient details
+        $patient = MolecularReg::where('patient_id', $id)->firstOrFail();
+
+        // Fetch associated test details
+        $tests = MolecularRegTest::where('patient_id', $id)->get();
+
+        // Combine data for receipt
+        return Inertia::render ('Molecular/MoneyReceipt', compact('patient', 'tests'));
     }
 }

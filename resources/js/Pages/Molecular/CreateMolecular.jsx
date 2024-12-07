@@ -9,7 +9,7 @@ const CreateMolecular = ({ references = [] }) => {
     const [overallDiscount, setOverallDiscount] = useState(0);
     const [overallPaid, setOverallPaid] = useState(0);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: "",
         contact_no: "",
         age: "",
@@ -87,6 +87,7 @@ const CreateMolecular = ({ references = [] }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route("moleculars.store"));
+        reset();
     };
 
       const selectedTestIds = testFields.map((test) => test.test_id);

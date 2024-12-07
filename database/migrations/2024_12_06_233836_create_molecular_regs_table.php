@@ -25,8 +25,8 @@ return new class extends Migration
             $table->float('total')->nullable();
             $table->float('net_payable')->nullable();
             $table->string('reference_name')->nullable();
-            $table->string('payment_type')->default('Cash');
-            $table->string('account_head')->default('Cash in hand');
+            $table->string('payment_type')->nullable();
+            $table->string('account_head')->nullable();
             $table->string('user_name');
             $table->timestamps();
         });

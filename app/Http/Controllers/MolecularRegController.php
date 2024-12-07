@@ -75,6 +75,8 @@ class MolecularRegController extends Controller
             // Step 4: Calculate due amount
             $dueAmount = max($totalAmount - $request->paid - $request->discount, 0);
 
+            $net_payable = $totalAmount - $request->discount;
+            
             // Step 5: Create the MolecularReg record
             $molecularReg = MolecularReg::create([
                 'patient_id'    => $molecularRegId,
@@ -85,6 +87,7 @@ class MolecularRegController extends Controller
                 'discount'      => $request->discount,
                 'paid'          => $request->paid,
                 'total'         => $totalAmount,
+                'net_payable'   => $net_payable,
                 'due'           => $dueAmount,
                 'reg_date'      => now()->format('Y-m-d'),
                 'reference_name' => $request->reference_name,
