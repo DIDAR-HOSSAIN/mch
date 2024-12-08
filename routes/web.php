@@ -37,7 +37,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('moleculars', MolecularRegController::class);
-Route::get('molecular-inv/{id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
+Route::get('molecular-inv/{patient_id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
+// Route::get('/molecular-inv/{patient_id}', [MolecularRegController::class, 'moneyReceipt'])->name('molecular-inv');
+
 
 
 Route::post('/', [HomeController::class, 'index'])->name('home');

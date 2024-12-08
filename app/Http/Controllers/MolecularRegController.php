@@ -23,7 +23,7 @@ class MolecularRegController extends Controller
     public function index()
     {
         return Inertia::render('Patients/Index', [
-            'patients' => Patient::with('patientTests.test')->get(),
+            'patients' => MolecularReg::with('patientTests.test')->get(),
         ]);
     }
 
@@ -76,7 +76,7 @@ class MolecularRegController extends Controller
             $dueAmount = max($totalAmount - $request->paid - $request->discount, 0);
 
             $net_payable = $totalAmount - $request->discount;
-            
+
             // Step 5: Create the MolecularReg record
             $molecularReg = MolecularReg::create([
                 'patient_id'    => $molecularRegId,
@@ -119,20 +119,19 @@ class MolecularRegController extends Controller
             // Commit the transaction
             DB::commit();
 
-            return response()->json([
-                'patient_id' => $molecularReg->patient_id,
-                'message'    => 'Molecular Registration completed successfully!',
-            ], 201);
+            // Redirect to the money receipt page
+            return redirect()->route('molecular-inv', ['patient_id' => $molecularReg->patient_id])
+                ->with('success', 'Molecular Registration completed successfully!');
         } catch (Exception $e) {
             // Rollback the transaction on error
             DB::rollBack();
 
             Log::error('Molecular Registration failed', ['error' => $e->getMessage()]);
 
-            return response()->json([
-                'error'   => 'Molecular Registration failed',
-                'message' => $e->getMessage(),
-            ], 500);
+            // Redirect back with error
+            return redirect()->back()
+                ->withErrors(['error' => 'Molecular Registration failed: ' . $e->getMessage()])
+                ->withInput();
         }
     }
 
@@ -195,4 +194,12 @@ class MolecularRegController extends Controller
     {
         //
     }
+
+    // public function moneyReceipt($patient_id)
+    // {
+    //     $molecularReg = MolecularReg::with('tests')->where('patient_id', $patient_id)->firstOrFail();
+
+    //     return Inertia::render('Molecular/moneyReceipt', compact('molecularReg'));
+    // }
+
 }
