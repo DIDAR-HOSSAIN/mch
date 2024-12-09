@@ -195,11 +195,4 @@ class MolecularRegController extends Controller
         //
     }
 
-    // public function moneyReceipt($patient_id)
-    // {
-    //     $molecularReg = MolecularReg::with('tests')->where('patient_id', $patient_id)->firstOrFail();
-
-    //     return Inertia::render('Molecular/moneyReceipt', compact('molecularReg'));
-    // }
-
 }

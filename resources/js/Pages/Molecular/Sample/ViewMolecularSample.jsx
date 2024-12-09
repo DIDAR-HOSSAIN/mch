@@ -6,7 +6,7 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { CSVLink } from "react-csv";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
-const ViewList = ({ auth, samples }) => {
+const ViewMolecularSample = ({ auth, samples }) => {
     // State for filtered data
        const [filteredData, setFilteredData] = useState(samples);
        const [perPage, setPerPage] = useState(10);
@@ -299,4 +299,4 @@ const ViewList = ({ auth, samples }) => {
     );
 };
 
-export default ViewList;
+export default ViewMolecularSample;

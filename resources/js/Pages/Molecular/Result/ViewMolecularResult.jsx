@@ -6,7 +6,7 @@ import DateWiseReport from "../Reports/DateWiseReport";
 import { Inertia } from "@inertiajs/inertia";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
-const ViewList = ({ auth, results }) => {
+const ViewMolecularResult = ({ auth, results }) => {
     const [filteredData, setFilteredData] = useState(results);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -377,4 +377,4 @@ const ViewList = ({ auth, results }) => {
     );
 };
 
-export default ViewList;
+export default ViewMolecularResult;

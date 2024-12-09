@@ -13,6 +13,8 @@ use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SampleCollectionController;
+use App\Http\Controllers\SampleController; //molecular
+use App\Http\Controllers\MolecularResultController; //molecular result
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
@@ -38,7 +40,12 @@ Route::get('/', function () {
 
 Route::resource('moleculars', MolecularRegController::class);
 Route::get('molecular-inv/{patient_id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
-// Route::get('/molecular-inv/{patient_id}', [MolecularRegController::class, 'moneyReceipt'])->name('molecular-inv');
+
+Route::resource('/samples', SampleController::class);
+Route::resource('/results', MolecularResultController::class);
+Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])->name('samples.receive');
+
+
 
 
 

@@ -231,7 +231,7 @@ const CreateMolecular = ({ references = [] }) => {
                                 ))}
 
                                 {/* Totals Row */}
-                                <tr className="bg-red-600 font-semibold text-lg">
+                                <tr className="bg-green-600 font-semibold text-lg">
                                     <td
                                         colSpan="2"
                                         className="py-2 px-4 text-right"
