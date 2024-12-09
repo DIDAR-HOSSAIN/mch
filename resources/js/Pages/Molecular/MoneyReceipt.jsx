@@ -3,8 +3,8 @@ import { useReactToPrint } from "react-to-print";
 import numberToWords from "number-to-words";
 import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receipt_Header.png";
 import Barcode from "react-barcode";
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularTestReceipt = ({ auth, patient, tests }) => {
     const formatDate = (dateString) => {
@@ -26,7 +26,6 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
         }
     `,
     });
-
 
     const convertToWords = (amount) => {
         if (!amount || isNaN(amount)) return "Invalid amount";

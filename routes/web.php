@@ -47,8 +47,6 @@ Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])-
 
 
 
-
-
 Route::post('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'About')->name('about');
 Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
@@ -111,6 +109,14 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
 Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, general'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+    Route::resource('moleculars', MolecularRegController::class);
+    Route::get('molecular-inv/{patient_id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
+
+    Route::resource('/samples', SampleController::class);
+    Route::resource('/results', MolecularResultController::class);
+    Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])->name('samples.receive');
 });
 
 // Route::middleware('auth')->group(function () {
