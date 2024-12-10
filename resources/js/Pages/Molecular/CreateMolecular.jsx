@@ -19,7 +19,8 @@ const CreateMolecular = ({ auth, references = [] }) => {
         tests: testFields,
         discount: 0,
         paid: 0,
-        account_head: "Cash in Hand",
+        account_head: "Cash in hand",
+        payment_type: "",
         reference_name: "",
     });
 
@@ -159,6 +160,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
+                                <option value="Other">Other</option>
                             </select>
                             <InputError message={errors.gender} />
                         </div>
@@ -368,11 +370,20 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                     }
                                     className="w-full border rounded px-3 py-2"
                                 >
-                                    <option value="Cash">Cash</option>
-                                    <option value="Other">Other</option>
+                                <option value="">Select Payment Type</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Card">Card</option>
+                                <option value="Bkash">Bkash</option>
+                                <option value="Rocket">Rocket</option>
+                                <option value="Nagod">Nagod</option>
+                                <option value="Internet Banking">Internet Banking</option>
+                                <option value="Mobile Banking">Mobile Banking</option>
+                                <option value="Others">Others</option>
                                 </select>
                                 <InputError message={errors.payment_type} />
                             </div>
+                            
                             <div>
                                 <label className="block text-sm font-medium text-gray-600">
                                     Account Head

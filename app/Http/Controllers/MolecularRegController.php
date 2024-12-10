@@ -22,7 +22,7 @@ class MolecularRegController extends Controller
      */
     public function index()
     {
-        $moleculars = MolecularReg::all();
+        $moleculars = MolecularReg::orderBy('patient_id', 'desc')->get();
         return Inertia::render('Molecular/ViewMolecular', ['moleculars' => $moleculars]);
     }
 
@@ -91,7 +91,7 @@ class MolecularRegController extends Controller
                 'reg_date'      => now()->format('Y-m-d'),
                 'reference_name' => $request->reference_name,
                 'payment_type'  => $request->payment_type,
-                'account_head'  => $request->account_head,
+                'account_head'  => $request->account_head ?? 'Cash in hand',
                 'user_name' => auth()->user()->name,
 
 
@@ -179,8 +179,10 @@ class MolecularRegController extends Controller
     public function edit($patient_id)
     {
         $molecularReg = MolecularReg::with('molecularTests')->findOrFail($patient_id);
+        $references = Reference::all();
+        $tests = MolecularTest::select('id', 'test_name', 'test_fee')->get();
         // dd($molecularReg);
-        return Inertia::render('Molecular/EditMolecular', ['molecularReg' => $molecularReg]);
+        return Inertia::render('Molecular/EditMolecular', ['molecularReg' => $molecularReg, 'references' => $references, 'tests' => $tests]);
     }
 
     /**
@@ -202,7 +204,8 @@ class MolecularRegController extends Controller
             'tests.*.test_id' => 'required|exists:molecular_tests,id',
             'discount' => 'required|numeric|min:0',
             'paid' => 'required|numeric|min:0',
-            'account_head' => 'required|string|max:255',
+            'account_head' => 'nullable|string|max:255',
+            'payment_type' => 'nullable|string|max:255',
             'reference_name' => 'nullable|string|max:255',
         ]);
 
@@ -232,7 +235,8 @@ class MolecularRegController extends Controller
             'total' => $totalAmount,
             'net_payable' => $netPayable,
             'due' => $dueAmount,
-            'account_head' => $validatedData['account_head'],
+            'account_head' => $validatedData['account_head'] ?? 'Cash in hand',
+            'payment_type' => $validatedData['payment_type'],
             'reference_name' => $validatedData['reference_name'],
         ]);
 
