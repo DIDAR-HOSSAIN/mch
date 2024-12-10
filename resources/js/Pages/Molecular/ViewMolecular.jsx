@@ -47,11 +47,17 @@ const ViewMolecular = ({ auth, moleculars }) => {
 
     const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
-    const destroy = (id) => {
+    const destroy = (patient_id) => {
         if (confirm("Are you sure you want to delete this molecular?")) {
-            Inertia.delete(route("moleculars.destroy", id));
+            Inertia.delete(route("moleculars.destroy", patient_id), {
+                onError: (error) => console.error("Error:", error),
+                onSuccess: () => alert("Deleted successfully!"),
+            });
         }
     };
+
+    
+    
 
     return (
         <AdminDashboardLayout
@@ -190,9 +196,7 @@ const ViewMolecular = ({ auth, moleculars }) => {
                                         {/* Delete Button */}
                                         {/* {hasRole(auth.user, "super-admin") && ( */}
                                         <button
-                                            onClick={() =>
-                                                destroy(molecular.id)
-                                            }
+                                            onClick={() => destroy(molecular.id)}
                                             tabIndex="-1"
                                             type="button"
                                             className="p-2 text-white bg-red-500 rounded inline-flex items-center"

@@ -276,10 +276,19 @@ class MolecularRegController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MolecularReg $molecularReg)
+    public function destroy($id)
     {
-        MolecularReg::find($molecularReg->id)->delete();
-        return redirect()->route('moleculars.index');
+        $molecularReg = MolecularReg::find($id);
+
+        if (!$molecularReg) {
+            abort(404, 'Record not found.');
+        }
+        // dd($molecularReg);
+        // Proceed with deletion
+        $molecularReg->molecularTests()->delete();
+        $molecularReg->delete();
+
+        return redirect()->route('moleculars.index')->with('success', 'Record deleted successfully.');
     }
 
 }
