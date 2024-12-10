@@ -14,7 +14,7 @@ class MolecularReg extends Model
 
     public function molecularTests()
 {
-    return $this->hasMany(MolecularRegTest::class);
+    return $this->hasMany(MolecularRegTest::class, 'patient_id', 'patient_id');
 }
     
 

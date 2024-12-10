@@ -92,14 +92,6 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                             <span className="font-bold">Contact:</span>{" "}
                             {patient.contact_no}
                         </p>
-                        <p>
-                            <span className="font-bold">Gender:</span>{" "}
-                            {patient.gender}
-                        </p>
-                        <p>
-                            <span className="font-bold">Age:</span>{" "}
-                            {patient.age}
-                        </p>
                     </div>
                     <div>
                         <p>
@@ -107,16 +99,12 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                             {formatDate(patient.reg_date)}
                         </p>
                         <p>
-                            <span className="font-bold">Reference:</span>{" "}
-                            {patient.reference_name || "N/A"}
+                            <span className="font-bold">Age:</span>{" "}
+                            {patient.age}
                         </p>
                         <p>
-                            <span className="font-bold">Payment Type:</span>{" "}
-                            {patient.payment_type || "N/A"}
-                        </p>
-                        <p>
-                            <span className="font-bold">Account Head:</span>{" "}
-                            {patient.account_head || "N/A"}
+                            <span className="font-bold">Gender:</span>{" "}
+                            {patient.gender}
                         </p>
                     </div>
                 </div>
