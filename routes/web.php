@@ -102,9 +102,11 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-
     Route::resource('moleculars', MolecularRegController::class);
     Route::get('molecular-inv/{patient_id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
+    Route::get('molecular/summary', [MolecularRegController::class, 'summaryReport'])->name('molecular.summary');
+    Route::get('molecular/summary/details', [MolecularRegController::class, 'summaryDetails'])->name('molecular.summary.details');
+    Route::get('molecular/dues/details', [MolecularRegController::class, 'duesCheck'])->name('molecular.dues.details');
 
     Route::resource('/samples', SampleController::class);
     Route::resource('/results', MolecularResultController::class);

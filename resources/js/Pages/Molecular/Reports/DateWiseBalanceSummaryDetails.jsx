@@ -9,6 +9,8 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
+
     useEffect(() => {
         filterData(selectedUser, startDate, endDate);
     }, [selectedUser, startDate, endDate]);
@@ -47,11 +49,11 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary (Dope)
+                    Date Wise Balance Summary (Molecular)
                 </h2>
             }
         >
-            <Head title="Dope Summary" />
+            <Head title="Molecular Summary" />
 
             <div className="py-4">
                 <div className="mx-auto max-w-4xl">
@@ -98,7 +100,13 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                             scope="col"
                                             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                         >
-                                            Bill
+                                            Total Bill
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                        >
+                                            Net Bill
                                         </th>
                                         <th
                                             scope="col"
@@ -124,13 +132,16 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                     {filteredData.map((item, index) => (
                                         <tr key={index}>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.entry_date}
+                                                {formatDate(item.reg_date)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.patient_id}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.total}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {item.net_payable}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.discount}
@@ -150,6 +161,9 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap font-bold">
                                             {getColumnSummary("total")}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                            {getColumnSummary("net_payable")}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap font-bold">
                                             {getColumnSummary("discount")}

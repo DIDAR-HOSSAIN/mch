@@ -47,11 +47,11 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary (Dope)
+                    Date Wise Balance Summary (Molecular)
                 </h2>
             }
         >
-            <Head title="Dope Summary" />
+            <Head title="Molecular Summary" />
 
             <div className="py-4">
                 <div className="mx-auto max-w-4xl">
@@ -96,6 +96,14 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap font-bold">
                                         {getColumnSummary("total")}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        Net Bill
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        {getColumnSummary("net_payable")}
                                     </td>
                                 </tr>
                                 <tr>

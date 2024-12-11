@@ -210,7 +210,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/moleculars-summary"
+                                href="/molecular/summary"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Summary
@@ -224,7 +224,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/moleculars-summary-details"
+                                href="/molecular/summary/details"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Summary Details
@@ -238,7 +238,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/moleculars-dues-details"
+                                href="/molecular/dues/details"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Dues Details

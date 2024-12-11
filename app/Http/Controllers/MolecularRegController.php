@@ -9,6 +9,7 @@ use App\Http\Requests\StoreMolecularRegRequest;
 use App\Http\Requests\UpdateMolecularRegRequest;
 use App\Models\Reference;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -291,6 +292,69 @@ class MolecularRegController extends Controller
         $molecularReg->delete();
 
         return redirect()->route('moleculars.index')->with('success', 'Record deleted successfully.');
+    }
+
+    public function summaryReport(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = MolecularReg::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Molecular/Reports/DateWiseBalanceSummary', [
+            'data' => $data
+        ]);
+    }
+
+    public function summaryDetails(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = MolecularReg::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Molecular/Reports/DateWiseBalanceSummaryDetails', [
+            'data' => $data
+        ]);
+    }
+
+    public function duesCheck(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = MolecularReg::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Molecular/Reports/DuesReport', [
+            'data' => $data
+        ]);
     }
 
 }

@@ -3,6 +3,8 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
 import DateWiseReport from "./DateWiseReport";
 
+    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
+
 const DuesReport = ({ auth, data }) => {
     const [filteredData, setFilteredData] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
@@ -50,7 +52,7 @@ const DuesReport = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Dues Report (Dope)
+                    Dues Report (Molecular)
                 </h2>
             }
         >
@@ -109,7 +111,7 @@ const DuesReport = ({ auth, data }) => {
                                     {filteredData.map((item, index) => (
                                         <tr key={index}>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.entry_date}
+                                                {formatDate(item.reg_date)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.patient_id}
