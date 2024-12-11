@@ -38,14 +38,6 @@ Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
 
-Route::resource('moleculars', MolecularRegController::class);
-Route::get('molecular-inv/{patient_id}', [MolecularRegTestController::class, 'molecularMoneyReceipt'])->name('molecular-inv');
-
-Route::resource('/samples', SampleController::class);
-Route::resource('/results', MolecularResultController::class);
-Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])->name('samples.receive');
-
-
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
 Route::inertia('/about', 'About')->name('about');

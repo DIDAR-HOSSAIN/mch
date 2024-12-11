@@ -169,7 +169,9 @@ class MolecularRegController extends Controller
      */
     public function show($id)
     {
-        $molecularReg = MolecularReg::find($id);
+        $molecularReg = MolecularReg::with('molecularTests')->get();
+         $molecularReg = MolecularReg::with('molecularTests')->findOrFail($id);
+        // dd($molecularReg);
         return Inertia::render('Molecular/ShowMolecular', ['molecularReg' => $molecularReg]);
     }
 
