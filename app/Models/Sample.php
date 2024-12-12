@@ -16,8 +16,10 @@ class Sample extends Model
         'collection_date',
         'received_date',
         'received_by',
-        'status',
-        'remarks'
+        'collection_status',
+        'received_status',
+        'remarks',
+        'user_name'
     ];
 
     // Relationship to Patient

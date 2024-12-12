@@ -8,7 +8,9 @@ use App\Http\Requests\UpdateSampleRequest;
 use Inertia\Inertia;
 use App\Models\MolecularRegTest;
 use App\Models\MolecularReg;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +21,7 @@ class SampleController extends Controller
      */
     public function index()
     {
-        $molecularSamples = MolecularRegTest::all();
+        $molecularSamples = Sample::all();
         return Inertia::render('Molecular/Sample/ViewMolecularSample', ['molecularSamples' => $molecularSamples]);
     }
 
@@ -51,20 +53,44 @@ class SampleController extends Controller
 
         $data = $request->all();
 
-        // Check if there is an authenticated user
-        if ($user = Auth::user()) {
-            // Access user properties safely
-            $data['user_name'] = $user->name;
-        } else {
-            // Handle the case where there is no authenticated user
-            // For example, you could set a default value or return an error response
-            return response()->json(['error' => 'User not authenticated'], 401);
-        }
-        
-            Sample::create($data);
-        
-            return redirect()->route('sample.index')->with('success', 'Sample created successfully.');
-       
+        // Generate a unique sample_id
+        $data['sample_id'] = $this->generateMolecularRegId();
+
+        // Add authenticated user details
+        $data['user_name'] = Auth::user()->name;
+
+        // Create the sample in the database
+        Sample::create($data);
+
+        // Redirect with success message
+        return redirect()->route('samples.index')->with('success', 'Sample created successfully.');
+    }
+
+    /**
+     * Generate a unique Molecular Registration ID for the sample.
+     */
+    private function generateMolecularRegId()
+    {
+        $prefix = 'SID';
+        $currentDate = now()->format('ymd');
+
+        do {
+            // Get the maximum sample_id for the current date
+            $latestSampleId = DB::table('samples')
+            ->where('sample_id', 'like', "$prefix-$currentDate-%")
+            ->max('sample_id');
+
+            // Extract and increment the serial number
+            $serialNumber = $latestSampleId ? intval(substr($latestSampleId, -3)) + 1 : 1;
+
+            // Format the serial number with leading zeros
+            $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+
+            // Generate the new sample_id
+            $newSampleId = "$prefix-$currentDate-$serialNumberFormatted";
+        } while (DB::table('samples')->where('sample_id', $newSampleId)->exists());
+
+        return $newSampleId;
     }
 
     /**
@@ -112,7 +138,6 @@ class SampleController extends Controller
             'status' => 'Received',
             'receive_date' => now(),
             'received_by' => $request->received_by,
-            'condition' => $request->condition ?? 'Good',
             'remarks' => $request->remarks,
         ]);
 

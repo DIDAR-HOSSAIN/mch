@@ -8,69 +8,70 @@ import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
 const ViewMolecularSample = ({ auth, molecularSamples }) => {
     // State for filtered data
-       const [filteredData, setFilteredData] = useState(molecularSamples);
-       const [perPage, setPerPage] = useState(10);
-       const [currentPage, setCurrentPage] = useState(1);
+    const [filteredData, setFilteredData] = useState(molecularSamples);
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
 
-       const handlePerPageChange = (e) => {
-           const value = e.target.value;
-           setPerPage(value === "all" ? molecularSamples.length : parseInt(value));
-           setCurrentPage(1);
-       };
+    const handlePerPageChange = (e) => {
+        const value = e.target.value;
+        setPerPage(value === "all" ? molecularSamples.length : parseInt(value));
+        setCurrentPage(1);
+    };
 
-       const totalPages =
-           perPage === "all" ? 1 : Math.ceil(molecularSamples.length / perPage);
+    const totalPages =
+        perPage === "all" ? 1 : Math.ceil(molecularSamples.length / perPage);
 
-       const handlePageChange = (pageNumber) => {
-           setCurrentPage(pageNumber);
-       };
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
-       useEffect(() => {
-           const startIndex = (currentPage - 1) * perPage;
-           const endIndex = Math.min(startIndex + perPage, molecularSamples.length);
-           const displayedData = molecularSamples.slice(startIndex, endIndex);
-           setFilteredData(displayedData);
-       }, [molecularSamples, currentPage, perPage]);
+    useEffect(() => {
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = Math.min(
+            startIndex + perPage,
+            molecularSamples.length
+        );
+        const displayedData = molecularSamples.slice(startIndex, endIndex);
+        setFilteredData(displayedData);
+    }, [molecularSamples, currentPage, perPage]);
 
-       const formatDate = (dateString) => {
-           const options = { day: "numeric", month: "short", year: "numeric" };
-           return new Date(dateString).toLocaleDateString("en-GB", options);
-       };
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
+    };
 
-       const handleDateWiseSearch = (startDate, endDate) => {
-           if (!startDate || !endDate) {
-               setFilteredData(molecularSamples);
-               return;
-           }
+    const handleDateWiseSearch = (startDate, endDate) => {
+        if (!startDate || !endDate) {
+            setFilteredData(molecularSamples);
+            return;
+        }
 
-           const filteredData = molecularSamples.filter((data) => {
-               const entryDate = new Date(data.sample_collection_date);
-               return (
-                   entryDate >= startDate &&
-                   entryDate <= new Date(endDate.getTime() + 86400000)
-               );
-           });
+        const filteredData = molecularSamples.filter((data) => {
+            const entryDate = new Date(data.sample_collection_date);
+            return (
+                entryDate >= startDate &&
+                entryDate <= new Date(endDate.getTime() + 86400000)
+            );
+        });
 
-           setFilteredData(filteredData);
-       };
+        setFilteredData(filteredData);
+    };
 
-       const handleSearch = (searchTerm) => {
-           const filtered = molecularSamples.filter((data) => {
-               return (
-                   data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                   data.patient_id
-                       .toLowerCase()
-                       .includes(searchTerm.toLowerCase())
-               );
-           });
+    const handleSearch = (searchTerm) => {
+        const filtered = molecularSamples.filter((data) => {
+            return (
+                data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
 
-           setFilteredData(filtered);
-       };
+        setFilteredData(filtered);
+    };
 
     // Event handler for deleting a sample
     const destroy = (id) => {
         if (confirm("Are you sure you want to delete this Sample?")) {
-            Inertia.delete(route("sample.destroy", id));
+            Inertia.delete(route("samples.destroy", id));
         }
     };
 
@@ -79,7 +80,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Manage Sample
+                    Manage Molecular Samples
                 </h2>
             }
         >
@@ -88,19 +89,24 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                     <div className="p-6 bg-white border-b border-gray-200">
                         {/* Search and Export Controls */}
                         <div className="flex items-center justify-between mb-6">
-                            {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin", "user"]) && (
-                            <Link
-                                className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
-                                href={route("sample.create")}
-                            >
-                                Create Sample
-                            </Link>
+                            {hasAnyRole(auth.user, [
+                                "super-admin",
+                                "admin",
+                                "sub-admin",
+                                "user",
+                            ]) && (
+                                <Link
+                                    className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
+                                    href={route("samples.create")}
+                                >
+                                    Create Molecular Sample
+                                </Link>
                             )}
 
                             {/* CSV Export Link */}
                             <CSVLink
                                 data={filteredData}
-                                filename={"Sample Report.csv"}
+                                filename={"Molecular_Sample_Report.csv"}
                                 className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                             >
                                 Export
@@ -129,7 +135,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                             </div>
                         </div>
 
-                        {/* Table of molecularSamples */}
+                        {/* Table of Molecular Samples */}
                         <div className="overflow-x-auto">
                             <table className="w-full whitespace-nowrap">
                                 {/* Table Headers */}
@@ -141,10 +147,19 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                         </th>
                                         <th className="px-4 py-2">Name</th>
                                         <th className="px-4 py-2">
-                                            Sample Collection Date
+                                            Collection Date
                                         </th>
                                         <th className="px-4 py-2">
-                                            Sample Status
+                                            Received Date
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Received By
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Collection Status
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Received Status
                                         </th>
                                         <th className="px-4 py-2">Remarks</th>
                                         <th className="px-4 py-2">Action</th>
@@ -159,8 +174,11 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                 id,
                                                 patient_id,
                                                 name,
-                                                sample_collection_date,
-                                                sample_status,
+                                                collection_date,
+                                                received_date,
+                                                received_by,
+                                                collection_status,
+                                                received_status,
                                                 remarks,
                                             },
                                             index
@@ -177,12 +195,20 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {formatDate(
-                                                        sample_collection_date
+                                                        collection_date
                                                     )}
                                                 </td>
-                                        
                                                 <td className="border px-4 py-2">
-                                                    {sample_status}
+                                                    {received_date}
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {received_by}
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {collection_status}
+                                                </td>
+                                                <td className="border px-4 py-2">
+                                                    {received_status}
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {remarks}
@@ -193,47 +219,43 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                         tabIndex="1"
                                                         className="mr-1 px-4 py-2 text-sm text-white bg-blue-900 rounded"
                                                         href={route(
-                                                            "sample.show",
+                                                            "samples.show",
                                                             id
                                                         )}
                                                     >
                                                         Show
                                                     </Link>
-                                                    {/* Barcode Print Link */}
-                                                    <Link
-                                                        tabIndex="1"
-                                                        className="px-4 py-2 text-sm text-white bg-blue-900 rounded"
-                                                        href={route(
-                                                            "barcode",
-                                                            id
-                                                        )}
-                                                    >
-                                                        Barcode Print
-                                                    </Link>
-                                                    {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin"]) && (
-                                                    <Link
-                                                        tabIndex="1"
-                                                        className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
-                                                        href={route(
-                                                            "sample.edit",
-                                                            id
-                                                        )}
-                                                    >
-                                                        Edit
-                                                    </Link>
+                                                    {hasAnyRole(auth.user, [
+                                                        "super-admin",
+                                                        "admin",
+                                                        "sub-admin",
+                                                    ]) && (
+                                                        <Link
+                                                            tabIndex="1"
+                                                            className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
+                                                            href={route(
+                                                                "samples.edit",
+                                                                id
+                                                            )}
+                                                        >
+                                                            Edit
+                                                        </Link>
                                                     )}
 
-                                                    {hasRole(auth.user, "super-admin") && (
-                                                    <button
-                                                        onClick={() =>
-                                                            destroy(id)
-                                                        }
-                                                        tabIndex="-1"
-                                                        type="button"
-                                                        className="px-4 py-2 text-sm text-white bg-red-500 rounded"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                                    {hasRole(
+                                                        auth.user,
+                                                        "super-admin"
+                                                    ) && (
+                                                        <button
+                                                            onClick={() =>
+                                                                destroy(id)
+                                                            }
+                                                            tabIndex="-1"
+                                                            type="button"
+                                                            className="px-4 py-2 text-sm text-white bg-red-500 rounded"
+                                                        >
+                                                            Delete
+                                                        </button>
                                                     )}
                                                 </td>
                                             </tr>
@@ -245,9 +267,9 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                         <tr>
                                             <td
                                                 className="px-6 py-4 border-t"
-                                                colSpan="6"
+                                                colSpan="7"
                                             >
-                                                No contacts found.
+                                                No molecular samples found.
                                             </td>
                                         </tr>
                                     )}

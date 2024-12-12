@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->id();
-            $table->string('id')->change();
             $table->string('sample_id')->unique();
             $table->string('patient_id');
             $table->string('name');

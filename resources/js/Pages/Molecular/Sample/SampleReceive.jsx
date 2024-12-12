@@ -1,181 +1,157 @@
-import CustomDatePicker from "@/Components/DatePicker";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import React, { useState, useEffect } from "react";
+import { useForm } from "@inertiajs/react";
 import TextInput from "@/Components/TextInput";
+import InputLabel from "@/Components/InputLabel";
+import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import CustomDatePicker from "@/Components/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const CreateMolecularSample = ({ auth, regIds, collectors, technicians }) => {
-    const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
-    const [sampleReceivedDate, setSampleReceivedDate] = useState(new Date());
-    const [selectedPatientId, setSelectedPatientId] = useState("");
-    const [selectedPatientName, setSelectedPatientName] = useState("");
-
-    useEffect(() => {
-        if (Array.isArray(regIds) && selectedPatientId) {
-            const selectedPatient = regIds.find(
-                (patient) => patient.patient_id === selectedPatientId
-            );
-            setSelectedPatientName(selectedPatient ? selectedPatient.name : "");
-        }
-    }, [selectedPatientId, regIds]);
+const CreateMolecularSample = ({ auth, regIds }) => {
+    const [selectedPatient, setSelectedPatient] = useState("");
+    const [sampleCollectionDate, setSampleCollectionDate] = useState(
+        new Date()
+    );
 
     const { data, setData, post, processing, errors } = useForm({
         patient_id: "",
         name: "",
         collection_date: "",
-        received_date: "",
-        collected_by: "",
-        received_by: "",
-        status: "",
+        collection_status: "Collected", // Default value
         remarks: "",
+        user_name: auth.user.name,
     });
 
-    const handlePatientChange = (e) => {
-        const selectedPatientId = e.target.value;
-        setSelectedPatientId(selectedPatientId);
-        setData("patient_id", selectedPatientId);
-
-        const selectedPatient = regIds.find(
-            (patient) => patient.patient_id === selectedPatientId
-        );
-        if (selectedPatient) {
-            setData("name", selectedPatient.name);
+    useEffect(() => {
+        if (data.patient_id) {
+            const patient = regIds.find(
+                (p) => p.patient_id === data.patient_id
+            );
+            setSelectedPatient(patient || "");
+            setData("name", patient?.name || "");
         }
-    };
+    }, [data.patient_id]);
 
     const handleCollectionDateChange = (date) => {
         setSampleCollectionDate(date);
-        setData("collection_date", date ? date.toISOString().split("T")[0] : null);
-    };
-
-    const handleReceivedDateChange = (date) => {
-        setSampleReceivedDate(date);
-        setData("received_date", date ? date.toISOString().split("T")[0] : null);
+        setData(
+            "collection_date",
+            date ? date.toISOString().split("T")[0] : null
+        );
     };
 
     const submit = (e) => {
         e.preventDefault();
-        post(route("sample.store"));
+        post(route("samples.store"));
     };
 
     return (
-        <AdminDashboardLayout
-            user={auth.user}
-            header={
-                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Molecular Sample Entry
-                </h1>
-            }
-        >
-            <Head title="Molecular Sample Entry" />
-            <div className="py-4 max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <form
-                    onSubmit={submit}
-                    className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-                >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {/* Patient ID */}
-                        <div>
-                            <InputLabel htmlFor="patient_id">Patient ID:</InputLabel>
-                            <select
-                                id="patient_id"
-                                onChange={handlePatientChange}
-                                value={selectedPatientId}
-                                className="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            >
-                                <option value="">Select a patient</option>
-                                {Array.isArray(regIds) &&
-                                    regIds.map((patient) => (
-                                        <option
-                                            key={patient.id}
-                                            value={patient.patient_id}
-                                        >
-                                            {patient.patient_id}
-                                        </option>
-                                    ))}
-                            </select>
-                        </div>
-
-                        {/* Name */}
-                        <div>
-                            <InputLabel htmlFor="name">Name:</InputLabel>
-                            <TextInput
-                                id="name"
-                                name="name"
-                                value={selectedPatientName}
-                                className="mt-1 block w-full"
-                                readOnly
-                            />
-                            <InputError message={errors.name} className="mt-2" />
-                        </div>
-
-                        {/* Collection Date */}
-                        <div>
-                            <InputLabel htmlFor="collection_date">Collection Date:</InputLabel>
-                            <CustomDatePicker
-                                selectedDate={sampleCollectionDate}
-                                handleDateChange={handleCollectionDateChange}
-                            />
-                            <InputError message={errors.collection_date} className="mt-2" />
-                        </div>
-
-                        {/* Received Date */}
-                        <div>
-                            <InputLabel htmlFor="received_date">Received Date:</InputLabel>
-                            <CustomDatePicker
-                                selectedDate={sampleReceivedDate}
-                                handleDateChange={handleReceivedDateChange}
-                            />
-                            <InputError message={errors.received_date} className="mt-2" />
-                        </div>
-
-                        {/* Received By */}
-                        <div>
-                            <InputLabel htmlFor="received_by">Received By:</InputLabel>
-                            <select
-                                id="received_by"
-                                value={data.received_by}
-                                onChange={(e) => setData("received_by", e.target.value)}
-                                className="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm"
-                            >
-                                <option value="">Select Technician</option>
-                                {Array.isArray(technicians) &&
-                                    technicians.map((technician) => (
-                                        <option key={technician.id} value={technician.id}>
-                                            {technician.name}
-                                        </option>
-                                    ))}
-                            </select>
-                            <InputError message={errors.received_by} className="mt-2" />
-                        </div>
-
-                        {/* Remarks */}
-                        <div className="md:col-span-2 lg:col-span-4">
-                            <InputLabel htmlFor="remarks">Remarks:</InputLabel>
-                            <TextInput
-                                id="remarks"
-                                name="remarks"
-                                value={data.remarks}
-                                className="mt-1 block w-full"
-                                onChange={(e) => setData("remarks", e.target.value)}
-                            />
-                            <InputError message={errors.remarks} className="mt-2" />
-                        </div>
-                    </div>
-                    <div className="flex items-center justify-center mt-6">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            disabled={processing}
+        <AdminDashboardLayout user={auth.user}>
+            <form
+                onSubmit={submit}
+                className="space-y-6 max-w-3xl mx-auto px-4 py-6 bg-white shadow-md rounded-lg"
+            >
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div>
+                        <InputLabel htmlFor="patient_id" value="Patient ID" />
+                        <select
+                            id="patient_id"
+                            value={data.patient_id}
+                            onChange={(e) =>
+                                setData("patient_id", e.target.value)
+                            } // Keep patient_id as a string
+                            className="block w-full"
                         >
-                            {processing ? "Submitting..." : "Submit"}
-                        </button>
+                            <option value="">Select Patient</option>
+                            {regIds.map((patient) => (
+                                <option
+                                    key={patient.id}
+                                    value={patient.patient_id}
+                                >
+                                    {" "}
+                                    {/* Use patient_id here */}
+                                    {patient.patient_id}
+                                </option>
+                            ))}
+                        </select>
+
+                        <InputError
+                            message={errors.patient_id}
+                            className="mt-2"
+                        />
                     </div>
-                </form>
-            </div>
+
+                    <div>
+                        <InputLabel htmlFor="name" value="Name" />
+                        <TextInput
+                            id="name"
+                            value={data.name}
+                            readOnly
+                            className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div>
+                        <InputLabel htmlFor="collection_date">
+                            Collection Date:
+                        </InputLabel>
+                        <CustomDatePicker
+                            selectedDate={sampleCollectionDate}
+                            handleDateChange={handleCollectionDateChange}
+                        />
+                        <InputError
+                            message={errors.collection_date}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div>
+                        <InputLabel
+                            htmlFor="collection_status"
+                            value="Collection Status"
+                        />
+                        <select
+                            id="collection_status"
+                            value={data.collection_status}
+                            onChange={(e) =>
+                                setData("collection_status", e.target.value)
+                            }
+                            className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="Pending">Pending</option>
+                            <option value="Collected">Collected</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                        <InputError
+                            message={errors.collection_status}
+                            className="mt-2"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="remarks" value="Remarks" />
+                    <textarea
+                        id="remarks"
+                        value={data.remarks}
+                        onChange={(e) => setData("remarks", e.target.value)}
+                        className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        rows="2"
+                    />
+                </div>
+
+                <div className="flex justify-center">
+                    <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        disabled={processing}
+                    >
+                        {processing ? "Creating..." : "Submit"}
+                    </button>
+                </div>
+            </form>
         </AdminDashboardLayout>
     );
 };

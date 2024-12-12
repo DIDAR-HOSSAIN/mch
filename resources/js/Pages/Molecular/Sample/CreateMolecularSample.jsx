@@ -6,7 +6,8 @@ import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import CustomDatePicker from "@/Components/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-const CreateSampleForm = ({ auth, regIds }) => {
+
+const CreateMolecularSample = ({ auth, regIds }) => {
     const [selectedPatient, setSelectedPatient] = useState("");
     const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
 
@@ -39,25 +40,38 @@ const CreateSampleForm = ({ auth, regIds }) => {
 
     return (
         <AdminDashboardLayout user={auth.user}>
-            <form onSubmit={submit} className="space-y-6 max-w-3xl mx-auto px-4 py-6 bg-white shadow-md rounded-lg">
+            <form
+                onSubmit={submit}
+                className="space-y-6 max-w-3xl mx-auto px-4 py-6 bg-white shadow-md rounded-lg"
+            >
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div>
                         <InputLabel htmlFor="patient_id" value="Patient ID" />
                         <select
                             id="patient_id"
                             value={data.patient_id}
-                            onChange={(e) => setData("patient_id", Number(e.target.value))} // Ensure it's a number
+                            onChange={(e) =>
+                                setData("patient_id", e.target.value)
+                            } // Keep patient_id as a string
                             className="block w-full"
-                            >
+                        >
                             <option value="">Select Patient</option>
                             {regIds.map((patient) => (
-                            <option key={patient.patient_id} value={patient.id}> {/* Use numeric ID */}
-                                {patient.patient_id}
-                            </option>
+                                <option
+                                    key={patient.id}
+                                    value={patient.patient_id}
+                                >
+                                    {" "}
+                                    {/* Use patient_id here */}
+                                    {patient.patient_id}
+                                </option>
                             ))}
-                            </select>
+                        </select>
 
-                        <InputError message={errors.patient_id} className="mt-2" />
+                        <InputError
+                            message={errors.patient_id}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -73,27 +87,40 @@ const CreateSampleForm = ({ auth, regIds }) => {
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div>
-                            <InputLabel htmlFor="collection_date">Collection Date:</InputLabel>
-                            <CustomDatePicker
-                                selectedDate={sampleCollectionDate}
-                                handleDateChange={handleCollectionDateChange}
-                            />
-                            <InputError message={errors.collection_date} className="mt-2" />
-                        </div>
+                        <InputLabel htmlFor="collection_date">
+                            Collection Date:
+                        </InputLabel>
+                        <CustomDatePicker
+                            selectedDate={sampleCollectionDate}
+                            handleDateChange={handleCollectionDateChange}
+                        />
+                        <InputError
+                            message={errors.collection_date}
+                            className="mt-2"
+                        />
+                    </div>
 
                     <div>
-                        <InputLabel htmlFor="collection_status" value="Collection Status" />
+                        <InputLabel
+                            htmlFor="collection_status"
+                            value="Collection Status"
+                        />
                         <select
                             id="collection_status"
                             value={data.collection_status}
-                            onChange={(e) => setData("collection_status", e.target.value)}
+                            onChange={(e) =>
+                                setData("collection_status", e.target.value)
+                            }
                             className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         >
                             <option value="Pending">Pending</option>
                             <option value="Collected">Collected</option>
                             <option value="Failed">Failed</option>
                         </select>
-                        <InputError message={errors.collection_status} className="mt-2" />
+                        <InputError
+                            message={errors.collection_status}
+                            className="mt-2"
+                        />
                     </div>
                 </div>
 
@@ -122,4 +149,4 @@ const CreateSampleForm = ({ auth, regIds }) => {
     );
 };
 
-export default CreateSampleForm;
+export default CreateMolecularSample;
