@@ -109,7 +109,7 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('molecular/dues/details', [MolecularRegController::class, 'duesCheck'])->name('molecular.dues.details');
 
     Route::resource('/samples', SampleController::class);
-    Route::resource('/results', MolecularResultController::class);
+     Route::resource('/results', MolecularResultController::class);
     Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])->name('samples.receive');
 });
 

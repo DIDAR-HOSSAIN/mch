@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('patient_id');
-            $table->string('sample_code')->unique();
+            $table->string('id')->change();
+            $table->string('sample_id')->unique();
+            $table->string('patient_id');
+            $table->string('name');
             $table->dateTime('collection_date');
             $table->dateTime('received_date')->nullable();
-            $table->string('collected_by');
             $table->string('received_by')->nullable();
-            $table->string('status')->default('Collected'); // 'Collected', 'Received', etc.
-            $table->string('condition')->nullable(); // Sample condition (e.g., 'Intact', 'Damaged')
-            $table->text('remarks')->nullable();
-            // Foreign key to Patient table
-            $table->foreign('patient_id')->references('id')->on('molecular_regs')->onDelete('cascade');
+            $table->enum('collection_status', ['Pending', 'Collected', 'Failed'])->default('Collected');
+            $table->enum('received_status', ['Pending', 'Received', 'Rejected'])->default('Pending');
+            $table->string('remarks')->nullable();
+            $table->string('user_name');
+            $table->foreign('patient_id')->references('patient_id')->on('molecular_regs')->onDelete('cascade');
             $table->timestamps();
         });
     }

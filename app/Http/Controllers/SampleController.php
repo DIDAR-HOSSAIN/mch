@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Sample;
 use App\Http\Requests\StoreSampleRequest;
 use App\Http\Requests\UpdateSampleRequest;
+use Inertia\Inertia;
+use App\Models\MolecularRegTest;
+use App\Models\MolecularReg;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class SampleController extends Controller
 {
@@ -13,7 +19,8 @@ class SampleController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Molecular/ViewMolecularSample', ['tests' => $tests, 'references' => $references]);
+        $molecularSamples = MolecularRegTest::all();
+        return Inertia::render('Molecular/Sample/ViewMolecularSample', ['molecularSamples' => $molecularSamples]);
     }
 
     /**
@@ -21,7 +28,10 @@ class SampleController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Molecular/CreateMolecularSample', ['tests' => $tests, 'references' => $references]);
+        $existingPatientIds = Sample::pluck('patient_id')->toArray();
+
+        $regIds = MolecularReg::whereNotIn('patient_id', $existingPatientIds)->get();
+        return Inertia::render('Molecular/Sample/CreateMolecularSample', [ 'regIds' => $regIds ]);
     }
 
     /**
@@ -29,20 +39,32 @@ class SampleController extends Controller
      */
     public function store(StoreSampleRequest $request)
     {
-        $validated = $request->validate([
-            'patient_id' => 'required',
-            'sample_code' => 'required|unique:samples',
-            'test_id' => 'required',
+        Validator::make($request->all(), [
+            'patient_id' => 'required|string|exists:molecular_regs,patient_id',
             'collection_date' => 'required|date',
-            'collected_by' => 'required|string',
+            'received_date' => 'nullable|date',
+            'received_by' => 'nullable|string|max:255',
+            'collection_status' => 'required|in:Pending,Collected,Failed',
+            'received_status' => 'nullable|in:Pending,Received,Rejected',
             'remarks' => 'nullable|string',
-        ]);
-    
-        $validated['status'] = 'Collected';
-    
-        Sample::create($validated);
-    
-        return response()->json(['message' => 'Sample collected successfully']);
+        ])->validate();
+
+        $data = $request->all();
+
+        // Check if there is an authenticated user
+        if ($user = Auth::user()) {
+            // Access user properties safely
+            $data['user_name'] = $user->name;
+        } else {
+            // Handle the case where there is no authenticated user
+            // For example, you could set a default value or return an error response
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+        
+            Sample::create($data);
+        
+            return redirect()->route('sample.index')->with('success', 'Sample created successfully.');
+       
     }
 
     /**

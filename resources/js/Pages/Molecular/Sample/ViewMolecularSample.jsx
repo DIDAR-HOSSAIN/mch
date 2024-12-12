@@ -6,20 +6,20 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { CSVLink } from "react-csv";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
-const ViewMolecularSample = ({ auth, samples }) => {
+const ViewMolecularSample = ({ auth, molecularSamples }) => {
     // State for filtered data
-       const [filteredData, setFilteredData] = useState(samples);
+       const [filteredData, setFilteredData] = useState(molecularSamples);
        const [perPage, setPerPage] = useState(10);
        const [currentPage, setCurrentPage] = useState(1);
 
        const handlePerPageChange = (e) => {
            const value = e.target.value;
-           setPerPage(value === "all" ? samples.length : parseInt(value));
+           setPerPage(value === "all" ? molecularSamples.length : parseInt(value));
            setCurrentPage(1);
        };
 
        const totalPages =
-           perPage === "all" ? 1 : Math.ceil(samples.length / perPage);
+           perPage === "all" ? 1 : Math.ceil(molecularSamples.length / perPage);
 
        const handlePageChange = (pageNumber) => {
            setCurrentPage(pageNumber);
@@ -27,10 +27,10 @@ const ViewMolecularSample = ({ auth, samples }) => {
 
        useEffect(() => {
            const startIndex = (currentPage - 1) * perPage;
-           const endIndex = Math.min(startIndex + perPage, samples.length);
-           const displayedData = samples.slice(startIndex, endIndex);
+           const endIndex = Math.min(startIndex + perPage, molecularSamples.length);
+           const displayedData = molecularSamples.slice(startIndex, endIndex);
            setFilteredData(displayedData);
-       }, [samples, currentPage, perPage]);
+       }, [molecularSamples, currentPage, perPage]);
 
        const formatDate = (dateString) => {
            const options = { day: "numeric", month: "short", year: "numeric" };
@@ -39,11 +39,11 @@ const ViewMolecularSample = ({ auth, samples }) => {
 
        const handleDateWiseSearch = (startDate, endDate) => {
            if (!startDate || !endDate) {
-               setFilteredData(samples);
+               setFilteredData(molecularSamples);
                return;
            }
 
-           const filteredData = samples.filter((data) => {
+           const filteredData = molecularSamples.filter((data) => {
                const entryDate = new Date(data.sample_collection_date);
                return (
                    entryDate >= startDate &&
@@ -55,7 +55,7 @@ const ViewMolecularSample = ({ auth, samples }) => {
        };
 
        const handleSearch = (searchTerm) => {
-           const filtered = samples.filter((data) => {
+           const filtered = molecularSamples.filter((data) => {
                return (
                    data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                    data.patient_id
@@ -110,7 +110,7 @@ const ViewMolecularSample = ({ auth, samples }) => {
                         {/* Date-wise Filtering */}
                         <div className="flex items-center justify-between mb-6">
                             <DateWiseReport
-                                data={samples}
+                                data={molecularSamples}
                                 onSearch={handleDateWiseSearch}
                                 startDateField="sample_collection_date"
                                 endDateField="sample_collection_date"
@@ -129,7 +129,7 @@ const ViewMolecularSample = ({ auth, samples }) => {
                             </div>
                         </div>
 
-                        {/* Table of Samples */}
+                        {/* Table of molecularSamples */}
                         <div className="overflow-x-auto">
                             <table className="w-full whitespace-nowrap">
                                 {/* Table Headers */}

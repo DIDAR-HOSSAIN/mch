@@ -10,15 +10,14 @@ class Sample extends Model
     use HasFactory;
 
     protected $fillable = [
+        'sample_id',
         'patient_id',
-        'sample_code',
+        'name',
         'collection_date',
         'received_date',
-        'collected_by',
         'received_by',
         'status',
-        'condition',
-        'remarks',
+        'remarks'
     ];
 
     // Relationship to Patient
@@ -28,7 +27,7 @@ class Sample extends Model
     }
 
     // Relationship to Results
-    public function results()
+    public function molecularResults()
     {
         return $this->hasMany(Result::class);
     }
