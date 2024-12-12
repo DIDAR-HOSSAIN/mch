@@ -125,24 +125,29 @@ class SampleController extends Controller
         //
     }
 
-
-    public function receiveSample(Request $request, $id)
+    public function sampleCreate()
     {
-        $sample = Sample::findOrFail($id);
-
-        if ($sample->status !== 'Collected') {
-            return response()->json(['message' => 'Sample must be in "Collected" status to receive'], 400);
-        }
-
-        $sample->update([
-            'status' => 'Received',
-            'receive_date' => now(),
-            'received_by' => $request->received_by,
-            'remarks' => $request->remarks,
-        ]);
-
-        return response()->json(['message' => 'Sample received successfully']);
+        $collectedSamples = Sample::where('collection_status', 'Collected')->get(['id', 'patient_id', 'name', 'collection_date', 'collection_status']);
+        // dd($collectedSamples);
+        return Inertia::render('Molecular/Sample/SampleReceive', [ 'collectedSamples' => $collectedSamples ]);
     }
+
+
+    public function updateReceive(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'received_date' => 'required|date',
+            'received_by' => 'required|string|max:255',
+            'received_status' => 'required|string|max:255',
+            'remarks' => 'nullable|string|max:500',
+        ]);
+    
+        $sample = Sample::findOrFail($id);
+        $sample->update($validated);
+    
+        return redirect()->back()->with('success', 'Sample updated successfully.');
+    }
+    
 
 
 }

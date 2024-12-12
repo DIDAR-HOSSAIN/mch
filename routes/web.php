@@ -108,9 +108,10 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('molecular/summary/details', [MolecularRegController::class, 'summaryDetails'])->name('molecular.summary.details');
     Route::get('molecular/dues/details', [MolecularRegController::class, 'duesCheck'])->name('molecular.dues.details');
 
-    Route::resource('/samples', SampleController::class);
-     Route::resource('/results', MolecularResultController::class);
-    Route::put('/samples/receive/{id}', [SampleController::class, 'receiveSample'])->name('samples.receive');
+    Route::resource('samples', SampleController::class);
+    Route::get('samples-receive', [SampleController::class, 'sampleCreate'])->name('samples-receive');
+    Route::put('/samples/receive/{id}', [SampleController::class, 'updateReceive'])->name('samples.receive.update');
+    Route::resource('/results', MolecularResultController::class);
 });
 
 // Route::middleware('auth')->group(function () {
