@@ -6,7 +6,6 @@ use App\Models\Sample;
 use App\Http\Requests\StoreSampleRequest;
 use App\Http\Requests\UpdateSampleRequest;
 use Inertia\Inertia;
-use App\Models\MolecularRegTest;
 use App\Models\MolecularReg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -106,7 +105,7 @@ class SampleController extends Controller
      */
     public function edit(Sample $sample)
     {
-        //
+        return Inertia::render('Molecular/Sample/EditMolecularSample', ['sample' => $sample]);
     }
 
     /**
@@ -114,7 +113,24 @@ class SampleController extends Controller
      */
     public function update(UpdateSampleRequest $request, Sample $sample)
     {
-        //
+        // Validate the input data
+        Validator::make($request->all(), [
+            'patient_id' => 'required|string|exists:molecular_regs,patient_id',
+            'collection_date' => 'required|date',
+            'received_date' => 'nullable|date',
+            'received_by' => 'nullable|string|max:255',
+            'collection_status' => 'required|in:Pending,Collected,Failed',
+            'received_status' => 'nullable|in:Pending,Received,Rejected',
+            'remarks' => 'nullable|string',
+        ])->validate();
+
+        // Update the sample with the validated data
+        $data = $request->all();
+        $data['user_name'] = Auth::user()->name; // Update the user who modified the data
+        $sample->update($data);
+
+        // Redirect to the index page with a success message
+        return redirect()->route('samples.index')->with('success', 'Sample updated successfully.');
     }
 
     /**
@@ -127,11 +143,13 @@ class SampleController extends Controller
 
     public function sampleCreate()
     {
-        $collectedSamples = Sample::where('collection_status', 'Collected')->get(['id', 'patient_id', 'name', 'collection_date', 'collection_status']);
-        // dd($collectedSamples);
-        return Inertia::render('Molecular/Sample/SampleReceive', [ 'collectedSamples' => $collectedSamples ]);
-    }
+        // Fetch samples with 'Collected' status but exclude those with a 'Received' status
+        $collectedSamples = Sample::where('collection_status', 'Collected')
+            ->where('received_status', '<>', 'Received') // Exclude samples already marked as received
+            ->get(['id', 'patient_id', 'name', 'collection_date', 'collection_status']);
 
+        return Inertia::render('Molecular/Sample/SampleReceive', ['collectedSamples' => $collectedSamples]);
+    }
 
     public function updateReceive(Request $request, $id)
     {
@@ -141,12 +159,13 @@ class SampleController extends Controller
             'received_status' => 'required|string|max:255',
             'remarks' => 'nullable|string|max:500',
         ]);
-    
+
         $sample = Sample::findOrFail($id);
         $sample->update($validated);
-    
+
         return redirect()->back()->with('success', 'Sample updated successfully.');
     }
+
     
 
 
