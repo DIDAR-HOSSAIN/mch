@@ -5,6 +5,7 @@ import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import CustomDatePicker from "@/Components/DatePicker";
+import { format } from "date-fns"; // Use date-fns for formatting
 import "react-datepicker/dist/react-datepicker.css";
 
 const CreateMolecularSample = ({ auth, regIds }) => {
@@ -30,8 +31,11 @@ const CreateMolecularSample = ({ auth, regIds }) => {
 
     const handleCollectionDateChange = (date) => {
         setSampleCollectionDate(date);
-        setData("collection_date", date ? date.toISOString().split("T")[0] : null);
+        const formattedDate = format(date, "yyyy-MM-dd");
+        setData("collection_date", formattedDate);
     };
+
+    console.log('from create molecular', sampleCollectionDate);
 
     const submit = (e) => {
         e.preventDefault();
@@ -52,7 +56,7 @@ const CreateMolecularSample = ({ auth, regIds }) => {
                             value={data.patient_id}
                             onChange={(e) =>
                                 setData("patient_id", e.target.value)
-                            } // Keep patient_id as a string
+                            }
                             className="block w-full"
                         >
                             <option value="">Select Patient</option>
@@ -61,8 +65,6 @@ const CreateMolecularSample = ({ auth, regIds }) => {
                                     key={patient.id}
                                     value={patient.patient_id}
                                 >
-                                    {" "}
-                                    {/* Use patient_id here */}
                                     {patient.patient_id}
                                 </option>
                             ))}

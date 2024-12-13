@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -50,8 +52,8 @@ class SampleController extends Controller
             'remarks' => 'nullable|string',
         ])->validate();
 
-        $data = $request->all();
 
+        $data = $request->all();
         // Generate a unique sample_id
         $data['sample_id'] = $this->generateMolecularRegId();
 

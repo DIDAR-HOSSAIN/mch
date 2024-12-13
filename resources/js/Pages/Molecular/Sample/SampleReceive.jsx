@@ -4,14 +4,21 @@ import TextInput from "@/Components/TextInput";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import CustomDatePicker from "@/Components/DatePicker";
+import { format } from "date-fns"; // For formatting dates
+import "react-datepicker/dist/react-datepicker.css";
 
 const SampleReceive = ({ auth, collectedSamples }) => {
+
+    const [sampleReceivedDate, setSampleReceivedDate] = useState(new Date());
+    const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
+    
     const { data, setData, put, processing, errors } = useForm({
         patient_id: "",
         name: "",
         collection_date: "",
         collection_status: "",
-        received_date: new Date().toISOString().split("T")[0], // Default to today
+        received_date: new Date().toLocaleDateString("en-CA"),
         received_by: auth.user.name,
         received_status: "Received",
         remarks: "",
@@ -41,6 +48,18 @@ const SampleReceive = ({ auth, collectedSamples }) => {
             }));
         }
     }, [data.patient_id, collectedSamples]);
+
+    const handleCollectionDateChange = (date) => {
+            setSampleCollectionDate(date);
+            const formattedDate = format(date, "yyyy-MM-dd");
+            setData("collection_date", formattedDate);
+        };
+
+    const handleReceivedDateChange = (date) => {
+        setSampleReceivedDate(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
+        setData("collection_date", formattedDate);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -93,15 +112,20 @@ const SampleReceive = ({ auth, collectedSamples }) => {
                 </div>
 
                 {/* Collection Date */}
-                <div>
-                    <InputLabel htmlFor="collection_date" value="Collection Date" />
-                    <TextInput
-                        id="collection_date"
-                        value={data.collection_date}
-                        readOnly
-                        className="block w-full bg-gray-100 border-gray-300 rounded-md"
-                    />
-                </div>
+                    <div>
+                        <InputLabel htmlFor="collection_date">
+                            Collection Date:
+                        </InputLabel>
+                        <CustomDatePicker
+                            selectedDate={sampleCollectionDate}
+                            handleDateChange={handleCollectionDateChange}
+                            disabled
+                        />
+                        <InputError
+                            message={errors.collection_date}
+                            className="mt-2"
+                        />
+                    </div>
 
                 {/* Collection Status */}
                 <div>
@@ -122,16 +146,18 @@ const SampleReceive = ({ auth, collectedSamples }) => {
 
                 {/* Received Date */}
                 <div>
-                    <InputLabel htmlFor="received_date" value="Received Date" />
-                    <TextInput
-                        id="received_date"
-                        type="date"
-                        value={data.received_date}
-                        onChange={(e) => setData("received_date", e.target.value)}
-                        className="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                    />
-                    <InputError message={errors.received_date} className="mt-2" />
-                </div>
+                        <InputLabel htmlFor="received_date">
+                            Received Date:
+                        </InputLabel>
+                        <CustomDatePicker
+                            selectedDate={sampleReceivedDate}
+                            handleDateChange={handleReceivedDateChange}
+                        />
+                        <InputError
+                            message={errors.collection_date}
+                            className="mt-2"
+                        />
+                    </div>
 
                 {/* Received By */}
                 <div>
