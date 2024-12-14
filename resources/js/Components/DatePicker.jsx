@@ -7,7 +7,8 @@ const CustomDatePicker = ({ selectedDate, handleDateChange, readOnly, disabled }
         <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            dateFormat="dd/MM/yyyy"
+            dateFormat="dd/MM/yyyy HH:mm:ss"
+            // dateFormat="dd/MM/yyyy"
             isClearable // This allows clearing the date
             placeholderText="Select Date" // Placeholder text when no date is selected
             readOnly= {readOnly}

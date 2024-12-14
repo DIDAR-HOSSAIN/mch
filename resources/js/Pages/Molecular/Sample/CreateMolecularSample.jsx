@@ -31,11 +31,9 @@ const CreateMolecularSample = ({ auth, regIds }) => {
 
     const handleCollectionDateChange = (date) => {
         setSampleCollectionDate(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
+        const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
         setData("collection_date", formattedDate);
     };
-
-    console.log('from create molecular', sampleCollectionDate);
 
     const submit = (e) => {
         e.preventDefault();
@@ -44,109 +42,98 @@ const CreateMolecularSample = ({ auth, regIds }) => {
 
     return (
         <AdminDashboardLayout user={auth.user}>
-            <form
-                onSubmit={submit}
-                className="space-y-6 max-w-3xl mx-auto px-4 py-6 bg-white shadow-md rounded-lg"
-            >
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <div>
-                        <InputLabel htmlFor="patient_id" value="Patient ID" />
-                        <select
-                            id="patient_id"
-                            value={data.patient_id}
-                            onChange={(e) =>
-                                setData("patient_id", e.target.value)
-                            }
-                            className="block w-full"
-                        >
-                            <option value="">Select Patient</option>
-                            {regIds.map((patient) => (
-                                <option
-                                    key={patient.id}
-                                    value={patient.patient_id}
-                                >
-                                    {patient.patient_id}
-                                </option>
-                            ))}
-                        </select>
+            <div className="flex flex-col items-center bg-gray-50 min-h-screen py-6">
+                <form
+                    onSubmit={submit}
+                    className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8 space-y-6"
+                >
+                    <h1 className="text-2xl font-semibold text-gray-800 text-center">
+                        Create Molecular Sample
+                    </h1>
 
-                        <InputError
-                            message={errors.patient_id}
-                            className="mt-2"
-                        />
+                    {/* Patient ID and Name */}
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <div>
+                            <InputLabel htmlFor="patient_id" value="Patient ID" />
+                            <select
+                                id="patient_id"
+                                value={data.patient_id}
+                                onChange={(e) => setData("patient_id", e.target.value)}
+                                className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="">Select Patient</option>
+                                {regIds.map((patient) => (
+                                    <option key={patient.id} value={patient.patient_id}>
+                                        {patient.patient_id}
+                                    </option>
+                                ))}
+                            </select>
+                            <InputError message={errors.patient_id} className="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="name" value="Name" />
+                            <TextInput
+                                id="name"
+                                value={data.name}
+                                readOnly
+                                className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
                     </div>
 
+                    {/* Collection Date and Status */}
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <div>
+                            <InputLabel htmlFor="collection_date" value="Collection Date" />
+                            <CustomDatePicker
+                                selectedDate={sampleCollectionDate}
+                                handleDateChange={handleCollectionDateChange}
+                            />
+                            <InputError message={errors.collection_date} className="mt-2" />
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="collection_status" value="Collection Status" />
+                            <select
+                                id="collection_status"
+                                value={data.collection_status}
+                                onChange={(e) => setData("collection_status", e.target.value)}
+                                className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="Pending">Pending</option>
+                                <option value="Collected">Collected</option>
+                                <option value="Failed">Failed</option>
+                            </select>
+                            <InputError message={errors.collection_status} className="mt-2" />
+                        </div>
+                    </div>
+
+                    {/* Remarks */}
                     <div>
-                        <InputLabel htmlFor="name" value="Name" />
-                        <TextInput
-                            id="name"
-                            value={data.name}
-                            readOnly
+                        <InputLabel htmlFor="remarks" value="Remarks" />
+                        <textarea
+                            id="remarks"
+                            value={data.remarks}
+                            onChange={(e) => setData("remarks", e.target.value)}
                             className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            rows="2"
                         />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <div>
-                        <InputLabel htmlFor="collection_date">
-                            Collection Date:
-                        </InputLabel>
-                        <CustomDatePicker
-                            selectedDate={sampleCollectionDate}
-                            handleDateChange={handleCollectionDateChange}
-                        />
-                        <InputError
-                            message={errors.collection_date}
-                            className="mt-2"
-                        />
+                        <InputError message={errors.remarks} className="mt-2" />
                     </div>
 
-                    <div>
-                        <InputLabel
-                            htmlFor="collection_status"
-                            value="Collection Status"
-                        />
-                        <select
-                            id="collection_status"
-                            value={data.collection_status}
-                            onChange={(e) =>
-                                setData("collection_status", e.target.value)
-                            }
-                            className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    {/* Submit Button */}
+                    <div className="flex justify-center">
+                        <button
+                            type="submit"
+                            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50"
+                            disabled={processing}
                         >
-                            <option value="Pending">Pending</option>
-                            <option value="Collected">Collected</option>
-                            <option value="Failed">Failed</option>
-                        </select>
-                        <InputError
-                            message={errors.collection_status}
-                            className="mt-2"
-                        />
+                            {processing ? "Creating..." : "Submit"}
+                        </button>
                     </div>
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="remarks" value="Remarks" />
-                    <textarea
-                        id="remarks"
-                        value={data.remarks}
-                        onChange={(e) => setData("remarks", e.target.value)}
-                        className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        rows="2"
-                    />
-                </div>
-
-                <div className="flex justify-center">
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                        disabled={processing}
-                    >
-                        {processing ? "Creating..." : "Submit"}
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </AdminDashboardLayout>
     );
 };

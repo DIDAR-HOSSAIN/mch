@@ -99,7 +99,8 @@ class SampleController extends Controller
      */
     public function show(Sample $sample)
     {
-        //
+        // dd($sample);
+        return Inertia::render('Molecular/Sample/ShowMolecularSample', ['sample'=> $sample]);
     }
 
     /**
@@ -140,7 +141,8 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
-        //
+        $sample->delete();
+        return redirect()->route('samples.index')->with('success', 'Sample deleted successfully');
     }
 
     public function sampleCreate()
@@ -148,7 +150,7 @@ class SampleController extends Controller
         // Fetch samples with 'Collected' status but exclude those with a 'Received' status
         $collectedSamples = Sample::where('collection_status', 'Collected')
             ->where('received_status', '<>', 'Received') // Exclude samples already marked as received
-            ->get(['id', 'patient_id', 'name', 'collection_date', 'collection_status']);
+            ->get(['id', 'patient_id', 'name', 'collection_date', 'collection_status', 'remarks']);
 
         return Inertia::render('Molecular/Sample/SampleReceive', ['collectedSamples' => $collectedSamples]);
     }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import DateWiseReport from "../Reports/DateWiseReport";
-import { Inertia } from "@inertiajs/inertia";
 import { Link } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { CSVLink } from "react-csv";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
+import Swal from "sweetalert2";
+import { Inertia } from "@inertiajs/inertia";
+
 
 const ViewMolecularSample = ({ auth, molecularSamples }) => {
     // State for filtered data
@@ -68,12 +70,32 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
         setFilteredData(filtered);
     };
 
-    // Event handler for deleting a sample
-    const destroy = (id) => {
-        if (confirm("Are you sure you want to delete this Sample?")) {
-            Inertia.delete(route("samples.destroy", id));
-        }
-    };
+   
+
+        const handleDelete = (id) => {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+            }).then((sample) => {
+                if (sample.isConfirmed) {
+                    // Call backend delete route
+                    Inertia.delete(route('samples.destroy', { id }), {
+                        onSuccess: () => {
+                            location.reload(); // Force full-page reload
+                        },
+                        onError: (errors) => {
+                            Swal.fire('Error!', errors.error || 'Something went wrong.', 'error');
+                        },
+                    });
+                }
+            });
+        };
+
+    
+
 
     return (
         <AdminDashboardLayout
@@ -153,15 +175,11 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                             Received Date
                                         </th>
                                         <th className="px-4 py-2">
-                                            Received By
-                                        </th>
-                                        <th className="px-4 py-2">
                                             Collection Status
                                         </th>
                                         <th className="px-4 py-2">
                                             Received Status
                                         </th>
-                                        <th className="px-4 py-2">Remarks</th>
                                         <th className="px-4 py-2">Action</th>
                                     </tr>
                                 </thead>
@@ -176,10 +194,8 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                 name,
                                                 collection_date,
                                                 received_date,
-                                                received_by,
                                                 collection_status,
                                                 received_status,
-                                                remarks,
                                             },
                                             index
                                         ) => (
@@ -202,16 +218,10 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                     {received_date}
                                                 </td>
                                                 <td className="border px-4 py-2">
-                                                    {received_by}
-                                                </td>
-                                                <td className="border px-4 py-2">
                                                     {collection_status}
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {received_status}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {remarks}
                                                 </td>
                                                 <td className="border px-4 py-2">
                                                     {/* Show Sample Link */}
@@ -246,16 +256,14 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                         auth.user,
                                                         "super-admin"
                                                     ) && (
-                                                        <button
-                                                            onClick={() =>
-                                                                destroy(id)
-                                                            }
-                                                            tabIndex="-1"
-                                                            type="button"
-                                                            className="px-4 py-2 text-sm text-white bg-red-500 rounded"
-                                                        >
-                                                            Delete
-                                                        </button>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(id)
+                                                        }
+                                                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                                    >
+                                                        Delete
+                                                    </button>
                                                     )}
                                                 </td>
                                             </tr>

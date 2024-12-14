@@ -17,10 +17,12 @@ class MolecularResult extends Model
         'methodology',
         'remarks',
         'comments',
+        'user_name'
+
     ];
 
     // Relationship to Sample
-    public function sample()
+    public function molecularSample()
     {
         return $this->belongsTo(Sample::class);
     }

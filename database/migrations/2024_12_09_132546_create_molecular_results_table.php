@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('methodology')->nullable(); // e.g., 'PCR'
             $table->text('remarks')->nullable();
             $table->text('comments')->nullable();
+            $table->string('user_name')->nullable(); // e.g., 'copies/mL'
             $table->timestamps();
             // Foreign key to Sample table
             $table->foreign('sample_id')->references('id')->on('samples')->onDelete('cascade');

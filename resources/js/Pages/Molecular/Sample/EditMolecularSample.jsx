@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InputLabel from "@/Components/InputLabel";
+import CustomDatePicker from "@/Components/DatePicker";
+import { format, parseISO } from "date-fns";
+import InputError from "@/Components/InputError";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-export default function EditMolecularSample({ sample }) {
+export default function EditMolecularSample({ auth, sample }) {
+    const [sampleReceivedDate, setSampleReceivedDate] = useState(
+        sample.received_date ? parseISO(sample.received_date) : new Date()
+    );
+    const [sampleCollectionDate, setSampleCollectionDate] = useState(
+        sample.collection_date ? parseISO(sample.collection_date) : new Date()
+    );
+
     const { data, setData, errors, put, processing } = useForm({
         patient_id: sample.patient_id || "",
         name: sample.name || "",
@@ -15,29 +26,14 @@ export default function EditMolecularSample({ sample }) {
         remarks: sample.remarks || "",
     });
 
-    const [collectionDate, setCollectionDate] = useState(
-        sample.collection_date ? new Date(sample.collection_date) : null
-    );
-    const [receivedDate, setReceivedDate] = useState(
-        sample.received_date ? new Date(sample.received_date) : null
-    );
-
-    // Update the state with the selected date and format it for frontend display
     const handleCollectionDateChange = (date) => {
-        setCollectionDate(date);
-        setData(
-            "collection_date",
-            date ? date.toISOString().split("T")[0] : "" // Store as YYYY-MM-DD in backend
-        );
+        setSampleCollectionDate(date);
+        setData("collection_date", format(date, "yyyy-MM-dd HH:mm:ss"));
     };
 
-    // Update the state with the selected date and format it for frontend display
     const handleReceivedDateChange = (date) => {
-        setReceivedDate(date);
-        setData(
-            "received_date",
-            date ? date.toISOString().split("T")[0] : "" // Store as YYYY-MM-DD in backend
-        );
+        setSampleReceivedDate(date);
+        setData("received_date", format(date, "yyyy-MM-dd HH:mm:ss"));
     };
 
     const handleSubmit = (e) => {
@@ -46,225 +42,147 @@ export default function EditMolecularSample({ sample }) {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                Edit Molecular Sample
-            </h2>
+        <AdminDashboardLayout user={auth.user}>
+            <div className="container mx-auto px-4 py-8 max-w-4xl">
+                <div className="bg-white shadow rounded-lg p-6">
+                    <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+                        Edit Molecular Sample
+                    </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Patient ID */}
-                <div>
-                    <label
-                        htmlFor="patient_id"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Patient ID
-                    </label>
-                    <input
-                        id="patient_id"
-                        type="text"
-                        value={data.patient_id}
-                        onChange={(e) => setData("patient_id", e.target.value)}
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.patient_id ? "border-red-500" : ""
-                        }`}
-                        disabled
-                    />
-                    {errors.patient_id && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.patient_id}
-                        </p>
-                    )}
-                </div>
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        {/* Grid Container */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Patient ID */}
+                            <div>
+                                <InputLabel htmlFor="patient_id" value="Patient ID" />
+                                <input
+                                    id="patient_id"
+                                    type="text"
+                                    value={data.patient_id}
+                                    onChange={(e) => setData("patient_id", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.patient_id ? "border-red-500" : ""
+                                    }`}
+                                    disabled
+                                />
+                                <InputError message={errors.patient_id} className="mt-2" />
+                            </div>
 
-                {/* Name */}
-                <div>
-                    <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Name
-                    </label>
-                    <input
-                        id="name"
-                        type="text"
-                        value={data.name}
-                        onChange={(e) => setData("name", e.target.value)}
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.name ? "border-red-500" : ""
-                        }`}
-                    />
-                    {errors.name && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.name}
-                        </p>
-                    )}
-                </div>
+                            {/* Name */}
+                            <div>
+                                <InputLabel htmlFor="name" value="Name" />
+                                <input
+                                    id="name"
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData("name", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.name ? "border-red-500" : ""
+                                    }`}
+                                />
+                                <InputError message={errors.name} className="mt-2" />
+                            </div>
 
-                {/* Collection Date */}
-                <div>
-                    <label
-                        htmlFor="collection_date"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Collection Date
-                    </label>
-                    <DatePicker
-                        selected={collectionDate}
-                        dateFormat="dd/MM/yyyy" // Display as DD-MM-YYYY
-                        onChange={handleCollectionDateChange}
-                        className={`mt-1 block w-full px-4 py-2 rounded-md shadow-sm sm:text-sm border-gray-300 focus:ring-blue-500 focus:border-blue-500 ${
-                            errors.collection_date ? "border-red-500" : ""
-                        }`}
-                        placeholderText="Select a date"
-                    />
-                    {errors.collection_date && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.collection_date}
-                        </p>
-                    )}
-                </div>
+                            {/* Collection Date */}
+                            <div>
+                                <InputLabel htmlFor="collection_date" value="Collection Date" />
+                                <CustomDatePicker
+                                    selectedDate={sampleCollectionDate}
+                                    handleDateChange={handleCollectionDateChange}
+                                />
+                                <InputError message={errors.collection_date} className="mt-2" />
+                            </div>
 
-                {/* Received Date */}
-                <div>
-                    <label
-                        htmlFor="received_date"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Received Date
-                    </label>
-                    <DatePicker
-                        selected={receivedDate}
-                        dateFormat="dd/MM/yyyy" // Display as DD-MM-YYYY
-                        onChange={handleReceivedDateChange}
-                        className={`mt-1 block w-full px-4 py-2 rounded-md shadow-sm sm:text-sm border-gray-300 focus:ring-blue-500 focus:border-blue-500 ${
-                            errors.received_date ? "border-red-500" : ""
-                        }`}
-                        placeholderText="Select a date"
-                    />
-                    {errors.received_date && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.received_date}
-                        </p>
-                    )}
-                </div>
+                            {/* Received Date */}
+                            <div>
+                                <InputLabel htmlFor="received_date" value="Received Date" />
+                                <CustomDatePicker
+                                    selectedDate={sampleReceivedDate}
+                                    handleDateChange={handleReceivedDateChange}
+                                />
+                                <InputError message={errors.received_date} className="mt-2" />
+                            </div>
 
-                {/* Received By */}
-                <div>
-                    <label
-                        htmlFor="received_by"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Received By
-                    </label>
-                    <input
-                        id="received_by"
-                        type="text"
-                        value={data.received_by}
-                        onChange={(e) => setData("received_by", e.target.value)}
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.received_by ? "border-red-500" : ""
-                        }`}
-                    />
-                    {errors.received_by && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.received_by}
-                        </p>
-                    )}
-                </div>
+                            {/* Received By */}
+                            <div>
+                                <InputLabel htmlFor="received_by" value="Received By" />
+                                <input
+                                    id="received_by"
+                                    type="text"
+                                    value={data.received_by}
+                                    onChange={(e) => setData("received_by", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.received_by ? "border-red-500" : ""
+                                    }`}
+                                />
+                                <InputError message={errors.received_by} className="mt-2" />
+                            </div>
 
-                {/* Collection Status */}
-                <div>
-                    <label
-                        htmlFor="collection_status"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Collection Status
-                    </label>
-                    <select
-                        id="collection_status"
-                        value={data.collection_status}
-                        onChange={(e) =>
-                            setData("collection_status", e.target.value)
-                        }
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.collection_status ? "border-red-500" : ""
-                        }`}
-                    >
-                        <option value="Pending">Pending</option>
-                        <option value="Collected">Collected</option>
-                        <option value="Failed">Failed</option>
-                    </select>
-                    {errors.collection_status && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.collection_status}
-                        </p>
-                    )}
-                </div>
+                            {/* Collection Status */}
+                            <div>
+                                <InputLabel htmlFor="collection_status" value="Collection Status" />
+                                <select
+                                    id="collection_status"
+                                    value={data.collection_status}
+                                    onChange={(e) => setData("collection_status", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.collection_status ? "border-red-500" : ""
+                                    }`}
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Collected">Collected</option>
+                                    <option value="Failed">Failed</option>
+                                </select>
+                                <InputError message={errors.collection_status} className="mt-2" />
+                            </div>
 
-                {/* Received Status */}
-                <div>
-                    <label
-                        htmlFor="received_status"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Received Status
-                    </label>
-                    <select
-                        id="received_status"
-                        value={data.received_status}
-                        onChange={(e) =>
-                            setData("received_status", e.target.value)
-                        }
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.received_status ? "border-red-500" : ""
-                        }`}
-                    >
-                        <option value="Pending">Pending</option>
-                        <option value="Received">Received</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                    {errors.received_status && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.received_status}
-                        </p>
-                    )}
-                </div>
+                            {/* Received Status */}
+                            <div>
+                                <InputLabel htmlFor="received_status" value="Received Status" />
+                                <select
+                                    id="received_status"
+                                    value={data.received_status}
+                                    onChange={(e) => setData("received_status", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.received_status ? "border-red-500" : ""
+                                    }`}
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Received">Received</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                                <InputError message={errors.received_status} className="mt-2" />
+                            </div>
 
-                {/* Remarks */}
-                <div>
-                    <label
-                        htmlFor="remarks"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Remarks
-                    </label>
-                    <textarea
-                        id="remarks"
-                        value={data.remarks}
-                        onChange={(e) => setData("remarks", e.target.value)}
-                        className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.remarks ? "border-red-500" : ""
-                        }`}
-                    ></textarea>
-                    {errors.remarks && (
-                        <p className="mt-2 text-sm text-red-600">
-                            {errors.remarks}
-                        </p>
-                    )}
-                </div>
+                            {/* Remarks */}
+                            <div className="md:col-span-2">
+                                <InputLabel htmlFor="remarks" value="Remarks" />
+                                <textarea
+                                    id="remarks"
+                                    value={data.remarks}
+                                    onChange={(e) => setData("remarks", e.target.value)}
+                                    className={`mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                                        errors.remarks ? "border-red-500" : ""
+                                    }`}
+                                    rows="4"
+                                ></textarea>
+                                <InputError message={errors.remarks} className="mt-2" />
+                            </div>
+                        </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                        disabled={processing}
-                    >
-                        {processing ? "Updating..." : "Update Sample"}
-                    </button>
+                        {/* Submit Button */}
+                        <div className="text-center">
+                            <button
+                                type="submit"
+                                className="w-full px-6 py-3 bg-blue-600 text-white font-semibold text-sm tracking-wider rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                                disabled={processing}
+                            >
+                                {processing ? "Updating..." : "Update Sample"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+            </div>
+        </AdminDashboardLayout>
     );
 }
