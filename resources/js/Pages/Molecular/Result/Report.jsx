@@ -1,245 +1,174 @@
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head } from "@inertiajs/react";
-import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receipt_Header.png";
 import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
-import QRCode from "qrcode.react";
 import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
 
-const Report = ({ auth, reports }) => {
+const MolecularReport = ({ patient, results, sample }) => {
+    const reportRef = useRef();
 
-    const formatDate = (dateString) => {
-        const options = { day: "numeric", month: "short", year: "numeric" };
-        return new Date(dateString).toLocaleDateString("en-GB", options);
-    };
+    // Optionally, handle PDF generation here
+    // const handleDownloadPDF = async () => {
+    //     const input = reportRef.current;
+    //     const canvas = await html2canvas(input, { scale: 2 });
+    //     const imgData = canvas.toDataURL("image/png");
+    //     const pdf = new jsPDF("p", "mm", "a4");
+    //     const pdfWidth = pdf.internal.pageSize.getWidth();
+    //     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    const contentToPrint = useRef(null);
-    const handlePrint = useReactToPrint({
-        documentTitle: `${reports.patient_id || "N/A"}`,
-        onBeforePrint: () => console.log("before printing..."),
-        onAfterPrint: () => console.log("after printing..."),
-        removeAfterPrint: true,
-        content: () => contentToPrint.current,
-        pageStyle: `
-                @page {
-                    size: A4;
-                    margin: 0;
-                }
-            `,
-    });
-
+    //     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    //     pdf.save(`Molecular_Test_Report_${patient.id}.pdf`);
+    // };
 
     return (
-        <AdminDashboardLayout
-            user={auth.user}
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Dope Report
-                </h2>
-            }
-        >
-            <Head title="Dope Report" />
-
-            <button
-                onClick={() => {
-                    handlePrint(null, () => contentToPrint.current);
-                }}
-                className="mx-auto mt-2 block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        <div className="p-6 bg-gray-50 min-h-screen">
+            {/* Button to download PDF */}
+            {/* <button
+                onClick={handleDownloadPDF}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md mb-4 hover:bg-blue-700"
             >
-                Print
-            </button>
+                Download Report
+            </button> */}
 
-            <div
-                ref={contentToPrint}
-                className="money-receipt bg-white rounded-lg p-6 max-w-2xl mx-auto"
-            >
-                <img
-                    className="w-full h-full object-contain"
-                    src={money_receipt_header_img}
-                    alt=""
-                />
-                <p className="text-center">
-                    953 O.R Nizam Road, Chattogram - 4000, Contact :
-                    01883077569, Email : mchctg.rtpcrlab@gmail.com
-                </p>
-
-                <h1 className="text-2xl font-bold mt-2 text-center">
-                    Dope Test Report
+            {/* Report Content */}
+            <div ref={reportRef} className="bg-white p-6 rounded-md shadow-md">
+                <h1 className="text-2xl font-bold text-center mb-4">
+                    Molecular Test Report
                 </h1>
 
-                <div className="p-4">
-                    {/* Patient Information */}
-                    <div className="bg-gray-100 p-4 mb-2 rounded-md">
-                        <h2 className="text-lg font-semibold mb-3">
-                            Patient Information
-                        </h2>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <span className="font-semibold">
-                                    Patient ID:
-                                </span>
-                                {reports.patient_id}
-                            </div>
-                            <div>
-                                <span className="font-semibold">Name: </span>
-                                {reports.name}
-                            </div>
-                            <div>
-                                <span className="font-semibold">Sex: </span>
-                                {reports.dope.sex}
-                            </div>
-                            <div>
-                                <span className="font-semibold">
-                                    Date of Birth:
-                                </span>
-                                {formatDate(reports.dope.dob)}
-                            </div>
-                            <div>
-                                <span className="font-semibold">
-                                    Collection Date:
-                                </span>
-                                {formatDate(reports.sample_collection_date)}
-                            </div>
-                            <div>
-                                <span className="font-semibold">
-                                    Sample Name: Urine
-                                </span>
-                            </div>
+                {/* Patient Details */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold mb-2">Patient Details</h2>
+                    <p>
+                        <strong>Name:</strong> {patient.name}
+                    </p>
+                    <p>
+                        <strong>Patient ID:</strong> {patient.id}
+                    </p>
+                    <p>
+                        <strong>Gender:</strong> {patient.gender}
+                    </p>
+                    <p>
+                        <strong>Age:</strong> {patient.age}
+                    </p>
+                    <p>
+                        <strong>Contact:</strong> {patient.contact_no}
+                    </p>
+                    <p>
+                        <strong>Specimen:</strong> Whole Blood
+                    </p>
+                    <p>
+                        <strong>Sample Collected:</strong>{" "}
+                        {sample.collection_date}
+                    </p>
+                    <p>
+                        <strong>Sample Received:</strong> {sample.received_date}
+                    </p>
+                    <p>
+                        <strong>Referred By:</strong> {patient.reference_name}
+                    </p>
+                    <p>
+                        <strong>Report Date:</strong>{" "}
+                        {new Date().toLocaleDateString()}
+                    </p>
+                </div>
 
-                            {/* Add more patient information fields as needed */}
-                        </div>
-                        <div>
-                            <span className="font-semibold">
-                                Method: Immunochromatography(ICT)
-                            </span>
-                        </div>
+                {/* Test Results */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold mb-2">
+                        Molecular Test Results
+                    </h2>
+                    <table className="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="border border-gray-300 px-4 py-2">
+                                    Investigation
+                                </th>
+                                <th className="border border-gray-300 px-4 py-2">
+                                    Result
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {results.map((result, index) => (
+                                <tr key={index}>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {result.investigation}
+                                    </td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {result.result}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Remarks Section */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold mb-2">Remarks</h2>
+                    <p>
+                        <strong>Methodology:</strong> Real-Time PCR based on
+                        TaqMan Technology
+                    </p>
+                    <ul className="list-disc pl-6">
+                        <li>
+                            The examination was carried out on QuantStudio™ 5
+                            Real-Time PCR System.
+                        </li>
+                        <li>
+                            Extraction was done using Gene Proof Pathogen-Free
+                            DNA isolation kit.
+                        </li>
+                        <li>
+                            Real-Time PCR reaction carried out using RevoDx HLA
+                            B27 Direct qPCR kit.
+                        </li>
+                    </ul>
+                </div>
+
+                {/* Comments Section */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold mb-2">Comments</h2>
+                    <p>
+                        Clinical diagnosis should not rely solely on HLA-B27
+                        status. Other biochemical or imaging tests & clinical
+                        findings are necessary to confirm the diagnosis of
+                        autoimmune diseases.
+                    </p>
+                </div>
+
+                {/* Footer with Signatures */}
+                <div className="flex gap-6 px-4">
+                    <div className="text-left mt-2">
+                        <img
+                            className="mx-auto"
+                            src={sign2}
+                            alt="Jahanara Trading Logo"
+                        />
+                        <hr className="border-black border-solid border-1 w-full" />
+                        <strong className="text-xl">Zahirul Islam</strong>
+                        <p>Senior Research Officer</p>
+                        <p>Molecular Biologist</p>
+                        <p>Medical Centre Hospital Chattogram.</p>
                     </div>
 
-                    {/* Diagnostic Tests */}
-                    <div>
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="">Test Name</th>
-                                    <th className="">Result</th>
-                                </tr>
-                            </thead>
-                            <tbody className="text-center">
-                                {reports.alcohol && (
-                                    <tr>
-                                        <td className="py-2 px-4">Alcohol</td>
-                                        <td className="py-2 px-4">
-                                            {reports.alcohol}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.benzodiazepines && (
-                                    <tr>
-                                        <td className="py-2 px-4">
-                                            Benzodiazepines
-                                        </td>
-                                        <td className="py-2 px-4">
-                                            {reports.benzodiazepines}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.cannabinoids && (
-                                    <tr>
-                                        <td className="py-2 px-4">
-                                            Cannabinoids
-                                        </td>
-                                        <td className="py-2 px-4">
-                                            {reports.cannabinoids}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.amphetamine && (
-                                    <tr>
-                                        <td className="py-2 px-4">
-                                            Amphetamine
-                                        </td>
-                                        <td className="py-2 px-4">
-                                            {reports.amphetamine}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.opiates && (
-                                    <tr>
-                                        <td className="py-2 px-4">Opiates</td>
-                                        <td className="py-2 px-4">
-                                            {reports.opiates}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.cocaine && (
-                                    <tr>
-                                        <td className="py-2 px-4">Cocaine</td>
-                                        <td className="py-2 px-4">
-                                            {reports.cocaine}
-                                        </td>
-                                    </tr>
-                                )}
-                                {reports.methamphetamine && (
-                                    <tr>
-                                        <td className="py-2 px-4">
-                                            Methamphetamine
-                                        </td>
-                                        <td className="py-2 px-4">
-                                            {reports.methamphetamine}
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-
-                        <div className="">
-                            <QRCode
-                                className="mx-auto"
-                                value={reports.patient_id || "N/A"}
-                                // size={256}
-                            />
-                        </div>
-
-                        <div className="flex gap-6 px-4">
-                            <div className="text-left mt-2">
-                                <img
-                                    className="mx-auto"
-                                    src={sign2}
-                                    alt="Jahanara Trading Logo"
-                                />
-                                <hr className="border-black border-solid border-1 w-full" />
-                                <strong className="text-xl">
-                                    Zahirul Islam
-                                </strong>
-                                <p>Senior Research Officer</p>
-                                <p>Molecular Biologist</p>
-                                <p>Medical Centre Hospital Chattogram.</p>
-                            </div>
-
-                            <div className="text-right mt-2">
-                                <img
-                                    className="mx-auto"
-                                    src={sign1}
-                                    alt="Jahanara Trading Logo"
-                                />
-                                <hr className="border-black border-solid border-1 w-full" />
-                                <strong className="text-xl">
-                                    Dr. Md. Zakir Hossain
-                                </strong>
-                                <p>Asst. Professor (Microbiology)</p>
-                                <p>Consultant</p>
-                                <p>Medical Centre Hospital Chattogram.</p>
-                            </div>
-                        </div>
+                    <div className="text-right mt-2">
+                        <img
+                            className="mx-auto"
+                            src={sign1}
+                            alt="Jahanara Trading Logo"
+                        />
+                        <hr className="border-black border-solid border-1 w-full" />
+                        <strong className="text-xl">
+                            Dr. Md. Zakir Hossain
+                        </strong>
+                        <p>Asst. Professor (Microbiology)</p>
+                        <p>Consultant</p>
+                        <p>Medical Centre Hospital Chattogram.</p>
                     </div>
                 </div>
-                <h3 className="text-right mr-8">
-                    Prepared By : {auth.user.name}
-                </h3>
             </div>
-        </AdminDashboardLayout>
+        </div>
     );
 };
 
-export default Report;
+export default MolecularReport;

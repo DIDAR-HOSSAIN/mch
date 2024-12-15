@@ -1,333 +1,269 @@
-import React, { useState, useEffect } from "react";
-import { FaPlus, FaTrashAlt } from "react-icons/fa";
-import InputError from "@/Components/InputError";
-import { Head, useForm } from "@inertiajs/react";
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-
-const EditMolecular = ({ auth, molecularReg, references = [], tests }) => {
-    console.log("from edit molecular", molecularReg);
-    console.log("from edit molecular2", molecularReg.molecular_tests);
-
-    // const [testFields, setTestFields] = useState(
-    //     molecularReg?.molecular_tests || [{ test_id: "", test_fee: 0 }]
-    // );
-    const [overallDiscount, setOverallDiscount] = useState(
-        molecularReg?.discount || 0
-    );
-    const [overallPaid, setOverallPaid] = useState(molecularReg?.paid || 0);
-
-    const { data, setData, put, processing, errors } = useForm({
-        name: molecularReg?.name || "",
-        contact_no: molecularReg?.contact_no || "",
-        age: molecularReg?.age || "",
-        gender: molecularReg?.gender || "",
-        tests: molecularReg?.molecular_tests || [],
-        discount: molecularReg?.discount || 0,
-        paid: molecularReg?.paid || 0,
-        due: molecularReg?.due || 0,
-        total: molecularReg?.total || 0,
-        net_payable: molecularReg?.net_payable || 0,
-        account_head: molecularReg?.account_head || "Cash in Hand",
-        reference_name: molecularReg?.reference_name || "",
-    });
-
-    useEffect(() => {
-        setTestFields(molecularReg?.molecular_tests || []);
-        setOverallDiscount(molecularReg?.discount || 0);
-        setOverallPaid(molecularReg?.paid || 0);
-        setData((prevData) => ({
-            ...prevData,
-            tests: molecularReg?.molecular_tests || [],
-            discount: molecularReg?.discount || 0,
-            paid: molecularReg?.paid || 0,
-        }));
-    }, [molecularReg]);
-
-    const addTestField = () => {
-        const updatedFields = [...tests, { test_id: "", total: 0 }];
-        setTestFields(updatedFields);
-        setData("tests", updatedFields);
-    };
-
-    const removeTestField = (index) => {
-        const updatedFields = tests.filter((_, i) => i !== index);
-        setTestFields(updatedFields);
-        setData("tests", updatedFields);
-    };
-
-    const handleTestChange = (index, field, value) => {
-        const updatedFields = [...tests];
-        updatedFields[index][field] = value;
-
-        if (field === "test_id") {
-            const selectedTest = tests.find((t) => t.id == value);
-            updatedFields[index].total = selectedTest?.test_fee || 0;
-        }
-
-        setTestFields(updatedFields);
-        setData("tests", updatedFields);
-    };
-
-    const handleChange = (e) => {
-        setData(e.target.name, e.target.value);
-    };
-
-    const handleOverallChange = (field, value) => {
-        const numValue = Number(value);
-        if (field === "discount") {
-            setOverallDiscount(numValue);
-            setData("discount", numValue);
-        } else if (field === "paid") {
-            setOverallPaid(numValue);
-            setData("paid", numValue);
-        }
-    };
-
-    const calculateTotals = () => {
-        const totalAmount = testFields.reduce(
-            (acc, test) => acc + (test.total || 0),
-            0
-        );
-        const totalAfterDiscount = totalAmount - overallDiscount;
-        const totalDue = totalAfterDiscount - overallPaid;
-
-        return { totalAmount, totalAfterDiscount, totalDue };
-    };
-
-    const { totalAmount, totalAfterDiscount, totalDue } = calculateTotals();
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        put(route("moleculars.update", { id: molecularReg.id }), {
-            onSuccess: () => {
-                alert("Molecular data updated successfully!");
-            },
+Schema::create('molecular_results', function (Blueprint $table) {
+            $table->id();
+            $table->string('sample_id');
+            $table->string('patient_id');
+            $table->string('investigation'); // Test name, e.g., 'Hepatitis B Virus (HBV)'
+            $table->string('result')->nullable(); // e.g., 'Positive', 'Negative'
+            $table->string('unit')->nullable(); // e.g., 'copies/mL'
+            $table->string('methodology')->nullable(); // e.g., 'PCR'
+            $table->text('remarks')->nullable();
+            $table->text('comments')->nullable();
+            $table->string('user_name')->nullable(); // e.g., 'copies/mL'
+            $table->timestamps();
+            $table->foreign('sample_id')->references('sample_id')->on('samples')->onDelete('cascade');
+            $table->foreign('patient_id')->references('patient_id')->on('molecular_reg_tests')->onDelete('cascade');
         });
+
+
+
+
+
+
+
+
+
+
+
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { Head } from "@inertiajs/react";
+import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receipt_Header.png";
+import React, { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import QRCode from "qrcode.react";
+import sign1 from "@/assets/images/sign/zakir_sign.png";
+import sign2 from "@/assets/images/sign/zohir_sign.png";
+
+const Report = ({ auth, reports }) => {
+    const formatDate = (dateString) => {
+        const options = { day: "numeric", month: "short", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("en-GB", options);
     };
+
+    const contentToPrint = useRef(null);
+    const handlePrint = useReactToPrint({
+        documentTitle: `${reports.patient_id || "N/A"}`,
+        onBeforePrint: () => console.log("before printing..."),
+        onAfterPrint: () => console.log("after printing..."),
+        removeAfterPrint: true,
+        content: () => contentToPrint.current,
+        pageStyle: `
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+            `,
+    });
 
     return (
         <AdminDashboardLayout
             user={auth.user}
-            header={<h2 className="text-xl font-semibold">Edit Molecular</h2>}
-        >
-            <Head title="Edit Molecular" />
-            <div className="max-w-5xl mx-auto bg-white shadow-md rounded-md p-6">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-700">
-                    Edit Molecular Registration
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Dope Report
                 </h2>
+            }
+        >
+            <Head title="Dope Report" />
 
-                {errors.error && (
-                    <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-                        {errors.error}
+            <button
+                onClick={() => {
+                    handlePrint(null, () => contentToPrint.current);
+                }}
+                className="mx-auto mt-2 block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+                Print
+            </button>
+
+            <div
+                ref={contentToPrint}
+                className="money-receipt bg-white rounded-lg p-6 max-w-2xl mx-auto"
+            >
+                <img
+                    className="w-full h-full object-contain"
+                    src={money_receipt_header_img}
+                    alt=""
+                />
+                <p className="text-center">
+                    953 O.R Nizam Road, Chattogram - 4000, Contact :
+                    01883077569, Email : mchctg.rtpcrlab@gmail.com
+                </p>
+
+                <h1 className="text-2xl font-bold mt-2 text-center">
+                    Dope Test Report
+                </h1>
+
+                <div className="p-4">
+                    {/* Patient Information */}
+                    <div className="bg-gray-100 p-4 mb-2 rounded-md">
+                        <h2 className="text-lg font-semibold mb-3">
+                            Patient Information
+                        </h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <span className="font-semibold">
+                                    Patient ID:
+                                </span>
+                                {reports.patient_id}
+                            </div>
+                            <div>
+                                <span className="font-semibold">Name: </span>
+                                {reports.name}
+                            </div>
+                            <div>
+                                <span className="font-semibold">Sex: </span>
+                                {reports.dope.sex}
+                            </div>
+                            <div>
+                                <span className="font-semibold">
+                                    Date of Birth:
+                                </span>
+                                {formatDate(reports.dope.dob)}
+                            </div>
+                            <div>
+                                <span className="font-semibold">
+                                    Collection Date:
+                                </span>
+                                {formatDate(reports.sample_collection_date)}
+                            </div>
+                            <div>
+                                <span className="font-semibold">
+                                    Sample Name: Urine
+                                </span>
+                            </div>
+
+                            {/* Add more patient information fields as needed */}
+                        </div>
+                        <div>
+                            <span className="font-semibold">
+                                Method: Immunochromatography(ICT)
+                            </span>
+                        </div>
                     </div>
-                )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Patient Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={data.name}
-                                onChange={handleChange}
-                                className="w-full border rounded-md px-3 py-2"
-                            />
-                            <InputError message={errors.name} />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Contact No.
-                            </label>
-                            <input
-                                type="text"
-                                name="contact_no"
-                                value={data.contact_no}
-                                onChange={handleChange}
-                                className="w-full border rounded-md px-3 py-2"
-                            />
-                            <InputError message={errors.contact_no} />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Age.
-                            </label>
-                            <input
-                                type="text"
-                                name="age"
-                                value={data.age}
-                                onChange={handleChange}
-                                className="w-full border rounded-md px-3 py-2"
-                            />
-                            <InputError message={errors.age} />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Gender.
-                            </label>
-                            <input
-                                type="text"
-                                name="gender"
-                                value={data.gender}
-                                onChange={handleChange}
-                                className="w-full border rounded-md px-3 py-2"
-                            />
-                            <InputError message={errors.gender} />
-                        </div>
-                    </div>
-
-                    {/* Test Details */}
-                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-semibold mb-4">
-                            Test Details
-                        </h3>
-                        <table className="w-full border">
+                    {/* Diagnostic Tests */}
+                    <div>
+                        <table className="w-full">
                             <thead>
-                                <tr>
-                                    <th>S/N</th>
-                                    <th>Test Name</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
+                                <tr className="bg-gray-200">
+                                    <th className="">Test Name</th>
+                                    <th className="">Result</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {molecularReg?.molecular_tests.map(
-                                    (test, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>
-                                                {test.test_id ? (
-                                                    // Display existing test names as plain text
-                                                    <span>
-                                                        {test.test_name}
-                                                    </span>
-                                                ) : (
-                                                    // Show dropdown only for new test entries
-                                                    <select
-                                                        value={test.test_id}
-                                                        onChange={(e) =>
-                                                            handleTestChange(
-                                                                index,
-                                                                "test_id",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Select Test
-                                                        </option>
-                                                        {tests.map((t) => (
-                                                            <option
-                                                                key={t.id}
-                                                                value={t.id}
-                                                            >
-                                                                {t.test_name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                )}
-                                            </td>
-                                            <td>{test.test_fee || 0} Tk</td>
-                                            <td>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removeTestField(index)
-                                                    }
-                                                    className="bg-red-500 text-white px-2 py-1 rounded"
-                                                >
-                                                    <FaTrashAlt />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    )
+                            <tbody className="text-center">
+                                {reports.alcohol && (
+                                    <tr>
+                                        <td className="py-2 px-4">Alcohol</td>
+                                        <td className="py-2 px-4">
+                                            {reports.alcohol}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.benzodiazepines && (
+                                    <tr>
+                                        <td className="py-2 px-4">
+                                            Benzodiazepines
+                                        </td>
+                                        <td className="py-2 px-4">
+                                            {reports.benzodiazepines}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.cannabinoids && (
+                                    <tr>
+                                        <td className="py-2 px-4">
+                                            Cannabinoids
+                                        </td>
+                                        <td className="py-2 px-4">
+                                            {reports.cannabinoids}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.amphetamine && (
+                                    <tr>
+                                        <td className="py-2 px-4">
+                                            Amphetamine
+                                        </td>
+                                        <td className="py-2 px-4">
+                                            {reports.amphetamine}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.opiates && (
+                                    <tr>
+                                        <td className="py-2 px-4">Opiates</td>
+                                        <td className="py-2 px-4">
+                                            {reports.opiates}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.cocaine && (
+                                    <tr>
+                                        <td className="py-2 px-4">Cocaine</td>
+                                        <td className="py-2 px-4">
+                                            {reports.cocaine}
+                                        </td>
+                                    </tr>
+                                )}
+                                {reports.methamphetamine && (
+                                    <tr>
+                                        <td className="py-2 px-4">
+                                            Methamphetamine
+                                        </td>
+                                        <td className="py-2 px-4">
+                                            {reports.methamphetamine}
+                                        </td>
+                                    </tr>
                                 )}
                             </tbody>
                         </table>
-                        <button
-                            type="button"
-                            onClick={addTestField}
-                            className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
-                        >
-                            <FaPlus /> Add Test
-                        </button>
-                    </div>
 
-                    {/* Totals */}
-                    {/* Totals and Editable Inputs */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Total Amount
-                            </label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
-                                {data.total} Tk
-                            </p>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Discount
-                            </label>
-                            <input
-                                type="number"
-                                value={overallDiscount}
-                                onChange={(e) =>
-                                    handleOverallChange(
-                                        "discount",
-                                        e.target.value
-                                    )
-                                }
-                                className="w-full border rounded-md px-3 py-2"
+                        <div className="">
+                            <QRCode
+                                className="mx-auto"
+                                value={reports.patient_id || "N/A"}
+                                // size={256}
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Paid
-                            </label>
-                            <input
-                                type="number"
-                                value={overallPaid}
-                                onChange={(e) =>
-                                    handleOverallChange("paid", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2"
-                            />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                After Discount
-                            </label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
-                                {data.net_payable} Tk
-                            </p>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Total Due
-                            </label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
-                                {data.due} Tk
-                            </p>
-                        </div>
-                    </div>
 
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        className="bg-blue-500 text-white px-6 py-2 rounded"
-                    >
-                        {processing ? "Updating..." : "Update"}
-                    </button>
-                </form>
+                        <div className="flex gap-6 px-4">
+                            <div className="text-left mt-2">
+                                <img
+                                    className="mx-auto"
+                                    src={sign2}
+                                    alt="Jahanara Trading Logo"
+                                />
+                                <hr className="border-black border-solid border-1 w-full" />
+                                <strong className="text-xl">
+                                    Zahirul Islam
+                                </strong>
+                                <p>Senior Research Officer</p>
+                                <p>Molecular Biologist</p>
+                                <p>Medical Centre Hospital Chattogram.</p>
+                            </div>
+
+                            <div className="text-right mt-2">
+                                <img
+                                    className="mx-auto"
+                                    src={sign1}
+                                    alt="Jahanara Trading Logo"
+                                />
+                                <hr className="border-black border-solid border-1 w-full" />
+                                <strong className="text-xl">
+                                    Dr. Md. Zakir Hossain
+                                </strong>
+                                <p>Asst. Professor (Microbiology)</p>
+                                <p>Consultant</p>
+                                <p>Medical Centre Hospital Chattogram.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h3 className="text-right mr-8">
+                    Prepared By : {auth.user.name}
+                </h3>
             </div>
         </AdminDashboardLayout>
     );
 };
 
-export default EditMolecular;
+export default Report;

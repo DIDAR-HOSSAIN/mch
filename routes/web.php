@@ -113,6 +113,7 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::put('/samples/receive/{id}', [SampleController::class, 'updateReceive'])->name('samples.receive.update');
     Route::resource('/results', MolecularResultController::class);
     Route::get('/patients/{patient_id}/tests', [MolecularResultController::class, 'getPatientTests'])->name('patients.getTests');
+    Route::get('/results/{patientId}/reports', [MolecularResultController::class, 'generateReport'])->name('results.reports');
 });
 
 // Route::middleware('auth')->group(function () {
