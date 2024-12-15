@@ -10,6 +10,7 @@ use App\Models\MolecularResult;
 use App\Models\Sample;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MolecularResultController extends Controller
 {
@@ -117,40 +118,19 @@ class MolecularResultController extends Controller
 
     public function generateReport($patientId)
     {
-        // Fetch the patient details using the patient_id
-        $patient = MolecularReg::where('patient_id', $patientId)->firstOrFail();
+         // Retrieve the patient’s tests and their molecular results
+    $results = MolecularRegTest::where('patient_id', $patientId)
+    ->with(['molecularResult' => function ($query) {
+        $query->select('sample_id', 'patient_id', 'investigation', 'result', 'unit', 'methodology', 'remarks', 'comments');
+    }])
+    ->get();
 
-        // Fetch molecular test results for the patient using patient_id
-        // $results = MolecularResult::where('patient_id', $patientId)->get();
-        $results = MolecularResult::where('patient_id', $patientId)->get(); 
+    return Inertia::render('Molecular/Result/Report', [
+        'results' => $results,
+        'patient_id' => $patientId
+    ]);
 
-        $results = MolecularResult::all();
-
-        // dd($results);
-
-
-        // Check if results exist to avoid fetching unnecessary sample data when no results are found
-        if ($results->isEmpty()) {
-            $sample = []; // If no results, no sample data needs to be fetched
-        } else {
-            // Optionally, fetch sample information based on the results
-            $sample = Sample::whereIn('sample_id', $results->pluck('sample_id'))->get();
-        }
-
-        // Render the React page with patient details, test results, and sample data
-        return Inertia::render('Molecular/Result/Report', [
-            'patient' => $patient,
-            'results' => $results,
-            'sample' => $sample, // Pass samples if available
-        ]);
     }
-
-
-
-
-
-
-
 
 
 }

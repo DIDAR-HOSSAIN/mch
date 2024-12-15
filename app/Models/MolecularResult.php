@@ -27,4 +27,9 @@ class MolecularResult extends Model
     {
         return $this->belongsTo(Sample::class);
     }
+
+    public function molecularRegTest()
+    {
+        return $this->belongsTo(MolecularRegTest::class, 'patient_id');
+    }
 }
