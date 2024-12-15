@@ -24,16 +24,9 @@ class MolecularResultController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($patient_id)
+    public function create()
     {
-        // dd($patient_id);
-        $patient = MolecularReg::findOrFail($patient_id); // Ensure the patient exists
-        $tests = MolecularRegTest::where('patient_id', $patientId)->get(); // Get tests related to the patient
-
-        return Inertia::render('Molecular/Result/CreateMolecularResult', [
-        'patient' => $patient,
-        'tests' => $tests,
-    ]);
+        // return Inertia::render('Molecular/Result/CreateMolecularResult');
     }
     
 
@@ -42,21 +35,32 @@ class MolecularResultController extends Controller
      */
     public function store(StoreMolecularResultRequest $request)
     {
-        $validated = $request->validated();
-        
-        // If storing a single result
-        MolecularResult::create([
-            'investigation' => $validated['investigation'],
-            'result' => $validated['result'],
-            'unit' => $validated['unit'],
-            'methodology' => $validated['methodology'],
-            'remarks' => $validated['remarks'],
-            'comments' => $validated['comments'],
-            'user_name' => $validated['user_name'],
-            'patient_id' => $validated['patient_id'] // Assuming you have a `patient_id` field
+        $request->validate([
+            'results' => 'required|array',
+            'results.*.sample_id' => 'required|string|max:255',
+            'results.*.investigation' => 'required|string|max:255',
+            'results.*.result' => 'required|string|max:255',
+            'results.*.unit' => 'nullable|string|max:255',
+            'results.*.methodology' => 'required|string|max:255',
+            'results.*.remarks' => 'nullable|string|max:500',
+            'results.*.comments' => 'nullable|string|max:500',
         ]);
         
-        return redirect()->route('results.index')->with('message', 'Result saved successfully!');
+        $results = $request->input('results');
+
+        foreach ($results as $result) {
+            MolecularResult::create([
+                'sample_id' => $result['sample_id'],
+                'investigation' => $result['investigation'],
+                'result' => $result['result'],
+                'unit' => $result['unit'] ?? null,
+                'methodology' => $result['methodology'],
+                'remarks' => $result['remarks'] ?? null,
+                'comments' => $result['comments'] ?? null,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Results saved successfully.');
     }
 
     // Store multiple results for a patient
@@ -121,5 +125,18 @@ class MolecularResultController extends Controller
     public function destroy(MolecularResult $molecularResult)
     {
         //
+    }
+
+    public function getPatientTests($patient_id)
+    {
+    $tests = MolecularRegTest::where('patient_id', $patient_id)
+    ->select('id', 'test_name', 'test_id', 'test_date', 'test_fee')
+    ->get();
+
+    return Inertia::render('Molecular/Result/CreateMolecularResult', ['tests'=> $tests]);
+
+    return response()->json([
+    'tests' => $tests
+    ]);
     }
 }

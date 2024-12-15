@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('molecular_results', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sample_id');
+            $table->string('sample_id');
             $table->string('investigation'); // Test name, e.g., 'Hepatitis B Virus (HBV)'
             $table->string('result')->nullable(); // e.g., 'Positive', 'Negative'
             $table->string('unit')->nullable(); // e.g., 'copies/mL'
@@ -22,8 +22,7 @@ return new class extends Migration
             $table->text('comments')->nullable();
             $table->string('user_name')->nullable(); // e.g., 'copies/mL'
             $table->timestamps();
-            // Foreign key to Sample table
-            $table->foreign('sample_id')->references('id')->on('samples')->onDelete('cascade');
+            $table->foreign('sample_id')->references('sample_id')->on('samples')->onDelete('cascade');
         });
     }
 
