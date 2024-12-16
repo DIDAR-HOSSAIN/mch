@@ -1,26 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
 
-const MolecularReport = ({ results = [], patient_id }) => {
-
-    console.log('from reulsts for report', results);
-    console.log('from reulsts for patient_id', patient_id);
-
+const MolecularReport = ({ tests = [], sample = {} }) => {
     const reportRef = useRef();
-
-    const [patient, setPatient] = useState({}); // State to store patient info
-
-    // Fetch the patient details based on patient_id
-    useEffect(() => {
-        const fetchPatientDetails = async () => {
-            const response = await fetch(`/api/patients/${patient_id}`);
-            const data = await response.json();
-            setPatient(data);
-        };
-
-        fetchPatientDetails();
-    }, [patient_id]);
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
@@ -33,75 +16,111 @@ const MolecularReport = ({ results = [], patient_id }) => {
                 {/* Patient Details */}
                 <div className="mb-6">
                     <h2 className="text-lg font-bold mb-2">Patient Details</h2>
-                    <p><strong>Name:</strong> {patient.name || "N/A"}</p>
-                    <p><strong>Patient ID:</strong> {patient.id || "N/A"}</p>
-                    <p><strong>Gender:</strong> {patient.gender || "N/A"}</p>
-                    <p><strong>Age:</strong> {patient.age || "N/A"}</p>
-                    <p><strong>Contact:</strong> {patient.contact_no || "N/A"}</p>
-                    <p><strong>Specimen:</strong> Whole Blood</p>
-                    <p><strong>Sample Collected:</strong> {results[0]?.molecularResult?.collection_date || "N/A"}</p>
-                    <p><strong>Sample Received:</strong> {results[0]?.molecularResult?.received_date || "N/A"}</p>
-                    <p><strong>Referred By:</strong> {patient.reference_name || "N/A"}</p>
-                    <p><strong>Report Date:</strong> {new Date().toLocaleDateString()}</p>
+                    <p>
+                        <strong>Name:</strong> {sample.name || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Patient ID:</strong> {sample.id || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Gender:</strong> {sample.gender || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Age:</strong> {sample.age || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Contact:</strong> {sample.contact_no || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Specimen:</strong> Whole Blood
+                    </p>
+                    <p>
+                        <strong>Sample Collected:</strong>{" "}
+                        {sample.collection_date || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Sample Received:</strong>{" "}
+                        {sample.received_date || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Referred By:</strong>{" "}
+                        {sample.reference_name || "N/A"}
+                    </p>
+                    <p>
+                        <strong>Report Date:</strong>{" "}
+                        {new Date().toLocaleDateString()}
+                    </p>
                 </div>
 
                 {/* Test Results */}
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold mb-2">Molecular Test Results</h2>
-                    <table className="w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-gray-300 px-4 py-2">Investigation</th>
-                                <th className="border border-gray-300 px-4 py-2">Result</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {results.length > 0 ? (
-                                results.map((result, index) => (
-                                    <tr key={index}>
-                                        <td className="border border-gray-300 px-4 py-2">{result.molecularResult.investigation || "N/A"}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{result.molecularResult.result || "N/A"}</td>
+                {tests.length > 0 ? (
+                    tests.map((test, index) => (
+                        <div key={index} className="mb-6">
+                            <h2 className="text-lg font-bold mb-2">
+                                Test:{" "}
+                                {test.molecular_reg_test?.test_name || "N/A"}
+                            </h2>
+
+                            <table className="w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr className="bg-gray-200">
+                                        <th className="border border-gray-300 px-4 py-2">
+                                            Investigation
+                                        </th>
+                                        <th className="border border-gray-300 px-4 py-2">
+                                            Result
+                                        </th>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="2" className="text-center py-4 text-gray-500">
-                                        No results available
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className="border border-gray-300 px-4 py-2">
+                                            {test.investigation || "N/A"}
+                                        </td>
+                                        <td className="border border-gray-300 px-4 py-2">
+                                            {test.result || "N/A"}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                <div className="mb-6">
-                    <div className="flex items-center">
-                        <span className="font-semibold">Methodology:</span>
-                        <span className="ml-2">{results.map((result) => result.molecularResult.methodology).filter(Boolean).join(", ") || "No methodology available."}</span>
-                    </div>
-                </div>
+                            {/* Additional Sections */}
+                            <div className="mb-6">
+                                <div className="flex items-center">
+                                    <span className="font-semibold">
+                                        Methodology:
+                                    </span>
+                                    <span className="ml-2">
+                                        {test.methodology ||
+                                            "No methodology available."}
+                                    </span>
+                                </div>
+                            </div>
 
-                {/* Remarks Section */}
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold mb-2">Remarks</h2>
-                    {results.length > 0 ? (
-                        <ul className="list-disc pl-6">
-                            {results.map((result, index) => (
-                                <li key={index}>{result.molecularResult.remarks}</li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No remarks available.</p>
-                    )}
-                </div>
+                            <div className="mb-6">
+                                <h3 className="font-semibold mb-2">Remarks</h3>
+                                {test.remarks ? (
+                                    <p>{test.remarks}</p>
+                                ) : (
+                                    <p>No remarks available.</p>
+                                )}
+                            </div>
 
-                {/* Comments Section */}
-                <div className="mb-6">
-                    <div className="flex items-center">
-                        <span className="font-semibold">Comments:</span>
-                        <span className="ml-2">{results.map((result) => result.molecularResult.comments).filter(Boolean).join(", ") || "No comments available."}</span>
-                    </div>
-                </div>
+                            <div className="mb-6">
+                                <h3 className="font-semibold mb-2">Comments</h3>
+                                {test.comments ? (
+                                    <p>{test.comments}</p>
+                                ) : (
+                                    <p>No comments available.</p>
+                                )}
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-gray-500 text-center py-4">
+                        No test results available.
+                    </p>
+                )}
 
                 {/* Footer with Signatures */}
                 <div className="flex gap-6 px-4 justify-between">
@@ -125,7 +144,9 @@ const MolecularReport = ({ results = [], patient_id }) => {
                             alt="Signature Zakir"
                         />
                         <hr className="border-black border-solid border-1 w-full" />
-                        <strong className="text-xl">Dr. Md. Zakir Hossain</strong>
+                        <strong className="text-xl">
+                            Dr. Md. Zakir Hossain
+                        </strong>
                         <p>Asst. Professor (Microbiology)</p>
                         <p>Consultant</p>
                         <p>Medical Centre Hospital Chattogram.</p>

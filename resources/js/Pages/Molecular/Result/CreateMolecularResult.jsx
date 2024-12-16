@@ -55,16 +55,32 @@ const CreateMolecularResult = ({ tests }) => {
                                     className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
+
                             <div>
                                 <label className="block text-gray-700 font-medium mb-1">
                                     Patient ID
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Enter Sample ID"
+                                    placeholder="Enter Patient ID"
                                     value={data.results[test.id]?.patient_id || ""}
                                     onChange={(e) =>
                                         handleFieldChange(test.id, "patient_id", e.target.value)
+                                    }
+                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-gray-700 font-medium mb-1">
+                                    Test ID
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Test ID"
+                                    value={data.results[test.id]?.test_id || ""}
+                                    onChange={(e) =>
+                                        handleFieldChange(test.id, "test_id", e.target.value)
                                     }
                                     className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                 />

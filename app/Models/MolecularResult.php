@@ -12,6 +12,7 @@ class MolecularResult extends Model
     protected $fillable = [
         'sample_id',
         'patient_id',
+        'test_id',
         'investigation',
         'result',
         'unit',

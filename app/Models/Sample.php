@@ -27,10 +27,11 @@ class Sample extends Model
     {
         return $this->belongsTo(molecularReg::class);
     }
-
-    // Relationship to Results
+    
     public function molecularResults()
     {
-        return $this->hasMany(Result::class);
+        return $this->hasMany(MolecularResult::class, 'sample_id', 'sample_id');
     }
+
+
 }
