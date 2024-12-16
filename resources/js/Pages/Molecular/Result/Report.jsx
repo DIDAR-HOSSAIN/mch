@@ -3,117 +3,130 @@ import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
 
 const MolecularReport = ({ tests = [], sample = {} }) => {
-    const reportRef = useRef();
+    console.log('Molecular tests Report ', tests)
+    console.log('Molecular sample Report ', sample)
+    const printRef = useRef();
+
+    // Function to trigger print
+    const handlePrint = () => {
+        window.print();
+    };
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-            {/* Report Content */}
-            <div ref={reportRef} className="bg-white p-6 rounded-md shadow-md">
-                <h1 className="text-2xl font-bold text-center mb-4">
-                    Molecular Test Report
-                </h1>
-
-                {/* Patient Details */}
-                <div className="mb-6">
-                    <h2 className="text-lg font-bold mb-2">Patient Details</h2>
-                    <p>
-                        <strong>Name:</strong> {sample.name || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Patient ID:</strong> {sample.id || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Gender:</strong> {sample.gender || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Age:</strong> {sample.age || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Contact:</strong> {sample.contact_no || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Specimen:</strong> Whole Blood
-                    </p>
-                    <p>
-                        <strong>Sample Collected:</strong>{" "}
-                        {sample.collection_date || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Sample Received:</strong>{" "}
-                        {sample.received_date || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Referred By:</strong>{" "}
-                        {sample.reference_name || "N/A"}
-                    </p>
-                    <p>
-                        <strong>Report Date:</strong>{" "}
-                        {new Date().toLocaleDateString()}
-                    </p>
-                </div>
-
-                {/* Test Results */}
+            {/* Print Section */}
+            <div ref={printRef} className="print-section">
                 {tests.length > 0 ? (
                     tests.map((test, index) => (
-                        <div key={index} className="mb-6">
-                            <h2 className="text-lg font-bold mb-2">
-                                Test:{" "}
-                                {test.molecular_reg_test?.test_name || "N/A"}
+                        <div
+                            key={index}
+                            className="a4-page p-6 bg-white rounded-md shadow-md"
+                        >
+                            {/* Patient Details */}
+                            <h1 className="text-2xl font-bold text-center mb-6">
+                                Molecular Test Report
+                            </h1>
+                            <h2 className="text-lg font-semibold mb-2">
+                                Patient Details
                             </h2>
+                            <p>
+                                <strong>Name:</strong> {sample.name || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Patient ID:</strong> {sample.patient_id || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Gender:</strong> {sample.molecular_patient_reg.gender || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Age:</strong> {sample.molecular_patient_reg.age || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Specimen:</strong> Whole Blood
+                            </p>
+                            <p>
+                                <strong>Sample Collected:</strong>{" "}
+                                {sample.collection_date || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Sample Received:</strong>{" "}
+                                {sample.received_date || "N/A"}
+                            </p>
+                            <p>
+                                <strong>Referred By:</strong>{" "}
+                                {sample.molecular_patient_reg.reference_name|| "N/A"}
+                            </p>
+                            <p>
+                                <strong>Report Date:</strong>{" "}
+                                {sample.created_at || "N/A"}
+                            </p>
 
-                            <table className="w-full border-collapse border border-gray-300">
+                            {/* Test Details */}
+                            <h2 className="text-lg font-semibold mt-6 mb-2">
+                                Test: {test.molecular_reg_test?.test_name || "N/A"}
+                            </h2>
+                            <table className="w-full border-collapse border">
                                 <thead>
-                                    <tr className="bg-gray-200">
-                                        <th className="border border-gray-300 px-4 py-2">
+                                    <tr>
+                                        <th className="border p-2 text-left">
                                             Investigation
                                         </th>
-                                        <th className="border border-gray-300 px-4 py-2">
+                                        <th className="border p-2 text-left">
                                             Result
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td className="border border-gray-300 px-4 py-2">
+                                        <td className="border p-2">
                                             {test.investigation || "N/A"}
                                         </td>
-                                        <td className="border border-gray-300 px-4 py-2">
+                                        <td className="border p-2">
                                             {test.result || "N/A"}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
 
-                            {/* Additional Sections */}
-                            <div className="mb-6">
-                                <div className="flex items-center">
-                                    <span className="font-semibold">
-                                        Methodology:
-                                    </span>
-                                    <span className="ml-2">
-                                        {test.methodology ||
-                                            "No methodology available."}
-                                    </span>
+                            {/* Remarks & Comments */}
+                            <h3 className="mt-6 font-semibold">Remarks</h3>
+                            <p>{test.remarks || "No remarks available."}</p>
+
+                            <h3 className="mt-4 font-semibold">Comments</h3>
+                            <p>{test.comments || "No comments available."}</p>
+
+                            <div className="mt-6 text-center">
+                                <p>----------End of Report----------</p>
+                            </div>
+
+                            {/* Signatures */}
+                            <div className="flex justify-between mt-10">
+                                <div className="text-center">
+                                    {/* <img
+                                        src={sign2}
+                                        alt="Zahirul Signature"
+                                        className="w-24 mx-auto"
+                                    /> */}
+                                    <hr className="border-t border-black my-2" />
+                                    <strong>Zahirul Islam</strong>
+                                    <p>Senior Research Officer</p>
+                                    <p>Molecular Biologist</p>
+                                </div>
+                                <div className="text-center">
+                                    {/* <img
+                                        src={sign1}
+                                        alt="Zakir Signature"
+                                        className="w-24 mx-auto"
+                                    /> */}
+                                    <hr className="border-t border-black my-2" />
+                                    <strong>Dr. Md. Zakir Hossain</strong>
+                                    <p>Asst. Professor (Microbiology)</p>
+                                    <p>Consultant</p>
                                 </div>
                             </div>
 
-                            <div className="mb-6">
-                                <h3 className="font-semibold mb-2">Remarks</h3>
-                                {test.remarks ? (
-                                    <p>{test.remarks}</p>
-                                ) : (
-                                    <p>No remarks available.</p>
-                                )}
-                            </div>
-
-                            <div className="mb-6">
-                                <h3 className="font-semibold mb-2">Comments</h3>
-                                {test.comments ? (
-                                    <p>{test.comments}</p>
-                                ) : (
-                                    <p>No comments available.</p>
-                                )}
-                            </div>
+                            {/* Page Break */}
+                            <div className="page-break"></div>
                         </div>
                     ))
                 ) : (
@@ -121,38 +134,47 @@ const MolecularReport = ({ tests = [], sample = {} }) => {
                         No test results available.
                     </p>
                 )}
-
-                {/* Footer with Signatures */}
-                <div className="flex gap-6 px-4 justify-between">
-                    <div className="text-left mt-2">
-                        <img
-                            className="mx-auto"
-                            src={sign2}
-                            alt="Signature Zahirul"
-                        />
-                        <hr className="border-black border-solid border-1 w-full" />
-                        <strong className="text-xl">Zahirul Islam</strong>
-                        <p>Senior Research Officer</p>
-                        <p>Molecular Biologist</p>
-                        <p>Medical Centre Hospital Chattogram.</p>
-                    </div>
-
-                    <div className="text-right mt-2">
-                        <img
-                            className="mx-auto"
-                            src={sign1}
-                            alt="Signature Zakir"
-                        />
-                        <hr className="border-black border-solid border-1 w-full" />
-                        <strong className="text-xl">
-                            Dr. Md. Zakir Hossain
-                        </strong>
-                        <p>Asst. Professor (Microbiology)</p>
-                        <p>Consultant</p>
-                        <p>Medical Centre Hospital Chattogram.</p>
-                    </div>
-                </div>
             </div>
+
+            {/* Print Button */}
+            <button
+                onClick={handlePrint}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+            >
+                Print Report
+            </button>
+
+            {/* Print Styles */}
+            <style>
+                {`
+                    @media print {
+                        body {
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .print-section {
+                            width: 210mm;
+                            height: 297mm;
+                            margin: 0 auto;
+                        }
+                        .a4-page {
+                            page-break-after: always;
+                            margin: 0;
+                            padding: 20px;
+                            width: 100%;
+                            height: 100%;
+                            box-sizing: border-box;
+                            break-inside: avoid;
+                        }
+                        .page-break {
+                            page-break-after: always;
+                        }
+                        button {
+                            display: none; /* Hide buttons on print */
+                        }
+                    }
+                `}
+            </style>
         </div>
     );
 };

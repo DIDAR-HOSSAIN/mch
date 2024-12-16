@@ -25,7 +25,7 @@ class Sample extends Model
     // Relationship to Patient
     public function molecularPatientReg()
     {
-        return $this->belongsTo(molecularReg::class);
+        return $this->belongsTo(MolecularReg::class, 'patient_id', 'patient_id');
     }
     
     public function molecularResults()

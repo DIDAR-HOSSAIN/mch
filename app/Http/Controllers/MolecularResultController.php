@@ -118,22 +118,44 @@ class MolecularResultController extends Controller
     }
 
 
+    // public function generateReport($patientId)
+    // {
+    //     // Fetch the molecular test results by patient ID and eager load related test details
+    //     $tests = MolecularResult::where('patient_id', $patientId)
+    //         ->with('molecularRegTest') // Ensure related tests are included
+    //         ->get();
+
+    //     // Fetch the sample details associated with the patient
+    //     $sample = Sample::where('patient_id', $patientId)->firstOrFail();
+    //     // dd($sample);
+    //     // Render the Inertia view with the necessary data
+    //     return Inertia::render('Molecular/Result/Report', [
+    //         'tests' => $tests,
+    //         'sample' => $sample,
+    //     ]);
+    // }
+
+
     public function generateReport($patientId)
     {
-        // Fetch the molecular test results by patient ID and eager load related test details
+        // Fetch molecular test results
         $tests = MolecularResult::where('patient_id', $patientId)
-            ->with('molecularRegTest') // Ensure related tests are included
+            ->with('molecularRegTest') // Include test details
             ->get();
 
-        // Fetch the sample details associated with the patient
-        $sample = Sample::where('patient_id', $patientId)->firstOrFail();
-        // dd($sample);
+        // Fetch sample details and include patient relationship
+        $sample = Sample::where('patient_id', $patientId)
+            ->with('molecularPatientReg') // Include related patient details
+            ->firstOrFail();
+
         // Render the Inertia view with the necessary data
         return Inertia::render('Molecular/Result/Report', [
             'tests' => $tests,
             'sample' => $sample,
+            'patient' => $sample->patient, // Pass patient details separately if needed
         ]);
     }
+
 
 
 
