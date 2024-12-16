@@ -30,9 +30,9 @@ public function sample()
         return $this->belongsTo(Sample::class, 'sample_id');
     }
 
-    public function molecularResult()
+    public function molecularResults()
     {
-        return $this->hasMany(MolecularResult::class, 'sample_id');
+        return $this->hasMany(MolecularResult::class, 'test_id', 'test_id');
     }
 
     

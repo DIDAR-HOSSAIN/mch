@@ -41,6 +41,7 @@ class MolecularResultController extends Controller
             'results' => 'required|array',
             'results.*.sample_id' => 'required|string|max:255',
             'results.*.patient_id' => 'required|string|max:255',
+            'results.*.test_id' => 'required|string|max:255',
             'results.*.investigation' => 'required|string|max:255',
             'results.*.result' => 'required|string|max:255',
             'results.*.unit' => 'nullable|string|max:255',
@@ -55,6 +56,7 @@ class MolecularResultController extends Controller
             MolecularResult::create([
                 'sample_id' => $result['sample_id'],
                 'patient_id' => $result['patient_id'],
+                'test_id' => $result['test_id'],
                 'investigation' => $result['investigation'],
                 'result' => $result['result'],
                 'unit' => $result['unit'] ?? null,
@@ -116,20 +118,17 @@ class MolecularResultController extends Controller
     }
 
 
-    public function generateReport($patientId)
+    public function generateReport($testId)
     {
-         // Retrieve the patient’s tests and their molecular results
-    $results = MolecularRegTest::where('patient_id', $patientId)
-    ->with(['molecularResult' => function ($query) {
-        $query->select('sample_id', 'patient_id', 'investigation', 'result', 'unit', 'methodology', 'remarks', 'comments');
-    }])
-    ->get();
+        // Fetch the specific test with its results
+        $test = MolecularRegTest::where('test_id', $testId)
+            ->with('molecularResults') // Eager load related results
+            ->firstOrFail();
 
-    return Inertia::render('Molecular/Result/Report', [
-        'results' => $results,
-        'patient_id' => $patientId
-    ]);
-
+        return Inertia::render('Molecular/Result/Report', [
+            'test' => $test,
+            'results' => $test->molecularResults, // Pass results to the view
+        ]);
     }
 
 
