@@ -17,10 +17,12 @@ class MolecularResultController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $results = MolecularResult::where('patient_id', $request->patientId)->get(); // Fetch results by patient ID
-        return Inertia::render('Molecular/ViewMolecularResult', ['results' => $results]);
+        $results = MolecularResult:: with('molecularSample')->get();
+
+        // $results = MolecularResult::orderBy('id', 'desc')->get();
+        return Inertia::render('Molecular/Result/ViewMolecularResult', ['results' => $results]);
     }
 
     /**

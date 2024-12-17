@@ -112,7 +112,7 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('samples-receive', [SampleController::class, 'sampleCreate'])->name('samples-receive');
     Route::put('/samples/receive/{id}', [SampleController::class, 'updateReceive'])->name('samples.receive.update');
     Route::resource('/results', MolecularResultController::class);
-    Route::get('/patients/{patient_id}/tests', [MolecularResultController::class, 'getPatientTests'])->name('patients.getTests');
+    Route::get('/results/{patient_id}/createReport', [MolecularResultController::class, 'getPatientTests'])->name('results.createReport');
     Route::get('/results/{patientId}/reports', [MolecularResultController::class, 'generateReport'])->name('results.reports');
 });
 
