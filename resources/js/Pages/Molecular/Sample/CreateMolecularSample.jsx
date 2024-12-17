@@ -9,6 +9,7 @@ import { format } from "date-fns"; // Use date-fns for formatting
 import "react-datepicker/dist/react-datepicker.css";
 
 const CreateMolecularSample = ({ auth, regIds }) => {
+    console.log('sample create',regIds);
     const [selectedPatient, setSelectedPatient] = useState("");
     const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
 
