@@ -6,13 +6,14 @@ import { CSVLink } from "react-csv";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 import Swal from "sweetalert2";
 import { Inertia } from "@inertiajs/inertia";
-
+import { FaEye, FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 
 const ViewMolecularSample = ({ auth, molecularSamples }) => {
-    // State for filtered data
     const [filteredData, setFilteredData] = useState(molecularSamples);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(molecularSamples.length / perPage);
 
     const handlePerPageChange = (e) => {
         const value = e.target.value;
@@ -20,26 +21,21 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
         setCurrentPage(1);
     };
 
-    const totalPages =
-        perPage === "all" ? 1 : Math.ceil(molecularSamples.length / perPage);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
     useEffect(() => {
         const startIndex = (currentPage - 1) * perPage;
-        const endIndex = Math.min(
-            startIndex + perPage,
-            molecularSamples.length
-        );
-        const displayedData = molecularSamples.slice(startIndex, endIndex);
-        setFilteredData(displayedData);
+        const endIndex = perPage === "all" ? molecularSamples.length : startIndex + perPage;
+        setFilteredData(molecularSamples.slice(startIndex, endIndex));
     }, [molecularSamples, currentPage, perPage]);
 
     const formatDate = (dateString) => {
-        const options = { day: "numeric", month: "short", year: "numeric" };
-        return new Date(dateString).toLocaleDateString("en-GB", options);
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
     };
 
     const handleDateWiseSearch = (startDate, endDate) => {
@@ -48,54 +44,43 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
             return;
         }
 
-        const filteredData = molecularSamples.filter((data) => {
-            const entryDate = new Date(data.sample_collection_date);
-            return (
-                entryDate >= startDate &&
-                entryDate <= new Date(endDate.getTime() + 86400000)
-            );
-        });
-
-        setFilteredData(filteredData);
+        setFilteredData(
+            molecularSamples.filter((data) => {
+                const entryDate = new Date(data.sample_collection_date);
+                return entryDate >= startDate && entryDate <= endDate;
+            })
+        );
     };
 
     const handleSearch = (searchTerm) => {
-        const filtered = molecularSamples.filter((data) => {
-            return (
-                data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                data.patient_id.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        });
-
-        setFilteredData(filtered);
+        const lowercasedTerm = searchTerm.toLowerCase();
+        setFilteredData(
+            molecularSamples.filter(
+                (data) =>
+                    data.name?.toLowerCase().includes(lowercasedTerm) ||
+                    data.patient_id?.toLowerCase().includes(lowercasedTerm)
+            )
+        );
     };
 
-   
-
-        const handleDelete = (id) => {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action cannot be undone!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-            }).then((sample) => {
-                if (sample.isConfirmed) {
-                    // Call backend delete route
-                    Inertia.delete(route('samples.destroy', { id }), {
-                        onSuccess: () => {
-                            location.reload(); // Force full-page reload
-                        },
-                        onError: (errors) => {
-                            Swal.fire('Error!', errors.error || 'Something went wrong.', 'error');
-                        },
-                    });
-                }
-            });
-        };
-
-    
-
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Inertia.delete(route("samples.destroy", { id }), {
+                    onSuccess: () => location.reload(),
+                    onError: (errors) => {
+                        Swal.fire("Error!", errors.error || "Something went wrong.", "error");
+                    },
+                });
+            }
+        });
+    };
 
     return (
         <AdminDashboardLayout
@@ -106,17 +91,12 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                 </h2>
             }
         >
-            <div className="py-2 mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div className="p-6 bg-white border-b border-gray-200">
-                        {/* Search and Export Controls */}
-                        <div className="flex items-center justify-between mb-6">
-                            {hasAnyRole(auth.user, [
-                                "super-admin",
-                                "admin",
-                                "sub-admin",
-                                "user",
-                            ]) && (
+            <div className="py-2 mx-auto max-w-7xl">
+                <div className="bg-white shadow-sm sm:rounded-lg">
+                    <div className="p-6">
+                        {/* Controls */}
+                        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                            {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin", "user"]) && (
                                 <Link
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                     href={route("samples.create")}
@@ -124,202 +104,133 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                     Create Molecular Sample
                                 </Link>
                             )}
-
-                            {/* CSV Export Link */}
                             <CSVLink
                                 data={filteredData}
                                 filename={"Molecular_Sample_Report.csv"}
-                                className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
+                                className="px-6 py-2 text-white bg-green-500 rounded-md"
                             >
                                 Export
                             </CSVLink>
                         </div>
 
-                        {/* Date-wise Filtering */}
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-wrap items-center gap-4 mb-6">
                             <DateWiseReport
                                 data={molecularSamples}
                                 onSearch={handleDateWiseSearch}
                                 startDateField="sample_collection_date"
                                 endDateField="sample_collection_date"
                             />
-
-                            {/* Search Input */}
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    className="px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                    onChange={(e) =>
-                                        handleSearch(e.target.value)
-                                    }
-                                />
-                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={(e) => handleSearch(e.target.value)}
+                            />
                         </div>
 
-                        {/* Table of Molecular Samples */}
+                        {/* Table */}
                         <div className="overflow-x-auto">
-                            <table className="w-full whitespace-nowrap">
-                                {/* Table Headers */}
-                                <thead>
-                                    <tr className="bg-gray-100">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-gray-100">
+                                    <tr>
                                         <th className="px-4 py-2">No.</th>
-                                        <th className="px-4 py-2">
-                                            Patient ID
-                                        </th>
+                                        <th className="px-4 py-2">Patient ID</th>
                                         <th className="px-4 py-2">Name</th>
-                                        <th className="px-4 py-2">
-                                            Collection Date
-                                        </th>
-                                        <th className="px-4 py-2">
-                                            Received Date
-                                        </th>
-                                        <th className="px-4 py-2">
-                                            Collection Status
-                                        </th>
-                                        <th className="px-4 py-2">
-                                            Received Status
-                                        </th>
-                                        <th className="px-4 py-2">Action</th>
+                                        <th className="px-4 py-2">Collection Date</th>
+                                        <th className="px-4 py-2">Received Date</th>
+                                        <th className="px-4 py-2">Collection Status</th>
+                                        <th className="px-4 py-2">Received Status</th>
+                                        <th className="px-4 py-2 text-center">Action</th>
                                     </tr>
                                 </thead>
-
-                                {/* Table Body */}
                                 <tbody>
-                                    {filteredData.map(
-                                        (
-                                            {
-                                                id,
-                                                patient_id,
-                                                name,
-                                                collection_date,
-                                                received_date,
-                                                collection_status,
-                                                received_status,
-                                            },
-                                            index
-                                        ) => (
-                                            <tr key={id}>
-                                                <td className="border px-4 py-2">
-                                                    {index + 1}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {patient_id}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {name}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {formatDate(
-                                                        collection_date
-                                                    )}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {received_date}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {collection_status}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {received_status}
-                                                </td>
-                                                <td className="border px-4 py-2">
-                                                    {/* Show Sample Link */}
+                                    {filteredData.map((sample, index) => (
+                                        <tr key={sample.id} className="border-t">
+                                            <td className="px-4 py-2">{index + 1}</td>
+                                            <td className="px-4 py-2">{sample.patient_id || "N/A"}</td>
+                                            <td className="px-4 py-2">{sample.name || "N/A"}</td>
+                                            <td className="px-4 py-2">{formatDate(sample.collection_date)}</td>
+                                            <td className="px-4 py-2">{formatDate(sample.received_date)}</td>
+                                            <td className="px-4 py-2">{sample.collection_status || "N/A"}</td>
+                                            <td className="px-4 py-2">{sample.received_status || "N/A"}</td>
+                                            <td className="border px-4 py-2 text-center">
+                                                <Link
+                                                    tabIndex="1"
+                                                    className="p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                                    href={route("samples.show", sample.id)}
+                                                    title="View"
+                                                >
+                                                    <FaEye className="h-5 w-5" />
+                                                </Link>
+                                                <Link
+                                                    className="mx-1 p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                                    href={route("results.createReport", {
+                                                        patient_id: sample.patient_id,
+                                                    })}
+                                                    
+                                                    title="Create Report"
+                                                >
+                                                    <FaPlus className="h-5 w-5" />
+                                                </Link>
+                                                {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin"]) && (
                                                     <Link
-                                                        tabIndex="1"
-                                                        className="mr-1 px-4 py-2 text-sm text-white bg-blue-900 rounded"
-                                                        href={route(
-                                                            "samples.show",
-                                                            id
-                                                        )}
+                                                        className="mr-1 p-2 text-white bg-blue-900 rounded inline-flex items-center"
+                                                        href={route("samples.edit", sample.id)}
+                                                        title="Edit"
                                                     >
-                                                        Show
+                                                        <FaEdit className="h-5 w-5" />
                                                     </Link>
-                                                    {hasAnyRole(auth.user, [
-                                                        "super-admin",
-                                                        "admin",
-                                                        "sub-admin",
-                                                    ]) && (
-                                                        <Link
-                                                            tabIndex="1"
-                                                            className=" mx-1 px-4 py-2 text-sm text-white bg-blue-500 rounded"
-                                                            href={route(
-                                                                "samples.edit",
-                                                                id
-                                                            )}
-                                                        >
-                                                            Edit
-                                                        </Link>
-                                                    )}
-
-                                                    {hasRole(
-                                                        auth.user,
-                                                        "super-admin"
-                                                    ) && (
+                                                )}
+                                                {hasRole(auth.user, "super-admin") && (
                                                     <button
-                                                        onClick={() =>
-                                                            handleDelete(id)
-                                                        }
-                                                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                                                        onClick={() => handleDelete(sample.id)}
+                                                        className="p-2 text-white bg-red-500 rounded"
+                                                        title="Delete"
                                                     >
-                                                        Delete
+                                                        <FaTrashAlt className="h-5 w-5" />
                                                     </button>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        )
-                                    )}
-
-                                    {/* Rendered when no data is available */}
-                                    {filteredData.length === 0 && (
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {!filteredData.length && (
                                         <tr>
-                                            <td
-                                                className="px-6 py-4 border-t"
-                                                colSpan="7"
-                                            >
+                                            <td colSpan="8" className="text-center py-4">
                                                 No molecular samples found.
                                             </td>
                                         </tr>
                                     )}
                                 </tbody>
                             </table>
+                        </div>
 
-                            {/* Pagination select controls */}
-                            <div className="flex items-center justify-evenly mt-6">
-                                <select
-                                    value={perPage}
-                                    onChange={handlePerPageChange}
-                                    className="px- py-2 border rounded-md"
-                                >
-                                    <option value={10}>10</option>
-                                    <option value={20}>20</option>
-                                    <option value={30}>30</option>
-                                    <option value={50}>50</option>
-                                    <option value={100}>100</option>
-                                    <option value="all">All</option>
-                                </select>
-
-                                {/* Pagination buttons */}
-                                <div className="flex">
-                                    {Array.from(
-                                        { length: totalPages },
-                                        (_, index) => (
-                                            <button
-                                                key={index}
-                                                className={`px-3 py-1 border ${
-                                                    currentPage === index + 1
-                                                        ? "bg-blue-500 text-white"
-                                                        : ""
-                                                }`}
-                                                onClick={() =>
-                                                    handlePageChange(index + 1)
-                                                }
-                                            >
-                                                {index + 1}
-                                            </button>
-                                        )
-                                    )}
-                                </div>
+                        {/* Pagination */}
+                        <div className="flex items-center justify-between mt-6">
+                            <select
+                                value={perPage}
+                                onChange={handlePerPageChange}
+                                className="px-3 py-2 border rounded-md"
+                            >
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={30}>30</option>
+                                <option value={50}>50</option>
+                                <option value="all">All</option>
+                            </select>
+                            <div className="flex space-x-2">
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <button
+                                        key={i}
+                                        className={`px-3 py-1 rounded-md ${
+                                            currentPage === i + 1
+                                                ? "bg-blue-500 text-white"
+                                                : "bg-gray-100"
+                                        }`}
+                                        onClick={() => handlePageChange(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>

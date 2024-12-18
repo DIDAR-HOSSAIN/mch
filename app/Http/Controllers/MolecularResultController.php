@@ -41,32 +41,33 @@ class MolecularResultController extends Controller
     {
         $request->validate([
             'results' => 'required|array',
-            'results.*.sample_id' => 'required|string|max:255',
-            'results.*.patient_id' => 'required|string|max:255',
-            'results.*.test_id' => 'required|string|max:255',
-            'results.*.investigation' => 'required|string|max:255',
-            'results.*.result' => 'required|string|max:255',
-            'results.*.unit' => 'nullable|string|max:255',
-            'results.*.methodology' => 'required|string|max:255',
-            'results.*.remarks' => 'nullable|string|max:500',
-            'results.*.comments' => 'nullable|string|max:500',
-        ]);
+            'results.*.sample_id' => 'required|string',
+            'results.*.patient_id' => 'required|string',
+            'results.*.test_id' => 'required|integer',
+            'results.*.investigation' => 'required|string',
+            'results.*.result' => 'nullable|string',
+            'results.*.unit' => 'nullable|string',
+            'results.*.methodology' => 'nullable|string',
+            'results.*.remarks' => 'nullable|string',
+            'results.*.comments' => 'nullable|string',
+        ]);        
         
         $results = $request->input('results');
 
-        foreach ($results as $result) {
+        foreach ($request->results as $result) {
             MolecularResult::create([
                 'sample_id' => $result['sample_id'],
                 'patient_id' => $result['patient_id'],
                 'test_id' => $result['test_id'],
                 'investigation' => $result['investigation'],
-                'result' => $result['result'],
+                'result' => $result['result'] ?? null,
                 'unit' => $result['unit'] ?? null,
-                'methodology' => $result['methodology'],
+                'methodology' => $result['methodology'] ?? null,
                 'remarks' => $result['remarks'] ?? null,
                 'comments' => $result['comments'] ?? null,
             ]);
         }
+        
 
         return redirect()->back()->with('success', 'Results saved successfully.');
     }

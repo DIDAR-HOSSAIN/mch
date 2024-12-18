@@ -5,6 +5,7 @@ import { CSVLink } from "react-csv";
 import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 import { Inertia } from "@inertiajs/inertia";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
+import { FaFileInvoice } from "react-icons/fa";
 
 const ViewMolecularResult = ({ auth, results }) => {
     console.log("view molecular result", results);
@@ -125,7 +126,18 @@ const ViewMolecularResult = ({ auth, results }) => {
                                     <td className="border px-4 py-2 text-center">
                                         {/* Actions */}
                                         <Link
-                                            className="mr-1 p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                            tabIndex="1"
+                                            className="p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                            href={route(
+                                                "results.reports",
+                                                result.patient_id
+                                            )}
+                                            title="Molecular Report"
+                                        >
+                                            <FaFileInvoice className="h-5 w-5" />
+                                        </Link>
+                                        <Link
+                                            className="mx-1 p-2 text-white bg-green-700 rounded inline-flex items-center"
                                             href={route(
                                                 "results.show",
                                                 result.id
@@ -176,11 +188,10 @@ const ViewMolecularResult = ({ auth, results }) => {
                             ).map((page) => (
                                 <button
                                     key={page}
-                                    className={`px-4 py-2 border rounded ${
-                                        page === currentPage
+                                    className={`px-4 py-2 border rounded ${page === currentPage
                                             ? "bg-blue-500 text-white"
                                             : "bg-white"
-                                    }`}
+                                        }`}
                                     onClick={() => handlePageChange(page)}
                                 >
                                     {page}
