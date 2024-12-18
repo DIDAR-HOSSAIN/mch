@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "@inertiajs/react";
 
 const CreateMolecularResult = ({ tests }) => {
+    console.log('create result', tests);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         results: {}, // Object to hold the form data dynamically
     });
@@ -48,7 +50,7 @@ const CreateMolecularResult = ({ tests }) => {
                                 <input
                                     type="text"
                                     placeholder="Enter Sample ID"
-                                    value={data.results[test.id]?.sample_id || ""}
+                                    value={test.sample?.sample_id || ""}
                                     onChange={(e) =>
                                         handleFieldChange(test.id, "sample_id", e.target.value)
                                     }
@@ -63,7 +65,7 @@ const CreateMolecularResult = ({ tests }) => {
                                 <input
                                     type="text"
                                     placeholder="Enter Patient ID"
-                                    value={data.results[test.id]?.patient_id || ""}
+                                    value={test.patient_id || ""}
                                     onChange={(e) =>
                                         handleFieldChange(test.id, "patient_id", e.target.value)
                                     }
@@ -78,7 +80,7 @@ const CreateMolecularResult = ({ tests }) => {
                                 <input
                                     type="text"
                                     placeholder="Enter Test ID"
-                                    value={data.results[test.id]?.test_id || ""}
+                                    value={test.test_id || ""}
                                     onChange={(e) =>
                                         handleFieldChange(test.id, "test_id", e.target.value)
                                     }

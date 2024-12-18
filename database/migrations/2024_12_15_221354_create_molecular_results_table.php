@@ -24,11 +24,6 @@ return new class extends Migration
         $table->text('comments')->nullable();
         $table->string('user_name')->nullable();
         $table->timestamps();
-
-        // Foreign key constraints
-        $table->foreign('sample_id')->references('sample_id')->on('samples')->onDelete('cascade');
-        $table->foreign('patient_id')->references('patient_id')->on('molecular_reg_tests')->onDelete('cascade');
-        $table->foreign('test_id')->references('test_id')->on('molecular_reg_tests')->onDelete('cascade'); // New test-specific foreign key
         });
     }
 

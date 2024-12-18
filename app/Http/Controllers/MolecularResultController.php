@@ -107,6 +107,7 @@ class MolecularResultController extends Controller
     public function getPatientTests($patient_id)
     {
         $tests = MolecularRegTest::where('patient_id', $patient_id)
+         ->with('sample')
         ->select('id', 'patient_id', 'test_name', 'test_id', 'test_date', 'test_fee')
         ->get();
 

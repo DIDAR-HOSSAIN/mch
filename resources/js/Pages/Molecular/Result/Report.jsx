@@ -35,85 +35,96 @@ const MolecularReport = ({ tests = [], sample = {} }) => {
                             key={index}
                             className="a4-page p-6 bg-white rounded-md shadow-md"
                         >
+                            {/* Patient Details */}
 
-                        {/* Patient Details */}
-                        
-                        <h2 className="text-lg font-semibold mb-4">Patient Details</h2>
+                            <h2 className="text-lg font-semibold mb-4">
+                                Patient Details
+                            </h2>
 
-                        <table className="w-full table-fixed border border-gray-300">
-                            <tbody>
-                                {/* Row 1 */}
-                                <tr>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Patient Name:
-                                        <span className="block text-gray-900 font-normal">
-                                            {sample.molecular_patient_reg?.name || "N/A"}
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Patient ID:
-                                        <span className="block text-gray-900 font-normal">
-                                            {sample.patient_id || "N/A"}
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Gender:
-                                        <span className="block text-gray-900 font-normal">
-                                            {sample.molecular_patient_reg?.gender || "N/A"}
-                                        </span>
-                                    </td>
-                                </tr>
+                            <table className="w-full table-fixed border border-gray-300">
+                                <tbody>
+                                    {/* Row 1 */}
+                                    <tr>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Patient Name:
+                                            <span className="block text-gray-900 font-normal">
+                                                {sample.molecular_patient_reg?.name || "N/A"}
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Patient ID:
+                                            <span className="block text-gray-900 font-normal">
+                                                {sample.patient_id || "N/A"}
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Gender:
+                                            <span className="block text-gray-900 font-normal">
+                                                {sample.molecular_patient_reg
+                                                    ?.gender || "N/A"}
+                                            </span>
+                                        </td>
+                                    </tr>
 
-                                {/* Row 2 */}
-                                <tr>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Age:
-                                        <span className="block text-gray-900 font-normal">
-                                            {sample.molecular_patient_reg?.age || "N/A"}
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Specimen:
-                                        <span className="block text-gray-900 font-normal">
-                                            Whole Blood
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Sample Collected:
-                                        <span className="block text-gray-900 font-normal">
-                                            {formatBDDateTime(sample.collection_date || "N/A")}
-                                        </span>
-                                    </td>
-                                </tr>
+                                    {/* Row 2 */}
+                                    <tr>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Age:
+                                            <span className="block text-gray-900 font-normal">
+                                                {sample.molecular_patient_reg
+                                                    ?.age || "N/A"}
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Specimen:
+                                            <span className="block text-gray-900 font-normal">
+                                                Whole Blood
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Sample Collected:
+                                            <span className="block text-gray-900 font-normal">
+                                                {formatBDDateTime(
+                                                    sample.collection_date ||
+                                                        "N/A"
+                                                )}
+                                            </span>
+                                        </td>
+                                    </tr>
 
-                                {/* Row 3 */}
-                                <tr>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Sample Received:
-                                        <span className="block text-gray-900 font-normal">
-                                            {formatBDDateTime(sample.received_date || "N/A")}
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Referred By:
-                                        <span className="block text-gray-900 font-normal">
-                                            {sample.molecular_patient_reg?.reference_name || "N/A"}
-                                        </span>
-                                    </td>
-                                    <td className="border px-4 py-2 font-semibold text-gray-700">
-                                        Report Date:
-                                        <span className="block text-gray-900 font-normal">
-                                            {formatBDDateTime(sample.created_at || "N/A")}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
+                                    {/* Row 3 */}
+                                    <tr>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Sample Received:
+                                            <span className="block text-gray-900 font-normal">
+                                                {formatBDDateTime(
+                                                    sample.received_date ||
+                                                        "N/A"
+                                                )}
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Referred By:
+                                            <span className="block text-gray-900 font-normal">
+                                                {sample.molecular_patient_reg
+                                                    ?.reference_name || "N/A"}
+                                            </span>
+                                        </td>
+                                        <td className="border px-4 py-2 font-semibold text-gray-700">
+                                            Report Date:
+                                            <span className="block text-gray-900 font-normal">
+                                                {formatBDDateTime(
+                                                    sample.created_at || "N/A"
+                                                )}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
                             {/* Test Details */}
                             <h1 className="text-2xl font-bold text-center my-6">
-                            Molecular Test Report
+                                Molecular Test Report
                             </h1>
                             <table className="w-full border-collapse border">
                                 <thead>
@@ -129,7 +140,7 @@ const MolecularReport = ({ tests = [], sample = {} }) => {
                                 <tbody>
                                     <tr>
                                         <td className="border p- text-center">
-                                            {test.investigation || "N/A"}
+                                            {test.molecular_reg_test.test_name || "N/A"}
                                         </td>
                                         <td className="border p- text-center">
                                             {test.result || "N/A"}
@@ -139,33 +150,38 @@ const MolecularReport = ({ tests = [], sample = {} }) => {
                             </table>
 
                             <div className="flex items-center mt-4">
-                                    <span className="font-semibold">Methodology :</span>
-                                    <span className="ml-2">
-                                        {test.methodology || "No methodology available."}
-                                    </span>
-                                </div>
+                                <span className="font-semibold">
+                                    Methodology :
+                                </span>
+                                <span className="ml-2">
+                                    {test.methodology ||
+                                        "No methodology available."}
+                                </span>
+                            </div>
 
                             {/* Remarks & Comments */}
                             <h3 className="mt-4 font-semibold">Remarks :</h3>
                             <ul className="list-disc pl-6 mb-4">
-                            {test.remarks ? (
-                                test.remarks
-                                .split(/[.,|/]/) // Split the remarks based on ., |, or /
-                                .filter((item) => item.trim() !== "") // Filter out any empty entries
-                                .map((item, index) => (
-                                    <li key={index} className="mb-1">
-                                    {item.trim()}
-                                    </li>
-                                ))
-                            ) : (
-                                <li>No remarks available.</li>
-                            )}
+                                {test.remarks ? (
+                                    test.remarks
+                                        .split(/[.,|/]/) // Split the remarks based on ., |, or /
+                                        .filter((item) => item.trim() !== "") // Filter out any empty entries
+                                        .map((item, index) => (
+                                            <li key={index} className="mb-1">
+                                                {item.trim()}
+                                            </li>
+                                        ))
+                                ) : (
+                                    <li>No remarks available.</li>
+                                )}
                             </ul>
 
-
-
-                            <span className="mt-4 font-semibold">Comments :</span>
-                            <span className="ml-2">{test.comments || "No comments available."}</span>
+                            <span className="mt-4 font-semibold">
+                                Comments :
+                            </span>
+                            <span className="ml-2">
+                                {test.comments || "No comments available."}
+                            </span>
 
                             <div className="mt-6 text-center">
                                 <p>----------End of Report----------</p>

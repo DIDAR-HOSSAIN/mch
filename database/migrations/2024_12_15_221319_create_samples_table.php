@@ -23,7 +23,6 @@ return new class extends Migration
             $table->enum('received_status', ['Pending', 'Received', 'Rejected'])->default('Pending');
             $table->string('remarks')->nullable();
             $table->string('user_name');
-            $table->foreign('patient_id')->references('patient_id')->on('molecular_regs')->onDelete('cascade');
             $table->timestamps();
         });
     }

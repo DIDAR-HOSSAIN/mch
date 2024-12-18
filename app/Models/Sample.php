@@ -22,16 +22,21 @@ class Sample extends Model
         'user_name'
     ];
 
-    // Relationship to Patient
+
     public function molecularPatientReg()
     {
         return $this->belongsTo(MolecularReg::class, 'patient_id', 'patient_id');
     }
+
+    // public function molecularRegTest()
+    // {
+    //     return $this->belongsTo(MolecularRegTest::class);
+    // }
     
-    public function molecularResults()
-    {
-        return $this->hasMany(MolecularResult::class, 'sample_id', 'sample_id');
-    }
+    // public function molecularResults()
+    // {
+    //     return $this->hasMany(MolecularResult::class, 'sample_id', 'sample_id');
+    // }
 
 
 }

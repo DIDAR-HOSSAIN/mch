@@ -15,25 +15,27 @@ class MolecularRegTest extends Model
 
     protected $fillable = ['patient_id', 'test_id', 'entry_date', 'test_name', 'test_fee', 'test_date'];
 
-    public function molecularReg()
-{
-    return $this->belongsTo(molecularReg::class);
-}
-
-public function molecularTest()
-{
-    return $this->belongsTo(MolecularTest::class);
-}
-
-public function sample()
+    public function sample()
     {
-        return $this->belongsTo(Sample::class, 'sample_id');
+        return $this->hasOne(Sample::class, 'patient_id', 'patient_id');
     }
 
-    public function molecularResults()
-    {
-        return $this->hasMany(MolecularResult::class, 'test_id', 'test_id');
-    }
+
+
+    // public function molecularReg()
+    // {
+    //     return $this->belongsTo(molecularReg::class);
+    // }
+
+    // public function molecularTest()
+    // {
+    // return $this->belongsTo(MolecularTest::class);
+    // }
+
+    // public function molecularResults()
+    // {
+    //     return $this->hasMany(MolecularResult::class, 'test_id', 'test_id');
+    // }
 
     
     

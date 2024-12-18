@@ -12,10 +12,11 @@ class MolecularTest extends Model
 
     protected $fillable = ['test_name','test_fee'];
 
-    public function molecularRegTests()
-{
-    return $this->hasMany(molecularRegTest::class);
-}
+
+    // public function molecularRegTests()
+    // {
+    //     return $this->hasMany(molecularRegTest::class);
+    // }
 
 
 }

@@ -23,7 +23,7 @@ class MolecularResult extends Model
 
     ];
 
-    // Relationship to Sample
+   
     public function molecularSample()
     {
         return $this->belongsTo(Sample::class, 'sample_id', 'sample_id');

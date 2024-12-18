@@ -12,15 +12,16 @@ class MolecularReg extends Model
 
     protected $fillable = ['patient_id', 'name', 'contact_no', 'age', 'gender', 'reg_date', 'discount', 'paid', 'due', 'total', 'net_payable', 'reference_name', 'payment_type', 'account_head', 'user_name'];
 
+
     public function molecularTests()
     {
         return $this->hasMany(MolecularRegTest::class, 'patient_id', 'patient_id');
     }
 
-    public function molecularSamples(): HasMany
-    {
-        return $this->hasMany(Sample::class);
-    }
+    // public function molecularSamples()
+    // {
+    //     return $this->hasMany(Sample::class);
+    // }
     
 
 }

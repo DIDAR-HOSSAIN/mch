@@ -18,8 +18,6 @@ return new class extends Migration
             $table->date('test_date')->useCurrent();
             $table->string('test_name');
             $table->float('test_fee');
-            $table->foreign('patient_id')->references('patient_id')->on('molecular_regs')->onDelete('cascade');
-            $table->foreign('test_id')->references('id')->on('molecular_tests')->onDelete('cascade');
             $table->timestamps();
         });
     }
