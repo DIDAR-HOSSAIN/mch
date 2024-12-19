@@ -9,6 +9,7 @@ const SidebarMenu = () => {
         pcrDropdown: false,
         dopeDropdown: false,
         molecularDropdown: false,
+        molecularSampleDropdown: false,
         sampleDropdown: false,
         resultDropdown: false,
         reportApproveDropdown: false,
@@ -248,6 +249,64 @@ const SidebarMenu = () => {
             )}
 
             {/* //end molecular */}
+
+             {/* // start Molecular sample */}
+             <div className="flex">
+                <button
+                    onClick={() => toggleDropdown("molecularSampleDropdown")}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {dropdownState.molecularSampleDropdown ? "Molecular Sample. ▲" : "Molecular Sample. ▼"}
+                </button>
+            </div>
+            {dropdownState.molecularSampleDropdown && (
+                <div className="flex flex-col gap-1">
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                            <Link
+                                href="/samples/create"
+                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            >
+                                Sample Collection(Molecular)
+                            </Link>
+                        )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                            <Link
+                                href="/samples-receive"
+                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            >
+                                Sample Receive(Molecular)
+                            </Link>
+                        )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                            <Link
+                                href="/samples"
+                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                            >
+                                Manage Sample (Molecular)
+                            </Link>
+                        )}
+                </div>
+            )}
+
+            {/* //sample molecular end  */}
 
             <div className="flex">
                 <button
