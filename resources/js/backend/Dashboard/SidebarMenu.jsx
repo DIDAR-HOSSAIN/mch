@@ -10,6 +10,7 @@ const SidebarMenu = () => {
         dopeDropdown: false,
         molecularDropdown: false,
         molecularSampleDropdown: false,
+        molecularResultDropdown: false,
         sampleDropdown: false,
         resultDropdown: false,
         reportApproveDropdown: false,
@@ -43,13 +44,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/pcr/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Registration
-                            </Link>
-                        )}
+                        <Link
+                            href="/pcr/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -58,26 +59,26 @@ const SidebarMenu = () => {
                         "user",
                         "general",
                     ]) && (
-                            <Link
-                                href="/pcr"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Pcr
-                            </Link>
-                        )}
+                        <Link
+                            href="/pcr"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Pcr
+                        </Link>
+                    )}
                     {hasAnyRole(auth.user, [
                         "super-admin",
                         "admin",
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/summary"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
+                        <Link
+                            href="/summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
@@ -97,13 +98,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/dope/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Registration
-                            </Link>
-                        )}
+                        <Link
+                            href="/dope/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -112,13 +113,13 @@ const SidebarMenu = () => {
                         "user",
                         "general",
                     ]) && (
-                            <Link
-                                href="/dope"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Dope
-                            </Link>
-                        )}
+                        <Link
+                            href="/dope"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Dope
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -126,13 +127,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/dope-summary"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -140,13 +141,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/summary-details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary Details
-                            </Link>
-                        )}
+                        <Link
+                            href="/summary-details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary Details
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -154,13 +155,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/dues-details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Dues Details
-                            </Link>
-                        )}
+                        <Link
+                            href="/dues-details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Dues Details
+                        </Link>
+                    )}
                 </div>
             )}
 
@@ -170,7 +171,9 @@ const SidebarMenu = () => {
                     onClick={() => toggleDropdown("molecularDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {dropdownState.molecularDropdown ? "Molecular Reg. ▲" : "Molecular Reg. ▼"}
+                    {dropdownState.molecularDropdown
+                        ? "Molecular Reg. ▲"
+                        : "Molecular Reg. ▼"}
                 </button>
             </div>
             {dropdownState.molecularDropdown && (
@@ -181,13 +184,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/moleculars/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Registration
-                            </Link>
-                        )}
+                        <Link
+                            href="/moleculars/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -196,13 +199,13 @@ const SidebarMenu = () => {
                         "user",
                         "general",
                     ]) && (
-                            <Link
-                                href="/moleculars"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Molecular
-                            </Link>
-                        )}
+                        <Link
+                            href="/moleculars"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Molecular
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -210,13 +213,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/molecular/summary"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
+                        <Link
+                            href="/molecular/summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -224,13 +227,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/molecular/summary/details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary Details
-                            </Link>
-                        )}
+                        <Link
+                            href="/molecular/summary/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary Details
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -238,25 +241,27 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/molecular/dues/details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Dues Details
-                            </Link>
-                        )}
+                        <Link
+                            href="/molecular/dues/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Dues Details
+                        </Link>
+                    )}
                 </div>
             )}
 
             {/* //end molecular */}
 
-             {/* // start Molecular sample */}
-             <div className="flex">
+            {/* // start Molecular sample */}
+            <div className="flex">
                 <button
                     onClick={() => toggleDropdown("molecularSampleDropdown")}
                     className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
-                    {dropdownState.molecularSampleDropdown ? "Molecular Sample. ▲" : "Molecular Sample. ▼"}
+                    {dropdownState.molecularSampleDropdown
+                        ? "Molecular Sample. ▲"
+                        : "Molecular Sample. ▼"}
                 </button>
             </div>
             {dropdownState.molecularSampleDropdown && (
@@ -267,13 +272,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/samples/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Sample Collection(Molecular)
-                            </Link>
-                        )}
+                        <Link
+                            href="/samples/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Sample Collection(Molecular)
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -281,13 +286,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/samples-receive"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Sample Receive(Molecular)
-                            </Link>
-                        )}
+                        <Link
+                            href="/samples-receive"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Sample Receive(Molecular)
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -296,17 +301,65 @@ const SidebarMenu = () => {
                         "user",
                         "general",
                     ]) && (
-                            <Link
-                                href="/samples"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Sample (Molecular)
-                            </Link>
-                        )}
+                        <Link
+                            href="/samples"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Sample (Molecular)
+                        </Link>
+                    )}
                 </div>
             )}
 
             {/* //sample molecular end  */}
+
+
+            {/* // Molecular Result Start*/}
+            <div className="flex">
+                <button
+                    onClick={() => toggleDropdown("molecularResultDropdown")}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {dropdownState.molecularResultDropdown
+                        ? "Molecular Result. ▲"
+                        : "Molecular Result. ▼"}
+                </button>
+            </div>
+            {dropdownState.molecularResultDropdown && (
+                <div className="flex flex-col gap-1">
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/samples"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Result Create(Molecular)
+                        </Link>
+                    )}
+
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                        <Link
+                            href="/results"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Results (Molecular)
+                        </Link>
+                    )}
+                </div>
+            )}
+
+            {/* //Molecular Result end  */}
 
             <div className="flex">
                 <button
@@ -326,13 +379,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/sample/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Sample Receive
-                            </Link>
-                        )}
+                        <Link
+                            href="/sample/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Sample Receive
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -341,13 +394,13 @@ const SidebarMenu = () => {
                         "user",
                         "general",
                     ]) && (
-                            <Link
-                                href="/sample"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Sample
-                            </Link>
-                        )}
+                        <Link
+                            href="/sample"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Sample
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -355,13 +408,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/dope-summary"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
@@ -382,13 +435,13 @@ const SidebarMenu = () => {
                         "admin",
                         "sub-admin",
                     ]) && (
-                            <Link
-                                href="/result/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Result Input
-                            </Link>
-                        )}
+                        <Link
+                            href="/result/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Result Input
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -396,13 +449,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/result"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Result
-                            </Link>
-                        )}
+                        <Link
+                            href="/result"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Result
+                        </Link>
+                    )}
 
                     {hasAnyRole(auth.user, [
                         "super-admin",
@@ -410,13 +463,13 @@ const SidebarMenu = () => {
                         "sub-admin",
                         "user",
                     ]) && (
-                            <Link
-                                href="/dope-summary"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
+                        <Link
+                            href="/dope-summary"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
                 </div>
             )}
 
