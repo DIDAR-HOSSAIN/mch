@@ -2,7 +2,7 @@
     import { useReactToPrint } from "react-to-print";
     import sign1 from "@/assets/images/sign/zakir_sign.png";
     import sign2 from "@/assets/images/sign/zohir_sign.png";
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+    import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
     const MolecularReport = ({ auth, tests = [], sample = {} }) => {
         console.log('Molecular tests Report ', tests)
@@ -166,6 +166,9 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
                                             <th className="border p-2 text-center">
                                                 Result
                                             </th>
+                                            {test.unit && (
+                                                <th className="border p-2 text-center">Unit</th>
+                                            )}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -176,6 +179,11 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
                                             <td className="border p- text-center">
                                                 {test.result || "N/A"}
                                             </td>
+                                            {test.unit && (
+                                                <td className="border p-2 text-center">
+                                                    {test.unit}
+                                                </td>
+                                            )}
                                         </tr>
                                     </tbody>
                                 </table>
