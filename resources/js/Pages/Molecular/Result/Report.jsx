@@ -1,19 +1,19 @@
-    import React, { useRef } from "react";
-    import { useReactToPrint } from "react-to-print";
-    import sign1 from "@/assets/images/sign/zakir_sign.png";
-    import sign2 from "@/assets/images/sign/zohir_sign.png";
-    import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import React, { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import sign1 from "@/assets/images/sign/zakir_sign.png";
+import sign2 from "@/assets/images/sign/zohir_sign.png";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-    const MolecularReport = ({ auth, tests = [], sample = {} }) => {
-        console.log('Molecular tests Report ', tests)
-        console.log('Molecular sample Report ', sample)
-        
-        const contentToPrint = useRef(null);
+const MolecularReport = ({ auth, tests = [], sample = {} }) => {
+    console.log('Molecular tests Report ', tests)
+    console.log('Molecular sample Report ', sample)
 
-        const handlePrint = useReactToPrint({
-            documentTitle: `Report_${sample.patient_id}`,
-            content: () => contentToPrint.current,
-            pageStyle: `
+    const contentToPrint = useRef(null);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: `Report_${sample.patient_id}`,
+        content: () => contentToPrint.current,
+        pageStyle: `
                 @page {
                     size: A4;
                     margin: 1cm;
@@ -26,23 +26,23 @@
                     margin: 0 !important;
                 }
             `,
+    });
+
+    const formatBDDateTime = (date) =>
+        new Date(date).toLocaleString("en-GB", {
+            timeZone: "Asia/Dhaka",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true, // Use 12-hour format with AM/PM
         });
 
-        const formatBDDateTime = (date) => 
-            new Date(date).toLocaleString("en-GB", {
-                timeZone: "Asia/Dhaka", // Bangladesh Time Zone
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true, // Use 12-hour format with AM/PM
-            });
-        
 
-        return (
-            <AdminDashboardLayout
+    return (
+        <AdminDashboardLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
@@ -117,7 +117,7 @@
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
                                                         sample.collection_date ||
-                                                            "N/A"
+                                                        "N/A"
                                                     )}
                                                 </span>
                                             </td>
@@ -130,7 +130,7 @@
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
                                                         sample.received_date ||
-                                                            "N/A"
+                                                        "N/A"
                                                     )}
                                                 </span>
                                             </td>
@@ -157,36 +157,48 @@
                                 <h1 className="text-2xl font-bold text-center my-2">
                                     Molecular Test Report
                                 </h1>
+
+
                                 <table className="w-full border-collapse border">
                                     <thead>
                                         <tr>
-                                            <th className="border p-2 text-center">
-                                                Investigation
-                                            </th>
-                                            <th className="border p-2 text-center">
+                                            <th className="border p-2 text-center">Investigation</th>
+                                            <th className="border p-2 text-center" colSpan={test.result_status === 'Positive' ? 2 : 1}>
                                                 Result
                                             </th>
-                                            {test.unit && (
+
+                                            {test.result_status === 'Negative' && (
                                                 <th className="border p-2 text-center">Unit</th>
                                             )}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className="border p- text-center">
+                                            <td className="border p-2 text-center">
                                                 {test.molecular_reg_test.test_name || "N/A"}
                                             </td>
-                                            <td className="border p- text-center">
-                                                {test.result || "N/A"}
-                                            </td>
-                                            {test.unit && (
-                                                <td className="border p-2 text-center">
-                                                    {test.unit}
-                                                </td>
+                                            {test.result_status === 'Negative' ? (
+                                                <>
+                                                    <td className="border p-2 text-center">{test.result || "N/A"}</td>
+                                                    <td className="border p-2 text-center">{test.unit || "N/A"}</td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td className="border p-2 text-center" rowSpan={3}>
+                                                        {test.result || "N/A"}
+                                                    </td>
+                                                    <td className="border p-2 text-center" rowSpan={3}>
+                                                        {test.result_copies || "N/A"}
+                                                    </td>
+                                                </>
                                             )}
                                         </tr>
                                     </tbody>
                                 </table>
+
+
+
+
 
                                 <div className="flex items-center mt-2">
                                     <span className="font-semibold">
@@ -251,7 +263,7 @@
                                         /> */}
                                         <hr className="border-t border-black my-2" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
-                                        <p>MBBS, Bcs, M.Phil (Microbiology)</p>
+                                        <p>MBBS, BCS, M.Phil (Microbiology)</p>
                                         <p>Asst. Professor & Head</p>
                                         <p>Dept. of Mircrobiology & Immunology</p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
@@ -271,8 +283,8 @@
                     )}
                 </div>
             </div>
-            </AdminDashboardLayout>
-        );
-    };
+        </AdminDashboardLayout>
+    );
+};
 
-    export default MolecularReport;
+export default MolecularReport;

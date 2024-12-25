@@ -209,7 +209,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                             <select
                                 value={perPage}
                                 onChange={handlePerPageChange}
-                                className="px-3 py-2 border rounded-md"
+                                className="px-3 px-6 border rounded-md"
                             >
                                 <option value={10}>10</option>
                                 <option value={20}>20</option>
