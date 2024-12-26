@@ -88,10 +88,10 @@ const CreateMolecular = ({ auth, references = [] }) => {
     return (
         <AdminDashboardLayout
             user={auth.user}
-            header={<h2 className="text-xl font-semibold">Manage Molecular</h2>}
+            header={<h2 className="text-xl font-semibold">Molecular Registration</h2>}
         >
-            <Head title="Manage Molecular" />
-            <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-md p-6">
+            <Head title="Molecular Registration" />
+            <div className="mt-4 max-w-5xl mx-auto justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">
                 <h2 className="text-2xl font-semibold mb-2 text-gray-700">
                     Molecular Registration
                 </h2>
@@ -167,7 +167,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                     </div>
 
                     {/* Test Details */}
-                    <div className="bg-gray-50 p-4 rounded-lg shadow-lg">
+                    <div className="">
                         <h3 className="text-lg font-semibold mb-4 text-gray-800">
                             Test Details
                         </h3>
@@ -290,7 +290,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                     </div>
 
                     {/* Payment Details */}
-                    <div className="bg-gray-50 p-2 rounded-lg shadow">
+                    <div className="p-2 rounded-lg shadow">
                         <h3 className="text-lg font-semibold mb-2 text-gray-800">
                             Payment Details
                         </h3>
@@ -370,20 +370,26 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                     }
                                     className="w-full border rounded px-3 py-2"
                                 >
-                                <option value="">Select Payment Type</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Cheque">Cheque</option>
-                                <option value="Card">Card</option>
-                                <option value="Bkash">Bkash</option>
-                                <option value="Rocket">Rocket</option>
-                                <option value="Nagod">Nagod</option>
-                                <option value="Internet Banking">Internet Banking</option>
-                                <option value="Mobile Banking">Mobile Banking</option>
-                                <option value="Others">Others</option>
+                                    <option value="">
+                                        Select Payment Type
+                                    </option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Card">Card</option>
+                                    <option value="Bkash">Bkash</option>
+                                    <option value="Rocket">Rocket</option>
+                                    <option value="Nagod">Nagod</option>
+                                    <option value="Internet Banking">
+                                        Internet Banking
+                                    </option>
+                                    <option value="Mobile Banking">
+                                        Mobile Banking
+                                    </option>
+                                    <option value="Others">Others</option>
                                 </select>
                                 <InputError message={errors.payment_type} />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-600">
                                     Account Head

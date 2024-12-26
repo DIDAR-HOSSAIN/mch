@@ -82,7 +82,7 @@ const SampleReceive = ({ auth, collectedSamples }) => {
 
     return (
         <AdminDashboardLayout user={auth.user}>
-            <div className="container mx-auto px-4 py-8 max-w-3xl">
+            <div className="container mx-auto px-4 py-4 max-w-3xl">
                 <form
                     onSubmit={handleSubmit}
                     className="space-y-6 bg-white shadow-md rounded-lg p-6"

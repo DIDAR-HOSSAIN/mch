@@ -1,19 +1,19 @@
-    import React, { useRef } from "react";
-    import { useReactToPrint } from "react-to-print";
-    import sign1 from "@/assets/images/sign/zakir_sign.png";
-    import sign2 from "@/assets/images/sign/zohir_sign.png";
-    import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import React, { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import sign1 from "@/assets/images/sign/zakir_sign.png";
+import sign2 from "@/assets/images/sign/zohir_sign.png";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-    const MolecularReport = ({ auth, tests = [], sample = {} }) => {
-        console.log('Molecular tests Report ', tests)
-        console.log('Molecular sample Report ', sample)
-        
-        const contentToPrint = useRef(null);
+const MolecularReport = ({ auth, tests = [], sample = {} }) => {
+    console.log("Molecular tests Report ", tests);
+    console.log("Molecular sample Report ", sample);
 
-        const handlePrint = useReactToPrint({
-            documentTitle: `Report_${sample.patient_id}`,
-            content: () => contentToPrint.current,
-            pageStyle: `
+    const contentToPrint = useRef(null);
+
+    const handlePrint = useReactToPrint({
+        documentTitle: `Report_${sample.patient_id}`,
+        content: () => contentToPrint.current,
+        pageStyle: `
                 @page {
                     size: A4;
                     margin: 1cm;
@@ -26,23 +26,22 @@
                     margin: 0 !important;
                 }
             `,
+    });
+
+    const formatBDDateTime = (date) =>
+        new Date(date).toLocaleString("en-GB", {
+            timeZone: "Asia/Dhaka",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true, // Use 12-hour format with AM/PM
         });
 
-        const formatBDDateTime = (date) => 
-            new Date(date).toLocaleString("en-GB", {
-                timeZone: "Asia/Dhaka", // Bangladesh Time Zone
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true, // Use 12-hour format with AM/PM
-            });
-        
-
-        return (
-            <AdminDashboardLayout
+    return (
+        <AdminDashboardLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
@@ -79,7 +78,9 @@
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Patient Name:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg?.name || "N/A"}
+                                                    {sample
+                                                        .molecular_patient_reg
+                                                        ?.name || "N/A"}
                                                 </span>
                                             </td>
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
@@ -91,7 +92,8 @@
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Gender:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
+                                                    {sample
+                                                        .molecular_patient_reg
                                                         ?.gender || "N/A"}
                                                 </span>
                                             </td>
@@ -102,7 +104,8 @@
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Age:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
+                                                    {sample
+                                                        .molecular_patient_reg
                                                         ?.age || "N/A"}
                                                 </span>
                                             </td>
@@ -137,15 +140,18 @@
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Referred By:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
-                                                        ?.reference_name || "N/A"}
+                                                    {sample
+                                                        .molecular_patient_reg
+                                                        ?.reference_name ||
+                                                        "N/A"}
                                                 </span>
                                             </td>
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Report Date:
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
-                                                        sample.created_at || "N/A"
+                                                        sample.created_at ||
+                                                            "N/A"
                                                     )}
                                                 </span>
                                             </td>
@@ -157,32 +163,65 @@
                                 <h1 className="text-2xl font-bold text-center my-2">
                                     Molecular Test Report
                                 </h1>
+
                                 <table className="w-full border-collapse border">
                                     <thead>
                                         <tr>
                                             <th className="border p-2 text-center">
                                                 Investigation
                                             </th>
-                                            <th className="border p-2 text-center">
+                                            <th
+                                                className="border p-2 text-center"
+                                                colSpan={
+                                                    test.result_status ===
+                                                    "Positive"
+                                                        ? 2
+                                                        : 1
+                                                }
+                                            >
                                                 Result
                                             </th>
-                                            {test.unit && (
-                                                <th className="border p-2 text-center">Unit</th>
+
+                                            {test.result_status ===
+                                                "Negative" && (
+                                                <th className="border p-2 text-center">
+                                                    Unit
+                                                </th>
                                             )}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td className="border p- text-center">
-                                                {test.molecular_reg_test.test_name || "N/A"}
+                                            <td className="border p-2 text-center">
+                                                {test.molecular_reg_test
+                                                    .test_name || "N/A"}
                                             </td>
-                                            <td className="border p- text-center">
-                                                {test.result || "N/A"}
-                                            </td>
-                                            {test.unit && (
-                                                <td className="border p-2 text-center">
-                                                    {test.unit}
-                                                </td>
+                                            {test.result_status ===
+                                            "Negative" ? (
+                                                <>
+                                                    <td className="border p-2 text-center">
+                                                        {test.result || "N/A"}
+                                                    </td>
+                                                    <td className="border p-2 text-center">
+                                                        {test.unit || "N/A"}
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td
+                                                        className="border p-2 text-center"
+                                                        rowSpan={3}
+                                                    >
+                                                        {test.result || "N/A"}
+                                                    </td>
+                                                    <td
+                                                        className="border p-2 text-center"
+                                                        rowSpan={3}
+                                                    >
+                                                        {test.result_copies ||
+                                                            "N/A"}
+                                                    </td>
+                                                </>
                                             )}
                                         </tr>
                                     </tbody>
@@ -199,14 +238,21 @@
                                 </div>
 
                                 {/* Remarks & Comments */}
-                                <h3 className="mt-2 font-semibold">Remarks :</h3>
+                                <h3 className="mt-2 font-semibold">
+                                    Remarks :
+                                </h3>
                                 <ul className="list-disc pl-6 mb-2">
                                     {test.remarks ? (
                                         test.remarks
                                             .split(/[|]/) // Split the remarks based on ., |, or /
-                                            .filter((item) => item.trim() !== "") // Filter out any empty entries
+                                            .filter(
+                                                (item) => item.trim() !== ""
+                                            ) // Filter out any empty entries
                                             .map((item, index) => (
-                                                <li key={index} className="mb-1">
+                                                <li
+                                                    key={index}
+                                                    className="mb-1"
+                                                >
                                                     {item.trim()}
                                                 </li>
                                             ))
@@ -237,11 +283,16 @@
                                         <hr className="border-t border-black my-2" />
                                         <strong>Zahirul Islam</strong>
                                         <p>BSC (Hons) , MS</p>
-                                        <p>Biochemistry & Molecular Biology (CU)</p>
+                                        <p>
+                                            Biochemistry & Molecular Biology
+                                            (CU)
+                                        </p>
                                         <p>Senior Research Officer</p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
                                         <p>Molecular Biologist</p>
-                                        <p>Medical Centre Hospital (RT-PCR Lab)</p>
+                                        <p>
+                                            Medical Centre Hospital (RT-PCR Lab)
+                                        </p>
                                     </div>
                                     <div className="text-center">
                                         {/* <img
@@ -251,12 +302,16 @@
                                         /> */}
                                         <hr className="border-t border-black my-2" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
-                                        <p>MBBS, Bcs, M.Phil (Microbiology)</p>
+                                        <p>MBBS, BCS, M.Phil (Microbiology)</p>
                                         <p>Asst. Professor & Head</p>
-                                        <p>Dept. of Mircrobiology & Immunology</p>
+                                        <p>
+                                            Dept. of Mircrobiology & Immunology
+                                        </p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
                                         <p>Consultant</p>
-                                        <p>Medical Centre Hospital (RT-PCR Lab)</p>
+                                        <p>
+                                            Medical Centre Hospital (RT-PCR Lab)
+                                        </p>
                                     </div>
                                 </div>
 
@@ -271,8 +326,8 @@
                     )}
                 </div>
             </div>
-            </AdminDashboardLayout>
-        );
-    };
+        </AdminDashboardLayout>
+    );
+};
 
-    export default MolecularReport;
+export default MolecularReport;

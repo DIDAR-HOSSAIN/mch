@@ -15,11 +15,13 @@ return new class extends Migration
         $table->id();
         $table->string('sample_id');
         $table->string('patient_id');
-        $table->unsignedBigInteger('test_id')->nullable(); // Add this for test-specific results
-        $table->string('investigation'); // Test name, e.g., 'Hepatitis B Virus (HBV)'
-        $table->string('result')->nullable(); // e.g., 'Positive', 'Negative'
-        $table->string('unit')->nullable(); // e.g., 'copies/mL'
-        $table->string('methodology')->nullable(); // e.g., 'PCR'
+        $table->unsignedBigInteger('test_id')->nullable();
+        $table->enum('result_status', ['Negative', 'Positive'])->default('Negative');
+        $table->string('investigation');
+        $table->string('result')->nullable();
+        $table->string('unit')->nullable();
+        $table->string('result_copies')->nullable();
+        $table->string('methodology')->nullable();
         $table->text('remarks')->nullable();
         $table->text('comments')->nullable();
         $table->string('user_name')->nullable();

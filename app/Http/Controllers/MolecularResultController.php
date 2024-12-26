@@ -115,30 +115,7 @@ class MolecularResultController extends Controller
         // dd($tests);
 
         return Inertia::render('Molecular/Result/CreateMolecularResult', ['tests'=> $tests]);
-
-        return response()->json([
-        'tests' => $tests
-        ]);
     }
-
-
-    // public function generateReport($patientId)
-    // {
-    //     // Fetch the molecular test results by patient ID and eager load related test details
-    //     $tests = MolecularResult::where('patient_id', $patientId)
-    //         ->with('molecularRegTest') // Ensure related tests are included
-    //         ->get();
-
-    //     // Fetch the sample details associated with the patient
-    //     $sample = Sample::where('patient_id', $patientId)->firstOrFail();
-    //     // dd($sample);
-    //     // Render the Inertia view with the necessary data
-    //     return Inertia::render('Molecular/Result/Report', [
-    //         'tests' => $tests,
-    //         'sample' => $sample,
-    //     ]);
-    // }
-
 
     public function generateReport($patientId)
     {
