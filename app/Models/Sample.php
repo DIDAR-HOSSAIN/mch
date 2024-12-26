@@ -28,15 +28,4 @@ class Sample extends Model
         return $this->belongsTo(MolecularReg::class, 'patient_id', 'patient_id');
     }
 
-    // public function molecularRegTest()
-    // {
-    //     return $this->belongsTo(MolecularRegTest::class);
-    // }
-    
-    // public function molecularResults()
-    // {
-    //     return $this->hasMany(MolecularResult::class, 'sample_id', 'sample_id');
-    // }
-
-
 }

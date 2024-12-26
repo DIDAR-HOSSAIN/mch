@@ -18,26 +18,7 @@ class MolecularRegTest extends Model
     public function sample()
     {
         return $this->hasOne(Sample::class, 'patient_id', 'patient_id');
-    }
-
-
-
-    // public function molecularReg()
-    // {
-    //     return $this->belongsTo(molecularReg::class);
-    // }
-
-    // public function molecularTest()
-    // {
-    // return $this->belongsTo(MolecularTest::class);
-    // }
-
-    // public function molecularResults()
-    // {
-    //     return $this->hasMany(MolecularResult::class, 'test_id', 'test_id');
-    // }
-
-    
+    }   
     
 
 }
