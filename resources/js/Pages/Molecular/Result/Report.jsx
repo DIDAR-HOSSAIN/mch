@@ -244,10 +244,10 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 <ul className="list-disc pl-6 mb-2">
                                     {test.remarks ? (
                                         test.remarks
-                                            .split(/[|]/) // Split the remarks based on ., |, or /
+                                            .split(/[|]/)
                                             .filter(
                                                 (item) => item.trim() !== ""
-                                            ) // Filter out any empty entries
+                                            )
                                             .map((item, index) => (
                                                 <li
                                                     key={index}
