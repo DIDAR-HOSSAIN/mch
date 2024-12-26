@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const CreateMolecularResult = ({ auth, tests }) => {
+const EditMolecularResult = ({ auth, tests }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         results: tests.map((test) => ({
             sample_id: test.sample?.sample_id || "",
@@ -273,4 +273,4 @@ const CreateMolecularResult = ({ auth, tests }) => {
     );
 };
 
-export default CreateMolecularResult;
+export default EditMolecularResult;

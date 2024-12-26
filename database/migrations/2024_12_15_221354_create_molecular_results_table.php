@@ -16,7 +16,7 @@ return new class extends Migration
         $table->string('sample_id');
         $table->string('patient_id');
         $table->unsignedBigInteger('test_id')->nullable();
-        $table->enum('result_status', ['Negative', 'Positive'])->default('Negative');
+        $table->enum('result_status', ['Negative', 'Positive']);
         $table->string('investigation');
         $table->string('result')->nullable();
         $table->string('unit')->nullable();
