@@ -92,7 +92,9 @@ class MolecularResultController extends Controller
      */
     public function edit(MolecularResult $molecularResult)
     {
-        //
+        $molecularResult = MolecularResult::all();
+        // return $molecularResult;
+        return Inertia::render('Molecular/Result/EditMolecularResult', ['molecularResult' => $molecularResult] );
     }
 
     /**
@@ -100,7 +102,28 @@ class MolecularResultController extends Controller
      */
     public function update(UpdateMolecularResultRequest $request, MolecularResult $molecularResult)
     {
-        //
+        $results = $request->input('results');
+        foreach ($results as $result) {
+        $validated = \Validator::make($result, [
+            'sample_id' => 'required|string',
+            'patient_id' => 'required|string',
+            'test_id' => 'required|integer',
+            'result_status' => 'required|string',
+            'specimen' => 'required|string',
+            'investigation' => 'required|string',
+            'result' => 'nullable|string',
+            'unit' => 'nullable|string',
+            'result_copies' => 'nullable|string',
+            'methodology' => 'nullable|string',
+            'remarks' => 'nullable|string',
+            'comments' => 'nullable|string',
+        ])->validate();
+
+        $existingResult = MolecularResult::findOrFail($result['id']);
+        $existingResult->update($validated);
+    }
+
+    return redirect()->back()->with('success', 'Results updated successfully.');
     }
 
     /**

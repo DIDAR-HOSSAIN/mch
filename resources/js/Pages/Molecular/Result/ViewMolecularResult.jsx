@@ -149,7 +149,7 @@ const ViewMolecularResult = ({ auth, results }) => {
                                             className="mr-1 p-2 text-white bg-blue-900 rounded inline-flex items-center"
                                             href={route(
                                                 "results.edit",
-                                                result.id
+                                                result.patient_id
                                             )}
                                         >
                                             <FiEdit className="h-5 w-5" />

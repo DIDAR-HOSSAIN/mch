@@ -2,24 +2,24 @@ import React from "react";
 import { useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const EditMolecularResult = ({ auth, tests }) => {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        results: tests.map((test) => ({
-            sample_id: test.sample?.sample_id || "",
-            patient_id: test.patient_id || "",
-            test_id: test.test_id || test.id, // Use test.id as fallback
-            investigation: test.test_name || "",
-            result: "",
-            unit: "",
-            result_status: "Negative",
-            result_copies: "",
-            methodology: "Real-Time PCR based on TaqMan Technology",
-            remarks: "",
-            comments: "",
+const EditMolecularResult = ({ auth, molecularResult }) => {
+    const { data, setData, put, processing, errors, reset } = useForm({
+        results: molecularResult.map((result) => ({
+            id: result.id,
+            sample_id: result.sample_id || "",
+            patient_id: result.patient_id || "",
+            test_id: result.test_id || "",
+            investigation: result.investigation || "",
+            result: result.result || "",
+            unit: result.unit || "",
+            result_status: result.result_status || "",
+            specimen: result.specimen || "",
+            result_copies: result.result_copies || "",
+            methodology: result.methodology || "Real-Time PCR based on TaqMan Technology",
+            remarks: result.remarks || "",
+            comments: result.comments || "",
         })),
     });
-
-    console.log("create molecular redults", data);
 
     const handleChange = (index, field, value) => {
         const updatedResults = [...data.results];
@@ -29,11 +29,17 @@ const EditMolecularResult = ({ auth, tests }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("results.store"), {
-            onSuccess: () => {
-                alert("Results submitted successfully!");
-                reset();
-            },
+        data.results.forEach((result) => {
+            put(route("results.update", { result: result.id }), {
+                data: result,
+                onSuccess: () => {
+                    alert("Results updated successfully!");
+                    reset();
+                },
+                onError: () => {
+                    console.error("Error updating results");
+                },
+            });
         });
     };
 
@@ -42,229 +48,128 @@ const EditMolecularResult = ({ auth, tests }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Create Molecular Results
+                    Edit Molecular Results
                 </h2>
             }
         >
             <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-4">
                 <h2 className="text-2xl font-bold mb-8 text-center text-blue-700">
-                    Enter Test Results
+                    Update Test Results
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {data.results.map((result, index) => (
                         <div
-                            key={index}
+                            key={result.id}
                             className="p-4 border rounded-lg bg-gray-50 shadow-md"
                         >
-                            {/* Test Header */}
-                            <div className="mb-4">
-                                <h3 className="text-lg font-semibold text-gray-700">
-                                    {tests[index].test_name}{" "}
-                                    <span className="text-sm text-gray-500">
-                                        (Fee: {tests[index].test_fee} | Date:{" "}
-                                        {tests[index].test_date})
-                                    </span>
-                                </h3>
-                            </div>
-
-                            {/* Test Details */}
+                            {/* Static Fields */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Sample ID
-                                    </label>
-                                    <input
-                                        type="text"
-                                        defaultValue={result.sample_id}
-                                        readOnly
-                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Patient ID
-                                    </label>
-                                    <input
-                                        type="text"
-                                        defaultValue={result.patient_id}
-                                        readOnly
-                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Test ID
-                                    </label>
-                                    <input
-                                        type="text"
-                                        defaultValue={result.test_id}
-                                        readOnly
-                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                    />
-                                </div>
+                                {["sample_id", "patient_id", "test_id"].map((field) => (
+                                    <div key={field}>
+                                        <label className="block text-gray-700 font-medium mb-1">
+                                            {field.replace("_", " ").toUpperCase()}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={result[field]}
+                                            readOnly
+                                            className="w-full px-4 py-2 border rounded-md bg-gray-100"
+                                        />
+                                    </div>
+                                ))}
                             </div>
 
                             {/* Editable Fields */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Investigation
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={result.investigation}
-                                        readOnly
-                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Methodology
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Methodology"
-                                        value={result.methodology}
-                                        readOnly
-                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "methodology",
-                                                e.target.value
-                                            )
-                                        }
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Result Status
-                                    </label>
-                                    <select
-                                        id={`result_status_${index}`} // Unique id for each select
-                                        value={result.result_status}
-                                        onChange={(e) =>
-                                            handleChange(index, "result_status", e.target.value)
-                                        }
-                                        className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        <option value="Negative">Negative</option>
-                                        <option value="Positive">Positive</option>
-                                    </select>
-                                </div>
-
-
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Result
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Result"
-                                        value={result.result}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "result",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {result.result_status === "Negative" && (
-                                    <div>
+                                {[
+                                    { field: "investigation", type: "text", readOnly: true },
+                                    { field: "methodology", type: "text", readOnly: false },
+                                    { field: "result_status", type: "select", options: ["Negative", "Positive"] },
+                                    { field: "specimen", type: "select", options: ["Whole Blood", "Plasma", "Serum", "Cervical Swab"] },
+                                    { field: "result", type: "text", readOnly: false },
+                                    ...(result.result_status === "Negative" && result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                        ? [{ field: "unit", type: "text", readOnly: false }]
+                                        : []),
+                                    ...(result.result_status === "Positive" && result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                        ? [{ field: "result_copies", type: "text", readOnly: false }]
+                                        : []),
+                                ].map(({ field, type, options, readOnly }) => (
+                                    <div key={field}>
                                         <label className="block text-gray-700 font-medium mb-1">
-                                            Unit
+                                            {field.replace("_", " ").toUpperCase()}
                                         </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Unit"
-                                            value={result.unit}
-                                            onChange={(e) =>
-                                                handleChange(
-                                                    index,
-                                                    "unit",
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        />
+                                        {type === "select" ? (
+                                            <select
+                                                value={result[field]}
+                                                onChange={(e) =>
+                                                    handleChange(index, field, e.target.value)
+                                                }
+                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                            >
+                                                <option value="" disabled>
+                                                    Select {field.replace("_", " ")}
+                                                </option>
+                                                {options.map((option) => (
+                                                    <option key={option} value={option}>
+                                                        {option}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            <input
+                                                type={type}
+                                                value={result[field]}
+                                                onChange={(e) =>
+                                                    handleChange(index, field, e.target.value)
+                                                }
+                                                readOnly={readOnly}
+                                                className={`w-full px-4 py-2 border rounded-md ${
+                                                    readOnly ? "bg-gray-100" : "focus:ring-2 focus:ring-blue-500"
+                                                }`}
+                                            />
+                                        )}
+                                        {errors[`results.${index}.${field}`] && (
+                                            <span className="text-red-500 text-sm">
+                                                {errors[`results.${index}.${field}`]}
+                                            </span>
+                                        )}
                                     </div>
-
-                                )}
-
-                                {result.result_status === "Positive" && (
-                                    <div>
-                                        <label className="block text-gray-700 font-medium mb-1">
-                                            Result Copies
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Result Copies"
-                                            value={result.result_copies}
-                                            onChange={(e) =>
-                                                handleChange(index, "result_copies", e.target.value)
-                                            }
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                )}
-                                
-
+                                ))}
                             </div>
 
-                            <div className="flex gap-4">
-                                <div className="w-1/2">
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Remarks
-                                    </label>
-                                    <textarea
-                                        placeholder="Enter Remarks"
-                                        value={result.remarks}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "remarks",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        rows="3"
-                                    ></textarea>
-                                </div>
-
-                                <div className="w-1/2">
-                                    <label className="block text-gray-700 font-medium mb-1">
-                                        Comments
-                                    </label>
-                                    <textarea
-                                        placeholder="Enter Comments"
-                                        value={result.comments}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "comments",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        rows="3"
-                                    ></textarea>
-                                </div>
+                            {/* Remarks and Comments */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {["remarks", "comments"].map((field) => (
+                                    <div key={field}>
+                                        <label className="block text-gray-700 font-medium mb-1">
+                                            {field.toUpperCase()}
+                                        </label>
+                                        <textarea
+                                            value={result[field]}
+                                            onChange={(e) =>
+                                                handleChange(index, field, e.target.value)
+                                            }
+                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                            rows="3"
+                                        ></textarea>
+                                        {errors[`results.${index}.${field}`] && (
+                                            <span className="text-red-500 text-sm">
+                                                {errors[`results.${index}.${field}`]}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     ))}
+
                     <div className="flex justify-center">
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
                             disabled={processing}
+                            className="px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-md"
                         >
-                            {processing ? "Submitting..." : "Submit Results"}
+                            {processing ? "Updating..." : "Update Results"}
                         </button>
                     </div>
                 </form>

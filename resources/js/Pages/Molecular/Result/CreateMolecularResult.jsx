@@ -60,7 +60,7 @@ const CreateMolecularResult = ({ auth, tests }) => {
                             {/* Test Header */}
                             <div className="mb-4">
                                 <h3 className="text-lg font-semibold text-gray-700">
-                                    {tests[index].test_name}{" "}
+                                    {tests[index].test_name}
                                     <span className="text-sm text-gray-500">
                                         (Fee: {tests[index].test_fee} | Date:{" "}
                                         {tests[index].test_date})
@@ -213,47 +213,36 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                     />
                                 </div>
 
-                                {result.result_status === "Negative" && (
+                                {result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" && result.result_status === "Negative" && (
                                     <div>
-                                        <label className="block text-gray-700 font-medium mb-1">
-                                            Unit
-                                        </label>
+                                        <label className="block text-gray-700 font-medium mb-1">Unit</label>
                                         <input
                                             type="text"
                                             placeholder="Enter Unit"
                                             value={result.unit}
                                             onChange={(e) =>
-                                                handleChange(
-                                                    index,
-                                                    "unit",
-                                                    e.target.value
-                                                )
+                                                handleChange(index, "unit", e.target.value)
                                             }
                                             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
                                 )}
 
-                                {result.result_status === "Positive" && (
+                                {result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" && result.result_status === "Positive" && (
                                     <div>
-                                        <label className="block text-gray-700 font-medium mb-1">
-                                            Result Copies
-                                        </label>
+                                        <label className="block text-gray-700 font-medium mb-1">Result Copies</label>
                                         <input
                                             type="text"
                                             placeholder="Result Copies"
                                             value={result.result_copies}
                                             onChange={(e) =>
-                                                handleChange(
-                                                    index,
-                                                    "result_copies",
-                                                    e.target.value
-                                                )
+                                                handleChange(index, "result_copies", e.target.value)
                                             }
                                             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
                                 )}
+
                             </div>
 
                             <div className="flex gap-4">

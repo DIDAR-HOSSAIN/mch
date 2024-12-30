@@ -16,7 +16,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
         pageStyle: `
                 @page {
                     size: A4;
-                    margin: 1cm;
+                     margin: 0.5cm;
                 }
                 .a4-page {
                     page-break-inside: avoid;
@@ -71,93 +71,49 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     Patient Details
                                 </h2>
 
-                                <table className="w-full table-fixed border border-gray-300">
+                                <table className="w-full text-md text-gray-700 bg-gray-100 rounded border border-gray-200">
                                     <tbody>
                                         {/* Row 1 */}
-                                        <tr>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Patient Name:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {sample
-                                                        .molecular_patient_reg
-                                                        ?.name || "N/A"}
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Patient ID:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {sample.patient_id || "N/A"}
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Gender:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {sample
-                                                        .molecular_patient_reg
-                                                        ?.gender || "N/A"}
-                                                </span>
-                                            </td>
+                                        <tr className="hover:bg-gray-50 border-b">
+                                            <td className="font-semibold p-1">Patient Name:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.name || "N/A"}</td>
+                                            <td className="font-semibold p-1">Gender:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.gender || "N/A"}</td>
+                                            <td className="font-semibold p-1">Age:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.age || "N/A"}</td>
                                         </tr>
 
-                                        {/* Row 2 */}
-                                        <tr>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Age:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {sample
-                                                        .molecular_patient_reg
-                                                        ?.age || "N/A"}
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Specimen:
-                                                <span className="block text-gray-900 font-normal">
-                                                    Whole Blood
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Sample Collected:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {formatBDDateTime(
-                                                        sample.collection_date ||
-                                                            "N/A"
-                                                    )}
-                                                </span>
-                                            </td>
+                                        {/* Row 1 */}
+                                        <tr className="hover:bg-gray-50 border-b">
+                                            <td className="font-semibold p-1">Patient ID:</td>
+                                            <td className="p-1">{sample.patient_id || "N/A"}</td>
+                                            <td className="font-semibold p-1">Bill No:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.bill_no || "N/A"}</td>
+                                            <td className="font-semibold p-1">Contact No:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.contact_no || "N/A"}</td>
                                         </tr>
 
                                         {/* Row 3 */}
-                                        <tr>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Sample Received:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {formatBDDateTime(
-                                                        sample.received_date ||
-                                                            "N/A"
-                                                    )}
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Referred By:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {sample
-                                                        .molecular_patient_reg
-                                                        ?.reference_name ||
-                                                        "N/A"}
-                                                </span>
-                                            </td>
-                                            <td className="border px-4 py-2 font-semibold text-gray-700">
-                                                Report Date:
-                                                <span className="block text-gray-900 font-normal">
-                                                    {formatBDDateTime(
-                                                        sample.created_at ||
-                                                            "N/A"
-                                                    )}
-                                                </span>
-                                            </td>
+                                        <tr className="hover:bg-gray-50 border-b">
+                                            <td className="font-semibold p-1">Specimen:</td>
+                                            <td className="p-1">{test.specimen || "N/A"}</td>
+                                            <td className="font-semibold p-1">Sample Collected:</td>
+                                            <td className="p-1">{formatBDDateTime(sample.collection_date || "N/A")}</td>
+                                            <td className="font-semibold p-1">Sample Received:</td>
+                                            <td className="p-1">{formatBDDateTime(sample.received_date || "N/A")}</td>
+                                        </tr>
+
+                                        {/* Row 4 */}
+                                        <tr className="hover:bg-gray-50 border-b">
+                                            <td className="font-semibold p-1">Report Date:</td>
+                                            <td className="p-1">{formatBDDateTime(sample.created_at || "N/A")}</td>
+                                            <td className="font-semibold p-1">Referred By:</td>
+                                            <td className="p-1">{sample.molecular_patient_reg?.reference_name || "N/A"}</td>
                                         </tr>
                                     </tbody>
                                 </table>
+
+
 
                                 {/* Test Details */}
                                 <h1 className="text-2xl font-bold text-center my-2">
@@ -175,7 +131,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
-                                                    test.result_status ===
+                                                        test.result_status ===
                                                         "Positive"
                                                         ? 2
                                                         : 1
@@ -188,7 +144,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation !==
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
-                                                    "Negative" && (
+                                                "Negative" && (
                                                     <th className="border p-2 text-center">
                                                         Unit
                                                     </th>
@@ -203,13 +159,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </td>
 
                                             {test.investigation ===
-                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
                                                 <td className="border p-2 text-center">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
-                                              "Negative" ? (
+                                                "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
                                                     <td className="border p-2 text-center">
