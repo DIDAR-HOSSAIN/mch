@@ -19,8 +19,8 @@ return new class extends Migration
             $table->dateTime('collection_date');
             $table->dateTime('received_date')->nullable();
             $table->string('received_by')->nullable();
-            $table->enum('collection_status', ['Pending', 'Collected', 'Failed'])->default('Collected');
-            $table->enum('received_status', ['Pending', 'Received', 'Rejected'])->default('Pending');
+            $table->enum('collection_status', ['Pending', 'Collected', 'Failed']);
+            $table->enum('received_status', ['Pending', 'Received', 'Rejected']);
             $table->string('remarks')->nullable();
             $table->string('user_name');
             $table->timestamps();

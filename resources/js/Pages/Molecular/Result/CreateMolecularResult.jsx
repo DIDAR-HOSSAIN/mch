@@ -12,6 +12,7 @@ const CreateMolecularResult = ({ auth, tests }) => {
             result: "",
             unit: "",
             result_status: "Negative",
+            specimen: "",
             result_copies: "",
             methodology: "Real-Time PCR based on TaqMan Technology",
             remarks: "",
@@ -137,6 +138,7 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                         }
                                     />
                                 </div>
+
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">
                                         Result Status
@@ -145,16 +147,52 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                         id={`result_status_${index}`} // Unique id for each select
                                         value={result.result_status}
                                         onChange={(e) =>
-                                            handleChange(index, "result_status", e.target.value)
+                                            handleChange(
+                                                index,
+                                                "result_status",
+                                                e.target.value
+                                            )
                                         }
                                         className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                     >
-                                        <option value="Negative">Negative</option>
-                                        <option value="Positive">Positive</option>
+                                        <option value="Negative">
+                                            Negative
+                                        </option>
+                                        <option value="Positive">
+                                            Positive
+                                        </option>
                                     </select>
                                 </div>
 
-
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Specimen Type
+                                    </label>
+                                    <select
+                                        id={`specimen${index}`} // Unique id for each select
+                                        value={result.specimen}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                index,
+                                                "specimen",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                        <option value="" disabled>
+                                            Select Specimen
+                                        </option>
+                                        <option value="Whole Blood">
+                                            Whole Blood
+                                        </option>
+                                        <option value="Plasma">Plasma</option>
+                                        <option value="Serum">Serum</option>
+                                        <option value="Cervical Swab">
+                                            Cervical Swab
+                                        </option>
+                                    </select>
+                                </div>
 
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">
@@ -194,7 +232,6 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
-
                                 )}
 
                                 {result.result_status === "Positive" && (
@@ -207,14 +244,16 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                             placeholder="Result Copies"
                                             value={result.result_copies}
                                             onChange={(e) =>
-                                                handleChange(index, "result_copies", e.target.value)
+                                                handleChange(
+                                                    index,
+                                                    "result_copies",
+                                                    e.target.value
+                                                )
                                             }
                                             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
                                 )}
-                                
-
                             </div>
 
                             <div className="flex gap-4">

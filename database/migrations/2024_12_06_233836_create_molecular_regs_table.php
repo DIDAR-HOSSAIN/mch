@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('molecular_regs', function (Blueprint $table) {
             $table->id();
             $table->string('patient_id')->unique();
+            $table->string('bill_no')->nullable();
             $table->string('name')->nullable(false);
             $table->string('contact_no')->nullable(false);
             $table->integer('age')->default(0);

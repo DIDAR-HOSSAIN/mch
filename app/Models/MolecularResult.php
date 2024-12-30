@@ -14,6 +14,7 @@ class MolecularResult extends Model
         'patient_id',
         'test_id',
         'result_status',
+        'specimen',
         'investigation',
         'result',
         'unit',

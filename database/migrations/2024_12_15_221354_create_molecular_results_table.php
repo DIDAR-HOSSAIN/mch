@@ -12,20 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('molecular_results', function (Blueprint $table) {
-        $table->id();
-        $table->string('sample_id');
-        $table->string('patient_id');
-        $table->unsignedBigInteger('test_id')->nullable();
-        $table->enum('result_status', ['Negative', 'Positive']);
-        $table->string('investigation');
-        $table->string('result')->nullable();
-        $table->string('unit')->nullable();
-        $table->string('result_copies')->nullable();
-        $table->string('methodology')->nullable();
-        $table->text('remarks')->nullable();
-        $table->text('comments')->nullable();
-        $table->string('user_name')->nullable();
-        $table->timestamps();
+            $table->id();
+            $table->string('sample_id');
+            $table->string('patient_id');
+            $table->unsignedBigInteger('test_id')->nullable();
+            $table->enum('result_status', ['Negative', 'Positive']);
+            $table->enum('specimen', ['Whole Blood', 'Plasma', 'Serum', 'Cervical Swab']);
+            $table->string('investigation');
+            $table->string('result')->nullable();
+            $table->string('unit')->nullable();
+            $table->string('result_copies')->nullable();
+            $table->string('methodology')->nullable();
+            $table->text('remarks')->nullable();
+            $table->text('comments')->nullable();
+            $table->string('user_name')->nullable();
+            $table->timestamps();
         });
     }
 

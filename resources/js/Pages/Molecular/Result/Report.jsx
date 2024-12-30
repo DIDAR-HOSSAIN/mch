@@ -5,8 +5,8 @@ import sign2 from "@/assets/images/sign/zohir_sign.png";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularReport = ({ auth, tests = [], sample = {} }) => {
-    console.log('Molecular tests Report ', tests)
-    console.log('Molecular sample Report ', sample)
+    console.log("Molecular tests Report ", tests);
+    console.log("Molecular sample Report ", sample);
 
     const contentToPrint = useRef(null);
 
@@ -39,7 +39,6 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             second: "2-digit",
             hour12: true, // Use 12-hour format with AM/PM
         });
-
 
     return (
         <AdminDashboardLayout
@@ -79,7 +78,9 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Patient Name:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg?.name || "N/A"}
+                                                    {sample
+                                                        .molecular_patient_reg
+                                                        ?.name || "N/A"}
                                                 </span>
                                             </td>
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
@@ -91,7 +92,8 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Gender:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
+                                                    {sample
+                                                        .molecular_patient_reg
                                                         ?.gender || "N/A"}
                                                 </span>
                                             </td>
@@ -102,7 +104,8 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Age:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
+                                                    {sample
+                                                        .molecular_patient_reg
                                                         ?.age || "N/A"}
                                                 </span>
                                             </td>
@@ -117,7 +120,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
                                                         sample.collection_date ||
-                                                        "N/A"
+                                                            "N/A"
                                                     )}
                                                 </span>
                                             </td>
@@ -130,22 +133,25 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
                                                         sample.received_date ||
-                                                        "N/A"
+                                                            "N/A"
                                                     )}
                                                 </span>
                                             </td>
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Referred By:
                                                 <span className="block text-gray-900 font-normal">
-                                                    {sample.molecular_patient_reg
-                                                        ?.reference_name || "N/A"}
+                                                    {sample
+                                                        .molecular_patient_reg
+                                                        ?.reference_name ||
+                                                        "N/A"}
                                                 </span>
                                             </td>
                                             <td className="border px-4 py-2 font-semibold text-gray-700">
                                                 Report Date:
                                                 <span className="block text-gray-900 font-normal">
                                                     {formatBDDateTime(
-                                                        sample.created_at || "N/A"
+                                                        sample.created_at ||
+                                                            "N/A"
                                                     )}
                                                 </span>
                                             </td>
@@ -158,47 +164,82 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     Molecular Test Report
                                 </h1>
 
-
                                 <table className="w-full border-collapse border">
                                     <thead>
                                         <tr>
-                                            <th className="border p-2 text-center">Investigation</th>
-                                            <th className="border p-2 text-center" colSpan={test.result_status === 'Positive' ? 2 : 1}>
+                                            <th className="border p-2 text-center">
+                                                Investigation
+                                            </th>
+                                            <th
+                                                className="border p-2 text-center"
+                                                colSpan={
+                                                    test.investigation ===
+                                                        "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
+                                                    test.result_status ===
+                                                        "Positive"
+                                                        ? 2
+                                                        : 1
+                                                }
+                                            >
                                                 Result
                                             </th>
 
-                                            {test.result_status === 'Negative' && (
-                                                <th className="border p-2 text-center">Unit</th>
-                                            )}
+                                            {/* Show "Unit" column only if it's not HLA B27 and result_status is Negative */}
+                                            {test.investigation !==
+                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                                test.result_status ===
+                                                    "Negative" && (
+                                                    <th className="border p-2 text-center">
+                                                        Unit
+                                                    </th>
+                                                )}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr className="font-semibold text-xl">
                                             <td className="border p-2 text-center">
-                                                {test.molecular_reg_test.test_name || "N/A"}
+                                                {test.molecular_reg_test
+                                                    .test_name || "N/A"}
                                             </td>
-                                            {test.result_status === 'Negative' ? (
+
+                                            {test.investigation ===
+                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                                // Only show Result column for HLA B27
+                                                <td className="border p-2 text-center">
+                                                    {test.result || "N/A"}
+                                                </td>
+                                            ) : test.result_status ===
+                                              "Negative" ? (
+                                                // Logic for Negative result status
                                                 <>
-                                                    <td className="border p-2 text-center">{test.result || "N/A"}</td>
-                                                    <td className="border p-2 text-center">{test.unit || "N/A"}</td>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <td className="border p-2 text-center" rowSpan={3}>
+                                                    <td className="border p-2 text-center">
                                                         {test.result || "N/A"}
                                                     </td>
-                                                    <td className="border p-2 text-center" rowSpan={3}>
-                                                        {test.result_copies || "N/A"}
+                                                    <td className="border p-2 text-center">
+                                                        {test.unit || "N/A"}
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                // Logic for Positive result status
+                                                <>
+                                                    <td
+                                                        className="border p-2 text-center"
+                                                        rowSpan={3}
+                                                    >
+                                                        {test.result || "N/A"}
+                                                    </td>
+                                                    <td
+                                                        className="border p-2 text-center"
+                                                        rowSpan={3}
+                                                    >
+                                                        {test.result_copies ||
+                                                            "N/A"}
                                                     </td>
                                                 </>
                                             )}
                                         </tr>
                                     </tbody>
                                 </table>
-
-
-
-
 
                                 <div className="flex items-center mt-2">
                                     <span className="font-semibold">
@@ -211,14 +252,21 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </div>
 
                                 {/* Remarks & Comments */}
-                                <h3 className="mt-2 font-semibold">Remarks :</h3>
+                                <h3 className="mt-2 font-semibold">
+                                    Remarks :
+                                </h3>
                                 <ul className="list-disc pl-6 mb-2">
                                     {test.remarks ? (
                                         test.remarks
                                             .split(/[|]/) // Split the remarks based on ., |, or /
-                                            .filter((item) => item.trim() !== "") // Filter out any empty entries
+                                            .filter(
+                                                (item) => item.trim() !== ""
+                                            ) // Filter out any empty entries
                                             .map((item, index) => (
-                                                <li key={index} className="mb-1">
+                                                <li
+                                                    key={index}
+                                                    className="mb-1"
+                                                >
                                                     {item.trim()}
                                                 </li>
                                             ))
@@ -249,11 +297,16 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <hr className="border-t border-black my-2" />
                                         <strong>Zahirul Islam</strong>
                                         <p>BSC (Hons) , MS</p>
-                                        <p>Biochemistry & Molecular Biology (CU)</p>
+                                        <p>
+                                            Biochemistry & Molecular Biology
+                                            (CU)
+                                        </p>
                                         <p>Senior Research Officer</p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
                                         <p>Molecular Biologist</p>
-                                        <p>Medical Centre Hospital (RT-PCR Lab)</p>
+                                        <p>
+                                            Medical Centre Hospital (RT-PCR Lab)
+                                        </p>
                                     </div>
                                     <div className="text-center">
                                         {/* <img
@@ -265,10 +318,14 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>
                                         <p>Asst. Professor & Head</p>
-                                        <p>Dept. of Mircrobiology & Immunology</p>
+                                        <p>
+                                            Dept. of Mircrobiology & Immunology
+                                        </p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
                                         <p>Consultant</p>
-                                        <p>Medical Centre Hospital (RT-PCR Lab)</p>
+                                        <p>
+                                            Medical Centre Hospital (RT-PCR Lab)
+                                        </p>
                                     </div>
                                 </div>
 
