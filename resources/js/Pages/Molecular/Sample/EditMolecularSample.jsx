@@ -8,6 +8,7 @@ import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 export default function EditMolecularSample({ auth, sample }) {
+    // console.log('edit molecular sample', sample);
     const [sampleReceivedDate, setSampleReceivedDate] = useState(
         sample.received_date ? parseISO(sample.received_date) : new Date()
     );
@@ -17,7 +18,7 @@ export default function EditMolecularSample({ auth, sample }) {
 
     const { data, setData, errors, put, processing } = useForm({
         patient_id: sample.patient_id || "",
-        name: sample.name || "",
+        name: sample.molecular_patient_reg.name || "",
         collection_date: sample.collection_date || "",
         received_date: sample.received_date || "",
         received_by: sample.received_by || "",

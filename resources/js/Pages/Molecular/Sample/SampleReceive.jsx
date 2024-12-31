@@ -9,11 +9,12 @@ import { format } from "date-fns"; // For formatting dates
 import "react-datepicker/dist/react-datepicker.css";
 
 const SampleReceive = ({ auth, collectedSamples }) => {
+    console.log('from sample receive',collectedSamples);
     const [sampleReceivedDate, setSampleReceivedDate] = useState(new Date());
     const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
     const [selectedPatient, setSelectedPatient] = useState(null);
 
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, put, processing, errors, reset } = useForm({
         patient_id: "",
         name: "",
         collection_date: "",
@@ -34,7 +35,7 @@ const SampleReceive = ({ auth, collectedSamples }) => {
                 setSelectedPatient(patient);
                 setData((prev) => ({
                     ...prev,
-                    name: patient.name || "",
+                    name: patient.molecular_patient_reg.name || "",
                     collection_date: patient.collection_date || "",
                     collection_status: patient.collection_status || "",
                     remarks: patient.remarks || "",
@@ -75,6 +76,7 @@ const SampleReceive = ({ auth, collectedSamples }) => {
                 onSuccess: () => alert("Sample updated successfully!"),
                 onError: () => alert("Failed to update sample."),
             });
+            reset();
         } else {
             alert("Please select a valid patient.");
         }

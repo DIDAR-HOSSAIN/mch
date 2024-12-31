@@ -9,6 +9,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { FaEye, FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 
 const ViewMolecularSample = ({ auth, molecularSamples }) => {
+    console.log("view molecularSamples", molecularSamples);
     const [filteredData, setFilteredData] = useState(molecularSamples);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +26,8 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
 
     useEffect(() => {
         const startIndex = (currentPage - 1) * perPage;
-        const endIndex = perPage === "all" ? molecularSamples.length : startIndex + perPage;
+        const endIndex =
+            perPage === "all" ? molecularSamples.length : startIndex + perPage;
         setFilteredData(molecularSamples.slice(startIndex, endIndex));
     }, [molecularSamples, currentPage, perPage]);
 
@@ -38,30 +40,39 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
         });
     };
 
-    const handleDateWiseSearch = (startDate, endDate) => {
-        if (!startDate || !endDate) {
-            setFilteredData(molecularSamples);
-            return;
-        }
+     const handleDateWiseSearch = (startDate, endDate) => {
+         if (!startDate || !endDate) {
+             setFilteredData(molecularSamples);
+             return;
+         }
 
-        setFilteredData(
-            molecularSamples.filter((data) => {
-                const entryDate = new Date(data.sample_collection_date);
-                return entryDate >= startDate && entryDate <= endDate;
-            })
-        );
-    };
+         // Adjust end date to include the full day
+         const adjustedEndDate = new Date(endDate);
+         adjustedEndDate.setHours(23, 59, 59, 999);
 
-    const handleSearch = (searchTerm) => {
-        const lowercasedTerm = searchTerm.toLowerCase();
-        setFilteredData(
-            molecularSamples.filter(
-                (data) =>
-                    data.name?.toLowerCase().includes(lowercasedTerm) ||
-                    data.patient_id?.toLowerCase().includes(lowercasedTerm)
-            )
-        );
-    };
+         setFilteredData(
+             molecularSamples.filter((data) => {
+                 const entryDate = new Date(data.collection_date);
+                 return (
+                     entryDate >= new Date(startDate) &&
+                     entryDate <= adjustedEndDate
+                 );
+             })
+         );
+     };
+
+       const handleSearch = (searchTerm) => {
+           const lowercasedTerm = searchTerm.toLowerCase();
+           setFilteredData(
+               molecularSamples.filter(
+                   (data) =>
+                       data.molecular_patient_reg?.name
+                           ?.toLowerCase()
+                           .includes(lowercasedTerm) ||
+                       data.patient_id?.toLowerCase().includes(lowercasedTerm)
+               )
+           );
+       };
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -75,7 +86,11 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                 Inertia.delete(route("samples.destroy", { id }), {
                     onSuccess: () => location.reload(),
                     onError: (errors) => {
-                        Swal.fire("Error!", errors.error || "Something went wrong.", "error");
+                        Swal.fire(
+                            "Error!",
+                            errors.error || "Something went wrong.",
+                            "error"
+                        );
                     },
                 });
             }
@@ -96,7 +111,12 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                     <div className="p-6">
                         {/* Controls */}
                         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                            {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin", "user"]) && (
+                            {hasAnyRole(auth.user, [
+                                "super-admin",
+                                "admin",
+                                "sub-admin",
+                                "user",
+                            ]) && (
                                 <Link
                                     className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                     href={route("samples.create")}
@@ -117,8 +137,8 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                             <DateWiseReport
                                 data={molecularSamples}
                                 onSearch={handleDateWiseSearch}
-                                startDateField="sample_collection_date"
-                                endDateField="sample_collection_date"
+                                startDateField="collection_date"
+                                endDateField="collection_date"
                             />
                             <input
                                 type="text"
@@ -134,56 +154,111 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                 <thead className="bg-gray-100">
                                     <tr>
                                         <th className="px-4 py-2">No.</th>
-                                        <th className="px-4 py-2">Patient ID</th>
+                                        <th className="px-4 py-2">
+                                            Patient ID
+                                        </th>
                                         <th className="px-4 py-2">Name</th>
-                                        <th className="px-4 py-2">Collection Date</th>
-                                        <th className="px-4 py-2">Received Date</th>
-                                        <th className="px-4 py-2">Collection Status</th>
-                                        <th className="px-4 py-2">Received Status</th>
-                                        <th className="px-4 py-2 text-center">Action</th>
+                                        <th className="px-4 py-2">
+                                            Collection Date
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Received Date
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Collection Status
+                                        </th>
+                                        <th className="px-4 py-2">
+                                            Received Status
+                                        </th>
+                                        <th className="px-4 py-2 text-center">
+                                            Action
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData.map((sample, index) => (
-                                        <tr key={sample.id} className="border-t">
-                                            <td className="px-4 py-2">{index + 1}</td>
-                                            <td className="px-4 py-2">{sample.patient_id || "N/A"}</td>
-                                            <td className="px-4 py-2">{sample.name || "N/A"}</td>
-                                            <td className="px-4 py-2">{formatDate(sample.collection_date)}</td>
-                                            <td className="px-4 py-2">{formatDate(sample.received_date)}</td>
-                                            <td className="px-4 py-2">{sample.collection_status || "N/A"}</td>
-                                            <td className="px-4 py-2">{sample.received_status || "N/A"}</td>
+                                        <tr
+                                            key={sample.id}
+                                            className="border-t"
+                                        >
+                                            <td className="px-4 py-2">
+                                                {index + 1}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {sample.patient_id || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {sample.molecular_patient_reg.name || "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {formatDate(
+                                                    sample.collection_date
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {formatDate(
+                                                    sample.received_date
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {sample.collection_status ||
+                                                    "N/A"}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {sample.received_status ||
+                                                    "N/A"}
+                                            </td>
                                             <td className="border px-4 py-2 text-center">
                                                 <Link
                                                     tabIndex="1"
                                                     className="p-2 text-white bg-green-700 rounded inline-flex items-center"
-                                                    href={route("samples.show", sample.id)}
+                                                    href={route(
+                                                        "samples.show",
+                                                        sample.id
+                                                    )}
                                                     title="View"
                                                 >
                                                     <FaEye className="h-5 w-5" />
                                                 </Link>
                                                 <Link
                                                     className="mx-1 p-2 text-white bg-green-700 rounded inline-flex items-center"
-                                                    href={route("results.createReport", {
-                                                        patient_id: sample.patient_id,
-                                                    })}
-                                                    
+                                                    href={route(
+                                                        "results.createReport",
+                                                        {
+                                                            patient_id:
+                                                                sample.patient_id,
+                                                        }
+                                                    )}
                                                     title="Create Report"
                                                 >
                                                     <FaPlus className="h-5 w-5" />
                                                 </Link>
-                                                {hasAnyRole(auth.user, ["super-admin", "admin", "sub-admin"]) && (
+                                                {hasAnyRole(auth.user, [
+                                                    "super-admin",
+                                                    "admin",
+                                                    "sub-admin",
+                                                ]) && (
                                                     <Link
                                                         className="mr-1 p-2 text-white bg-blue-900 rounded inline-flex items-center"
-                                                        href={route("samples.edit", sample.id)}
+                                                        href={route(
+                                                            "samples.edit",
+                                                            sample.id
+                                                        )}
                                                         title="Edit"
                                                     >
                                                         <FaEdit className="h-5 w-5" />
                                                     </Link>
                                                 )}
-                                                {hasRole(auth.user, "super-admin") && (
+                                                {hasRole(
+                                                    auth.user,
+                                                    "super-admin"
+                                                ) && (
                                                     <button
-                                                        onClick={() => handleDelete(sample.id)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                sample.id
+                                                            )
+                                                        }
                                                         className="p-2 text-white bg-red-500 rounded"
                                                         title="Delete"
                                                     >
@@ -195,7 +270,10 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                     ))}
                                     {!filteredData.length && (
                                         <tr>
-                                            <td colSpan="8" className="text-center py-4">
+                                            <td
+                                                colSpan="8"
+                                                className="text-center py-4"
+                                            >
                                                 No molecular samples found.
                                             </td>
                                         </tr>
@@ -209,7 +287,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                             <select
                                 value={perPage}
                                 onChange={handlePerPageChange}
-                                className="px-3 px-6 border rounded-md"
+                                className="px-3 border rounded-md"
                             >
                                 <option value={10}>10</option>
                                 <option value={20}>20</option>

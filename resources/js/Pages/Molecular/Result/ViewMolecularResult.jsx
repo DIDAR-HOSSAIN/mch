@@ -4,22 +4,24 @@ import { useState, useEffect } from "react";
 import { CSVLink } from "react-csv";
 import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 import { Inertia } from "@inertiajs/inertia";
-import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
-import { FaFileInvoice } from "react-icons/fa";
+import Swal from "sweetalert2";
+import { FaFileInvoice, FaTrashAlt } from "react-icons/fa";
 
 const ViewMolecularResult = ({ auth, results }) => {
-    console.log("view molecular result", results);
     const [searchTerm, setSearchTerm] = useState("");
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [res, setRes] = useState(results); // Set the initial state to the results prop
 
     // Filtered Results Based on Search
-    const filteredResults = results.filter(
-        ({ patient_id, molecular_sample }) =>
-            patient_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            molecular_sample.name
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())
+    const filteredResults = res.filter(
+        ({ patient_id, molecular_reg }) =>
+            (patient_id &&
+                patient_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (molecular_reg &&
+                molecular_reg.name
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()))
     );
 
     // Paginated Results
@@ -47,6 +49,40 @@ const ViewMolecularResult = ({ auth, results }) => {
 
     const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+        }).then((res) => {
+            if (res.isConfirmed) {
+                Inertia.delete(route("results.destroy", { id }), {
+                    onSuccess: () => {
+                        Swal.fire(
+                            "Deleted!",
+                            "The result has been deleted.",
+                            "success"
+                        );
+                        // Update the local state to remove the deleted item
+                        setRes((prevResults) =>
+                            prevResults.filter((res) => res.id !== id)
+                        );
+                    },
+                    onError: (errors) => {
+                        Swal.fire(
+                            "Error!",
+                            errors?.message ||
+                                "Something went wrong. Please try again.",
+                            "error"
+                        );
+                    },
+                });
+            }
+        });
+    };
+
     return (
         <AdminDashboardLayout
             user={auth.user}
@@ -60,7 +96,9 @@ const ViewMolecularResult = ({ auth, results }) => {
                     <div className="flex justify-between items-center mb-4">
                         <Link
                             className="bg-green-500 text-white px-4 py-2 rounded"
-                            href={route("results.createReport", { patient_id: 'patient_id' })}
+                            href={route("results.createReport", {
+                                patient_id: "patient_id", // Update this dynamically if needed
+                            })}
                         >
                             Create New Result
                         </Link>
@@ -112,21 +150,20 @@ const ViewMolecularResult = ({ auth, results }) => {
                                         {result.patient_id}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {result.molecular_sample.name}
+                                        {result.molecular_reg?.name || "N/A"}
                                     </td>
                                     <td className="border px-4 py-2">
                                         {formatDate(result.created_at)}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {result.investigation}
+                                        {result.investigation || "N/A"}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {result.result}
+                                        {result.result || "N/A"}
                                     </td>
                                     <td className="border px-4 py-2 text-center">
                                         {/* Actions */}
                                         <Link
-                                            tabIndex="1"
                                             className="p-2 text-white bg-green-700 rounded inline-flex items-center"
                                             href={route(
                                                 "results.reports",
@@ -155,10 +192,13 @@ const ViewMolecularResult = ({ auth, results }) => {
                                             <FiEdit className="h-5 w-5" />
                                         </Link>
                                         <button
-                                            onClick={() => destroy(result.id)}
+                                            onClick={() =>
+                                                handleDelete(result.id)
+                                            }
                                             className="p-2 text-white bg-red-500 rounded"
+                                            title="Delete"
                                         >
-                                            <FiTrash2 className="h-5 w-5" />
+                                            <FaTrashAlt className="h-5 w-5" />
                                         </button>
                                     </td>
                                 </tr>
@@ -188,10 +228,11 @@ const ViewMolecularResult = ({ auth, results }) => {
                             ).map((page) => (
                                 <button
                                     key={page}
-                                    className={`px-4 py-2 border rounded ${page === currentPage
+                                    className={`px-4 py-2 border rounded ${
+                                        page === currentPage
                                             ? "bg-blue-500 text-white"
                                             : "bg-white"
-                                        }`}
+                                    }`}
                                     onClick={() => handlePageChange(page)}
                                 >
                                     {page}
@@ -204,4 +245,5 @@ const ViewMolecularResult = ({ auth, results }) => {
         </AdminDashboardLayout>
     );
 };
+
 export default ViewMolecularResult;

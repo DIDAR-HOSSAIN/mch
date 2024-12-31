@@ -12,7 +12,6 @@ class Sample extends Model
     protected $fillable = [
         'sample_id',
         'patient_id',
-        'name',
         'collection_date',
         'received_date',
         'received_by',

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('sample_id')->unique();
             $table->string('patient_id');
-            $table->string('name');
             $table->dateTime('collection_date');
             $table->dateTime('received_date')->nullable();
             $table->string('received_by')->nullable();

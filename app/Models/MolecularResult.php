@@ -32,6 +32,11 @@ class MolecularResult extends Model
         return $this->belongsTo(Sample::class, 'sample_id', 'sample_id');
     }
 
+    public function molecularReg()
+    {
+        return $this->belongsTo(MolecularReg::class, 'patient_id', 'patient_id');
+    }
+
     public function molecularRegTest()
     {
         return $this->belongsTo(MolecularRegTest::class, 'test_id', 'test_id');

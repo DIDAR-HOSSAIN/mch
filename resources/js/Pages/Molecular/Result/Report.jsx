@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
+import pad from "@/assets/images/pcr_pad.png";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularReport = ({ auth, tests = [], sample = {} }) => {
@@ -15,8 +16,8 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
         content: () => contentToPrint.current,
         pageStyle: `
                 @page {
-                    size: A4;
-                     margin: 0.5cm;
+                     size: A4;
+                        margin: 0cm 0.5cm 0.5cm 0.5cm; /* Top, Right, Bottom, Left */
                 }
                 .a4-page {
                     page-break-inside: avoid;
@@ -59,6 +60,12 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                 {/* Print Section */}
                 <div ref={contentToPrint} className="print-section">
+                    <img
+                        className="w-full h-auto object-cover"
+                        src={pad}
+                        alt="Pad"
+                    />
+
                     {tests.length > 0 ? (
                         tests.map((test, index) => (
                             <div
@@ -67,71 +74,123 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                             >
                                 {/* Patient Details */}
 
-                                <h2 className="text-lg font-semibold mb-2">
-                                    Patient Details
-                                </h2>
-
                                 <table className="w-full text-md text-gray-700 bg-gray-100 rounded border border-gray-200">
                                     <tbody>
                                         {/* Row 1 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold p-1">Patient Name:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.name || "N/A"}</td>
-                                            <td className="font-semibold p-1">Gender:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.gender || "N/A"}</td>
-                                            <td className="font-semibold p-1">Age:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.age || "N/A"}</td>
+                                            <td className="font-semibold ">
+                                                Patient Name:
+                                            </td>
+                                            <td className="">
+                                                {sample.molecular_patient_reg
+                                                    ?.name || "N/A"}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Gender:
+                                            </td>
+                                            <td className="">
+                                                {sample.molecular_patient_reg
+                                                    ?.gender || "N/A"}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Age:
+                                            </td>
+                                            <td className="">
+                                                {sample.molecular_patient_reg
+                                                    ?.age || "N/A"}
+                                            </td>
                                         </tr>
 
-                                        {/* Row 1 */}
+                                        {/* Ro */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold p-1">Patient ID:</td>
-                                            <td className="p-1">{sample.patient_id || "N/A"}</td>
-                                            <td className="font-semibold p-1">Bill No:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.bill_no || "N/A"}</td>
-                                            <td className="font-semibold p-1">Contact No:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.contact_no || "N/A"}</td>
+                                            <td className="font-semibold ">
+                                                Patient ID:
+                                            </td>
+                                            <td className="">
+                                                {sample.patient_id || "N/A"}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Bill No:
+                                            </td>
+                                            <td className="">
+                                                {sample.molecular_patient_reg
+                                                    ?.bill_no || "N/A"}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Contact No:
+                                            </td>
+                                            <td className="">
+                                                {sample.molecular_patient_reg
+                                                    ?.contact_no || "N/A"}
+                                            </td>
                                         </tr>
 
                                         {/* Row 3 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold p-1">Specimen:</td>
-                                            <td className="p-1">{test.specimen || "N/A"}</td>
-                                            <td className="font-semibold p-1">Sample Collected:</td>
-                                            <td className="p-1">{formatBDDateTime(sample.collection_date || "N/A")}</td>
-                                            <td className="font-semibold p-1">Sample Received:</td>
-                                            <td className="p-1">{formatBDDateTime(sample.received_date || "N/A")}</td>
+                                            <td className="font-semibold ">
+                                                Specimen:
+                                            </td>
+                                            <td className="">
+                                                {test.specimen || "N/A"}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Sample Collected:
+                                            </td>
+                                            <td className="">
+                                                {formatBDDateTime(
+                                                    sample.collection_date ||
+                                                        "N/A"
+                                                )}
+                                            </td>
+                                            <td className="font-semibold ">
+                                                Sample Received:
+                                            </td>
+                                            <td className="">
+                                                {formatBDDateTime(
+                                                    sample.received_date ||
+                                                        "N/A"
+                                                )}
+                                            </td>
                                         </tr>
 
                                         {/* Row 4 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold p-1">Report Date:</td>
-                                            <td className="p-1">{formatBDDateTime(sample.created_at || "N/A")}</td>
-                                            <td className="font-semibold p-1">Referred By:</td>
-                                            <td className="p-1">{sample.molecular_patient_reg?.reference_name || "N/A"}</td>
+                                            <td className="font-semibold p-1">
+                                                Report Date:
+                                            </td>
+                                            <td className="p-1">
+                                                {formatBDDateTime(
+                                                    sample.created_at || "N/A"
+                                                )}
+                                            </td>
+                                            <td className="font-semibold p-1">
+                                                Referred By:
+                                            </td>
+                                            <td className="p-1">
+                                                {sample.molecular_patient_reg
+                                                    ?.reference_name || "N/A"}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
 
-
-
                                 {/* Test Details */}
-                                <h1 className="text-2xl font-bold text-center my-2">
+                                <h1 className="text-lg font-bold text-center my-1">
                                     Molecular Test Report
                                 </h1>
 
                                 <table className="w-full border-collapse border">
                                     <thead>
                                         <tr>
-                                            <th className="border p-2 text-center">
+                                            <th className="border p-1 text-center">
                                                 Investigation
                                             </th>
                                             <th
-                                                className="border p-2 text-center"
+                                                className="border p-1 text-center"
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
-                                                        test.result_status ===
+                                                    test.result_status ===
                                                         "Positive"
                                                         ? 2
                                                         : 1
@@ -144,7 +203,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation !==
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
-                                                "Negative" && (
+                                                    "Negative" && (
                                                     <th className="border p-2 text-center">
                                                         Unit
                                                     </th>
@@ -159,13 +218,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </td>
 
                                             {test.investigation ===
-                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
                                                 <td className="border p-2 text-center">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
-                                                "Negative" ? (
+                                              "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
                                                     <td className="border p-2 text-center">
@@ -238,7 +297,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     {test.comments || "No comments available."}
                                 </span>
 
-                                <div className="mt-4 text-center">
+                                <div className="mt-1 text-center">
                                     <p>----------End of Report----------</p>
                                 </div>
 

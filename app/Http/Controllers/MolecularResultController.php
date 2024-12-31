@@ -11,6 +11,7 @@ use App\Models\Sample;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class MolecularResultController extends Controller
 {
@@ -19,9 +20,7 @@ class MolecularResultController extends Controller
      */
     public function index()
     {
-        $results = MolecularResult:: with('molecularSample')->get();
-
-        // $results = MolecularResult::orderBy('id', 'desc')->get();
+        $results = MolecularResult::with(['molecularSample', 'molecularReg'])->get();
         return Inertia::render('Molecular/Result/ViewMolecularResult', ['results' => $results]);
     }
 
@@ -104,7 +103,7 @@ class MolecularResultController extends Controller
     {
         $results = $request->input('results');
         foreach ($results as $result) {
-        $validated = \Validator::make($result, [
+        $validated = Validator::make($result, [
             'sample_id' => 'required|string',
             'patient_id' => 'required|string',
             'test_id' => 'required|integer',
@@ -129,10 +128,21 @@ class MolecularResultController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MolecularResult $molecularResult)
+    public function destroy($id)
     {
-        //
+        $result = MolecularResult::findOrFail($id);
+
+        try {
+            $result->delete();
+            // Redirect with success message
+            return redirect()->route('results.index')->with('success', 'Result deleted successfully.');
+        } catch (\Exception $e) {
+            // Redirect with error message
+            return redirect()->route('results.index')->with('error', 'Error deleting result: ' . $e->getMessage());
+        }
     }
+
+
 
     public function getPatientTests($patient_id)
     {
