@@ -1,6 +1,6 @@
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 import TextInput from "@/Components/TextInput";
 import axiosApi from "@/axios/axios";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
@@ -173,7 +173,7 @@ const CreateForm = ({ auth }) => {
                                 value="Result Date"
                                 className="text-xl text-indigo-600"
                             />
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={resultDate}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "result_date")

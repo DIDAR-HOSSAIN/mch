@@ -1,7 +1,6 @@
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
@@ -227,7 +226,7 @@ const CreateForm = ({ auth, districts }) => {
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={dob || new Date()}
                                 handleDateChange={(date) =>
                                     handleDobChange(date)
@@ -322,7 +321,7 @@ const CreateForm = ({ auth, districts }) => {
                                 value="Entry Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={entryDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
@@ -580,7 +579,7 @@ const CreateForm = ({ auth, districts }) => {
                                 value="First Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={firstDoseDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "first_dose_date")
@@ -599,7 +598,7 @@ const CreateForm = ({ auth, districts }) => {
                                 value="Second Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={secondDoseDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "second_dose_date")
@@ -618,7 +617,7 @@ const CreateForm = ({ auth, districts }) => {
                                 value="Booster Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={boosterDoseDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "booster_dose_date")
@@ -836,12 +835,12 @@ const CreateForm = ({ auth, districts }) => {
                             />
                         </div>
                     </div>
-                    <PrimaryButton
-                        className="mx-auto block w-full mt-2"
+                    <button
+                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
                         disabled={processing}
                     >
-                        Register
-                    </PrimaryButton>
+                        Submit
+                    </button>
                 </form>
             </div>
         </AdminDashboardLayout>

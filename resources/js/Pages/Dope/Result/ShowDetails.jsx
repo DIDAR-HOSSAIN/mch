@@ -12,10 +12,6 @@ const ShowDetails = ({ auth, result }) => {
         return fieldName.replace(/_/g, " "); // Remove underscores and capitalize words
     };
 
-    const formatBooleanField = (value) => {
-        return value === 1 ? "Negative" : "Positive";
-    };
-
     return (
         <AdminDashboardLayout
             user={auth.user}
@@ -55,18 +51,6 @@ const ShowDetails = ({ auth, result }) => {
                                     <span className="text-xl text-indigo-900 ml-2">
                                         {key === "result_date"
                                             ? formatDate(value)
-                                            : key === "status"
-                                            ? value === true
-                                                ? "Approve"
-                                                : "Pending"
-                                            : key === "alcohol" ||
-                                              key === "benzodiazepines" ||
-                                              key === "cannabinoids" ||
-                                              key === "amphetamine" ||
-                                              key === "opiates" ||
-                                              key === "cocaine" ||
-                                              key === "methamphetamine"
-                                            ? formatBooleanField(value)
                                             : value}
                                     </span>
                                 </div>

@@ -1,13 +1,12 @@
 import React from "react";
 import DatePicker from "react-datepicker";
 
-const CustomDatePicker = ({ selectedDate, handleDateChange, readOnly, disabled }) => {
+const NormalDatePicker = ({ selectedDate, handleDateChange, readOnly, disabled }) => {
     return (
         <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            dateFormat="dd/MM/yyyy HH:mm:ss"
-            // dateFormat="dd/MM/yyyy"
+            dateFormat="dd/MM/yyyy"
             isClearable // This allows clearing the date
             placeholderText="Select Date" // Placeholder text when no date is selected
             readOnly= {readOnly}
@@ -16,4 +15,4 @@ const CustomDatePicker = ({ selectedDate, handleDateChange, readOnly, disabled }
     );
 };
 
-export default CustomDatePicker;
+export default NormalDatePicker;

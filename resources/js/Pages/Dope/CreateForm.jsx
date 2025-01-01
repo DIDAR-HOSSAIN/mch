@@ -1,4 +1,3 @@
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
@@ -7,6 +6,7 @@ import { Head, useForm, } from "@inertiajs/react";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Inertia } from "@inertiajs/inertia";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 
 const CreateForm = ({ auth, districts, references }) => {
 
@@ -16,7 +16,7 @@ const CreateForm = ({ auth, districts, references }) => {
     const [entryDate, setEntryDate] = useState(new Date());
     const [selectedDistrict, setSelectedDistrict] = useState(null);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, success, reset } = useForm({
         name: "",
         fathers_name: "",
         mothers_name: "",
@@ -29,9 +29,8 @@ const CreateForm = ({ auth, districts, references }) => {
         paid: 0,
         total: 0,
         due: 0,
-        dob: null, // Ensure dob is initialized as null
-        age: 0, // Initialize age with 0
-        // other form fields...
+        dob: null,
+        age: 0, 
     });
 
     console.log('dope reg data', data);
@@ -179,6 +178,18 @@ const CreateForm = ({ auth, districts, references }) => {
         >
             <Head title="Dope Registration" />
             <div className="py-2">
+
+                {success && <div className="alert-success">{success}</div>}
+                {errors && (
+                    <div className="alert-error">
+                        {Object.values(errors).map((error, index) => (
+                            <div key={index} className="text-red-500 text-sm">
+                                {error}
+                            </div>
+                        ))}
+                    </div>
+                )}
+
                 <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
@@ -187,7 +198,7 @@ const CreateForm = ({ auth, districts, references }) => {
                                 value="BRTA Form Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={brtaFormDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_form_date")
@@ -230,7 +241,7 @@ const CreateForm = ({ auth, districts, references }) => {
                                 value="BRTA Serial Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={brtaSerialDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_serial_date")
@@ -412,7 +423,7 @@ const CreateForm = ({ auth, districts, references }) => {
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={dob}
                                 handleDateChange={handleDobChange}
                             />
@@ -459,7 +470,7 @@ const CreateForm = ({ auth, districts, references }) => {
                                 value="Entry Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={entryDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
@@ -590,7 +601,7 @@ const CreateForm = ({ auth, districts, references }) => {
                             <InputError
                                 message={
                                     errors.discount ||
-                                    (data.discount >= data.total
+                                    (data.discount >= data.test_fee
                                         ? "Discount cannot be greater than or equal to Test Fee"
                                         : "")
                                 }

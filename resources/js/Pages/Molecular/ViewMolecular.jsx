@@ -174,12 +174,10 @@ const ViewMolecular = ({ auth, moleculars }) => {
                                         </Link>
 
                                         {/* Edit Button */}
-                                        {/* {hasAnyRole(auth.user, [
+                                        {hasAnyRole(auth.user, [
                                             "super-admin",
                                             "admin",
-                                            "sub-admin",
-                                            "user",
-                                        ]) && ( */}
+                                        ]) && (
                                         <Link
                                             tabIndex="1"
                                             className="mx-1 p-2 text-white bg-blue-500 rounded inline-flex items-center"
@@ -191,10 +189,10 @@ const ViewMolecular = ({ auth, moleculars }) => {
                                         >
                                             <FiEdit className="h-5 w-5" />
                                         </Link>
-                                        {/* )} */}
+                                        )}
 
                                         {/* Delete Button */}
-                                        {/* {hasRole(auth.user, "super-admin") && ( */}
+                                        {hasRole(auth.user, "super-admin") && (
                                         <button
                                             onClick={() => destroy(molecular.id)}
                                             tabIndex="-1"
@@ -204,7 +202,7 @@ const ViewMolecular = ({ auth, moleculars }) => {
                                         >
                                             <FiTrash2 className="h-5 w-5" />
                                         </button>
-                                        {/* )} */}
+                                         )}
                                     </td>
                                 </tr>
                             ))}

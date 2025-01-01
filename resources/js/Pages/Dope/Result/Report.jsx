@@ -23,8 +23,8 @@ const Report = ({ auth, reports }) => {
         content: () => contentToPrint.current,
         pageStyle: `
                 @page {
-                    size: A4;
-                    margin: 0;
+                     size: A4;
+                        margin: 0cm 0.5cm 0.5cm 0.5cm; /* Top, Right, Bottom, Left */
                 }
             `,
     });
@@ -64,17 +64,17 @@ const Report = ({ auth, reports }) => {
                     01883077569, Email : mchctg.rtpcrlab@gmail.com
                 </p>
 
-                <h1 className="text-2xl font-bold mt-2 text-center">
+                <h1 className="text-2xl font-bold mt-1 text-center">
                     Dope Test Report
                 </h1>
 
-                <div className="p-4">
+                <div className="p-2">
                     {/* Patient Information */}
-                    <div className="bg-gray-100 p-4 mb-2 rounded-md">
-                        <h2 className="text-lg font-semibold mb-3">
+                    <div className="bg-gray-100 p-2 mb-1 rounded-md">
+                        <h2 className="text-lg font-semibold mb-1">
                             Patient Information
                         </h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-1">
                             <div>
                                 <span className="font-semibold">
                                     Patient ID:
@@ -106,8 +106,6 @@ const Report = ({ auth, reports }) => {
                                     Sample Name: Urine
                                 </span>
                             </div>
-
-                            {/* Add more patient information fields as needed */}
                         </div>
                         <div>
                             <span className="font-semibold">
@@ -128,64 +126,64 @@ const Report = ({ auth, reports }) => {
                             <tbody className="text-center">
                                 {reports.alcohol && (
                                     <tr>
-                                        <td className="py-2 px-4">Alcohol</td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">Alcohol</td>
+                                        <td className="py-1 px-4">
                                             {reports.alcohol}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.benzodiazepines && (
                                     <tr>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             Benzodiazepines
                                         </td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             {reports.benzodiazepines}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.cannabinoids && (
                                     <tr>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             Cannabinoids
                                         </td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             {reports.cannabinoids}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.amphetamine && (
                                     <tr>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             Amphetamine
                                         </td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             {reports.amphetamine}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.opiates && (
                                     <tr>
-                                        <td className="py-2 px-4">Opiates</td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">Opiates</td>
+                                        <td className="py-1 px-4">
                                             {reports.opiates}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.cocaine && (
                                     <tr>
-                                        <td className="py-2 px-4">Cocaine</td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">Cocaine</td>
+                                        <td className="py-1 px-4">
                                             {reports.cocaine}
                                         </td>
                                     </tr>
                                 )}
                                 {reports.methamphetamine && (
                                     <tr>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             Methamphetamine
                                         </td>
-                                        <td className="py-2 px-4">
+                                        <td className="py-1 px-4">
                                             {reports.methamphetamine}
                                         </td>
                                     </tr>
@@ -201,35 +199,37 @@ const Report = ({ auth, reports }) => {
                             />
                         </div>
 
-                        <div className="flex gap-6 px-4">
-                            <div className="text-left mt-2">
+                        {/* Signatures */}
+                        <div className="flex justify-between mt-12">
+                            <div className="text-center">
                                 <img
-                                    className="mx-auto"
                                     src={sign2}
-                                    alt="Jahanara Trading Logo"
+                                    alt="Zahirul Signature"
+                                    className="w-24 mx-auto"
                                 />
-                                <hr className="border-black border-solid border-1 w-full" />
-                                <strong className="text-xl">
-                                    Zahirul Islam
-                                </strong>
+                                <hr className="border-t border-black my-2" />
+                                <strong>Zahirul Islam</strong>
+                                <p>BSC (Hons) , MS</p>
+                                <p>Biochemistry & Molecular Biology (CU)</p>
                                 <p>Senior Research Officer</p>
+                                <p>BITID, Fouzderhat, Chattogram</p>
                                 <p>Molecular Biologist</p>
-                                <p>Medical Centre Hospital Chattogram.</p>
+                                <p>Medical Centre Hospital (RT-PCR Lab)</p>
                             </div>
-
-                            <div className="text-right mt-2">
+                            <div className="text-center">
                                 <img
-                                    className="mx-auto"
                                     src={sign1}
-                                    alt="Jahanara Trading Logo"
+                                    alt="Zakir Signature"
+                                    className="w-24 mx-auto"
                                 />
-                                <hr className="border-black border-solid border-1 w-full" />
-                                <strong className="text-xl">
-                                    Dr. Md. Zakir Hossain
-                                </strong>
-                                <p>Asst. Professor (Microbiology)</p>
+                                <hr className="border-t border-black my-2" />
+                                <strong>Dr. Md. Zakir Hossain</strong>
+                                <p>MBBS, BCS, M.Phil (Microbiology)</p>
+                                <p>Asst. Professor & Head</p>
+                                <p>Dept. of Mircrobiology & Immunology</p>
+                                <p>BITID, Fouzderhat, Chattogram</p>
                                 <p>Consultant</p>
-                                <p>Medical Centre Hospital Chattogram.</p>
+                                <p>Medical Centre Hospital (RT-PCR Lab)</p>
                             </div>
                         </div>
                     </div>

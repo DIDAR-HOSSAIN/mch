@@ -10,6 +10,12 @@ use App\Models\MolecularRegTest;
 
 class MolecularRegTestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:molecular-list|molecular-create|molecular-edit|molecular-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:molecular-money-receipt', ['only' => ['molecularMoneyReceipt']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

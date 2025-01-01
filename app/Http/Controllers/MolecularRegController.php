@@ -18,6 +18,17 @@ use Illuminate\Support\Facades\Auth;
 
 class MolecularRegController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:molecular-list|molecular-create|molecular-edit|molecular-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:molecular-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:molecular-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:molecular-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:molecular-summary-report', ['only' => ['summaryReport']]);
+        $this->middleware('permission:molecular-summary-details', ['only' => ['summaryDetails']]);
+        $this->middleware('permission:molecular-due-check', ['only' => ['duesCheck']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */

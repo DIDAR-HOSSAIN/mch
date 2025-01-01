@@ -1,6 +1,6 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import CustomDatePicker from "@/Components/DatePicker";
+import NormalDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -142,7 +142,7 @@ const EditForm = ({ auth, gpcr }) => {
 
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.dob}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "dob")
@@ -232,7 +232,7 @@ const EditForm = ({ auth, gpcr }) => {
                                 value="Entry Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.entry_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
@@ -468,7 +468,7 @@ const EditForm = ({ auth, gpcr }) => {
                                 value="First Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.first_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "first_dose_date")
@@ -487,7 +487,7 @@ const EditForm = ({ auth, gpcr }) => {
                                 value="Second Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.second_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "second_dose_date")
@@ -506,7 +506,7 @@ const EditForm = ({ auth, gpcr }) => {
                                 value="Booster Dose Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.booster_dose_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "booster_dose_date")

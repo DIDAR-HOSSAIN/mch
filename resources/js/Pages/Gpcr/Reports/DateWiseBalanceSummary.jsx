@@ -1,4 +1,3 @@
-// DateWiseBalanceSummary.jsx
 import React, { useState } from "react";
 import DateWiseReport from "./DateWiseReport";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";

@@ -1,6 +1,6 @@
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
@@ -126,7 +126,7 @@ const CreateForm = ({ auth, dopeIds }) => {
                             <InputLabel htmlFor="sample_collection_date">
                                 Sample Collection Date:
                             </InputLabel>
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={sampleCollectionDate}
                                 handleDateChange={handleDateChange}
                             />

@@ -17,6 +17,15 @@ use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:molecular-sample-list|molecular-sample-create|molecular-sample-edit|molecular-sample-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:molecular-sample-create', ['only' => ['create', 'molecularResultCreate', 'store']]);
+        $this->middleware('permission:molecular-sample-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:molecular-sample-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:molecular-sample-receive', ['only' => ['sampleReceiveCreate', 'sampleReceiveUpdate']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -143,7 +152,7 @@ class SampleController extends Controller
         return redirect()->route('samples.index')->with('success', 'Sample deleted successfully');
     }
 
-    public function sampleCreate()
+    public function sampleReceiveCreate()
     {
         // Fetch samples with 'Collected' status but exclude those with a 'Received' status
         $collectedSamples = Sample::with('molecularPatientReg') 
@@ -156,7 +165,7 @@ class SampleController extends Controller
 
 
 
-    public function updateReceive(Request $request, $id)
+    public function sampleReceiveUpdate(Request $request, $id)
     {
         $validated = $request->validate([
             'received_date' => 'required|date',

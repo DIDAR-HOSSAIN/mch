@@ -1,11 +1,11 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import "react-datepicker/dist/react-datepicker.css";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 
 const EditForm = ({ auth, sampleEdit }) => {
     // Initialize form data with sampleEdit values
@@ -89,7 +89,7 @@ const EditForm = ({ auth, sampleEdit }) => {
                                 htmlFor="sample_collection_date"
                                 value="Sample Collection Date"
                             />
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={data.sample_collection_date}
                                 handleDateChange={(date) =>
                                     handleDateChange(

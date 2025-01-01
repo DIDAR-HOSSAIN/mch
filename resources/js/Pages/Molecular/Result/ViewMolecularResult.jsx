@@ -1,11 +1,12 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, Link } from "@inertiajs/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CSVLink } from "react-csv";
-import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit } from "react-icons/fi";
 import { Inertia } from "@inertiajs/inertia";
 import Swal from "sweetalert2";
 import { FaFileInvoice, FaTrashAlt } from "react-icons/fa";
+import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
 
 const ViewMolecularResult = ({ auth, results }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -182,24 +183,33 @@ const ViewMolecularResult = ({ auth, results }) => {
                                         >
                                             <FiEye className="h-5 w-5" />
                                         </Link>
-                                        <Link
-                                            className="mr-1 p-2 text-white bg-blue-900 rounded inline-flex items-center"
-                                            href={route(
-                                                "results.edit",
-                                                result.patient_id
-                                            )}
-                                        >
-                                            <FiEdit className="h-5 w-5" />
-                                        </Link>
-                                        <button
-                                            onClick={() =>
-                                                handleDelete(result.id)
-                                            }
-                                            className="p-2 text-white bg-red-500 rounded"
-                                            title="Delete"
-                                        >
-                                            <FaTrashAlt className="h-5 w-5" />
-                                        </button>
+
+                                        {hasAnyRole(auth.user, [
+                                            "super-admin",
+                                            "admin",
+                                        ]) && (
+                                            <Link
+                                                className="mr-1 p-2 text-white bg-blue-900 rounded inline-flex items-center"
+                                                href={route(
+                                                    "results.edit",
+                                                    result.patient_id
+                                                )}
+                                            >
+                                                <FiEdit className="h-5 w-5" />
+                                            </Link>
+                                        )}
+
+                                        {hasRole(auth.user, "super-admin") && (
+                                            <button
+                                                onClick={() =>
+                                                    handleDelete(result.id)
+                                                }
+                                                className="p-2 text-white bg-red-500 rounded"
+                                                title="Delete"
+                                            >
+                                                <FaTrashAlt className="h-5 w-5" />
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

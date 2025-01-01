@@ -207,7 +207,7 @@ const ViewList = ({ auth, results }) => {
                                                         {name}
                                                     </td>
                                                     <td className="border px-4 py-2">
-                                                        {result_date}
+                                                        {formatDate (result_date)}
                                                     </td>
                                                     <td className="border px-4 py-2">
                                                         {alcohol}

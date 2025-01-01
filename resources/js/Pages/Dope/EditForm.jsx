@@ -1,6 +1,6 @@
-import CustomDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 import TextInput from "@/Components/TextInput";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head, useForm } from "@inertiajs/react";
@@ -200,7 +200,7 @@ const UpdateForm = ({ auth, districts, dope }) => {
                                 value="BRTA Form Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={brtaFormDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_form_date")
@@ -243,7 +243,7 @@ const UpdateForm = ({ auth, districts, dope }) => {
                                 value="BRTA Serial Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={brtaSerialDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "brta_serial_date")
@@ -426,7 +426,7 @@ const UpdateForm = ({ auth, districts, dope }) => {
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={dob || null}
                                 handleDateChange={handleDobChange}
                             />
@@ -480,7 +480,7 @@ const UpdateForm = ({ auth, districts, dope }) => {
                                 value="Entry Date"
                             />
 
-                            <CustomDatePicker
+                            <NormalDatePicker
                                 selectedDate={entryDate || null}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")

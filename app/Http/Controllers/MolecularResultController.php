@@ -15,6 +15,15 @@ use Illuminate\Support\Facades\Validator;
 
 class MolecularResultController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:molecular-result-list|molecular-result-create|molecular-result-edit|molecular-result-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:molecular-result-create', ['only' => ['create', 'molecularResultCreate', 'store']]);
+        $this->middleware('permission:molecular-result-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:molecular-result-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:molecular-result-report', ['only' => ['generateReport']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -144,7 +153,7 @@ class MolecularResultController extends Controller
 
 
 
-    public function getPatientTests($patient_id)
+    public function molecularResultCreate($patient_id)
     {
         $tests = MolecularRegTest::where('patient_id', $patient_id)
          ->with('sample')

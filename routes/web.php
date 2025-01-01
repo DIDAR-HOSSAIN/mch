@@ -34,9 +34,10 @@ use Inertia\Inertia;
 */
 
 //Frontend Route
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('home');
+
+// Route::get('/', function () {
+//     return Inertia::render('Home');
+// })->name('home');
 
 
 Route::post('/', [HomeController::class, 'index'])->name('home');
@@ -109,10 +110,13 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('molecular/dues/details', [MolecularRegController::class, 'duesCheck'])->name('molecular.dues.details');
 
     Route::resource('samples', SampleController::class);
-    Route::get('samples-receive', [SampleController::class, 'sampleCreate'])->name('samples-receive');
-    Route::put('/samples/receive/{id}', [SampleController::class, 'updateReceive'])->name('samples.receive.update');
+    Route::get('samples-receive', [SampleController::class, 'sampleReceiveCreate'])->name('samples-receive');
+    Route::put('/samples/receive/{id}', [SampleController::class, 'sampleReceiveUpdate'])->name('samples.receive.update');
+
     Route::resource('/results', MolecularResultController::class);
-    Route::get('/results/{patient_id}/createReport', [MolecularResultController::class, 'getPatientTests'])->name('results.createReport');
+
+    Route::get('/results/{patient_id}/createReport', [MolecularResultController::class, 'molecularResultCreate'])->name('results.createReport');
+
     Route::get('/results/{patientId}/reports', [MolecularResultController::class, 'generateReport'])->name('results.reports');
 });
 

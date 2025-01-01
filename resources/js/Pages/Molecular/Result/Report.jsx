@@ -60,12 +60,6 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                 {/* Print Section */}
                 <div ref={contentToPrint} className="print-section">
-                    <img
-                        className="w-full h-auto object-cover"
-                        src={pad}
-                        alt="Pad"
-                    />
-
                     {tests.length > 0 ? (
                         tests.map((test, index) => (
                             <div
@@ -73,35 +67,40 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 className="a4-page p-6 bg-white rounded-md"
                             >
                                 {/* Patient Details */}
+                                <img
+                                    className="w-full h-auto object-cover"
+                                    src={pad}
+                                    alt="Pad"
+                                />
 
                                 <table className="w-full text-md text-gray-700 bg-gray-100 rounded border border-gray-200">
                                     <tbody>
                                         {/* Row 1 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold w-1/4">
                                                 Patient Name:
                                             </td>
-                                            <td className="">
+                                            <td className="w-1/4">
                                                 {sample.molecular_patient_reg
                                                     ?.name || "N/A"}
                                             </td>
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold w-1/6">
                                                 Gender:
                                             </td>
-                                            <td className="">
+                                            <td className="w-1/6">
                                                 {sample.molecular_patient_reg
                                                     ?.gender || "N/A"}
                                             </td>
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold w-1/6">
                                                 Age:
                                             </td>
-                                            <td className="">
+                                            <td className="w-1/6">
                                                 {sample.molecular_patient_reg
                                                     ?.age || "N/A"}
                                             </td>
                                         </tr>
 
-                                        {/* Ro */}
+                                        {/* Row 2 */}
                                         <tr className="hover:bg-gray-50 border-b">
                                             <td className="font-semibold ">
                                                 Patient ID:
@@ -128,12 +127,6 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         {/* Row 3 */}
                                         <tr className="hover:bg-gray-50 border-b">
                                             <td className="font-semibold ">
-                                                Specimen:
-                                            </td>
-                                            <td className="">
-                                                {test.specimen || "N/A"}
-                                            </td>
-                                            <td className="font-semibold ">
                                                 Sample Collected:
                                             </td>
                                             <td className="">
@@ -142,6 +135,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                         "N/A"
                                                 )}
                                             </td>
+
                                             <td className="font-semibold ">
                                                 Sample Received:
                                             </td>
@@ -151,17 +145,24 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                         "N/A"
                                                 )}
                                             </td>
+
+                                            <td className="font-semibold ">
+                                                Report Date:
+                                            </td>
+                                            <td className="">
+                                                {formatBDDateTime(
+                                                    sample.created_at || "N/A"
+                                                )}
+                                            </td>
                                         </tr>
 
                                         {/* Row 4 */}
                                         <tr className="hover:bg-gray-50 border-b">
                                             <td className="font-semibold p-1">
-                                                Report Date:
+                                                Specimen:
                                             </td>
                                             <td className="p-1">
-                                                {formatBDDateTime(
-                                                    sample.created_at || "N/A"
-                                                )}
+                                                {test.specimen || "N/A"}
                                             </td>
                                             <td className="font-semibold p-1">
                                                 Referred By:
