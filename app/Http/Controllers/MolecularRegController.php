@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 
 class MolecularRegController extends Controller
 {
@@ -91,6 +90,7 @@ class MolecularRegController extends Controller
             // Step 5: Create the MolecularReg record
             $molecularReg = MolecularReg::create([
                 'patient_id'    => $molecularRegId,
+                'bill_no'       =>$request->bill_no,
                 'name'          => $request->name,
                 'contact_no'    => $request->contact_no,
                 'age'           => $request->age,

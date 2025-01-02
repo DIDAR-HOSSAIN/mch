@@ -11,18 +11,21 @@ const CreateMolecular = ({ auth, references = [] }) => {
     const [overallDiscount, setOverallDiscount] = useState(0);
     const [overallPaid, setOverallPaid] = useState(0);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: "",
-        contact_no: "",
-        age: "",
-        gender: "",
-        tests: testFields,
-        discount: 0,
-        paid: 0,
-        account_head: "Cash in hand",
-        payment_type: "",
-        reference_name: "",
-    });
+    const { data, setData, post, processing, success, errors, reset } = useForm(
+        {
+            bill_no: "",
+            name: "",
+            contact_no: "",
+            age: "",
+            gender: "",
+            tests: testFields,
+            discount: 0,
+            paid: 0,
+            account_head: "Cash in hand",
+            payment_type: "",
+            reference_name: "",
+        }
+    );
 
     const addTestField = () => {
         const updatedFields = [...testFields, { test_id: "", total: 0 }];
@@ -54,7 +57,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
     const handleChange = (e) => setData(e.target.name, e.target.value);
 
     const handleOverallChange = (field, value) => {
-        const numValue = Number(value);
+        const numValue = parseInt(value, 10) || 0;
         if (field === "discount") {
             setOverallDiscount(numValue);
             setData("discount", numValue);
@@ -65,12 +68,12 @@ const CreateMolecular = ({ auth, references = [] }) => {
     };
 
     const calculateTotals = () => {
-        let totalAmount = testFields.reduce(
-            (acc, test) => acc + (test.total || 0),
+        const totalAmount = testFields.reduce(
+            (acc, test) => acc + (parseInt(test.total, 10) || 0),
             0
         );
-        const totalAfterDiscount = totalAmount - overallDiscount;
-        const totalDue = totalAfterDiscount - overallPaid;
+        const totalAfterDiscount = totalAmount - parseInt(overallDiscount, 10);
+        const totalDue = totalAfterDiscount - parseInt(overallPaid, 10);
 
         return { totalAmount, totalAfterDiscount, totalDue };
     };
@@ -88,7 +91,11 @@ const CreateMolecular = ({ auth, references = [] }) => {
     return (
         <AdminDashboardLayout
             user={auth.user}
-            header={<h2 className="text-xl font-semibold">Molecular Registration</h2>}
+            header={
+                <h2 className="text-xl font-semibold">
+                    Molecular Registration
+                </h2>
+            }
         >
             <Head title="Molecular Registration" />
             <div className="mt-4 max-w-5xl mx-auto justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">
@@ -96,9 +103,14 @@ const CreateMolecular = ({ auth, references = [] }) => {
                     Molecular Registration
                 </h2>
 
-                {errors.error && (
-                    <div className="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4">
-                        {errors.error}
+                {success && <div className="alert-success">{success}</div>}
+                {errors && (
+                    <div className="alert-error">
+                        {Object.values(errors).map((error, index) => (
+                            <div key={index} className="text-red-500 text-sm">
+                                {error}
+                            </div>
+                        ))}
                     </div>
                 )}
 
@@ -119,6 +131,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                             />
                             <InputError message={errors.name} />
                         </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-600">
                                 Contact No
@@ -133,6 +146,9 @@ const CreateMolecular = ({ auth, references = [] }) => {
                             />
                             <InputError message={errors.contact_no} />
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <div>
                             <label className="block text-sm font-medium text-gray-600">
                                 Age
@@ -147,6 +163,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                             />
                             <InputError message={errors.age} />
                         </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-600">
                                 Gender
@@ -163,6 +180,21 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                 <option value="Other">Other</option>
                             </select>
                             <InputError message={errors.gender} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                                Bill No
+                            </label>
+                            <input
+                                type="text"
+                                name="bill_no"
+                                value={data.bill_no}
+                                onChange={handleChange}
+                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+                                placeholder="Enter Bill No"
+                            />
+                            <InputError message={errors.bill_no} />
                         </div>
                     </div>
 
@@ -251,7 +283,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                                     <p className="font-medium text-white">
                                                         After Discount:
                                                         <span className="font-semibold text-white ml-2">
-                                                            {totalAfterDiscount}{" "}
+                                                            {totalAfterDiscount}
                                                             Tk
                                                         </span>
                                                     </p>
@@ -364,15 +396,13 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                 </label>
                                 <select
                                     name="payment_type"
-                                    value={data.payment_type}
+                                    value={data.payment_type || "Cash"}
                                     onChange={(e) =>
                                         setData("payment_type", e.target.value)
                                     }
                                     className="w-full border rounded px-3 py-2"
+                                    required
                                 >
-                                    <option value="">
-                                        Select Payment Type
-                                    </option>
                                     <option value="Cash">Cash</option>
                                     <option value="Cheque">Cheque</option>
                                     <option value="Card">Card</option>
@@ -387,6 +417,7 @@ const CreateMolecular = ({ auth, references = [] }) => {
                                     </option>
                                     <option value="Others">Others</option>
                                 </select>
+
                                 <InputError message={errors.payment_type} />
                             </div>
 
