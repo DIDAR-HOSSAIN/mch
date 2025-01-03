@@ -397,13 +397,14 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 </label>
                                 <select
                                     name="payment_type"
-                                    value={data.payment_type || "Cash"}
+                                    value={data.payment_type}
                                     onChange={(e) =>
                                         setData("payment_type", e.target.value)
                                     }
                                     className="w-full border rounded px-3 py-2"
                                     required
                                 >
+                                    <option value="" disabled>Select payment type</option>
                                     <option value="Cash">Cash</option>
                                     <option value="Cheque">Cheque</option>
                                     <option value="Card">Card</option>
