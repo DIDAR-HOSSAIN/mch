@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
 import InputError from "@/Components/InputError";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const CreateMolecular = ({ auth, references = [] }) => {
-    const { tests = [] } = usePage().props;
+const CreateMolecular = ({ auth, tests = [], references = [] }) => {
 
     const [testFields, setTestFields] = useState([{ test_id: "", total: 0 }]);
     const [overallDiscount, setOverallDiscount] = useState(0);
@@ -33,12 +32,6 @@ const CreateMolecular = ({ auth, references = [] }) => {
         setData("tests", updatedFields);
     };
 
-    const removeTestField = (index) => {
-        const updatedFields = testFields.filter((_, i) => i !== index);
-        setTestFields(updatedFields);
-        setData("tests", updatedFields);
-    };
-
     const handleTestChange = (index, field, value) => {
         const updatedFields = [...testFields];
         updatedFields[index][field] = value;
@@ -50,9 +43,16 @@ const CreateMolecular = ({ auth, references = [] }) => {
                 : 0;
         }
 
-        setTestFields(updatedFields);
-        setData("tests", updatedFields);
+        setTestFields(updatedFields); // Update local state
+        setData("tests", updatedFields); // Update form data directly
     };
+
+    const removeTestField = (index) => {
+        const updatedFields = testFields.filter((_, i) => i !== index);
+        setTestFields(updatedFields); // Update local state
+        setData("tests", updatedFields); // Update form data directly
+    };
+
 
     const handleChange = (e) => setData(e.target.name, e.target.value);
 
@@ -82,8 +82,9 @@ const CreateMolecular = ({ auth, references = [] }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("moleculars.store"));
-        reset();
+        post(route("moleculars.store"), {
+            onSuccess: () => reset(),
+        });
     };
 
     const selectedTestIds = testFields.map((test) => test.test_id);
