@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\FlightController;
 use App\Http\Controllers\GpcrController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
@@ -39,10 +40,8 @@ Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
 
-Route::resource('moleculars', MolecularRegController::class);
+Route::post('/dope/search', [HomeController::class, 'index'])->name('dope.search');
 
-// Route::post('/', [HomeController::class, 'index'])->name('home');
-Route::inertia('/about', 'About')->name('about');
 Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
@@ -86,6 +85,7 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
 //User route
 Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user'])->group(function () {
     
+    Route::resource('moleculars', MolecularRegController::class);
     Route::resource('flights', FlightController::class);
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');

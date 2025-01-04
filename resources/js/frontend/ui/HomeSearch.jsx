@@ -13,7 +13,7 @@ const HomeSearch = ({ results }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await post(route("home"), {
+        await post(route("dope.search"), {
             onSuccess: () => reset(),
             onError: () => reset(),
         });

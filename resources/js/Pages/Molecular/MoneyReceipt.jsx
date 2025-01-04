@@ -124,7 +124,7 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                                 <td className="p-2 border">{index + 1}</td>
                                 <td className="p-2 border">{test.test_name}</td>
                                 <td className="p-2 border text-right">
-                                    {test.test_fee?.toFixed(2)}
+                                    {test.test_fee}
                                 </td>
                             </tr>
                         ))}
@@ -134,23 +134,23 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                 {/* Payment Summary */}
                 <div className="flex justify-between font-semibold text-lg">
                     <p>Total:</p>
-                    <p>{patient.total?.toFixed(2) || "0.00"}</p>
+                    <p>{patient.total || "0.00"}</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Discount:</p>
-                    <p>{patient.discount?.toFixed(2) || "0.00"}</p>
+                    <p>{patient.discount || "0.00"}</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Net Payable:</p>
-                    <p>{patient.net_payable?.toFixed(2) || "0.00"}</p>
+                    <p>{patient.net_payable || "0.00"}</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Paid:</p>
-                    <p>{patient.paid?.toFixed(2) || "0.00"}</p>
+                    <p>{patient.paid || "0.00"}</p>
                 </div>
                 <div className="flex justify-between font-extrabold text-white text-2xl bg-black">
                     <p>Due:</p>
-                    <p>{patient.due?.toFixed(2) || "0.00"}</p>
+                    <p>{patient.due || "0.00"}</p>
                 </div>
 
                 {/* In Words */}
