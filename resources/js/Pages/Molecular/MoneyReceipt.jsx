@@ -78,36 +78,40 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                 </div>
 
                 {/* Patient Information */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4 mb-1">
                     <div>
                         <p>
-                            <span className="font-bold">Reg ID:</span>{" "}
+                            <span className="font-bold">Reg ID:</span>
                             {patient.patient_id}
                         </p>
                         <p>
-                            <span className="font-bold">Name:</span>{" "}
+                            <span className="font-bold">Name:</span>
                             {patient.name}
                         </p>
                         <p>
-                            <span className="font-bold">Contact:</span>{" "}
+                            <span className="font-bold">Contact:</span>
                             {patient.contact_no}
                         </p>
                     </div>
                     <div>
                         <p>
-                            <span className="font-bold">Reg Date:</span>{" "}
+                            <span className="font-bold">Reg Date:</span>
                             {formatDate(patient.reg_date)}
                         </p>
                         <p>
-                            <span className="font-bold">Age:</span>{" "}
+                            <span className="font-bold">Age:</span>
                             {patient.age}
                         </p>
                         <p>
-                            <span className="font-bold">Gender:</span>{" "}
+                            <span className="font-bold">Gender:</span>
                             {patient.gender}
                         </p>
                     </div>
                 </div>
+                        <p className="mb-2">
+                            <span className="font-bold">Ref. By :</span>
+                            {patient?.reference_name}
+                        </p>
 
                 {/* Test Details */}
                 <table className="w-full border-collapse border mb-4 text-sm">

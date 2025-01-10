@@ -211,7 +211,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                             <td className="border px-4 py-2 text-center">
                                                 <Link
                                                     tabIndex="1"
-                                                    className="p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                                    className="p-2 text-white bg-blue-400 rounded inline-flex items-center"
                                                     href={route(
                                                         "samples.show",
                                                         sample.id

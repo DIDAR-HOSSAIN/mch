@@ -102,23 +102,23 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                                         {/* Row 2 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Patient ID:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {sample.patient_id || "N/A"}
                                             </td>
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Bill No:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {sample.molecular_patient_reg
                                                     ?.bill_no || "N/A"}
                                             </td>
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Contact No:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {sample.molecular_patient_reg
                                                     ?.contact_no || "N/A"}
                                             </td>
@@ -126,30 +126,28 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                                         {/* Row 3 */}
                                         <tr className="hover:bg-gray-50 border-b">
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Sample Collected:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {formatBDDateTime(
                                                     sample.collection_date ||
                                                         "N/A"
                                                 )}
                                             </td>
-
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Sample Received:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {formatBDDateTime(
                                                     sample.received_date ||
                                                         "N/A"
                                                 )}
                                             </td>
-
-                                            <td className="font-semibold ">
+                                            <td className="font-semibold">
                                                 Report Date:
                                             </td>
-                                            <td className="">
+                                            <td>
                                                 {formatBDDateTime(
                                                     sample.created_at || "N/A"
                                                 )}
@@ -165,9 +163,9 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 {test.specimen || "N/A"}
                                             </td>
                                             <td className="font-semibold p-1">
-                                                Referred By:
+                                                Ref. By:
                                             </td>
-                                            <td className="p-1">
+                                            <td className="p-1" colSpan="3">
                                                 {sample.molecular_patient_reg
                                                     ?.reference_name || "N/A"}
                                             </td>
