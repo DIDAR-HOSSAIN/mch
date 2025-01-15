@@ -2,32 +2,12 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
-import pad from "@/assets/images/pcr_pad.png";
+// import pad from "@/assets/images/pcr_pad.png";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularReport = ({ auth, tests = [], sample = {} }) => {
     console.log("Molecular tests Report ", tests);
     console.log("Molecular sample Report ", sample);
-
-    const contentToPrint = useRef(null);
-
-    const handlePrint = useReactToPrint({
-        documentTitle: `Report_${sample.patient_id}`,
-        content: () => contentToPrint.current,
-        pageStyle: `
-                @page {
-                     size: A4;
-                        margin: 0cm 0.5cm 0.5cm 0.5cm; /* Top, Right, Bottom, Left */
-                }
-                .a4-page {
-                    page-break-inside: avoid;
-                    page-break-after: always;
-                }
-                .print-section {
-                    margin: 0 !important;
-                }
-            `,
-    });
 
     const formatBDDateTime = (date) =>
         new Date(date).toLocaleString("en-GB", {
@@ -41,6 +21,21 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             hour12: true, // Use 12-hour format with AM/PM
         });
 
+    const contentToPrint = useRef(null);
+    const handlePrint = useReactToPrint({
+        documentTitle: `Receipt_${sample.patient_id}`,
+        content: () => contentToPrint.current,
+        pageStyle: `
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            body {
+                margin-top: 5cm !important;
+            }
+        `,
+    });
+
     return (
         <AdminDashboardLayout
             user={auth.user}
@@ -51,12 +46,14 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             }
         >
             <div className="p-6 min-h-screen">
-                <button
-                    onClick={handlePrint}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                >
-                    Print
-                </button>
+                <div className="flex justify-center">
+                    <button
+                        onClick={handlePrint}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Print
+                    </button>
+                </div>
 
                 {/* Print Section */}
                 <div ref={contentToPrint} className="print-section">
@@ -67,16 +64,17 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 className="a4-page p-6 bg-white rounded-md"
                             >
                                 {/* Patient Details */}
-                                <img
+
+                                {/* <img
                                     className="w-full h-auto object-cover"
                                     src={pad}
                                     alt="Pad"
-                                />
+                                /> */}
 
-                                <table className="w-full text-md text-gray-700 bg-gray-100 rounded border border-gray-200">
+                                <table className="w-full text-sm text-gray-700 border border-black">
                                     <tbody>
                                         {/* Row 1 */}
-                                        <tr className="hover:bg-gray-50 border-b">
+                                        <tr className="hover:bg-gray-50 border border-black">
                                             <td className="font-semibold w-1/4">
                                                 Patient Name:
                                             </td>
@@ -101,7 +99,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </tr>
 
                                         {/* Row 2 */}
-                                        <tr className="hover:bg-gray-50 border-b">
+                                        <tr className="hover:bg-gray-50 border border-black">
                                             <td className="font-semibold">
                                                 Patient ID:
                                             </td>
@@ -125,7 +123,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </tr>
 
                                         {/* Row 3 */}
-                                        <tr className="hover:bg-gray-50 border-b">
+                                        <tr className="hover:bg-gray-50 border border-black">
                                             <td className="font-semibold">
                                                 Sample Collected:
                                             </td>
@@ -155,7 +153,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </tr>
 
                                         {/* Row 4 */}
-                                        <tr className="hover:bg-gray-50 border-b">
+                                        <tr className="hover:bg-gray-50 border border-black">
                                             <td className="font-semibold p-1">
                                                 Specimen:
                                             </td>
@@ -178,14 +176,14 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     Molecular Test Report
                                 </h1>
 
-                                <table className="w-full border-collapse border">
+                                <table className="w-full text-sm text-gray-700 border border-black">
                                     <thead>
-                                        <tr>
-                                            <th className="border p-1 text-center">
-                                                Investigation
+                                        <tr className="border border-black">
+                                            <th className="p-1 text-center border border-black">
+                                                Test Name
                                             </th>
                                             <th
-                                                className="border p-1 text-center"
+                                                className="text-sm p-1 text-center border border-black"
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
@@ -203,15 +201,15 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
                                                     "Negative" && (
-                                                    <th className="border p-2 text-center">
+                                                    <th className="p-2 text-center border border-black">
                                                         Unit
                                                     </th>
                                                 )}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="font-semibold text-xl">
-                                            <td className="border p-2 text-center">
+                                        <tr className="font-semibold text-lg border border-black">
+                                            <td className="text-sm p-2 text-center border border-black">
                                                 {test.molecular_reg_test
                                                     .test_name || "N/A"}
                                             </td>
@@ -219,17 +217,17 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation ===
                                             "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
-                                                <td className="border p-2 text-center">
+                                                <td className="text-sm p-2 text-center border border-black">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
                                               "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
-                                                    <td className="border p-2 text-center">
+                                                    <td className="text-sm p-2 text-center border border-black">
                                                         {test.result || "N/A"}
                                                     </td>
-                                                    <td className="border p-2 text-center">
+                                                    <td className="text-sm p-2 text-center border border-black">
                                                         {test.unit || "N/A"}
                                                     </td>
                                                 </>
@@ -237,13 +235,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 // Logic for Positive result status
                                                 <>
                                                     <td
-                                                        className="border p-2 text-center"
+                                                        className="text-sm p-2 text-center border border-black"
                                                         rowSpan={3}
                                                     >
                                                         {test.result || "N/A"}
                                                     </td>
                                                     <td
-                                                        className="border p-2 text-center"
+                                                        className="text-sm p-2 text-center border border-black"
                                                         rowSpan={3}
                                                     >
                                                         {test.result_copies ||
@@ -255,7 +253,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </tbody>
                                 </table>
 
-                                <div className="flex items-center mt-2">
+                                <div className="text-sm flex items-center mt-2">
                                     <span className="font-semibold">
                                         Methodology :
                                     </span>
@@ -266,10 +264,10 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </div>
 
                                 {/* Remarks & Comments */}
-                                <h3 className="mt-2 font-semibold">
+                                <h3 className="text-sm mt-2 font-semibold">
                                     Remarks :
                                 </h3>
-                                <ul className="list-disc pl-6 mb-2">
+                                <ul className="text-sm list-disc pl-6 mb-2">
                                     {test.remarks ? (
                                         test.remarks
                                             .split(/[|]/) // Split the remarks based on ., |, or /
@@ -289,10 +287,10 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     )}
                                 </ul>
 
-                                <span className="mt-2 font-semibold">
+                                <span className="text-sm mt-2 font-semibold">
                                     Comments :
                                 </span>
-                                <span className="ml-2">
+                                <span className="text-sm ml-2">
                                     {test.comments || "No comments available."}
                                 </span>
 
@@ -301,7 +299,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </div>
 
                                 {/* Signatures */}
-                                <div className="flex justify-between mt-12">
+                                <div className="text-sm flex justify-between mt-20">
                                     <div className="text-center">
                                         {/* <img
                                             src={sign2}

@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import CustomDatePicker from "@/Components/DatePicker";
-import { format } from "date-fns"; // For formatting dates
+import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 
 const SampleReceive = ({ auth, collectedSamples }) => {

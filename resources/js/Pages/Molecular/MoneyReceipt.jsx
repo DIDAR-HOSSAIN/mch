@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import numberToWords from "number-to-words";
-import money_receipt_header_img from "@/assets/images/Money-Receipt/money_receipt_Header.png";
+import pad from "@/assets/images/pcr_pad.png";
 import Barcode from "react-barcode";
 import { Head } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
@@ -58,63 +58,92 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                 {/* Header */}
                 <img
                     className="w-full h-full object-contain"
-                    src={money_receipt_header_img}
+                    src={pad}
                     alt=""
                 />
-                <div className="text-center mb-4">
-                    <p>953 O.R Nizam Road, Chattogram - 4000</p>
-                    <p>
-                        Contact: 01883077569 | Email: mchctg.rtpcrlab@gmail.com
-                    </p>
-                </div>
 
                 {/* Barcode Section */}
-                <div className="text-center mb-4">
+                <div className="text-center mb-2">
                     <Barcode
                         value={patient.patient_id || "N/A"}
                         width={1} // Set the desired width (in pixels)
-                        height={50} // Set the desired height (in pixels)
+                        height={40} // Set the desired height (in pixels)
                     />
                 </div>
 
                 {/* Patient Information */}
-                <div className="grid grid-cols-2 gap-4 mb-1">
-                    <div>
-                        <p>
-                            <span className="font-bold">Reg ID:</span>
+                <div className="border border-gray-300 p-2 rounded-md">
+                    {/* Section Title */}
+                    <h3 className="text-lg font-bold mb-2 border-b pb-2 text-gray-800">
+                        Patient Information
+                    </h3>
+
+                    {/* Reg ID, Bill No, and Date */}
+                    <div className="flex justify-between items-center mb-2">
+                        <p className="text-md">
+                            <span className="font-semibold text-gray-700">
+                                Patient ID:
+                            </span>{" "}
                             {patient.patient_id}
                         </p>
-                        <p>
-                            <span className="font-bold">Name:</span>
+                        <p className="text-md">
+                            <span className="font-semibold text-gray-700">
+                                Bill No:
+                            </span>{" "}
+                            {patient.bill_no}
+                        </p>
+                        <p className="text-md">
+                            <span className="font-semibold text-gray-700">
+                                Date:
+                            </span>{" "}
+                            {formatDate(patient.reg_date)}
+                        </p>
+                    </div>
+
+                    {/* Name */}
+                    <div className="mb-2">
+                        <p className="text-md w-full">
+                            <span className="font-semibold text-gray-700">
+                                Name:
+                            </span>{" "}
                             {patient.name}
                         </p>
-                        <p>
-                            <span className="font-bold">Contact:</span>
+                    </div>
+
+                    {/* Age, Gender, and Contact No */}
+                    <div className="flex justify-between items-center">
+                        <p className="text-md">
+                            <span className="font-semibold text-gray-700">
+                                Age:
+                            </span>{" "}
+                            {patient.age}
+                        </p>
+                        <p className="text-md">
+                            <span className="font-semibold text-gray-700">
+                                Gender:
+                            </span>{" "}
+                            {patient.gender}
+                        </p>
+                        <p className="text-md mb-2">
+                            <span className="font-semibold text-gray-700">
+                                Contact:
+                            </span>{" "}
                             {patient.contact_no}
                         </p>
                     </div>
-                    <div>
-                        <p>
-                            <span className="font-bold">Reg Date:</span>
-                            {formatDate(patient.reg_date)}
-                        </p>
-                        <p>
-                            <span className="font-bold">Age:</span>
-                            {patient.age}
-                        </p>
-                        <p>
-                            <span className="font-bold">Gender:</span>
-                            {patient.gender}
+                    {/* Name */}
+                    <div className="mb-2">
+                        <p className="text-md w-full">
+                            <span className="font-semibold text-gray-700">
+                                Ref. By :
+                            </span>{" "}
+                            {patient?.reference_name}
                         </p>
                     </div>
                 </div>
-                        <p className="mb-2">
-                            <span className="font-bold">Ref. By :</span>
-                            {patient?.reference_name}
-                        </p>
 
                 {/* Test Details */}
-                <table className="w-full border-collapse border mb-4 text-sm">
+                <table className="w-full border-collapse border mb-2 text-md">
                     <thead>
                         <tr className="border-b">
                             <th className="p-2 border">#</th>
@@ -128,7 +157,7 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                                 <td className="p-2 border">{index + 1}</td>
                                 <td className="p-2 border">{test.test_name}</td>
                                 <td className="p-2 border text-right">
-                                    {test.test_fee}
+                                    {test.test_fee}.00
                                 </td>
                             </tr>
                         ))}
@@ -138,23 +167,23 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                 {/* Payment Summary */}
                 <div className="flex justify-between font-semibold text-lg">
                     <p>Total:</p>
-                    <p>{patient.total || "0.00"}</p>
+                    <p>{patient.total || "0.00"}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Discount:</p>
-                    <p>{patient.discount || "0.00"}</p>
+                    <p>{patient.discount || "0.00"}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Net Payable:</p>
-                    <p>{patient.net_payable || "0.00"}</p>
+                    <p>{patient.net_payable || "0.00"}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Paid:</p>
-                    <p>{patient.paid || "0.00"}</p>
+                    <p>{patient.paid || "0.00"}.00</p>
                 </div>
                 <div className="flex justify-between font-extrabold text-white text-2xl bg-black">
                     <p>Due:</p>
-                    <p>{patient.due || "0.00"}</p>
+                    <p>{patient.due || "0.00"}.00</p>
                 </div>
 
                 {/* In Words */}
