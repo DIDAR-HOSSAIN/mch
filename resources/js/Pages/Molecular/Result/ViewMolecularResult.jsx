@@ -220,7 +220,7 @@ const ViewMolecularResult = ({ auth, results }) => {
                     <div className="flex justify-between items-center mt-4">
                         {/* Items Per Page */}
                         <select
-                            className="border rounded px-4 py-2"
+                            className="border rounded px-8 py-2"
                             value={perPage}
                             onChange={handlePerPageChange}
                         >

@@ -6,10 +6,11 @@ const CustomDatePicker = ({ selectedDate, handleDateChange, readOnly, disabled }
         <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
+            showTimeSelect
             dateFormat="dd/MM/yyyy HH:mm:ss"
             isClearable
             placeholderText="Select Date"
-            readOnly= {readOnly}
+            readOnly={readOnly}
             disabled={disabled}
         />
     );
