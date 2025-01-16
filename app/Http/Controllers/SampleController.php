@@ -10,10 +10,7 @@ use App\Models\MolecularReg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class SampleController extends Controller
 {
@@ -148,9 +145,16 @@ class SampleController extends Controller
      */
     public function destroy(Sample $sample)
     {
+        $sample->molecularResult()->delete();
         $sample->delete();
-        return redirect()->route('samples.index')->with('success', 'Sample deleted successfully');
+        return redirect()->route('samples.index')->with('success', 'Sample and related data deleted successfully');
     }
+
+    // public function destroy(Sample $sample)
+    // {
+    //     $sample->delete();
+    //     return redirect()->route('samples.index')->with('success', 'Sample deleted successfully');
+    // }
 
     public function sampleReceiveCreate()
     {

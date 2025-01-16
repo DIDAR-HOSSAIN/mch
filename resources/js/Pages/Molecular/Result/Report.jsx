@@ -18,23 +18,30 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
-            hour12: true, // Use 12-hour format with AM/PM
+            hour12: true,
         });
 
     const contentToPrint = useRef(null);
+
     const handlePrint = useReactToPrint({
         documentTitle: `Receipt_${sample.patient_id}`,
         content: () => contentToPrint.current,
         pageStyle: `
             @page {
                 size: A4;
-                margin: 0;
+                margin-top: 5cm;
             }
             body {
-                margin-top: 5cm !important;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .page-break {
+                page-break-after: always;
             }
         `,
     });
+
+
 
     return (
         <AdminDashboardLayout
@@ -46,7 +53,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             }
         >
             <div className="p-6 min-h-screen">
-                <div className="flex justify-center">
+            <div className="flex justify-center">
                     <button
                         onClick={handlePrint}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -130,7 +137,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border border-black">
                                                 {formatBDDateTime(
                                                     sample.collection_date ||
-                                                        "N/A"
+                                                    "N/A"
                                                 )}
                                             </td>
                                             <td className="font-semibold border border-black">
@@ -139,7 +146,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border border-black">
                                                 {formatBDDateTime(
                                                     sample.received_date ||
-                                                        "N/A"
+                                                    "N/A"
                                                 )}
                                             </td>
                                             <td className="font-semibold border border-black">
@@ -190,7 +197,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
-                                                    test.result_status ===
+                                                        test.result_status ===
                                                         "Positive"
                                                         ? 2
                                                         : 1
@@ -203,7 +210,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation !==
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
-                                                    "Negative" && (
+                                                "Negative" && (
                                                     <th className="p-2 text-center border border-black">
                                                         Unit
                                                     </th>
@@ -218,13 +225,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </td>
 
                                             {test.investigation ===
-                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
                                                 <td className="text-sm p-2 text-center border border-black">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
-                                              "Negative" ? (
+                                                "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
                                                     <td className="text-sm p-2 text-center border border-black">

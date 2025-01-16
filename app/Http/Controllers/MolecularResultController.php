@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MolecularReg;
 use App\Models\MolecularRegTest;
 use App\Http\Requests\StoreMolecularResultRequest;
 use App\Http\Requests\UpdateMolecularResultRequest;
 use App\Models\MolecularResult;
 use App\Models\Sample;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MolecularResultController extends Controller
@@ -23,15 +20,27 @@ class MolecularResultController extends Controller
         $this->middleware('permission:molecular-result-delete', ['only' => ['destroy']]);
         $this->middleware('permission:molecular-result-report', ['only' => ['generateReport']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $results = MolecularResult::with(['molecularSample', 'molecularReg'])->get();
-        return Inertia::render('Molecular/Result/ViewMolecularResult', ['results' => $results]);
+        // Fetch all results with relationships
+        $results = MolecularResult::with(['molecularSample', 'molecularReg'])
+            ->get()
+            ->groupBy('patient_id') // Group by patient_id
+            ->map(function ($group) {
+                return $group->first(); // Keep only the first record of each group
+            })
+            ->values(); // Reset keys after grouping
+
+        // Pass the grouped results to the frontend
+        return Inertia::render('Molecular/Result/ViewMolecularResult', [
+            'results' => $results,
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,7 +49,19 @@ class MolecularResultController extends Controller
     {
         // return Inertia::render('Molecular/Result/CreateMolecularResult');
     }
-    
+
+    public function molecularResultCreate($patient_id)
+    {
+        $tests = MolecularRegTest::where('patient_id', $patient_id)
+            ->with('sample')
+            ->select('id', 'patient_id', 'test_name', 'test_id', 'test_date', 'test_fee')
+            ->get();
+
+        // dd($tests);
+
+        return Inertia::render('Molecular/Result/CreateMolecularResult', ['tests' => $tests, 'message' => session('message'),]);
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -61,11 +82,20 @@ class MolecularResultController extends Controller
             'results.*.methodology' => 'nullable|string',
             'results.*.remarks' => 'nullable|string',
             'results.*.comments' => 'nullable|string',
-        ]);        
-        
-        $results = $request->input('results');
-
+        ]);
+    
+        $exists = false;
+    
         foreach ($request->results as $result) {
+            $existingResult = MolecularResult::where('patient_id', $result['patient_id'])
+                                             ->where('test_id', $result['test_id'])
+                                             ->exists();
+    
+            if ($existingResult) {
+                $exists = true;
+                continue;
+            }
+    
             MolecularResult::create([
                 'sample_id' => $result['sample_id'],
                 'patient_id' => $result['patient_id'],
@@ -81,11 +111,16 @@ class MolecularResultController extends Controller
                 'comments' => $result['comments'] ?? null,
             ]);
         }
-        
-
-        return redirect()->back()->with('success', 'Results saved successfully.');
+    
+        if ($exists) {
+            return redirect()->route('results.index')
+                             ->with('error', 'Some data already exists for patient_id and test_id.');
+        }
+    
+        return redirect()->route('results.index')
+                         ->with('message', 'Results saved successfully.');
     }
-   
+
 
     /**
      * Display the specified resource.
@@ -98,12 +133,21 @@ class MolecularResultController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MolecularResult $molecularResult)
+    public function edit($patientId)
     {
-        $molecularResult = MolecularResult::all();
-        // return $molecularResult;
-        return Inertia::render('Molecular/Result/EditMolecularResult', ['molecularResult' => $molecularResult] );
+        $molecularResults = MolecularResult::where('patient_id', $patientId)->get();
+        if ($molecularResults->isEmpty()) {
+            return redirect()->route('results.index')->with('error', 'Results not found');
+        }
+
+
+
+        // Return the results to the frontend
+        return Inertia::render('Molecular/Result/EditMolecularResult', [
+            'molecularResults' => $molecularResults,
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -112,26 +156,26 @@ class MolecularResultController extends Controller
     {
         $results = $request->input('results');
         foreach ($results as $result) {
-        $validated = Validator::make($result, [
-            'sample_id' => 'required|string',
-            'patient_id' => 'required|string',
-            'test_id' => 'required|integer',
-            'result_status' => 'required|string',
-            'specimen' => 'required|string',
-            'investigation' => 'required|string',
-            'result' => 'nullable|string',
-            'unit' => 'nullable|string',
-            'result_copies' => 'nullable|string',
-            'methodology' => 'nullable|string',
-            'remarks' => 'nullable|string',
-            'comments' => 'nullable|string',
-        ])->validate();
+            $validated = Validator::make($result, [
+                'sample_id' => 'required|string',
+                'patient_id' => 'required|string',
+                'test_id' => 'required|integer',
+                'result_status' => 'required|string',
+                'specimen' => 'required|string',
+                'investigation' => 'required|string',
+                'result' => 'nullable|string',
+                'unit' => 'nullable|string',
+                'result_copies' => 'nullable|string',
+                'methodology' => 'nullable|string',
+                'remarks' => 'nullable|string',
+                'comments' => 'nullable|string',
+            ])->validate();
 
-        $existingResult = MolecularResult::findOrFail($result['id']);
-        $existingResult->update($validated);
-    }
+            $existingResult = MolecularResult::findOrFail($result['id']);
+            $existingResult->update($validated);
+        }
 
-    return redirect()->back()->with('success', 'Results updated successfully.');
+        return redirect()->back()->with('success', 'Results updated successfully.');
     }
 
     /**
@@ -149,20 +193,6 @@ class MolecularResultController extends Controller
             // Redirect with error message
             return redirect()->route('results.index')->with('error', 'Error deleting result: ' . $e->getMessage());
         }
-    }
-
-
-
-    public function molecularResultCreate($patient_id)
-    {
-        $tests = MolecularRegTest::where('patient_id', $patient_id)
-         ->with('sample')
-        ->select('id', 'patient_id', 'test_name', 'test_id', 'test_date', 'test_fee')
-        ->get();
-
-        // dd($tests);
-
-        return Inertia::render('Molecular/Result/CreateMolecularResult', ['tests'=> $tests]);
     }
 
     public function generateReport($patientId)
@@ -184,9 +214,4 @@ class MolecularResultController extends Controller
             'patient' => $sample->patient, // Pass patient details separately if needed
         ]);
     }
-
-
-
-
-
 }

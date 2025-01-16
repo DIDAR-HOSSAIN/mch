@@ -1,8 +1,10 @@
 import React from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const CreateMolecularResult = ({ auth, tests }) => {
+    const { message } = usePage().props;
+
     const { data, setData, post, processing, errors, reset } = useForm({
         results: tests.map((test) => ({
             sample_id: test.sample?.sample_id || "",
@@ -31,12 +33,17 @@ const CreateMolecularResult = ({ auth, tests }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route("results.store"), {
-            onSuccess: () => {
-                alert("Results submitted successfully!");
-                reset();
+                onSuccess: () => {
+                    console.log("Form submitted successfully!");
+                },
+            
+            onError: (errors) => {
+                alert("An error occurred. Please try again.");
+                console.error(errors);
             },
         });
     };
+    
 
     return (
         <AdminDashboardLayout
@@ -51,6 +58,33 @@ const CreateMolecularResult = ({ auth, tests }) => {
                 <h2 className="text-2xl font-bold mb-8 text-center text-blue-700">
                     Enter Test Results
                 </h2>
+
+                {message && (
+                    <div
+                        className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3"
+                        role="alert"
+                    >
+                        <div className="flex">
+                            <div>
+                                <p className="text-sm">{message}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {errors.error && (
+                    <div
+                        className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3"
+                        role="alert"
+                    >
+                        <div className="flex">
+                            <div>
+                                <p className="text-sm">{errors.error}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {data.results.map((result, index) => (
                         <div

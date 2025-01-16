@@ -2,9 +2,9 @@ import React from "react";
 import { useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const EditMolecularResult = ({ auth, molecularResult }) => {
+const EditMolecularResult = ({ auth, molecularResults }) => {
     const { data, setData, put, processing, errors, reset } = useForm({
-        results: molecularResult.map((result) => ({
+        results: molecularResults.map((result) => ({
             id: result.id,
             sample_id: result.sample_id || "",
             patient_id: result.patient_id || "",

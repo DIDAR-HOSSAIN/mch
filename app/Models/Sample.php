@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Sample extends Model
 {
@@ -25,6 +26,11 @@ class Sample extends Model
     public function molecularPatientReg()
     {
         return $this->belongsTo(MolecularReg::class, 'patient_id', 'patient_id');
+    }
+
+    public function molecularResult(): HasOne
+    {
+        return $this->hasOne(MolecularResult::class, 'sample_id', 'sample_id');
     }
 
 }
