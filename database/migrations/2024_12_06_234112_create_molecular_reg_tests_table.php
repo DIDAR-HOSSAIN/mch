@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('molecular_reg_tests', function (Blueprint $table) {
             $table->id();
-            $table->string('patient_id')->nullable();
+            $table->string('patient_id', 20)->nullable();
             $table->unsignedBigInteger('test_id')->nullable();
             $table->date('test_date')->useCurrent();
             $table->string('test_name');

@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('samples', function (Blueprint $table) {
             $table->id();
-            $table->string('sample_id')->unique();
-            $table->string('patient_id');
+            $table->string('sample_id', 20)->unique();
+            $table->string('patient_id', 20);
             $table->dateTime('collection_date');
             $table->dateTime('received_date')->nullable();
             $table->string('received_by')->nullable();
             $table->enum('collection_status', ['Pending', 'Collected', 'Failed']);
             $table->enum('received_status', ['Pending', 'Received', 'Rejected']);
             $table->string('remarks')->nullable();
+            $table->enum('sample_status', ['Pending', 'Done']);
             $table->string('user_name');
             $table->timestamps();
         });

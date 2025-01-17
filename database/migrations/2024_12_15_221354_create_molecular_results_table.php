@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('molecular_results', function (Blueprint $table) {
             $table->id();
-            $table->string('sample_id');
-            $table->string('patient_id');
+            $table->string('result_id', 20)->unique();
+            $table->string('sample_id', 20);
+            $table->string('patient_id', 20);
             $table->unsignedBigInteger('test_id')->nullable();
             $table->enum('result_status', ['Negative', 'Positive']);
             $table->enum('specimen', ['Whole Blood', 'Plasma', 'Serum', 'Cervical Swab']);
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->string('methodology')->nullable();
             $table->text('remarks')->nullable();
             $table->text('comments')->nullable();
+            $table->enum('report_status', ['Pending', 'Ready', 'Delivered']);
             $table->string('user_name')->nullable();
             $table->timestamps();
         });
