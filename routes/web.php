@@ -86,7 +86,6 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
 Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user'])->group(function () {
     
     Route::resource('moleculars', MolecularRegController::class);
-    Route::resource('flights', FlightController::class);
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
     Route::get('summary', [GpcrController::class, 'summaryReport'])->name('summary');

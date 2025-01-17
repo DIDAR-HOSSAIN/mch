@@ -10,6 +10,8 @@ class MolecularResult extends Model
     use HasFactory;
 
     protected $fillable = [
+        'result_id',
+        'sample_id',
         'sample_id',
         'patient_id',
         'test_id',

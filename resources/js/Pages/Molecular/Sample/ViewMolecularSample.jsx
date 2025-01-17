@@ -188,7 +188,8 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                                 {sample.patient_id || "N/A"}
                                             </td>
                                             <td className="px-4 py-2">
-                                                {sample.molecular_patient_reg.name || "N/A"}
+                                                {sample.molecular_patient_reg
+                                                    .name || "N/A"}
                                             </td>
                                             <td className="px-4 py-2">
                                                 {formatDate(
@@ -287,7 +288,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                             <select
                                 value={perPage}
                                 onChange={handlePerPageChange}
-                                className="px-3 border rounded-md"
+                                className="px-8 py-2 border rounded-md"
                             >
                                 <option value={10}>10</option>
                                 <option value={20}>20</option>
@@ -299,7 +300,7 @@ const ViewMolecularSample = ({ auth, molecularSamples }) => {
                                 {Array.from({ length: totalPages }, (_, i) => (
                                     <button
                                         key={i}
-                                        className={`px-3 py-1 rounded-md ${
+                                        className={`px-4 py-2 rounded-md ${
                                             currentPage === i + 1
                                                 ? "bg-blue-500 text-white"
                                                 : "bg-gray-100"

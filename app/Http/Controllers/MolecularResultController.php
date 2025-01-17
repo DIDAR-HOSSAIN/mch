@@ -7,6 +7,8 @@ use App\Http\Requests\StoreMolecularResultRequest;
 use App\Http\Requests\UpdateMolecularResultRequest;
 use App\Models\MolecularResult;
 use App\Models\Sample;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,16 +28,15 @@ class MolecularResultController extends Controller
      */
     public function index()
     {
-        // Fetch all results with relationships
         $results = MolecularResult::with(['molecularSample', 'molecularReg'])
+            ->orderBy('patient_id', 'desc')
             ->get()
-            ->groupBy('patient_id') // Group by patient_id
+            ->groupBy('patient_id')
             ->map(function ($group) {
-                return $group->first(); // Keep only the first record of each group
+                return $group->first();
             })
-            ->values(); // Reset keys after grouping
+            ->values();
 
-        // Pass the grouped results to the frontend
         return Inertia::render('Molecular/Result/ViewMolecularResult', [
             'results' => $results,
         ]);
@@ -83,20 +84,24 @@ class MolecularResultController extends Controller
             'results.*.remarks' => 'nullable|string',
             'results.*.comments' => 'nullable|string',
         ]);
-    
+
         $exists = false;
-    
+
         foreach ($request->results as $result) {
             $existingResult = MolecularResult::where('patient_id', $result['patient_id'])
-                                             ->where('test_id', $result['test_id'])
-                                             ->exists();
-    
+            ->where('test_id', $result['test_id'])
+            ->exists();
+
             if ($existingResult) {
                 $exists = true;
                 continue;
             }
-    
+
+            // Generate a unique result ID
+            $resultId = $this->generateMolecularResultId();
+
             MolecularResult::create([
+                'result_id' => $resultId,
                 'sample_id' => $result['sample_id'],
                 'patient_id' => $result['patient_id'],
                 'test_id' => $result['test_id'],
@@ -111,14 +116,47 @@ class MolecularResultController extends Controller
                 'comments' => $result['comments'] ?? null,
             ]);
         }
-    
+
         if ($exists) {
             return redirect()->route('results.index')
-                             ->with('error', 'Some data already exists for patient_id and test_id.');
+            ->with('error', 'Some data already exists for patient_id and test_id.');
         }
-    
+
         return redirect()->route('results.index')
-                         ->with('message', 'Results saved successfully.');
+        ->with('message', 'Results saved successfully.');
+    }
+
+    private function generateMolecularResultId()
+    {
+        $prefix = 'RID';
+        $currentDate = now()->format('ymd');
+        $serialNumber = 0;
+
+        do {
+            DB::beginTransaction();
+
+            try {
+                $latestRegId = DB::table('molecular_results')
+                ->where('result_id', 'like', "$prefix-$currentDate-%")
+                ->lockForUpdate() // Lock the rows to prevent race conditions
+                    ->max('result_id');
+
+                $serialNumber = $latestRegId ? intval(substr($latestRegId, -3)) + 1 : 1;
+
+                $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+                $newRegId = "$prefix-$currentDate-$serialNumberFormatted";
+
+                if (!MolecularResult::where('result_id', $newRegId)->exists()) {
+                    DB::commit();
+                    return $newRegId;
+                }
+
+                DB::rollBack();
+            } catch (Exception $e) {
+                DB::rollBack();
+                throw new Exception('Error generating result ID: ' . $e->getMessage());
+            }
+        } while (true);
     }
 
 

@@ -28,7 +28,7 @@ class SampleController extends Controller
      */
     public function index()
     {
-        $molecularSamples = Sample::with('molecularPatientReg')->get();
+        $molecularSamples = Sample::with('molecularPatientReg')->orderBy('patient_id', 'desc')->get();
         return Inertia::render('Molecular/Sample/ViewMolecularSample', ['molecularSamples' => $molecularSamples]);
     }
 

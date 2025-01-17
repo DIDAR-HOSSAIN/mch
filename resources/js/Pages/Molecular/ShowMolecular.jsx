@@ -24,6 +24,7 @@ const ShowMolecular = ({ auth, molecularReg }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700">
                     <p><strong>Name:</strong> {molecularReg.name}</p>
                     <p><strong>Patient ID:</strong> {molecularReg.patient_id}</p>
+                    <p><strong>Bill No:</strong> {molecularReg.bill_no}</p>
                     <p><strong>Contact No:</strong> {molecularReg.contact_no}</p>
                     <p><strong>Age:</strong> {molecularReg.age}</p>
                     <p><strong>Gender:</strong> {molecularReg.gender}</p>

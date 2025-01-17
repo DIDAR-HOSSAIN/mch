@@ -19,6 +19,7 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
         contact_no: molecularReg?.contact_no || "",
         age: molecularReg?.age || "",
         gender: molecularReg?.gender || "",
+        bill_no: molecularReg?.bill_no || "",
         tests: molecularReg?.molecular_tests || [],
         discount: molecularReg?.discount || 0,
         paid: molecularReg?.paid || 0,
@@ -26,7 +27,7 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
         net_payable: molecularReg?.net_payable || 0,
         due: molecularReg?.due || 0,
         reference_name: molecularReg?.reference_name || "",
-        payment_type: molecularReg?.payment_type || "" ,
+        payment_type: molecularReg?.payment_type || "",
         account_head: molecularReg?.account_head || "Cash in hand",
     });
 
@@ -136,7 +137,9 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                             />
                             <InputError message={errors.contact_no} />
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <div>
                             <label className="block text-sm font-medium">
                                 Age.
@@ -169,6 +172,22 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                                 <option value="Others">Others</option>
                             </select>
                             <InputError message={errors.gender} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium">
+                                Bill No
+                            </label>
+                            <input
+                                type="text"
+                                name="bill_no"
+                                value={data.bill_no}
+                                onChange={(e) =>
+                                    setData("bill_no", e.target.value)
+                                }
+                                className="w-full border rounded-md px-3 py-2"
+                            />
+                            <InputError message={errors.bill_no} />
                         </div>
                     </div>
 
@@ -362,28 +381,13 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                             </select>
                             <InputError message={errors.gender} />
                         </div>
-
-                        <div>
-                            <label className="block text-sm font-medium">
-                                Account Head
-                            </label>
-                            <select
-                                name="account_head"
-                                value={data.account_head}
-                                onChange={(e) =>
-                                    setData("account_head", e.target.value)
-                                }
-                                className="w-full border rounded-md px-3 py-2"
-                            ></select>
-                            <InputError message={errors.account_head} />
-                        </div>
                     </div>
 
                     {/* Submit */}
                     <button
                         type="submit"
                         disabled={processing}
-                        className="bg-blue-500 text-white px-6 py-2 rounded"
+                        className="w-full bg-blue-500 text-white text-lg px-6 py-2 rounded"
                     >
                         {processing ? "Updating..." : "Update"}
                     </button>

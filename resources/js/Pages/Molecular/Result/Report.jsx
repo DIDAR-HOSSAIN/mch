@@ -53,7 +53,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             }
         >
             <div className="p-6 min-h-screen">
-            <div className="flex justify-center">
+                <div className="flex justify-center">
                     <button
                         onClick={handlePrint}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -137,7 +137,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border border-black">
                                                 {formatBDDateTime(
                                                     sample.collection_date ||
-                                                    "N/A"
+                                                        "N/A"
                                                 )}
                                             </td>
                                             <td className="font-semibold border border-black">
@@ -146,7 +146,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="border border-black">
                                                 {formatBDDateTime(
                                                     sample.received_date ||
-                                                    "N/A"
+                                                        "N/A"
                                                 )}
                                             </td>
                                             <td className="font-semibold border border-black">
@@ -186,18 +186,18 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     Molecular Test Report
                                 </h1>
 
-                                <table className="w-full text-sm text-gray-700 border border-black">
+                                <table className="w-full text-[16px] text-gray-700 border border-black">
                                     <thead>
                                         <tr className="border border-black">
-                                            <th className="p-1 text-center border border-black">
+                                            <th className="p-1 text-[16px] text-center border border-black">
                                                 Test Name
                                             </th>
                                             <th
-                                                className="text-sm p-1 text-center border border-black"
+                                                className="text-[16px] p-1 text-center border border-black"
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
-                                                        test.result_status ===
+                                                    test.result_status ===
                                                         "Positive"
                                                         ? 2
                                                         : 1
@@ -210,7 +210,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation !==
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
-                                                "Negative" && (
+                                                    "Negative" && (
                                                     <th className="p-2 text-center border border-black">
                                                         Unit
                                                     </th>
@@ -219,25 +219,25 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </thead>
                                     <tbody>
                                         <tr className="font-semibold text-lg border border-black">
-                                            <td className="text-sm p-2 text-center border border-black">
+                                            <td className="text-[16px] p-2 text-center border border-black">
                                                 {test.molecular_reg_test
                                                     .test_name || "N/A"}
                                             </td>
 
                                             {test.investigation ===
-                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
-                                                <td className="text-sm p-2 text-center border border-black">
+                                                <td className="text-[16px] p-2 text-center border border-black">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
-                                                "Negative" ? (
+                                              "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
-                                                    <td className="text-sm p-2 text-center border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-black">
                                                         {test.result || "N/A"}
                                                     </td>
-                                                    <td className="text-sm p-2 text-center border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-black">
                                                         {test.unit || "N/A"}
                                                     </td>
                                                 </>
@@ -245,13 +245,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 // Logic for Positive result status
                                                 <>
                                                     <td
-                                                        className="text-sm p-2 text-center border border-black"
+                                                        className="text-[16px] p-2 text-center border border-black"
                                                         rowSpan={3}
                                                     >
                                                         {test.result || "N/A"}
                                                     </td>
                                                     <td
-                                                        className="text-sm p-2 text-center border border-black"
+                                                        className="text-[16px] p-2 text-center border border-black"
                                                         rowSpan={3}
                                                     >
                                                         {test.result_copies ||

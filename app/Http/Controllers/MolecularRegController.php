@@ -54,9 +54,12 @@ class MolecularRegController extends Controller
      */
     public function store(StoreMolecularRegRequest $request)
     {
+        DB::beginTransaction();
+
         try {
+            // Validate the request
             $validator = Validator::make($request->all(), [
-                'bill_no' => 'required|string|max:255|unique:molecular_regs,bill_no',
+                'bill_no' => 'nullable|string|max:255|unique:molecular_regs,bill_no',
                 'name' => 'required|string|max:255',
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:0',
@@ -77,49 +80,56 @@ class MolecularRegController extends Controller
             }
 
             $data = $request->all();
+
+            // Generate a unique patient ID
             $data['patient_id'] = $this->generateMolecularRegId();
 
-            if ($user = Auth::user()) {
-                $data['user_name'] = $user->name;
-            } else {
-                return redirect()->back()->with('error', 'User not authenticated');
-            }
+            // Set the logged-in user's name
+            $data['user_name'] = Auth::user()->name ?? 'Unknown';
 
+            // Set registration date and financials
             $data['reg_date'] = $data['reg_date'] ?? now()->toDateString();
-            $data['total'] = (float) ($data['total'] ?? collect($data['tests'])->sum(function ($test) {
+            $data['total'] = collect($data['tests'])->sum(function ($test) {
                 $molecularTest = MolecularTest::find($test['test_id']);
                 if (!$molecularTest) {
                     throw new Exception('Test not found: ' . $test['test_id']);
                 }
-                return (float)$test['total'];
-            }));
-            $data['paid'] = (float) $data['paid'];
+                return $molecularTest->test_fee;
+            });
             $data['discount'] = (float) $data['discount'];
-            $data['due'] = max($data['total'] - $data['paid'] - $data['discount'], 0);
+            $data['paid'] = (float) $data['paid'];
+            $data['due'] = max($data['total'] - $data['discount'] - $data['paid'], 0);
             $data['net_payable'] = $data['total'] - $data['discount'];
 
-            $molReg = MolecularReg::create($data);
+            // Create the MolecularReg record
+            $molecularReg = MolecularReg::create($data);
 
-            foreach ($data['tests'] as $test) {
+            // Prepare tests for insertion
+            $tests = collect($data['tests'])->map(function ($test) use ($molecularReg) {
                 $molecularTest = MolecularTest::find($test['test_id']);
-                if (!$molecularTest) {
-                    throw new Exception('Test not found: ' . $test['test_id']);
-                }
+                return [
+                    'patient_id' => $molecularReg->patient_id,
+                    'test_id' => $molecularTest->id,
+                    'test_name' => $molecularTest->test_name,
+                    'test_fee' => $molecularTest->test_fee,
+                    'test_date' => now()->toDateString(),
+                ];
+            })->toArray();
 
-                MolecularRegTest::create([
-                    'patient_id' => $molReg->patient_id,
-                    'test_id'    => $test['test_id'],
-                    'test_name'  => $molecularTest->test_name,
-                    'test_fee'   => $molecularTest->test_fee,
-                    'test_date'  => now()->toDateString(),
-                ]);
-            }
+            // Insert test data
+            MolecularRegTest::insert($tests);
 
-            return redirect()->route('molecular-inv', ['patient_id' => $molReg->patient_id])
+            DB::commit();
+
+            return redirect()->route('molecular-inv', ['patient_id' => $molecularReg->patient_id])
                 ->with('success', 'Molecular Registration completed successfully!');
         } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error('Molecular Registration failed', ['error' => $e->getMessage()]);
+
             return redirect()->back()
-                ->with('error', 'Molecular Registration failed!: ' . $e->getMessage());
+                ->with('error', 'Molecular Registration failed! Error: ' . $e->getMessage());
         }
     }
 
@@ -130,35 +140,19 @@ class MolecularRegController extends Controller
     {
         $prefix = 'MCHM';
         $currentDate = now()->format('ymd');
-        $serialNumber = 0;
+        $serialNumber = 1;
 
-        do {
-            DB::beginTransaction();
+        $latestRegId = MolecularReg::where('patient_id', 'like', "$prefix-$currentDate-%")
+        ->latest('patient_id')
+        ->value('patient_id');
 
-            try {
-                $latestRegId = DB::table('molecular_regs')
-                    ->where('patient_id', 'like', "$prefix-$currentDate-%")
-                    ->lockForUpdate() // Lock the rows to prevent race conditions
-                    ->max('patient_id');
+        if ($latestRegId) {
+            $serialNumber = intval(substr($latestRegId, -3)) + 1;
+        }
 
-                $serialNumber = $latestRegId ? intval(substr($latestRegId, -3)) + 1 : 1;
-
-                $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
-                $newRegId = "$prefix-$currentDate-$serialNumberFormatted";
-
-                if (!MolecularReg::where('patient_id', $newRegId)->exists()) {
-                    DB::commit();
-                    return $newRegId;
-                }
-
-                DB::rollBack();
-            } catch (Exception $e) {
-                DB::rollBack();
-                throw new Exception('Error generating registration ID: ' . $e->getMessage());
-            }
-        } while (true);
+        $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
+        return "$prefix-$currentDate-$serialNumberFormatted";
     }
-
 
     /**
      * Display the specified resource.
@@ -198,6 +192,7 @@ class MolecularRegController extends Controller
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:1|max:120',
                 'gender' => 'required|in:Male,Female,Other',
+                'bill_no' => 'nullable|string|max:255',
                 'tests' => 'required|array',
                 'tests.*.test_id' => 'required|exists:molecular_tests,id',
                 'discount' => 'required|numeric|min:0',
@@ -228,6 +223,7 @@ class MolecularRegController extends Controller
                 'contact_no' => $validatedData['contact_no'],
                 'age' => $validatedData['age'],
                 'gender' => $validatedData['gender'],
+                'bill_no' => $validatedData['bill_no'],
                 'discount' => $validatedData['discount'],
                 'paid' => $validatedData['paid'],
                 'total' => $totalAmount,
