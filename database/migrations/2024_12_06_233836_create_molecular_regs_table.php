@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('bill_no', 25)->nullable();
             $table->string('name')->nullable(false);
             $table->string('contact_no')->nullable(false);
-            $table->integer('age')->default(0);
+            $table->integer('age')->nullable(false);
+            $table->enum('age_type', ['Y', 'M'])->nullable(false);
+            $table->enum('test_advised', ['HLA B27', 'HBV DNA', 'HCV RNA', 'HPV DNA']);
             $table->string('gender')->nullable(false);
             $table->date('reg_date')->useCurrent();
             $table->float('discount')->nullable();

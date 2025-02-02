@@ -63,6 +63,7 @@ class MolecularRegController extends Controller
                 'name' => 'required|string|max:255',
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:0',
+                'age_type' => 'required|in:Y,M',
                 'gender' => 'required|in:Male,Female,Other',
                 'discount' => 'required|numeric|min:0',
                 'paid' => 'required|numeric|min:0',
@@ -80,6 +81,8 @@ class MolecularRegController extends Controller
             }
 
             $data = $request->all();
+
+            $data['age_type'] = $request->input('age_type');
 
             // Generate a unique patient ID
             $data['patient_id'] = $this->generateMolecularRegId();
@@ -191,6 +194,7 @@ class MolecularRegController extends Controller
                 'name' => 'required|string|max:255',
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:1|max:120',
+                'age_type' => 'required|in:Y,M',
                 'gender' => 'required|in:Male,Female,Other',
                 'bill_no' => 'nullable|string|max:255',
                 'tests' => 'required|array',
@@ -222,6 +226,7 @@ class MolecularRegController extends Controller
                 'name' => $validatedData['name'],
                 'contact_no' => $validatedData['contact_no'],
                 'age' => $validatedData['age'],
+                'age_type' => $validatedData['age_type'],
                 'gender' => $validatedData['gender'],
                 'bill_no' => $validatedData['bill_no'],
                 'discount' => $validatedData['discount'],

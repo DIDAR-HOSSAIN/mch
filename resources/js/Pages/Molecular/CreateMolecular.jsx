@@ -16,6 +16,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
             name: "",
             contact_no: "",
             age: "",
+            age_type: "",
             gender: "",
             tests: testFields,
             discount: 0,
@@ -82,6 +83,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+         console.log(data.age_type);
         post(route("moleculars.store"), {
             onSuccess: () => reset(),
         });
@@ -163,6 +165,37 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 placeholder="Enter age"
                             />
                             <InputError message={errors.age} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                                Select Age Type
+                            </label>
+                            <div className="flex items-center space-x-4">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="age_type"
+                                        value="Y"
+                                        checked={data.age_type === "Y"}
+                                        onChange={handleChange}
+                                        className="focus:ring-green-500"
+                                    />
+                                    Year (Y)
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="age_type"
+                                        value="M"
+                                        checked={data.age_type === "M"}
+                                        onChange={handleChange}
+                                        className="focus:ring-green-500"
+                                    />
+                                    Month (M)
+                                </label>
+                            </div>
+                            <InputError message={errors.age_type} />
                         </div>
 
                         <div>
@@ -404,7 +437,9 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                     className="w-full border rounded px-3 py-2"
                                     required
                                 >
-                                    <option value="" disabled>Select payment type</option>
+                                    <option value="" disabled>
+                                        Select payment type
+                                    </option>
                                     <option value="Cash">Cash</option>
                                     <option value="Cheque">Cheque</option>
                                     <option value="Card">Card</option>

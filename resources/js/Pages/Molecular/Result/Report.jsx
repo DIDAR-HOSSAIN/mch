@@ -78,52 +78,52 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     alt="Pad"
                                 /> */}
 
-                                <table className="w-full text-sm text-gray-700 border border-black">
+                                <table className="w-full text-sm text-gray-700 border border-[#bbbebc]">
                                     <tbody>
                                         {/* Row 1 */}
-                                        <tr className="hover:bg-gray-50 border border-black">
-                                            <td className="font-semibold w-1/4 border border-black">
+                                        <tr className="hover:bg-gray-50 border border-[#bbbebc]">
+                                            <td className="font-semibold w-1/4 border border-[#bbbebc] p-2">
                                                 Patient Name:
                                             </td>
-                                            <td className="w-1/4 border border-black">
+                                            <td className="w-1/4 border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
                                                     ?.name || "N/A"}
                                             </td>
-                                            <td className="font-semibold w-1/6 border border-black">
+                                            <td className="font-semibold w-1/6 border border-[#bbbebc] p-2">
                                                 Gender:
                                             </td>
-                                            <td className="w-1/6 border border-black">
+                                            <td className="w-1/6 border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
                                                     ?.gender || "N/A"}
                                             </td>
-                                            <td className="font-semibold w-1/6 border border-black">
+                                            <td className="font-semibold w-1/6 border border-[#bbbebc] p-2">
                                                 Age:
                                             </td>
-                                            <td className="w-1/6 border border-black">
+                                            <td className="w-1/6 border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
                                                     ?.age || "N/A"}
                                             </td>
                                         </tr>
 
                                         {/* Row 2 */}
-                                        <tr className="hover:bg-gray-50 border border-black">
-                                            <td className="font-semibold border border-black">
+                                        <tr className="hover:bg-gray-50 border border-[#bbbebc] p-2">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Patient ID:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {sample.patient_id || "N/A"}
                                             </td>
-                                            <td className="font-semibold border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Bill No:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
                                                     ?.bill_no || "N/A"}
                                             </td>
-                                            <td className="font-semibold border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Contact No:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
                                                     ?.contact_no || "N/A"}
                                             </td>
@@ -131,28 +131,28 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                                         {/* Row 3 */}
                                         <tr className="hover:bg-gray-50 border border-black">
-                                            <td className="font-semibold border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Sample Collected:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {formatBDDateTime(
                                                     sample.collection_date ||
                                                         "N/A"
                                                 )}
                                             </td>
-                                            <td className="font-semibold border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Sample Received:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {formatBDDateTime(
                                                     sample.received_date ||
                                                         "N/A"
                                                 )}
                                             </td>
-                                            <td className="font-semibold border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Report Date:
                                             </td>
-                                            <td className="border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {formatBDDateTime(
                                                     sample.created_at || "N/A"
                                                 )}
@@ -161,17 +161,17 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                                         {/* Row 4 */}
                                         <tr className="hover:bg-gray-50 border border-black">
-                                            <td className="font-semibold p-1 border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Specimen:
                                             </td>
-                                            <td className="p-1 border border-black">
+                                            <td className="border border-[#bbbebc] p-2">
                                                 {test.specimen || "N/A"}
                                             </td>
-                                            <td className="font-semibold p-1 border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Ref. By:
                                             </td>
                                             <td
-                                                className="p-1 border border-black"
+                                                className="border border-[#bbbebc] p-2"
                                                 colSpan="3"
                                             >
                                                 {sample.molecular_patient_reg
@@ -182,18 +182,18 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </table>
 
                                 {/* Test Details */}
-                                <h1 className="text-lg font-bold text-center my-1">
+                                <h1 className="text-lg font-bold text-center mt-8">
                                     Molecular Test Report
                                 </h1>
 
                                 <table className="w-full text-[16px] text-gray-700 border border-black">
                                     <thead>
                                         <tr className="border border-black">
-                                            <th className="p-1 text-[16px] text-center border border-black">
+                                            <th className="text-[16px] text-center border border-[#bbbebc] p-2">
                                                 Test Name
                                             </th>
                                             <th
-                                                className="text-[16px] p-1 text-center border border-black"
+                                                className="text-[16px] text-center border border-[#bbbebc] p-2"
                                                 colSpan={
                                                     test.investigation ===
                                                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
@@ -211,15 +211,15 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                                 test.result_status ===
                                                     "Negative" && (
-                                                    <th className="p-2 text-center border border-black">
+                                                    <th className="p-2 text-center border border-[#bbbebc]">
                                                         Unit
                                                     </th>
                                                 )}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="font-semibold text-lg border border-black">
-                                            <td className="text-[16px] p-2 text-center border border-black">
+                                        <tr className="font-semibold text-lg border border-[#bbbebc]">
+                                            <td className="text-[16px] p-2 text-center border border-[#bbbebc]">
                                                 {test.molecular_reg_test
                                                     .test_name || "N/A"}
                                             </td>
@@ -227,17 +227,17 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             {test.investigation ===
                                             "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
                                                 // Only show Result column for HLA B27
-                                                <td className="text-[16px] p-2 text-center border border-black">
+                                                <td className="text-[16px] p-2 text-center border border-[#bbbebc]">
                                                     {test.result || "N/A"}
                                                 </td>
                                             ) : test.result_status ===
                                               "Negative" ? (
                                                 // Logic for Negative result status
                                                 <>
-                                                    <td className="text-[16px] p-2 text-center border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-[#bbbebc]">
                                                         {test.result || "N/A"}
                                                     </td>
-                                                    <td className="text-[16px] p-2 text-center border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-[#bbbebc]">
                                                         {test.unit || "N/A"}
                                                     </td>
                                                 </>
@@ -245,13 +245,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 // Logic for Positive result status
                                                 <>
                                                     <td
-                                                        className="text-[16px] p-2 text-center border border-black"
+                                                        className="text-[16px] p-2 text-center border border-[#bbbebc]"
                                                         rowSpan={3}
                                                     >
                                                         {test.result || "N/A"}
                                                     </td>
                                                     <td
-                                                        className="text-[16px] p-2 text-center border border-black"
+                                                        className="text-[16px] p-2 text-center border border-[#bbbebc]"
                                                         rowSpan={3}
                                                     >
                                                         {test.result_copies ||
@@ -263,7 +263,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </tbody>
                                 </table>
 
-                                <div className="text-sm flex items-center mt-2">
+                                <div className="text-sm flex items-center mt-8">    
                                     <span className="font-semibold">
                                         Methodology :
                                     </span>
@@ -304,19 +304,19 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     {test.comments || "No comments available."}
                                 </span>
 
-                                <div className="mt-1 text-center">
+                                <div className="mt-8 text-center">
                                     <p>----------End of Report----------</p>
                                 </div>
 
                                 {/* Signatures */}
-                                <div className="text-sm flex justify-between mt-20">
-                                    <div className="text-center">
+                                <div className="text-sm flex justify-between mt-16">
+                                    <div className="text-justify">
                                         {/* <img
                                             src={sign2}
                                             alt="Zahirul Signature"
                                             className="w-24 mx-auto"
                                         /> */}
-                                        <hr className="border-t border-black my-2" />
+                                        <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Zahirul Islam</strong>
                                         <p>BSC (Hons) , MS</p>
                                         <p>
@@ -330,16 +330,16 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             Medical Centre Hospital (RT-PCR Lab)
                                         </p>
                                     </div>
-                                    <div className="text-center">
+                                    <div className="text-justify">
                                         {/* <img
                                             src={sign1}
                                             alt="Zakir Signature"
                                             className="w-24 mx-auto"
                                         /> */}
-                                        <hr className="border-t border-black my-2" />
+                                        <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>
-                                        <p>Asst. Professor & Head</p>
+                                        <p>Assistant Professor & Head</p>
                                         <p>
                                             Dept. of Mircrobiology & Immunology
                                         </p>

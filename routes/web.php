@@ -6,7 +6,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
-use App\Http\Controllers\FlightController;
 use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PermissionController;
@@ -14,8 +13,8 @@ use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SampleCollectionController;
-use App\Http\Controllers\SampleController; //molecular
-use App\Http\Controllers\MolecularResultController; //molecular result
+use App\Http\Controllers\SampleController;
+use App\Http\Controllers\MolecularResultController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
