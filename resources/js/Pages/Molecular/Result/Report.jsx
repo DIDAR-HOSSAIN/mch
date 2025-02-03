@@ -101,7 +101,9 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </td>
                                             <td className="w-1/6 border border-[#bbbebc] p-2">
                                                 {sample.molecular_patient_reg
-                                                    ?.age || "N/A"}
+                                                    ?.age || "N/A"}{" "}
+                                                {sample.molecular_patient_reg
+                                                    ?.age_type || "N/A"}
                                             </td>
                                         </tr>
 
@@ -263,7 +265,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </tbody>
                                 </table>
 
-                                <div className="text-sm flex items-center mt-8">    
+                                <div className="text-sm flex items-center mt-8">
                                     <span className="font-semibold">
                                         Methodology :
                                     </span>

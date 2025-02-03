@@ -59,17 +59,19 @@ class MolecularRegController extends Controller
         try {
             // Validate the request
             $validator = Validator::make($request->all(), [
-                'bill_no' => 'nullable|string|max:255|unique:molecular_regs,bill_no',
-                'name' => 'required|string|max:255',
+                'bill_no' => 'nullable|string|max:25|unique:molecular_regs,bill_no',
+                'name' => 'required|string|max:100',
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:0',
                 'age_type' => 'required|in:Y,M',
+                'test_advised' => 'required|in:HLA B27,HBV DNA,HCV RNA,HPV DNA',
                 'gender' => 'required|in:Male,Female,Other',
                 'discount' => 'required|numeric|min:0',
                 'paid' => 'required|numeric|min:0',
-                'reference_name' => 'nullable|string|max:255',
+                'reference_name' => 'nullable|string|max:100',
+                'remarks' => 'nullable|string|max:50',
                 'payment_type' => 'required|string|in:Cash,Cheque,Card,Bkash,Rocket,Nagod,Internet Banking,Mobile Banking,Others',
-                'account_head' => 'required|string|max:255',
+                'account_head' => 'required|string|max:100',
                 'tests' => 'required|array|min:1',
                 'tests.*.test_id' => 'required|exists:molecular_tests,id',
             ]);
@@ -81,8 +83,6 @@ class MolecularRegController extends Controller
             }
 
             $data = $request->all();
-
-            $data['age_type'] = $request->input('age_type');
 
             // Generate a unique patient ID
             $data['patient_id'] = $this->generateMolecularRegId();
@@ -146,8 +146,8 @@ class MolecularRegController extends Controller
         $serialNumber = 1;
 
         $latestRegId = MolecularReg::where('patient_id', 'like', "$prefix-$currentDate-%")
-        ->latest('patient_id')
-        ->value('patient_id');
+            ->latest('patient_id')
+            ->value('patient_id');
 
         if ($latestRegId) {
             $serialNumber = intval(substr($latestRegId, -3)) + 1;
@@ -227,6 +227,7 @@ class MolecularRegController extends Controller
                 'contact_no' => $validatedData['contact_no'],
                 'age' => $validatedData['age'],
                 'age_type' => $validatedData['age_type'],
+                'test_advised' => $validatedData['test_advised'],
                 'gender' => $validatedData['gender'],
                 'bill_no' => $validatedData['bill_no'],
                 'discount' => $validatedData['discount'],
@@ -237,6 +238,7 @@ class MolecularRegController extends Controller
                 'account_head' => $validatedData['account_head'] ?? 'Cash in hand',
                 'payment_type' => $validatedData['payment_type'],
                 'reference_name' => $validatedData['reference_name'],
+                'remarks' => $validatedData['remarks'],
             ]);
 
             // Clear existing tests and re-insert updated test data

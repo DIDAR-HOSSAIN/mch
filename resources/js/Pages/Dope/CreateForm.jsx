@@ -178,7 +178,6 @@ const CreateForm = ({ auth, districts, references }) => {
         >
             <Head title="Dope Registration" />
             <div className="py-2">
-
                 {success && <div className="alert-success">{success}</div>}
                 {errors && (
                     <div className="alert-error">
@@ -684,6 +683,7 @@ const CreateForm = ({ auth, districts, references }) => {
 
                             <select
                                 id="reference_name"
+                                className="mt-1 block w-full"
                                 onChange={(e) =>
                                     setData("reference_name", e.target.value)
                                 }

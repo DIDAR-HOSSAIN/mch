@@ -116,7 +116,8 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                             <span className="font-semibold text-gray-700">
                                 Age:
                             </span>{" "}
-                            {patient.age}
+                            {patient.age}{" "}
+                            {patient.age_type}
                         </p>
                         <p className="text-md">
                             <span className="font-semibold text-gray-700">

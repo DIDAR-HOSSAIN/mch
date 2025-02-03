@@ -28,6 +28,7 @@ return new class extends Migration
             $table->float('total')->nullable();
             $table->float('net_payable')->nullable();
             $table->string('reference_name')->nullable();
+            $table->string('remarks')->nullable();
             $table->string('payment_type')->nullable();
             $table->string('account_head')->nullable();
             $table->string('user_name');

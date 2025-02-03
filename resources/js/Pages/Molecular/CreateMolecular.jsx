@@ -5,7 +5,6 @@ import { Head, useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const CreateMolecular = ({ auth, tests = [], references = [] }) => {
-
     const [testFields, setTestFields] = useState([{ test_id: "", total: 0 }]);
     const [overallDiscount, setOverallDiscount] = useState(0);
     const [overallPaid, setOverallPaid] = useState(0);
@@ -17,6 +16,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
             contact_no: "",
             age: "",
             age_type: "",
+            test_advised: "",
             gender: "",
             tests: testFields,
             discount: 0,
@@ -24,6 +24,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
             account_head: "Cash in hand",
             payment_type: "",
             reference_name: "",
+            remarks: "",
         }
     );
 
@@ -54,7 +55,6 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
         setData("tests", updatedFields); // Update form data directly
     };
 
-
     const handleChange = (e) => setData(e.target.name, e.target.value);
 
     const handleOverallChange = (field, value) => {
@@ -83,7 +83,6 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-         console.log(data.age_type);
         post(route("moleculars.store"), {
             onSuccess: () => reset(),
         });
@@ -119,15 +118,16 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Patient Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div>
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-2">
+                        {/* Name Field - Large */}
+                        <div className="md:col-span-3">
                             <label className="block text-sm font-medium text-gray-600">
                                 Name
                             </label>
                             <input
                                 type="text"
                                 name="name"
-                                value={data.name}
+                                value={data.name.toUpperCase()}
                                 onChange={handleChange}
                                 className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
                                 placeholder="Enter patient name"
@@ -135,7 +135,8 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                             <InputError message={errors.name} />
                         </div>
 
-                        <div>
+                        {/* Contact Field - Medium */}
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-600">
                                 Contact No
                             </label>
@@ -144,15 +145,14 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 name="contact_no"
                                 value={data.contact_no}
                                 onChange={handleChange}
-                                className="w-full border-red-40 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
                                 placeholder="Enter contact number"
                             />
                             <InputError message={errors.contact_no} />
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <div>
+                        {/* Age Field - Small */}
+                        <div className="md:col-span-1">
                             <label className="block text-sm font-medium text-gray-600">
                                 Age
                             </label>
@@ -166,12 +166,14 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                             />
                             <InputError message={errors.age} />
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                         <div>
                             <label className="block text-sm font-medium text-gray-600">
                                 Select Age Type
                             </label>
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-4 ">
                                 <label>
                                     <input
                                         type="radio"
@@ -196,6 +198,25 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 </label>
                             </div>
                             <InputError message={errors.age_type} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                                Test Advised
+                            </label>
+                            <select
+                                name="test_advised"
+                                value={data.test_advised}
+                                onChange={handleChange}
+                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+                            >
+                                <option value="">Select Test Advised</option>
+                                <option value="HLA B27">HLA B27</option>
+                                <option value="HBV DNA">HBV DNA</option>
+                                <option value="HCV RNA">HCV RNA</option>
+                                <option value="HPV DNA">HPV DNA</option>
+                            </select>
+                            <InputError message={errors.test_advised} />
                         </div>
 
                         <div>
@@ -422,6 +443,21 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                     ))}
                                 </select>
                                 <InputError message={errors.reference_name} />
+                            </div>
+
+                            <div className="">
+                                <label className="block text-sm font-medium text-gray-600">
+                                    Remarks
+                                </label>
+                                <input
+                                    type="text"
+                                    name="remarks"
+                                    value={data.remarks.toUpperCase()}
+                                    onChange={handleChange}
+                                    className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+                                    placeholder="Enter Remarks"
+                                />
+                                <InputError message={errors.remarks} />
                             </div>
 
                             <div>
