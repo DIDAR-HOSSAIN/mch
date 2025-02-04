@@ -55,7 +55,15 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
         setData("tests", updatedFields); // Update form data directly
     };
 
-    const handleChange = (e) => setData(e.target.name, e.target.value);
+    // const handleChange = (e) => setData(e.target.name, e.target.value.toUpperCase());
+    
+    const handleChange = (e) => {
+        const { name, value, type } = e.target;
+
+        // Apply toUpperCase only for text inputs, not for selects
+        setData(name, type === "text" ? value.toUpperCase() : value);
+    };
+
 
     const handleOverallChange = (field, value) => {
         const numValue = parseInt(value, 10) || 0;
@@ -261,17 +269,17 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                         <div className="overflow-x-auto">
                             <table className="w-full border text-sm text-gray-700">
                                 <thead>
-                                    <tr className="bg-gray-100 text-gray-800">
-                                        <th className="py-2 px-4 text-left">
+                                    <tr className="bg-green-500 text-gray-800">
+                                        <th className="py-2 px-4 text-left text-lg">
                                             S/N
                                         </th>
-                                        <th className="py-2 px-4 text-left">
+                                        <th className="py-2 px-4 text-left text-lg">
                                             Test Name
                                         </th>
-                                        <th className="py-2 px-4 text-center">
+                                        <th className="py-2 px-4 text-center text-lg">
                                             Amount
                                         </th>
-                                        <th className="py-2 px-4 text-center">
+                                        <th className="py-2 px-4 text-center text-lg">
                                             Action
                                         </th>
                                     </tr>
@@ -328,36 +336,36 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                     ))}
 
                                     {/* Totals Row */}
-                                    <tr className="bg-green-600 font-semibold text-lg">
+                                    <tr className="bg-green-500 font-semibold text-lg">
                                         <td
                                             colSpan="2"
                                             className="py-2 px-4 text-right"
                                         >
                                             <div className="flex flex-col sm:flex-row sm:gap-4">
                                                 <div className="py-2 px-4">
-                                                    <p className="font-medium text-white">
+                                                    <p className="font-medium text-black">
                                                         After Discount:
-                                                        <span className="font-semibold text-white ml-2">
+                                                        <span className="font-semibold text-black ml-2">
                                                             {totalAfterDiscount}
                                                             Tk
                                                         </span>
                                                     </p>
                                                 </div>
                                                 <div className="py-2 px-4">
-                                                    <p className="font-medium text-white">
+                                                    <p className="font-medium text-black">
                                                         Due:
-                                                        <span className="text-white font-semibold ml-2">
+                                                        <span className="text-black font-semibold ml-2">
                                                             {totalDue} Tk
                                                         </span>
                                                     </p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="py-2 px-4 text-center text-white flex gap-1 flex-col sm:flex-row sm:items-center sm:justify-center">
+                                        <td className="py-2 px-4 text-center text-black flex gap-1 flex-col sm:flex-row sm:items-center sm:justify-center">
                                             <p className="font-medium">
                                                 Total:
                                             </p>
-                                            <p className="text-white font-semibold">
+                                            <p className="text-black font-semibold">
                                                 {totalAmount} Tk
                                             </p>
                                         </td>
@@ -365,7 +373,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                             <button
                                                 type="button"
                                                 onClick={addTestField}
-                                                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 flex items-center justify-center"
+                                                className="bg-blue-500 text-black px-3 py-1 rounded hover:bg-blue-600 flex items-center justify-center"
                                             >
                                                 <FaPlus />
                                             </button>

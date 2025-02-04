@@ -170,11 +170,25 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                 {test.specimen || "N/A"}
                                             </td>
                                             <td className="font-semibold border border-[#bbbebc] p-2">
-                                                Ref. By:
+                                                Test Advised:
                                             </td>
                                             <td
                                                 className="border border-[#bbbebc] p-2"
                                                 colSpan="3"
+                                            >
+                                                {sample.molecular_patient_reg
+                                                    ?.test_advised|| "N/A"}
+                                            </td>
+                                        </tr>
+
+                                        {/* Row 5 */}
+                                        <tr className="hover:bg-gray-50 border border-black">
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
+                                                Ref. By:
+                                            </td>
+                                            <td
+                                                className="border border-[#bbbebc] p-2"
+                                                colSpan="5"
                                             >
                                                 {sample.molecular_patient_reg
                                                     ?.reference_name || "N/A"}
@@ -184,7 +198,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </table>
 
                                 {/* Test Details */}
-                                <h1 className="text-lg font-bold text-center mt-8">
+                                <h1 className="text-lg font-bold text-center mt-4">
                                     Molecular Test Report
                                 </h1>
 
@@ -265,7 +279,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </tbody>
                                 </table>
 
-                                <div className="text-sm flex items-center mt-8">
+                                <div className="text-sm flex items-center mt-4">
                                     <span className="font-semibold">
                                         Methodology :
                                     </span>

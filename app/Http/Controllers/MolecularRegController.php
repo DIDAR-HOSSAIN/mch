@@ -279,15 +279,23 @@ class MolecularRegController extends Controller
      */
     public function destroy($id)
     {
+        // Find the molecular registration by ID
         $molecularReg = MolecularReg::find($id);
 
         if (!$molecularReg) {
             abort(404, 'Record not found.');
         }
-        // dd($molecularReg);
-        // Proceed with deletion
-        $molecularReg->molecularTests()->delete();
-        $molecularReg->delete();
+
+        // Get the patient_id
+        $patientId = $molecularReg->patient_id;
+
+        // Delete related records directly using query builder
+        DB::table('molecular_reg_tests')->where('patient_id', $patientId)->delete();
+        DB::table('samples')->where('patient_id', $patientId)->delete();
+        DB::table('molecular_results')->where('patient_id', $patientId)->delete();
+
+        // Delete all molecular_regs records for the same patient_id
+        DB::table('molecular_regs')->where('patient_id', $patientId)->delete();
 
         return redirect()->route('moleculars.index')->with('success', 'Record deleted successfully.');
     }

@@ -6,6 +6,7 @@ import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 import { FaFileInvoice } from "react-icons/fa";
 import { Inertia } from "@inertiajs/inertia";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
+import Swal from "sweetalert2";
 
 
 const ViewMolecular = ({ auth, moleculars }) => {
@@ -47,16 +48,42 @@ const ViewMolecular = ({ auth, moleculars }) => {
 
     const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
-    const destroy = (patient_id) => {
-        if (confirm("Are you sure you want to delete this molecular?")) {
-            Inertia.delete(route("moleculars.destroy", patient_id), {
-                onError: (error) => console.error("Error:", error),
-                onSuccess: () => alert("Deleted successfully!"),
-            });
-        }
-    };
+    // const destroy = (patient_id) => {
+    //     if (confirm("Are you sure you want to delete this molecular?")) {
+    //         Inertia.delete(route("moleculars.destroy", patient_id), {
+    //             onError: (error) => console.error("Error:", error),
+    //             onSuccess: () => alert("Deleted successfully!"),
+    //         });
+    //     }
+    // };
 
-    
+    const destroy = (patient_id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Inertia.delete(route("moleculars.destroy", patient_id), {
+                    onSuccess: () => {
+                        Swal.fire(
+                            "Deleted!",
+                            "The record has been deleted.",
+                            "success"
+                        );
+                    },
+                    onError: (error) => {
+                        Swal.fire("Error!", "Something went wrong.", "error");
+                        console.error("Error:", error);
+                    },
+                });
+            }
+        });
+    };    
     
 
     return (

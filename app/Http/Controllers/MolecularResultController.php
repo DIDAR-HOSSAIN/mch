@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateMolecularResultRequest;
 use App\Models\MolecularResult;
 use App\Models\Sample;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
@@ -86,6 +87,7 @@ class MolecularResultController extends Controller
         ]);
 
         $exists = false;
+        $userName = Auth::user()->name;
 
         foreach ($request->results as $result) {
             $existingResult = MolecularResult::where('patient_id', $result['patient_id'])
@@ -114,6 +116,7 @@ class MolecularResultController extends Controller
                 'methodology' => $result['methodology'] ?? null,
                 'remarks' => $result['remarks'] ?? null,
                 'comments' => $result['comments'] ?? null,
+                'user_name' => $userName, 
             ]);
         }
 
