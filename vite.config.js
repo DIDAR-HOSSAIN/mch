@@ -9,7 +9,7 @@ export default defineConfig({
         laravel({
             input: 'resources/js/app.jsx',
             refresh: [{
-                paths: ['http://localhost:8000/help'],
+                paths: ['https://app.medicalcentrebd.com/'],
                 config: {
                     delay: 300,
                 },

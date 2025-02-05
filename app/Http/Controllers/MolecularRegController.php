@@ -195,6 +195,7 @@ class MolecularRegController extends Controller
                 'contact_no' => 'required|string|max:15',
                 'age' => 'required|integer|min:1|max:120',
                 'age_type' => 'required|in:Y,M',
+                'test_advised' => 'required|in:HLA B27,HBV DNA,HCV RNA,HPV DNA',
                 'gender' => 'required|in:Male,Female,Other',
                 'bill_no' => 'nullable|string|max:255',
                 'tests' => 'required|array',
@@ -203,6 +204,7 @@ class MolecularRegController extends Controller
                 'paid' => 'required|numeric|min:0',
                 'account_head' => 'nullable|string|max:255',
                 'payment_type' => 'nullable|string|max:255',
+                'remarks' => 'nullable|string|max:50',
                 'reference_name' => 'nullable|string|max:255',
             ]);
 

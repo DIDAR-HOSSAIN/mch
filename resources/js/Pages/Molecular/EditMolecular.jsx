@@ -4,8 +4,8 @@ import InputError from "@/Components/InputError";
 import { Head, useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
-    console.log('EditMolecular', molecularReg);
+const EditMolecular = ({ auth, molecularReg, references, tests }) => {
+    console.log("EditMolecular", molecularReg);
     const [testFields, setTestFields] = useState(
         molecularReg?.molecular_tests || [{ test_id: "", test_fee: 0 }]
     );
@@ -18,6 +18,8 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
         name: molecularReg?.name || "",
         contact_no: molecularReg?.contact_no || "",
         age: molecularReg?.age || "",
+        age_type: molecularReg?.age_type || "",
+        test_advised: molecularReg?.test_advised || "",
         gender: molecularReg?.gender || "",
         bill_no: molecularReg?.bill_no || "",
         tests: molecularReg?.molecular_tests || [],
@@ -27,6 +29,7 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
         net_payable: molecularReg?.net_payable || 0,
         due: molecularReg?.due || 0,
         reference_name: molecularReg?.reference_name || "",
+        remarks: molecularReg?.remarks || "",
         payment_type: molecularReg?.payment_type || "",
         account_head: molecularReg?.account_head || "Cash in hand",
     });
@@ -105,7 +108,7 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Patient Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <div>
                             <label className="block text-sm font-medium">
                                 Name
@@ -137,9 +140,7 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                             />
                             <InputError message={errors.contact_no} />
                         </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                         <div>
                             <label className="block text-sm font-medium">
                                 Age.
@@ -153,7 +154,64 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                             />
                             <InputError message={errors.age} />
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                                Select Age Type
+                            </label>
+                            <div className="flex items-center space-x-4">
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="age_type"
+                                        value="Y"
+                                        checked={data.age_type === "Y"}
+                                        onChange={(e) =>
+                                            setData("age_type", e.target.value)
+                                        }
+                                        className="focus:ring-green-500"
+                                    />
+                                    Year (Y)
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="age_type"
+                                        value="M"
+                                        checked={data.age_type === "M"}
+                                        onChange={(e) =>
+                                            setData("age_type", e.target.value)
+                                        }
+                                        className="focus:ring-green-500"
+                                    />
+                                    Month (M)
+                                </label>
+                            </div>
+                            <InputError message={errors.age_type} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-600">
+                                Test Advised
+                            </label>
+                            <select
+                                name="test_advised"
+                                value={data.test_advised}
+                                onChange={(e) =>
+                                    setData("test_advised", e.target.value)
+                                }
+                                className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+                            >
+                                <option value="">Select Test Advised</option>
+                                <option value="HLA B27">HLA B27</option>
+                                <option value="HBV DNA">HBV DNA</option>
+                                <option value="HCV RNA">HCV RNA</option>
+                                <option value="HPV DNA">HPV DNA</option>
+                            </select>
+                            <InputError message={errors.test_advised} />
+                        </div>
                         <div>
                             <label className="block text-sm font-medium">
                                 Gender
@@ -273,56 +331,64 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                         </button>
                     </div>
 
-                    {/* Totals */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mt-2">
                         <div>
-                            <label>Total Amount</label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
+                            <label className="text-sm font-medium text-gray-600">
+                                Total Amount
+                            </label>
+                            <p className="bg-gray-100 px-3 py-2 rounded text-gray-800">
                                 {totalAmount} Tk
                             </p>
                         </div>
                         <div>
-                            <label>Discount</label>
+                            <label className="text-sm font-medium text-gray-600">
+                                Discount
+                            </label>
                             <input
                                 type="number"
                                 value={overallDiscount}
                                 onChange={(e) => {
                                     const value = Number(e.target.value);
                                     setOverallDiscount(value);
-                                    setData("discount", value); // Ensure this updates `data`
+                                    setData("discount", value);
                                 }}
-                                className="border px-3 py-2 rounded"
+                                className="border px-3 py-2 rounded focus:ring focus:ring-green-200 w-full"
                             />
                         </div>
                         <div>
-                            <label>Paid</label>
+                            <label className="text-sm font-medium text-gray-600">
+                                Paid
+                            </label>
                             <input
                                 type="number"
                                 value={overallPaid}
                                 onChange={(e) => {
                                     const value = Number(e.target.value);
                                     setOverallPaid(value);
-                                    setData("paid", value); // Ensure this updates `data`
+                                    setData("paid", value);
                                 }}
-                                className="border px-3 py-2 rounded"
+                                className="border px-3 py-2 rounded focus:ring focus:ring-green-200 w-full"
                             />
                         </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div>
-                            <label>Net Payable</label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
+                            <label className="text-sm font-medium text-gray-600">
+                                Net Payable
+                            </label>
+                            <p className="bg-gray-100 px-3 py-2 rounded text-gray-800">
                                 {totalAfterDiscount} Tk
                             </p>
                         </div>
                         <div>
-                            <label>Total Due</label>
-                            <p className="bg-gray-100 px-3 py-2 rounded">
+                            <label className="text-sm font-medium text-gray-600">
+                                Total Due
+                            </label>
+                            <p className="bg-gray-100 px-3 py-2 rounded text-gray-800">
                                 {totalDue} Tk
                             </p>
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
                         <div>
                             <label className="block text-sm font-medium">
                                 Reference Name
@@ -350,6 +416,22 @@ const EditMolecular = ({  auth, molecularReg, references, tests  }) => {
                                 ))}
                             </select>
                             <InputError message={errors.reference_name} />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium">
+                                Remarks
+                            </label>
+                            <input
+                                type="text"
+                                name="remarks"
+                                value={data.remarks}
+                                onChange={(e) =>
+                                    setData("remarks", e.target.value)
+                                }
+                                className="w-full border rounded-md px-3 py-2"
+                            />
+                            <InputError message={errors.remarks} />
                         </div>
 
                         <div>
