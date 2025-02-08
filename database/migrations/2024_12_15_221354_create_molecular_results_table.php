@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('remarks')->nullable();
             $table->text('comments')->nullable();
             $table->enum('report_status', ['Pending', 'Ready', 'Delivered']);
+            $table->dateTime('report_date');
             $table->string('user_name')->nullable();
             $table->timestamps();
         });

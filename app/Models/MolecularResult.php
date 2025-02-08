@@ -21,6 +21,7 @@ class MolecularResult extends Model
         'result',
         'unit',
         'result_copies',
+        'report_date',
         'methodology',
         'remarks',
         'comments',

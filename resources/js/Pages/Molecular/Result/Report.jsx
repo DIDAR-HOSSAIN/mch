@@ -156,7 +156,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </td>
                                             <td className="border border-[#bbbebc] p-2">
                                                 {formatBDDateTime(
-                                                    sample.created_at || "N/A"
+                                                    test.report_date || "N/A"
                                                 )}
                                             </td>
                                         </tr>
@@ -325,13 +325,14 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 </div>
 
                                 {/* Signatures */}
-                                <div className="text-sm flex justify-between mt-16">
+                                {/* <div className="text-sm flex justify-between mt-16"> */}
+                                <div className="text-sm flex justify-between mt-4">
                                     <div className="text-justify">
-                                        {/* <img
+                                        <img
                                             src={sign2}
                                             alt="Zahirul Signature"
-                                            className="w-24 mx-auto"
-                                        /> */}
+                                            className="w-12 mx-auto"
+                                        />
                                         <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Zahirul Islam</strong>
                                         <p>BSC (Hons) , MS</p>
@@ -347,11 +348,11 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </p>
                                     </div>
                                     <div className="text-justify">
-                                        {/* <img
+                                        <img
                                             src={sign1}
                                             alt="Zakir Signature"
-                                            className="w-24 mx-auto"
-                                        /> */}
+                                            className="w-12 mx-auto"
+                                        />
                                         <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>

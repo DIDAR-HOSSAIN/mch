@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import "react-datepicker/dist/react-datepicker.css";
+import InputLabel from "@/Components/InputLabel";
+import InputError from "@/Components/InputError";
+import { format } from "date-fns";
+import CustomDatePicker from "@/Components/DatePicker";
 
 const CreateMolecularResult = ({ auth, tests }) => {
     const { message } = usePage().props;
+    const [reportDate, setReportDate] = useState(
+        new Date()
+    );
 
     const { data, setData, post, processing, errors, reset } = useForm({
         results: tests.map((test) => ({
@@ -16,6 +24,7 @@ const CreateMolecularResult = ({ auth, tests }) => {
             result_status: "Negative",
             specimen: "",
             result_copies: "",
+            report_date: "",
             methodology: "Real-Time PCR based on TaqMan Technology",
             remarks: "",
             comments: "",
@@ -30,20 +39,39 @@ const CreateMolecularResult = ({ auth, tests }) => {
         setData("results", updatedResults);
     };
 
+    // const handleChange = (index, field, value) => {
+    //     const updatedResults = [...data.results];
+    //     updatedResults[index][field] = value;
+    //     setData("results", updatedResults);
+
+    //     // If you modify report_date in the form, ensure it is properly updated in each result
+    //     if (field === "report_date") {
+    //         updatedResults[index].report_date = value; // This may be redundant but ensure it's correctly mapped
+    //         setData("results", updatedResults);
+    //     }
+    // };
+
+
+    const handleReportDateChange = (index, date) => {
+        const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
+        handleChange(index, "report_date", formattedDate);
+    };
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
+         console.log("Submit Data:", data);
         post(route("results.store"), {
-                onSuccess: () => {
-                    console.log("Form submitted successfully!");
-                },
-            
+            onSuccess: () => {
+                console.log("Form submitted successfully!");
+            },
+
             onError: (errors) => {
                 alert("An error occurred. Please try again.");
                 console.error(errors);
             },
         });
     };
-    
 
     return (
         <AdminDashboardLayout
@@ -247,36 +275,62 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                     />
                                 </div>
 
-                                {result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" && result.result_status === "Negative" && (
-                                    <div>
-                                        <label className="block text-gray-700 font-medium mb-1">Unit</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Unit"
-                                            value={result.unit}
-                                            onChange={(e) =>
-                                                handleChange(index, "unit", e.target.value)
-                                            }
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                )}
+                                <CustomDatePicker
+                                    selectedDate={
+                                        result.report_date
+                                            ? new Date(result.report_date)
+                                            : new Date()
+                                    }
+                                    handleDateChange={(date) =>
+                                        handleReportDateChange(index, date)
+                                    }
+                                />
 
-                                {result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" && result.result_status === "Positive" && (
-                                    <div>
-                                        <label className="block text-gray-700 font-medium mb-1">Result Copies</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Result Copies"
-                                            value={result.result_copies}
-                                            onChange={(e) =>
-                                                handleChange(index, "result_copies", e.target.value)
-                                            }
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                )}
+                                {result.investigation !==
+                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                    result.result_status === "Negative" && (
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                Unit
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Enter Unit"
+                                                value={result.unit}
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        index,
+                                                        "unit",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    )}
 
+                                {result.investigation !==
+                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                    result.result_status === "Positive" && (
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                Result Copies
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Result Copies"
+                                                value={result.result_copies}
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        index,
+                                                        "result_copies",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    )}
                             </div>
 
                             <div className="flex gap-4">
