@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MolecularRegTest;
 use App\Http\Requests\StoreMolecularResultRequest;
 use App\Http\Requests\UpdateMolecularResultRequest;
+use App\Models\MolecularReg;
 use App\Models\MolecularResult;
 use App\Models\Sample;
 use Exception;
@@ -59,10 +60,16 @@ class MolecularResultController extends Controller
             ->select('id', 'patient_id', 'test_name', 'test_id', 'test_date', 'test_fee')
             ->get();
 
-        // dd($tests);
+        // Fetch the related molecularReg record
+        $molecularReg = MolecularReg::where('patient_id', $patient_id)->first();
 
-        return Inertia::render('Molecular/Result/CreateMolecularResult', ['tests' => $tests, 'message' => session('message'),]);
+        return Inertia::render('Molecular/Result/CreateMolecularResult', [
+            'tests' => $tests,
+            'molecularReg' => $molecularReg, // Pass molecularReg data
+            'message' => session('message'),
+        ]);
     }
+
 
 
     /**
@@ -183,8 +190,6 @@ class MolecularResultController extends Controller
             return redirect()->route('results.index')->with('error', 'Results not found');
         }
 
-
-
         // Return the results to the frontend
         return Inertia::render('Molecular/Result/EditMolecularResult', [
             'molecularResults' => $molecularResults,
@@ -209,6 +214,7 @@ class MolecularResultController extends Controller
                 'result' => 'nullable|string',
                 'unit' => 'nullable|string',
                 'result_copies' => 'nullable|string',
+                'report_date' => 'nullable|date',
                 'methodology' => 'nullable|string',
                 'remarks' => 'nullable|string',
                 'comments' => 'nullable|string',

@@ -2,22 +2,17 @@ import React, { useState } from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import "react-datepicker/dist/react-datepicker.css";
-import InputLabel from "@/Components/InputLabel";
-import InputError from "@/Components/InputError";
 import { format } from "date-fns";
 import CustomDatePicker from "@/Components/DatePicker";
 
-const CreateMolecularResult = ({ auth, tests }) => {
+const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
     const { message } = usePage().props;
-    const [reportDate, setReportDate] = useState(
-        new Date()
-    );
 
     const { data, setData, post, processing, errors, reset } = useForm({
         results: tests.map((test) => ({
             sample_id: test.sample?.sample_id || "",
             patient_id: test.patient_id || "",
-            test_id: test.test_id || test.id, // Use test.id as fallback
+            test_id: test.test_id || test.id,
             investigation: test.test_name || "",
             result: "",
             unit: "",
@@ -31,7 +26,8 @@ const CreateMolecularResult = ({ auth, tests }) => {
         })),
     });
 
-    console.log("create molecular redults", data);
+    console.log("create molecular results", data);
+    console.log("create molecular molecularReg", molecularReg);
 
     const handleChange = (index, field, value) => {
         const updatedResults = [...data.results];
@@ -39,28 +35,14 @@ const CreateMolecularResult = ({ auth, tests }) => {
         setData("results", updatedResults);
     };
 
-    // const handleChange = (index, field, value) => {
-    //     const updatedResults = [...data.results];
-    //     updatedResults[index][field] = value;
-    //     setData("results", updatedResults);
-
-    //     // If you modify report_date in the form, ensure it is properly updated in each result
-    //     if (field === "report_date") {
-    //         updatedResults[index].report_date = value; // This may be redundant but ensure it's correctly mapped
-    //         setData("results", updatedResults);
-    //     }
-    // };
-
-
     const handleReportDateChange = (index, date) => {
         const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
         handleChange(index, "report_date", formattedDate);
     };
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-         console.log("Submit Data:", data);
+        console.log("Submit Data:", data);
         post(route("results.store"), {
             onSuccess: () => {
                 console.log("Form submitted successfully!");
@@ -123,15 +105,22 @@ const CreateMolecularResult = ({ auth, tests }) => {
                             <div className="mb-4">
                                 <h3 className="text-lg font-semibold text-gray-700">
                                     {tests[index].test_name}
-                                    <span className="text-sm text-gray-500">
-                                        (Fee: {tests[index].test_fee} | Date:{" "}
-                                        {tests[index].test_date})
-                                    </span>
                                 </h3>
                             </div>
 
                             {/* Test Details */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        defaultValue={molecularReg.name}
+                                        readOnly
+                                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
+                                    />
+                                </div>
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">
                                         Sample ID
@@ -275,17 +264,6 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                     />
                                 </div>
 
-                                <CustomDatePicker
-                                    selectedDate={
-                                        result.report_date
-                                            ? new Date(result.report_date)
-                                            : new Date()
-                                    }
-                                    handleDateChange={(date) =>
-                                        handleReportDateChange(index, date)
-                                    }
-                                />
-
                                 {result.investigation !==
                                     "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
                                     result.result_status === "Negative" && (
@@ -331,6 +309,22 @@ const CreateMolecularResult = ({ auth, tests }) => {
                                             />
                                         </div>
                                     )}
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Report Date
+                                    </label>
+                                    <CustomDatePicker
+                                        selectedDate={
+                                            result.report_date
+                                                ? new Date(result.report_date)
+                                                : new Date()
+                                        }
+                                        handleDateChange={(date) =>
+                                            handleReportDateChange(index, date)
+                                        }
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex gap-4">

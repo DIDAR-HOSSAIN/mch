@@ -1,6 +1,10 @@
 import React from "react";
 import { useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+import CustomDatePicker from "@/Components/DatePicker";
+
 
 const EditMolecularResult = ({ auth, molecularResults }) => {
     const { data, setData, put, processing, errors, reset } = useForm({
@@ -15,7 +19,10 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
             result_status: result.result_status || "",
             specimen: result.specimen || "",
             result_copies: result.result_copies || "",
-            methodology: result.methodology || "Real-Time PCR based on TaqMan Technology",
+            report_date: result.report_date || "",
+            methodology:
+                result.methodology ||
+                "Real-Time PCR based on TaqMan Technology",
             remarks: result.remarks || "",
             comments: result.comments || "",
         })),
@@ -26,6 +33,11 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
         updatedResults[index][field] = value;
         setData("results", updatedResults);
     };
+
+    const handleReportDateChange = (index, date) => {
+            const formattedDate = format(date, "yyyy-MM-dd HH:mm:ss");
+            handleChange(index, "report_date", formattedDate);
+        };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -64,53 +76,109 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
                         >
                             {/* Static Fields */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                {["sample_id", "patient_id", "test_id"].map((field) => (
-                                    <div key={field}>
-                                        <label className="block text-gray-700 font-medium mb-1">
-                                            {field.replace("_", " ").toUpperCase()}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={result[field]}
-                                            readOnly
-                                            className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                        />
-                                    </div>
-                                ))}
+                                {["sample_id", "patient_id", "test_id"].map(
+                                    (field) => (
+                                        <div key={field}>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                {field
+                                                    .replace("_", " ")
+                                                    .toUpperCase()}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={result[field]}
+                                                readOnly
+                                                className="w-full px-4 py-2 border rounded-md bg-gray-100"
+                                            />
+                                        </div>
+                                    )
+                                )}
                             </div>
 
                             {/* Editable Fields */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                 {[
-                                    { field: "investigation", type: "text", readOnly: true },
-                                    { field: "methodology", type: "text", readOnly: false },
-                                    { field: "result_status", type: "select", options: ["Negative", "Positive"] },
-                                    { field: "specimen", type: "select", options: ["Whole Blood", "Plasma", "Serum", "Cervical Swab"] },
-                                    { field: "result", type: "text", readOnly: false },
-                                    ...(result.result_status === "Negative" && result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
-                                        ? [{ field: "unit", type: "text", readOnly: false }]
+                                    {
+                                        field: "investigation",
+                                        type: "text",
+                                        readOnly: true,
+                                    },
+                                    {
+                                        field: "methodology",
+                                        type: "text",
+                                        readOnly: false,
+                                    },
+                                    {
+                                        field: "result_status",
+                                        type: "select",
+                                        options: ["Negative", "Positive"],
+                                    },
+                                    {
+                                        field: "specimen",
+                                        type: "select",
+                                        options: [
+                                            "Whole Blood",
+                                            "Plasma",
+                                            "Serum",
+                                            "Cervical Swab",
+                                        ],
+                                    },
+                                    {
+                                        field: "result",
+                                        type: "text",
+                                        readOnly: false,
+                                    },
+
+                                    ...(result.result_status === "Negative" &&
+                                    result.investigation !==
+                                        "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                        ? [
+                                              {
+                                                  field: "unit",
+                                                  type: "text",
+                                                  readOnly: false,
+                                              },
+                                          ]
                                         : []),
-                                    ...(result.result_status === "Positive" && result.investigation !== "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
-                                        ? [{ field: "result_copies", type: "text", readOnly: false }]
+                                    ...(result.result_status === "Positive" &&
+                                    result.investigation !==
+                                        "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                        ? [
+                                              {
+                                                  field: "result_copies",
+                                                  type: "text",
+                                                  readOnly: false,
+                                              },
+                                          ]
                                         : []),
                                 ].map(({ field, type, options, readOnly }) => (
                                     <div key={field}>
                                         <label className="block text-gray-700 font-medium mb-1">
-                                            {field.replace("_", " ").toUpperCase()}
+                                            {field
+                                                .replace("_", " ")
+                                                .toUpperCase()}
                                         </label>
                                         {type === "select" ? (
                                             <select
                                                 value={result[field]}
                                                 onChange={(e) =>
-                                                    handleChange(index, field, e.target.value)
+                                                    handleChange(
+                                                        index,
+                                                        field,
+                                                        e.target.value
+                                                    )
                                                 }
                                                 className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                             >
                                                 <option value="" disabled>
-                                                    Select {field.replace("_", " ")}
+                                                    Select{" "}
+                                                    {field.replace("_", " ")}
                                                 </option>
                                                 {options.map((option) => (
-                                                    <option key={option} value={option}>
+                                                    <option
+                                                        key={option}
+                                                        value={option}
+                                                    >
                                                         {option}
                                                     </option>
                                                 ))}
@@ -120,21 +188,48 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
                                                 type={type}
                                                 value={result[field]}
                                                 onChange={(e) =>
-                                                    handleChange(index, field, e.target.value)
+                                                    handleChange(
+                                                        index,
+                                                        field,
+                                                        e.target.value
+                                                    )
                                                 }
                                                 readOnly={readOnly}
                                                 className={`w-full px-4 py-2 border rounded-md ${
-                                                    readOnly ? "bg-gray-100" : "focus:ring-2 focus:ring-blue-500"
+                                                    readOnly
+                                                        ? "bg-gray-100"
+                                                        : "focus:ring-2 focus:ring-blue-500"
                                                 }`}
                                             />
                                         )}
-                                        {errors[`results.${index}.${field}`] && (
+                                        {errors[
+                                            `results.${index}.${field}`
+                                        ] && (
                                             <span className="text-red-500 text-sm">
-                                                {errors[`results.${index}.${field}`]}
+                                                {
+                                                    errors[
+                                                        `results.${index}.${field}`
+                                                    ]
+                                                }
                                             </span>
                                         )}
                                     </div>
                                 ))}
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Report Date
+                                    </label>
+                                    <CustomDatePicker
+                                        selectedDate={
+                                            result.report_date
+                                                ? new Date(result.report_date)
+                                                : new Date()
+                                        }
+                                        handleDateChange={(date) =>
+                                            handleReportDateChange(index, date)
+                                        }
+                                    />
+                                </div>
                             </div>
 
                             {/* Remarks and Comments */}
@@ -147,14 +242,24 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
                                         <textarea
                                             value={result[field]}
                                             onChange={(e) =>
-                                                handleChange(index, field, e.target.value)
+                                                handleChange(
+                                                    index,
+                                                    field,
+                                                    e.target.value
+                                                )
                                             }
                                             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                             rows="3"
                                         ></textarea>
-                                        {errors[`results.${index}.${field}`] && (
+                                        {errors[
+                                            `results.${index}.${field}`
+                                        ] && (
                                             <span className="text-red-500 text-sm">
-                                                {errors[`results.${index}.${field}`]}
+                                                {
+                                                    errors[
+                                                        `results.${index}.${field}`
+                                                    ]
+                                                }
                                             </span>
                                         )}
                                     </div>
