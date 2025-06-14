@@ -320,7 +320,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     {test.comments || "No comments available."}
                                 </span>
 
-                                <div className="mt-8 text-center">
+                                <div className="mt-4 text-center">
                                     <p>----------End of Report----------</p>
                                 </div>
 
@@ -328,11 +328,11 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                 {/* <div className="text-sm flex justify-between mt-16"> */}
                                 <div className="text-sm flex justify-between mt-4">
                                     <div className="text-justify">
-                                        {/* <img
+                                        <img
                                             src={sign2}
                                             alt="Zahirul Signature"
                                             className="w-12 mx-auto"
-                                        /> */}
+                                        />
                                         <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Zahirul Islam</strong>
                                         <p>BSC (Hons) , MS</p>
@@ -348,11 +348,11 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </p>
                                     </div>
                                     <div className="text-justify">
-                                        {/* <img
+                                        <img
                                             src={sign1}
                                             alt="Zakir Signature"
                                             className="w-12 mx-auto"
-                                        /> */}
+                                        />
                                         <hr className="border-t border-[#bbbebc] p-2my-2" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>
