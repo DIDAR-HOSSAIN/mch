@@ -46,11 +46,11 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary (General Pcr)
+                    Date Wise Balance Summary (Antigen)
                 </h2>
             }
         >
-            <Head title="General Pcr" />
+            <Head title="Antigen Summary" />
 
             <div className="py-4">
                 <div className="mx-auto max-w-4xl">

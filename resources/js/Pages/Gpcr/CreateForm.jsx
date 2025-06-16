@@ -713,13 +713,13 @@ const CreateForm = ({ auth, districts }) => {
                                 <option value="Royal Hospital">
                                     Royal Hospital
                                 </option>
-                                <option value="Royal Hospital">
+                                <option value="Ekushey Hospital">
                                     Ekushey Hospital
                                 </option>
-                                <option value="Royal Hospital">
+                                <option value="CSCR Hospital">
                                     CSCR Hospital
                                 </option>
-                                <option value="Royal Hospital">Others</option>
+                                <option value="Others">Others</option>
                             </select>
 
                             <InputError

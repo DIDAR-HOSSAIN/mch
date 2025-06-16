@@ -25,43 +25,30 @@ const calculateAge = (dob) => {
     return age;
 };
 
-const EditForm = ({ auth, gpcr }) => {
+const EditForm = ({ auth, antigen }) => {
     const initialData = {
-        name: gpcr.name || "",
-        email: gpcr.email || "",
-        dob: gpcr.dob ? new Date(gpcr.dob) : null,
-        age: gpcr.age || "", // Initialize age field
-        sex: gpcr.sex || "",
-        address: gpcr.address || "",
-        contact_no: gpcr.contact_no || "",
-        entry_date: gpcr.entry_date ? new Date(gpcr.entry_date) : null,
-        police_station: gpcr.police_station || "",
-        district: gpcr.district || "",
-        reg_fee: gpcr.reg_fee || "",
-        discount: gpcr.discount || "",
-        paid: gpcr.paid || "",
-        due: gpcr.due || "",
-        total: gpcr.total || "",
-        discount_reference: gpcr.discount_reference || "",
-        vaccine_name: gpcr.vaccine_name || "",
-        vaccine_certificate_no: gpcr.vaccine_certificate_no || "",
-        first_dose_date: gpcr.first_dose_date
-            ? new Date(gpcr.first_dose_date)
-            : null,
-        second_dose_date: gpcr.second_dose_date
-            ? new Date(gpcr.second_dose_date)
-            : null,
-        booster_dose_date: gpcr.booster_dose_date
-            ? new Date(gpcr.booster_dose_date)
-            : null,
-        contact_no_relation: gpcr.contact_no_relation || "",
-        sample_collected_by: gpcr.sample_collected_by || "",
-        hospital_name: gpcr.hospital_name || "",
-        ticket_no: gpcr.ticket_no || "",
-        payment_type: gpcr.payment_type || "",
-        account_head: gpcr.account_head || "",
-        nid: gpcr.nid || "",
-        passport_no: gpcr.passport_no || "",
+        name: antigen.name || "",
+        email: antigen.email || "",
+        dob: antigen.dob ? new Date(antigen.dob) : null,
+        age: antigen.age || "", // Initialize age field
+        sex: antigen.sex || "",
+        address: antigen.address || "",
+        contact_no: antigen.contact_no || "",
+        entry_date: antigen.entry_date ? new Date(antigen.entry_date) : null,
+        police_station: antigen.police_station || "",
+        district: antigen.district || "",
+        reg_fee: antigen.reg_fee || "",
+        discount: antigen.discount || "",
+        paid: antigen.paid || "",
+        due: antigen.due || "",
+        total: antigen.total || "",
+        discount_reference: antigen.discount_reference || "",
+        contact_no_relation: antigen.contact_no_relation || "",
+        sample_collected_by: antigen.sample_collected_by || "",
+        hospital_name: antigen.hospital_name || "",
+        payment_type: antigen.payment_type || "",
+        account_head: antigen.account_head || "",
+        nid: antigen.nid || "",
     };
 
     const { data, setData, patch, processing, errors } = useForm(initialData);
@@ -84,7 +71,7 @@ const EditForm = ({ auth, gpcr }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        patch(route("pcr.update", { pcr: gpcr.id }), data);
+        patch(route("antigen.update", { antigen: antigen.id }), data);
     };
 
     return (
@@ -92,11 +79,11 @@ const EditForm = ({ auth, gpcr }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Update PCR
+                    Update Rapid Antigen
                 </h1>
             }
         >
-            <Head title="Update PCR" />
+            <Head title=" Update Rapid Antigen" />
             <div className="py-2">
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -415,112 +402,6 @@ const EditForm = ({ auth, gpcr }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="vaccine_name"
-                                value="Vaccine Name"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Vaccine Name"
-                                name="vaccine_name"
-                                value={data.vaccine_name}
-                                onChange={(e) =>
-                                    setData("vaccine_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="vaccine_certificate_no"
-                                value="Vaccine Certificate No"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Vaccine Certificate No"
-                                name="vaccine_certificate_no"
-                                value={data.vaccine_certificate_no}
-                                onChange={(e) =>
-                                    setData(
-                                        "vaccine_certificate_no",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_certificate_no}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="first_dose_date"
-                                value="First Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.first_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "first_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.first_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="second_dose_date"
-                                value="Second Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.second_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "second_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.second_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="booster_dose_date"
-                                value="Booster Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.booster_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "booster_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.booster_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
                                 htmlFor="contact_no_relation"
                                 value="Contact No Relation"
                             />
@@ -603,10 +484,10 @@ const EditForm = ({ auth, gpcr }) => {
                                 <option value="Royal Hospital">
                                     Royal Hospital
                                 </option>
-                                <option value="Ekushey Hospital">
+                                <option value=" Ekushey Hospital">
                                     Ekushey Hospital
                                 </option>
-                                <option value="CSCR Hospital">
+                                <option value=" CSCR Hospital">
                                     CSCR Hospital
                                 </option>
                                 <option value="Others">Others</option>
@@ -614,26 +495,6 @@ const EditForm = ({ auth, gpcr }) => {
 
                             <InputError
                                 message={errors.hospital_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="ticket_no" value="Ticket No" />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Ticket No"
-                                name="ticket_no"
-                                value={data.ticket_no}
-                                onChange={(e) =>
-                                    setData("ticket_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.ticket_no}
                                 className="mt-2"
                             />
                         </div>
@@ -700,27 +561,6 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <InputError message={errors.nid} className="mt-2" />
-
-                            <InputLabel
-                                htmlFor="passport_no"
-                                value="Passport No"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Passport No"
-                                name="passport_no"
-                                value={data.passport_no}
-                                onChange={(e) =>
-                                    setData("passport_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.passport_no}
-                                className="mt-2"
-                            />
                         </div>
                     </div>
                     <PrimaryButton

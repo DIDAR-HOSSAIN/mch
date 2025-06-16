@@ -184,7 +184,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3 text-center">
                                     {formatDate(entry_date)}
                                 </td>
-                                <td className="p-3 text-right">{reg_fee}.00</td>
+                                <td className="p-3 text-right">{reg_fee}</td>
                             </tr>
 
                             {/* Additional rows (replace 'placeholder' with actual data) */}
@@ -192,14 +192,14 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Subtotal :</td>
-                                <td className="p-3 text-right">{reg_fee}.00</td>
+                                <td className="p-3 text-right">{reg_fee}</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-3"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Discount :</td>
                                 <td className="p-3 text-right">
-                                    {discount || 0}.00
+                                    {discount || 0}
                                 </td>
                             </tr>
                             <tr className="border-b">
@@ -209,7 +209,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                     Net Payable :
                                 </td>
                                 <td className="p-3 text-right">
-                                    {reg_fee - discount || 0}.00
+                                    {reg_fee - discount || 0}
                                 </td>
                             </tr>
                             <tr className="border-b">
@@ -217,7 +217,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Paid :</td>
                                 <td className="p-3 text-right">
-                                    {paid || 0}.00
+                                    {paid || 0}
                                 </td>
                             </tr>
                             <tr className="border-b">
@@ -225,7 +225,7 @@ const MoneyReceipt = ({ auth, data }) => {
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right">Due :</td>
                                 <td className="p-3 text-right font-extrabold">
-                                    {due || 0}.00
+                                    {due || 0}
                                 </td>
                             </tr>
                         </tbody>

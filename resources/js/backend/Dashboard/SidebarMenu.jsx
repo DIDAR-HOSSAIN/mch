@@ -7,6 +7,7 @@ const SidebarMenu = () => {
 
     const [dropdownState, setDropdownState] = useState({
         pcrDropdown: false,
+        antigenDropdown: false,
         dopeDropdown: false,
         molecularDropdown: false,
         molecularSampleDropdown: false,
@@ -66,7 +67,7 @@ const SidebarMenu = () => {
                             Manage Pcr
                         </Link>
                     )}
-                    {hasAnyRole(auth.user, [
+                    {/* {hasAnyRole(auth.user, [
                         "super-admin",
                         "admin",
                         "sub-admin",
@@ -78,7 +79,136 @@ const SidebarMenu = () => {
                         >
                             Date Wise Summary
                         </Link>
+                    )} */}
+
+                      {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/pcr/summary/report"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
                     )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/pcr/summary/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary Details
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/pcr/dues/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Dues Details
+                        </Link>
+                    )}
+
+                </div>
+            )}
+
+            <div className="flex">
+                <button
+                    onClick={() => toggleDropdown("antigenDropdown")}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {dropdownState.antigenDropdown
+                        ? "Rapid Antigen ▲"
+                        : "Rapid Antigen ▼"}
+                </button>
+            </div>
+            {dropdownState.antigenDropdown && (
+                <div className="flex flex-col gap-1">
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/antigen/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Registration
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                        "general",
+                    ]) && (
+                        <Link
+                            href="/antigen"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Manage Antigen
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/antigen/summary/report"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/antigen/summary/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Summary Details
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, [
+                        "super-admin",
+                        "admin",
+                        "sub-admin",
+                        "user",
+                    ]) && (
+                        <Link
+                            href="/antigen/dues/details"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Date Wise Dues Details
+                        </Link>
+                    )}
+
                 </div>
             )}
 

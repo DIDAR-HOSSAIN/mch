@@ -2,13 +2,31 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const DateWiseReport = ({ onSearch }) => {
+const DateWiseReport = ({ datas, onSearch }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
-    // Trigger search whenever startDate or endDate changes
+    const handleSearch = () => {
+
+        if (!datas) {
+            return; // Ensure datas is not undefined or null
+        }
+
+        const filteredData = datas.filter((data) => {
+            const entryDate = new Date(data.entry_date);
+
+            return (
+                (!startDate || entryDate >= startDate) &&
+                (!endDate ||
+                    entryDate <= new Date(endDate.getTime() + 86400000))
+            );
+        });
+
+        onSearch(filteredData, startDate, endDate);
+    };
+
     useEffect(() => {
-        onSearch(startDate, endDate);
+        handleSearch(); // Perform initial search when component mounts
     }, [startDate, endDate]);
 
     return (

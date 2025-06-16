@@ -2,30 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gpcr;
-use Illuminate\Http\Request;
-use App\Http\Requests\StoreGpcrRequest;
-use App\Models\District;
-use App\Models\Thana;
+use App\Models\Antigen;
+use App\Http\Requests\StoreAntigenRequest;
+use App\Http\Requests\UpdateAntigenRequest;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Models\District;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
-class GpcrController extends Controller
+class AntigenController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:pcr-list|pcr-create|pcr-edit|pcr-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:pcr-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:pcr-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:pcr-delete', ['only' => ['destroy']]);
-        $this->middleware('permission:pcr-money-receipt', ['only' => ['moneyReceipt']]);
-        $this->middleware('permission:pcr-summary-report', ['only' => ['summaryReport']]);
-        $this->middleware('permission:pcr-summary-details', ['only' => ['summaryDetails']]);
-        $this->middleware('permission:pcr-due-check', ['only' => ['duesCheck']]);
+        $this->middleware('permission:antigen-list|antigen-create|antigen-edit|antigen-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:antigen-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:antigen-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:antigen-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:antigen-summary-report', ['only' => ['dateWiseBalSummary']]);
+        $this->middleware('permission:antigen-summary-details', ['only' => ['summaryDetails']]);
+        $this->middleware('permission:antigen-due-check', ['only' => ['duesCheck']]);
+        $this->middleware('permission:antigen-money-receipt', ['only' => ['antigenMoneyReceipt']]);
     }
 
     /**
@@ -33,10 +33,10 @@ class GpcrController extends Controller
      */
     public function index(Request $request)
     {
-        $startDate = $request->input('start_date');
+         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Antigen::query();
 
         if ($startDate && $endDate) {
             // Make sure to convert the string dates to DateTime objects
@@ -48,7 +48,7 @@ class GpcrController extends Controller
 
         $datas = $query->orderBy('id', 'desc')->latest()->get();
 
-        return Inertia::render('Gpcr/ViewList', ['datas' => $datas]);
+        return Inertia::render('Antigen/ViewList', ['datas' => $datas]);
     }
 
     /**
@@ -56,17 +56,17 @@ class GpcrController extends Controller
      */
     public function create()
     {
-        $districts = District::with('thanas')->get();
+       $districts = District::with('thanas')->get();
 
-        return Inertia::render('Gpcr/CreateForm', ['districts' => $districts]);
+        return Inertia::render('Antigen/CreateForm', ['districts' => $districts]);
     }
-
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreGpcrRequest $request)
+    public function store(StoreAntigenRequest $request)
     {
+        
         // Retrieve all data from the request
         $data = $request->all();
 
@@ -89,10 +89,10 @@ class GpcrController extends Controller
         $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
 
         // Create Gpcr record
-        $gpcr = Gpcr::create($data);
+        $antigen = Antigen::create($data);
 
         // Redirect to the money invoice route with the ID
-        return Redirect::route('invoice', ['id' => $gpcr->id]);
+        return Redirect::route('invoice', ['id' => $antigen->id]);
     }
 
 
@@ -104,7 +104,7 @@ class GpcrController extends Controller
         // Loop until a unique patient_id is generated
         do {
             // Get the maximum patient_id for the current date
-            $latestPatientId = DB::table('gpcrs')
+            $latestPatientId = DB::table('antigens')
                 ->where('patient_id', 'like', "MCH-$currentDate-%")
                 ->max('patient_id');
 
@@ -116,102 +116,81 @@ class GpcrController extends Controller
 
             // Generate the new patient_id
             $newPatientId = $prefix . '-' . $currentDate . '-' . $serialNumberFormatted;
-        } while (Gpcr::where('patient_id', $newPatientId)->exists());
+        } while (Antigen::where('patient_id', $newPatientId)->exists());
 
         return $newPatientId;
     }
 
-
-
     /**
      * Display the specified resource.
      */
-
-    public function show($id)
+    public function show(Antigen $antigen)
     {
-        $gpcr = Gpcr::find($id);
-        return Inertia::render('Gpcr/ShowDetails', ['gpcr' => $gpcr]);
+        //  $gpcr = Gpcr::find($id);
+        return Inertia::render('Antigen/ShowDetails', ['antigen' => $antigen]);
     }
-
 
     /**
      * Show the form for editing the specified resource.
      */
-
-    public function edit($id)
+    public function edit(Antigen $antigen)
     {
-        $gpcr = Gpcr::find($id);
-        return Inertia::render('Gpcr/EditForm', ['gpcr' => $gpcr]);
+        // $antigen = Antigen::find($id);
+        return Inertia::render('Antigen/EditForm', ['antigen' => $antigen]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-   public function update($id, Request $request)
+    public function update(UpdateAntigenRequest $request, Antigen $antigen)
     {
-        // Validator::make($request->all(), [
+         // Validator::make($request->all(), [
         //     'title' => ['required'],
         //     'body' => ['required'],
         // ])->validate();
 
-        // Parse and convert date fields to a compatible format
-        $dateFields = ['dob', 'first_dose_date', 'second_dose_date', 'booster_dose_date', 'entry_date'];
-        foreach ($dateFields as $field) {
-            if ($request->has($field)) {
-                $request->merge([$field => Carbon::parse($request->input($field))->toDateString()]);
-            }
+     // Convert date fields to date string if present
+    $dateFields = ['dob', 'entry_date'];
+    foreach ($dateFields as $field) {
+        if ($request->has($field)) {
+            $request->merge([$field => Carbon::parse($request->input($field))->toDateString()]);
         }
+    }
 
-        // Update the Gpcr record with the modified request data
-        Gpcr::find($id)->update($request->all());
+    // Ensure 'due' is not null
+    $data = $request->all();
+    $data['due'] = $data['due'] ?? 0; // default to 0 if null
 
-        // Redirect the user to the index page after the update
-        return redirect()->route('pcr.index');
+    $antigen->update($data);
+
+    return redirect()->route('antigen.index')->with('success', 'Antigen record updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Gpcr $pcr)
+    public function destroy(Antigen $antigen)
     {
-        Gpcr::find($pcr->id)->delete();
-        return redirect()->route('pcr.index');
+         Antigen::find($antigen->id)->delete();
+        return redirect()->route('antigen.index');
     }
 
+    public function antigenMoneyReceipt($id)
+{
+    $data = Antigen::findOrFail($id); // better to use findOrFail for 404 handling
 
-    public function moneyReceipt($id)
-    {
-        $data = Gpcr::find($id);
+    return Inertia::render('Antigen/MoneyReceipt', [
+        'data' => $data,
+    ]);
+}
 
-        return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
-    }
-
-    // public function summaryReport(Request $request)
-    // {
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-
-    //     $query = Gpcr::query();
-
-    //     if ($startDate && $endDate) {
-    //         $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
-    //         $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
-
-    //         $query->whereBetween('entry_date', [$startDate, $endDate]);
-    //     }
-
-    //     $data = $query->get();
-
-    //     return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', [
-    //         'data' => $data
-    //     ]);
 
     public function dateWiseBalSummary(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Antigen::query();
 
         if ($startDate && $endDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
@@ -222,7 +201,7 @@ class GpcrController extends Controller
 
         $data = $query->get();
 
-        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', [
+        return Inertia::render('Antigen/Reports/DateWiseBalanceSummary', [
             'data' => $data
         ]);
     }
@@ -232,7 +211,7 @@ class GpcrController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Antigen::query();
 
         if ($startDate && $endDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
@@ -243,7 +222,7 @@ class GpcrController extends Controller
 
         $data = $query->get();
 
-        return Inertia::render('Gpcr/Reports/DateWiseBalanceSummaryDetails', [
+        return Inertia::render('Antigen/Reports/DateWiseBalanceSummaryDetails', [
             'data' => $data
         ]);
     }
@@ -253,7 +232,7 @@ class GpcrController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Gpcr::query();
+        $query = Antigen::query();
 
         if ($startDate && $endDate) {
             $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
@@ -264,11 +243,8 @@ class GpcrController extends Controller
 
         $data = $query->get();
 
-        return Inertia::render('Gpcr/Reports/DuesReport', [
+        return Inertia::render('Antigen/Reports/DuesReport', [
             'data' => $data
         ]);
     }
-
-
-
 }

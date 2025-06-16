@@ -1,90 +1,154 @@
-import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
-import { Head, useForm, usePage } from "@inertiajs/react";
-import NormalDatePicker from "@/Components/DatePicker";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import NormalDatePicker from "@/Components/NormalDatePicker";
 import TextInput from "@/Components/TextInput";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
+import { Head, useForm } from "@inertiajs/react";
+import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { useEffect } from "react";
 
-const calculateAge = (dob) => {
-    if (!dob) return ""; // Return empty string if DOB is not set
-    const currentDate = new Date();
-    const birthDate = new Date(dob);
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const birthMonth = birthDate.getMonth();
-    if (
-        currentMonth < birthMonth ||
-        (currentMonth === birthMonth &&
-            currentDate.getDate() < birthDate.getDate())
-    ) {
-        age--;
-    }
-    return age;
-};
+const CreateForm = ({ auth, districts }) => {
 
-const EditForm = ({ auth, gpcr }) => {
-    const initialData = {
-        name: gpcr.name || "",
-        email: gpcr.email || "",
-        dob: gpcr.dob ? new Date(gpcr.dob) : null,
-        age: gpcr.age || "", // Initialize age field
-        sex: gpcr.sex || "",
-        address: gpcr.address || "",
-        contact_no: gpcr.contact_no || "",
-        entry_date: gpcr.entry_date ? new Date(gpcr.entry_date) : null,
-        police_station: gpcr.police_station || "",
-        district: gpcr.district || "",
-        reg_fee: gpcr.reg_fee || "",
-        discount: gpcr.discount || "",
-        paid: gpcr.paid || "",
-        due: gpcr.due || "",
-        total: gpcr.total || "",
-        discount_reference: gpcr.discount_reference || "",
-        vaccine_name: gpcr.vaccine_name || "",
-        vaccine_certificate_no: gpcr.vaccine_certificate_no || "",
-        first_dose_date: gpcr.first_dose_date
-            ? new Date(gpcr.first_dose_date)
-            : null,
-        second_dose_date: gpcr.second_dose_date
-            ? new Date(gpcr.second_dose_date)
-            : null,
-        booster_dose_date: gpcr.booster_dose_date
-            ? new Date(gpcr.booster_dose_date)
-            : null,
-        contact_no_relation: gpcr.contact_no_relation || "",
-        sample_collected_by: gpcr.sample_collected_by || "",
-        hospital_name: gpcr.hospital_name || "",
-        ticket_no: gpcr.ticket_no || "",
-        payment_type: gpcr.payment_type || "",
-        account_head: gpcr.account_head || "",
-        nid: gpcr.nid || "",
-        passport_no: gpcr.passport_no || "",
+    const [dob, setDob] = useState(null);
+    const [entryDate, setEntryDate] = useState(new Date())
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: "",
+        email: "",
+        contact_no: "",
+        reg_fee: 1200,
+        discount: 0,
+        paid: 0,
+        total: 0,
+        due: 0,
+        dob: null,
+        age: 0,
+        // other form fields...
+    });
+
+    const calculateAge = (dob) => {
+        const currentDate = new Date();
+        const birthDate = new Date(dob);
+
+        let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+        const currentMonth = currentDate.getMonth();
+        const birthMonth = birthDate.getMonth();
+
+        if (
+            currentMonth < birthMonth ||
+            (currentMonth === birthMonth &&
+                currentDate.getDate() < birthDate.getDate())
+        ) {
+            age--;
+        }
+
+        return age;
     };
 
-    const { data, setData, patch, processing, errors } = useForm(initialData);
+     const handleDobChange = (date) => {
+         // Update the state variable
+         setDob(date);
 
-     useEffect(() => {
-         // Calculate age when DOB changes
+         // Update the form data with the selected date
+         const isoDate = date ? date.toISOString().split("T")[0] : null;
          setData((prevData) => ({
              ...prevData,
-             age: calculateAge(prevData.dob),
-         }));
-     }, [data.dob]);
-
-     const handleDateChange = (date, field) => {
-         setData((prevData) => ({
-             ...prevData,
-             [field]: date,
-             age: field === "dob" ? calculateAge(date) : prevData.age,
+             dob: isoDate,
+             age: isoDate ? calculateAge(isoDate) : 0,
          }));
      };
 
-    const handleSubmit = (e) => {
+    // Function to handle district change
+        const handleDistrictChange = (e) => {
+            const districtId = e.target.value;
+            const district = districts.find(
+                (district) => district.id === parseInt(districtId)
+            );
+            setSelectedDistrict(district);
+            setData("district", district ? district.name : ""); // Store the district name
+        };
+
+        const handleRegFeeChange = (value) => {
+            const regFee = (value);
+            const discount = (data.discount) || 0;
+            const calculatedTotal = regFee - discount;
+            const paid = (data.paid) || 0;
+            const calculatedDue = calculatedTotal - paid;
+
+            setData((prevData) => ({
+                ...prevData,
+                reg_fee: regFee,
+                total: calculatedTotal,
+                due: calculatedDue,
+            }));
+        };
+
+        const handleDiscountChange = (value) => {
+            const discount = (value);
+            const regFee = (data.reg_fee) || 0;
+            const calculatedTotal = regFee - discount;
+            const paid = (data.paid) || 0;
+            const calculatedDue = calculatedTotal - paid;
+
+            setData((prevData) => ({
+                ...prevData,
+                discount: discount,
+                total: calculatedTotal,
+                due: calculatedDue,
+            }));
+        };
+
+        const handlePaidChange = (value) => {
+            const paid = (value);
+            const regFee = (data.reg_fee) || 0;
+            const discount = (data.discount) || 0;
+            const calculatedTotal = regFee - discount;
+            const calculatedDue = calculatedTotal - paid;
+
+            setData((prevData) => ({
+                ...prevData,
+                paid: paid,
+                due: calculatedDue,
+                total: calculatedTotal,
+            }));
+        };
+
+        const handleDueChange = (value) => {
+            const due = (value) || 0;
+            const total = (data.total) || 0;
+            const calculatedTotal = total + due;
+            setData((prevData) => ({
+                ...prevData,
+                due: due,
+                total: calculatedTotal,
+            }));
+        };
+
+    const handleDateChange = (date, field) => {
+        switch (field) {
+            case "entry_date":
+                setEntryDate(date);
+                break;
+            default:
+                break;
+        }
+
+        setData(field, date ? date.toISOString().split("T")[0] : null);
+    };
+
+    const submit = (e) => {
         e.preventDefault();
-        patch(route("pcr.update", { pcr: gpcr.id }), data);
+
+        post(route("antigen.store"), {
+            onSuccess: ({ data }) => {
+                const patientId = data.patient_id;
+
+                // Redirect to the invoice route with the patient_id from the response
+                Inertia.visit(route("antigen.invoice", { id: patientId }));
+            },
+        });
     };
 
     return (
@@ -92,26 +156,32 @@ const EditForm = ({ auth, gpcr }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Update PCR
+                    Rapid Antigen
                 </h1>
             }
         >
-            <Head title="Update PCR" />
+            <Head title="Rapid Antigen" />
             <div className="py-2">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={submit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Name"
+                                id="name"
                                 name="name"
-                                value={data.name}
+                                value={data.name.toUpperCase()}
+                                className="mt-1 block w-full"
+                                autoComplete="name"
+                                autoCapitalize="name"
+                                isFocused={true}
                                 onChange={(e) =>
-                                    setData("name", e.target.value)
+                                    setData(
+                                        "name",
+                                        e.target.value.toUpperCase()
+                                    )
                                 }
+                                required
                             />
 
                             <InputError
@@ -124,11 +194,12 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="email" value="Email" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Email"
+                                id="email"
+                                type="email"
                                 name="email"
                                 value={data.email}
+                                className="mt-1 block w-full"
+                                autoComplete="username"
                                 onChange={(e) =>
                                     setData("email", e.target.value)
                                 }
@@ -142,24 +213,27 @@ const EditForm = ({ auth, gpcr }) => {
 
                         <div>
                             <InputLabel htmlFor="dob" value="Date of Birth" />
+
                             <NormalDatePicker
-                                selectedDate={data.dob}
+                                selectedDate={dob || new Date()}
                                 handleDateChange={(date) =>
-                                    handleDateChange(date, "dob")
+                                    handleDobChange(date)
                                 }
                             />
+
                             <InputError message={errors.dob} className="mt-2" />
                         </div>
 
                         <div>
                             <InputLabel htmlFor="age" value="Age" />
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Age"
+                                id="age"
                                 name="age"
                                 value={data.age}
+                                className="mt-1 block w-full"
+                                autoComplete="age"
                                 onChange={(e) => setData("age", e.target.value)}
+                                required
                             />
                             <InputError message={errors.age} className="mt-2" />
                         </div>
@@ -168,12 +242,12 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="sex" value="Sex" />
 
                             <select
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Sex"
+                                id="sex"
                                 name="sex"
                                 value={data.sex}
+                                className="mt-1 block w-full"
                                 onChange={(e) => setData("sex", e.target.value)}
+                                required
                             >
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
@@ -187,14 +261,15 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="address" value="Address" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Address"
+                                id="address"
                                 name="address"
-                                value={data.address}
+                                value={data.address ? data.address : ""}
+                                className="mt-1 block w-full"
+                                autoComplete="address"
                                 onChange={(e) =>
                                     setData("address", e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -210,14 +285,16 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <TextInput
+                                id="contact_no"
                                 type="text"
-                                className="w-full px-4 py-2"
-                                label="Contact No"
                                 name="contact_no"
                                 value={data.contact_no}
+                                className="mt-1 block w-full"
+                                autoComplete="contact_no"
                                 onChange={(e) =>
                                     setData("contact_no", e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -233,7 +310,7 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <NormalDatePicker
-                                selectedDate={data.entry_date}
+                                selectedDate={entryDate || new Date()}
                                 handleDateChange={(date) =>
                                     handleDateChange(date, "entry_date")
                                 }
@@ -246,41 +323,26 @@ const EditForm = ({ auth, gpcr }) => {
                         </div>
 
                         <div>
-                            <InputLabel
-                                htmlFor="police_station"
-                                value="Police Station"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Police Station"
-                                name="police_station"
-                                value={data.police_station}
-                                onChange={(e) =>
-                                    setData("police_station", e.target.value)
+                            <InputLabel htmlFor="districts">
+                                District:
+                            </InputLabel>
+                            <select
+                                id="district"
+                                onChange={handleDistrictChange}
+                                value={
+                                    selectedDistrict ? selectedDistrict.id : ""
                                 }
-                            />
-
-                            <InputError
-                                message={errors.police_station}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel htmlFor="district" value="District" />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="District"
-                                name="district"
-                                value={data.district}
-                                onChange={(e) =>
-                                    setData("district", e.target.value)
-                                }
-                            />
+                            >
+                                <option value="">Select a District</option>
+                                {districts.map((district) => (
+                                    <option
+                                        key={district.id}
+                                        value={district.id}
+                                    >
+                                        {district.name}
+                                    </option>
+                                ))}
+                            </select>
 
                             <InputError
                                 message={errors.district}
@@ -289,19 +351,47 @@ const EditForm = ({ auth, gpcr }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="reg_fee" value="Reg Fee" />
+                            <InputLabel htmlFor="police_station">
+                                Police Station:
+                            </InputLabel>
+                            <select
+                                id="police_station"
+                                onChange={(e) =>
+                                    setData("police_station", e.target.value)
+                                }
+                                value={data.police_station}
+                            >
+                                <option value="">
+                                    Select a Police Station
+                                </option>
+                                {selectedDistrict &&
+                                    Array.isArray(selectedDistrict.thanas) &&
+                                    selectedDistrict.thanas.map((thana) => (
+                                        <option
+                                            key={thana.id}
+                                            value={thana.name}
+                                        >
+                                            {thana.name}{" "}
+                                            {/* Render the thana name */}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
 
+                        <div>
+                            <InputLabel htmlFor="reg_fee" value="Reg Fee" />
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Reg Fee"
+                                id="reg_fee"
+                                type="number"
                                 name="reg_fee"
                                 value={data.reg_fee}
+                                className="mt-1 block w-full"
+                                autoComplete="reg_fee"
                                 onChange={(e) =>
-                                    setData("reg_fee", e.target.value)
+                                    handleRegFeeChange(e.target.value)
                                 }
+                                required
                             />
-
                             <InputError
                                 message={errors.reg_fee}
                                 className="mt-2"
@@ -312,15 +402,17 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="discount" value="Discount" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Discount"
+                                id="discount"
+                                type="number"
                                 name="discount"
                                 value={data.discount}
+                                className="mt-1 block w-full"
+                                autoComplete="discount"
                                 onChange={(e) =>
-                                    setData("discount", e.target.value)
+                                    handleDiscountChange(e.target.value)
                                 }
                             />
+
                             <InputError
                                 message={
                                     errors.discount ||
@@ -336,14 +428,16 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="paid" value="Paid" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Paid"
+                                id="paid"
+                                type="number"
                                 name="paid"
                                 value={data.paid}
+                                className="mt-1 block w-full"
+                                autoComplete="paid"
                                 onChange={(e) =>
-                                    setData("paid", e.target.value)
+                                    handlePaidChange(e.target.value)
                                 }
+                                required
                             />
 
                             <InputError
@@ -356,12 +450,16 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="due" value="Due" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Due"
+                                id="due"
+                                type="number"
                                 name="due"
                                 value={data.due}
-                                onChange={(e) => setData("due", e.target.value)}
+                                className="mt-1 block w-full"
+                                autoComplete="due"
+                                onChange={(e) =>
+                                    handleDueChange(e.target.value)
+                                }
+                                readOnly
                             />
 
                             <InputError message={errors.due} className="mt-2" />
@@ -371,14 +469,15 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="total" value="Total" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Total"
+                                id="total"
+                                type="number"
                                 name="total"
                                 value={data.total}
-                                onChange={(e) =>
-                                    setData("total", e.target.value)
-                                }
+                                className="mt-1 block w-full"
+                                autoComplete="total"
+                                onChange={(e) => setTotal(e.target.value)}
+                                readOnly
+                                required
                             />
 
                             <InputError
@@ -394,15 +493,15 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Discount Reference"
+                                id="discount_reference"
                                 name="discount_reference"
                                 value={data.discount_reference}
+                                className="mt-1 block w-full"
+                                autoComplete="discount_reference"
                                 onChange={(e) =>
                                     setData(
                                         "discount_reference",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -415,126 +514,20 @@ const EditForm = ({ auth, gpcr }) => {
 
                         <div>
                             <InputLabel
-                                htmlFor="vaccine_name"
-                                value="Vaccine Name"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Vaccine Name"
-                                name="vaccine_name"
-                                value={data.vaccine_name}
-                                onChange={(e) =>
-                                    setData("vaccine_name", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="vaccine_certificate_no"
-                                value="Vaccine Certificate No"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Vaccine Certificate No"
-                                name="vaccine_certificate_no"
-                                value={data.vaccine_certificate_no}
-                                onChange={(e) =>
-                                    setData(
-                                        "vaccine_certificate_no",
-                                        e.target.value
-                                    )
-                                }
-                            />
-
-                            <InputError
-                                message={errors.vaccine_certificate_no}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="first_dose_date"
-                                value="First Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.first_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "first_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.first_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="second_dose_date"
-                                value="Second Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.second_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "second_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.second_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
-                                htmlFor="booster_dose_date"
-                                value="Booster Dose Date"
-                            />
-
-                            <NormalDatePicker
-                                selectedDate={data.booster_dose_date}
-                                handleDateChange={(date) =>
-                                    handleDateChange(date, "booster_dose_date")
-                                }
-                            />
-
-                            <InputError
-                                message={errors.booster_dose_date}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
-                            <InputLabel
                                 htmlFor="contact_no_relation"
                                 value="Contact No Relation"
                             />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Contact No Relation"
+                                id="contact_no_relation"
                                 name="contact_no_relation"
                                 value={data.contact_no_relation}
+                                className="mt-1 block w-full"
+                                autoComplete="contact_no_relation"
                                 onChange={(e) =>
                                     setData(
                                         "contact_no_relation",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -552,15 +545,15 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Sample Collected By"
+                                id="sample_collected_by"
                                 name="sample_collected_by"
                                 value={data.sample_collected_by}
+                                className="mt-1 block w-full"
+                                autoComplete="sample_collected_by"
                                 onChange={(e) =>
                                     setData(
                                         "sample_collected_by",
-                                        e.target.value
+                                        e.target.value.toUpperCase()
                                     )
                                 }
                             />
@@ -578,11 +571,10 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <select
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Hospital Name"
+                                id="hospital_name"
                                 name="hospital_name"
                                 value={data.hospital_name}
+                                className="mt-1 block w-full"
                                 onChange={(e) =>
                                     setData("hospital_name", e.target.value)
                                 }
@@ -606,7 +598,7 @@ const EditForm = ({ auth, gpcr }) => {
                                 <option value="Ekushey Hospital">
                                     Ekushey Hospital
                                 </option>
-                                <option value="CSCR Hospital">
+                                <option value=" CSCR Hospital">
                                     CSCR Hospital
                                 </option>
                                 <option value="Others">Others</option>
@@ -619,37 +611,16 @@ const EditForm = ({ auth, gpcr }) => {
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="ticket_no" value="Ticket No" />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Ticket No"
-                                name="ticket_no"
-                                value={data.ticket_no}
-                                onChange={(e) =>
-                                    setData("ticket_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.ticket_no}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div>
                             <InputLabel
                                 htmlFor="payment_type"
                                 value="Payment Type"
                             />
 
                             <select
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Payment Type"
+                                id="payment_type"
                                 name="payment_type"
                                 value={data.payment_type}
+                                className="mt-1 block w-full"
                                 onChange={(e) =>
                                     setData("payment_type", e.target.value)
                                 }
@@ -671,11 +642,11 @@ const EditForm = ({ auth, gpcr }) => {
                             />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Account Head"
+                                id="account_head"
                                 name="account_head"
-                                value={data.account_head}
+                                value={data.account_head || "Cash in hand"} // Set default value here
+                                className="mt-1 block w-full"
+                                autoComplete="account_head"
                                 onChange={(e) =>
                                     setData("account_head", e.target.value)
                                 }
@@ -691,49 +662,28 @@ const EditForm = ({ auth, gpcr }) => {
                             <InputLabel htmlFor="nid" value="Nid No" />
 
                             <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Nid No"
+                                id="nid"
+                                type="number"
                                 name="nid"
                                 value={data.nid}
+                                className="mt-1 block w-full"
+                                autoComplete="nid"
                                 onChange={(e) => setData("nid", e.target.value)}
                             />
 
                             <InputError message={errors.nid} className="mt-2" />
-
-                            <InputLabel
-                                htmlFor="passport_no"
-                                value="Passport No"
-                            />
-
-                            <TextInput
-                                type="text"
-                                className="w-full px-4 py-2"
-                                label="Passport No"
-                                name="passport_no"
-                                value={data.passport_no}
-                                onChange={(e) =>
-                                    setData("passport_no", e.target.value)
-                                }
-                            />
-
-                            <InputError
-                                message={errors.passport_no}
-                                className="mt-2"
-                            />
                         </div>
                     </div>
-                    <PrimaryButton
-                        type="submit"
-                        className="mx-auto block w-full mt-2"
+                    <button
+                        className="mx-auto block w-full mt-2 bg-blue-400  rounded text-xl py-2 hover:bg-blue-500 text-white font-semibold"
                         disabled={processing}
                     >
-                        {processing ? "Updating..." : "Update"}
-                    </PrimaryButton>
+                        Submit
+                    </button>
                 </form>
             </div>
         </AdminDashboardLayout>
     );
 };
 
-export default EditForm;
+export default CreateForm;
