@@ -42,12 +42,6 @@ Route::get('/', function () {
 
 Route::post('/dope/search', [HomeController::class, 'index'])->name('dope.search');
 
-Route::resource('antigen', AntigenController::class);
-Route::get('antigen/summary/report', [AntigenController::class, 'dateWiseBalSummary'])->name('antigen.summary');
-Route::get('antigen/summary/details', [AntigenController::class, 'summaryDetails'])->name('antigen.summary.details');
-Route::get('antigen/dues/details', [AntigenController::class, 'duesCheck'])->name('antigen.dues.details');
-Route::get('antigen/invoice/{id}', [AntigenController::class, 'antigenMoneyReceipt'])->name('antigen.invoice');
-
 Route::get('contacts/create', [ContactController::class, 'create'])->name('contacts.create');
 Route::resource('contacts', ContactController::class)->middleware(['auth', 'verified'])->except('create');
 
@@ -90,7 +84,7 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
 
 //User route
 Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin, sub-admin, user'])->group(function () {
-    
+
     Route::resource('moleculars', MolecularRegController::class);
     Route::resource('pcr', GpcrController::class);
     Route::get('invoice/{id}', [GpcrController::class, 'moneyReceipt'])->name('invoice');
@@ -98,6 +92,13 @@ Route::middleware(['auth', 'check_user_status', 'check_roles:super-admin, admin,
     Route::get('pcr/summary/report', [GpcrController::class, 'dateWiseBalSummary'])->name('pcr.summary');
     Route::get('pcr/summary/details', [GpcrController::class, 'summaryDetails'])->name('pcr.summary.details');
     Route::get('pcr/dues/details', [GpcrController::class, 'duesCheck'])->name('pcr.dues.details');
+
+    Route::resource('antigen', AntigenController::class);
+    Route::get('antigen/summary/report', [AntigenController::class, 'dateWiseBalSummary'])->name('antigen.summary');
+    Route::get('antigen/summary/details', [AntigenController::class, 'summaryDetails'])->name('antigen.summary.details');
+    Route::get('antigen/dues/details', [AntigenController::class, 'duesCheck'])->name('antigen.dues.details');
+    Route::get('antigen/invoice/{id}', [AntigenController::class, 'antigenMoneyReceipt'])->name('antigen.invoice');
+
     Route::resource('dope', DopeController::class);
     Route::get('dope-inv/{id}', [DopeController::class, 'moneyReceipt'])->name('dope-inv');
     Route::get('dope-summary', [DopeController::class, 'summaryReport'])->name('dope-summary');
