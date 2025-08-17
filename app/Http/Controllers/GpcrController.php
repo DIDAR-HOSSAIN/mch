@@ -186,26 +186,6 @@ class GpcrController extends Controller
         return Inertia::render('Gpcr/MoneyReceipt', ['data' => $data]);
     }
 
-    // public function summaryReport(Request $request)
-    // {
-    //     $startDate = $request->input('start_date');
-    //     $endDate = $request->input('end_date');
-
-    //     $query = Gpcr::query();
-
-    //     if ($startDate && $endDate) {
-    //         $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
-    //         $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
-
-    //         $query->whereBetween('entry_date', [$startDate, $endDate]);
-    //     }
-
-    //     $data = $query->get();
-
-    //     return Inertia::render('Gpcr/Reports/DateWiseBalanceSummary', [
-    //         'data' => $data
-    //     ]);
-
     public function dateWiseBalSummary(Request $request)
     {
         $startDate = $request->input('start_date');

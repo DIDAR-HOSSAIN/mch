@@ -75,13 +75,10 @@ class AntigenController extends Controller
 
         // Check if there is an authenticated user
         if ($user = Auth::user()) {
-            // Access user properties safely
             $data['user_name'] = $user->name;
         } else {
-            // Handle the case where there is no authenticated user
-            // For example, you could set a default value or return an error response
             return response()->json(['error' => 'User not authenticated'], 401);
-        }
+        }        
 
         $data['dob'] = $data['dob'] ?? now()->toDateString();
 
@@ -92,7 +89,12 @@ class AntigenController extends Controller
         $antigen = Antigen::create($data);
 
         // Redirect to the money invoice route with the ID
-        return Redirect::route('invoice', ['id' => $antigen->id]);
+        return response()->json([
+            'id' => $antigen->id,
+            'patient_id' => $antigen->patient_id,
+        ]);
+        
+        
     }
 
 
@@ -176,13 +178,12 @@ class AntigenController extends Controller
     }
 
     public function antigenMoneyReceipt($id)
-{
-    $data = Antigen::findOrFail($id); // better to use findOrFail for 404 handling
+    {
+        $data = Antigen::find($id);
 
-    return Inertia::render('Antigen/MoneyReceipt', [
-        'data' => $data,
-    ]);
-}
+        return Inertia::render('Antigen/MoneyReceipt', ['data' => $data]);
+    }
+
 
 
     public function dateWiseBalSummary(Request $request)

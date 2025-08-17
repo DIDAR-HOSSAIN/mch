@@ -91,7 +91,7 @@ const ViewList = ({ auth, datas }) => {
                                         className="px-6 py-2 text-white bg-green-500 rounded-md focus:outline-none"
                                         href={route("antigen.create")}
                                     >
-                                        Manage Rapid Antigen
+                                        Add Antigen
                                     </Link>
                                 )}
 

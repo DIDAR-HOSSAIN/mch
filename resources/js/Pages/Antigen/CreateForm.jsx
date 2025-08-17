@@ -144,11 +144,9 @@ const CreateForm = ({ auth, districts }) => {
         post(route("antigen.store"), {
             onSuccess: ({ data }) => {
                 const patientId = data.patient_id;
-
-                // Redirect to the invoice route with the patient_id from the response
                 Inertia.visit(route("antigen.invoice", { id: patientId }));
             },
-        });
+        });        
     };
 
     return (
