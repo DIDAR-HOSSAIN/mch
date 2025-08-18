@@ -56,7 +56,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
     };
 
     // const handleChange = (e) => setData(e.target.name, e.target.value.toUpperCase());
-    
+
     const handleChange = (e) => {
         const { name, value, type } = e.target;
 
@@ -223,6 +223,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 <option value="HBV DNA">HBV DNA</option>
                                 <option value="HCV RNA">HCV RNA</option>
                                 <option value="HPV DNA">HPV DNA</option>
+                                <option value="RT-PCR for Dengue and Chikungunya Virus Detection">RT-PCR for Dengue and Chikungunya Virus Detection</option>
                             </select>
                             <InputError message={errors.test_advised} />
                         </div>

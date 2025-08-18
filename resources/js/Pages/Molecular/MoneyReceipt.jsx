@@ -168,23 +168,23 @@ const MolecularTestReceipt = ({ auth, patient, tests }) => {
                 {/* Payment Summary */}
                 <div className="flex justify-between font-semibold text-lg">
                     <p>Total:</p>
-                    <p>{patient.total || "0.00"}.00</p>
+                    <p>{patient.total}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Discount:</p>
-                    <p>{patient.discount || "0.00"}.00</p>
+                    <p>{patient.discount}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Net Payable:</p>
-                    <p>{patient.net_payable || "0.00"}.00</p>
+                    <p>{patient.net_payable}.00</p>
                 </div>
                 <div className="flex justify-between">
                     <p>Paid:</p>
-                    <p>{patient.paid || "0.00"}.00</p>
+                    <p>{patient.paid}.00</p>
                 </div>
                 <div className="flex justify-between font-extrabold text-white text-2xl bg-black">
                     <p>Due:</p>
-                    <p>{patient.due || "0.00"}.00</p>
+                    <p>{patient.due}</p>
                 </div>
 
                 {/* In Words */}

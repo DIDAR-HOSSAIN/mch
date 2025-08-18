@@ -242,6 +242,9 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                         <option value="Cervical Swab">
                                             Cervical Swab
                                         </option>
+                                        <option value=" EDTA Whole Blood">
+                                            EDTA Whole Blood
+                                        </option>
                                     </select>
                                 </div>
 
