@@ -121,6 +121,7 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
                                             "Plasma",
                                             "Serum",
                                             "Cervical Swab",
+                                            " EDTA Whole Blood",
                                         ],
                                     },
                                     {
