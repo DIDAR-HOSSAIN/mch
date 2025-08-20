@@ -20,6 +20,10 @@ return new class extends Migration
             $table->enum('result_status', ['Negative', 'Positive']);
             $table->enum('specimen', ['Whole Blood', 'Plasma', 'Serum', 'Cervical Swab']);
             $table->string('investigation');
+            $table->string('pathogen_name_dengue')->nullable();
+            $table->string('pathogen_name_chikungunya')->nullable();
+            $table->enum('dengue_result', ['Detected', 'Not Detected']);
+            $table->enum('chikungunya_result', ['Detected', 'Not Detected']);
             $table->string('result')->nullable();
             $table->string('unit')->nullable();
             $table->string('result_copies')->nullable();

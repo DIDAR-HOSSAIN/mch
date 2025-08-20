@@ -18,6 +18,8 @@ class MolecularResult extends Model
         'result_status',
         'specimen',
         'investigation',
+        'pathogen_name_dengue',
+        'pathogen_name_chikungunya',
         'result',
         'unit',
         'result_copies',

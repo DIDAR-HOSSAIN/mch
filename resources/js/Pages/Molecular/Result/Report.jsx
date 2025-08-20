@@ -186,6 +186,9 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             <td className="font-semibold border border-[#bbbebc] p-2">
                                                 Ref. By:
                                             </td>
+                                            <td className="font-semibold border border-[#bbbebc] p-2">
+                                                Platform: Applied Biosystems QuantStudio 5
+                                            </td>
                                             <td
                                                 className="border border-[#bbbebc] p-2"
                                                 colSpan="5"
