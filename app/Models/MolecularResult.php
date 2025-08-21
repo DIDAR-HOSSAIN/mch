@@ -20,6 +20,8 @@ class MolecularResult extends Model
         'investigation',
         'pathogen_name_dengue',
         'pathogen_name_chikungunya',
+        'dengue_result',
+        'chikungunya_result',
         'result',
         'unit',
         'result_copies',
@@ -31,7 +33,7 @@ class MolecularResult extends Model
 
     ];
 
-   
+
     public function molecularSample()
     {
         return $this->belongsTo(Sample::class, 'sample_id', 'sample_id');
