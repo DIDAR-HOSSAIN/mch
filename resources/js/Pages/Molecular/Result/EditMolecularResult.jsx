@@ -14,7 +14,7 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
             patient_id: result.patient_id || "",
             test_id: result.test_id || "",
             investigation: result.investigation || "",
-            result: result.result || "",
+            results: result.results || "",
             unit: result.unit || "",
             result_status: result.result_status || "",
             specimen: result.specimen || "",
@@ -125,7 +125,7 @@ const EditMolecularResult = ({ auth, molecularResults }) => {
                                         ],
                                     },
                                     {
-                                        field: "result",
+                                        field: "results",
                                         type: "text",
                                         readOnly: false,
                                     },

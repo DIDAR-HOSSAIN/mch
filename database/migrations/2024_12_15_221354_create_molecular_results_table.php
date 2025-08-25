@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('pathogen_name_chikungunya')->nullable();
             $table->enum('dengue_result', ['Detected', 'Not Detected']);
             $table->enum('chikungunya_result', ['Detected', 'Not Detected']);
-            $table->string('result')->nullable();
+            $table->enum('zika_result', ['Detected', 'Not Detected']);
+            $table->string('results')->nullable();
             $table->string('unit')->nullable();
             $table->string('result_copies')->nullable();
             $table->string('methodology')->nullable();

@@ -160,7 +160,7 @@ const ViewMolecularResult = ({ auth, results }) => {
                                         {result.investigation || "N/A"}
                                     </td>
                                     <td className="border px-4 py-2">
-                                        {result.result || "N/A"}
+                                        {result.results || "N/A"}
                                     </td>
                                     <td className="border px-4 py-2 text-center">
                                         {/* Actions */}
