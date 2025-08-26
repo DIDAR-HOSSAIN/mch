@@ -280,4 +280,24 @@ class MolecularResultController extends Controller
             'patient' => $sample->patient, // Pass patient details separately if needed
         ]);
     }
+
+    public function generateReportWithSign($patientId)
+    {
+        // Fetch molecular test results
+        $tests = MolecularResult::where('patient_id', $patientId)
+            ->with('molecularRegTest') // Include test details
+            ->get();
+
+        // Fetch sample details and include patient relationship
+        $sample = Sample::where('patient_id', $patientId)
+            ->with('molecularPatientReg') // Include related patient details
+            ->firstOrFail();
+
+        // Render the Inertia view with the necessary data
+        return Inertia::render('Molecular/Result/ReportWithSign', [
+            'tests' => $tests,
+            'sample' => $sample,
+            'patient' => $sample->patient, // Pass patient details separately if needed
+        ]);
+    }
 }

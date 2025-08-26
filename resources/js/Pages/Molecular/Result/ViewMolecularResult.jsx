@@ -7,6 +7,7 @@ import { Inertia } from "@inertiajs/inertia";
 import Swal from "sweetalert2";
 import { FaFileInvoice, FaTrashAlt } from "react-icons/fa";
 import { hasAnyRole, hasRole } from "@/backend/Utils/RoleCheck";
+import { PiSignature } from "react-icons/pi";
 
 const ViewMolecularResult = ({ auth, results }) => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -165,7 +166,7 @@ const ViewMolecularResult = ({ auth, results }) => {
                                     <td className="border px-4 py-2 text-center">
                                         {/* Actions */}
                                         <Link
-                                            className="p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                            className="p-2 mx-1 text-white bg-green-700 rounded inline-flex items-center"
                                             href={route(
                                                 "results.reports",
                                                 result.patient_id
@@ -174,6 +175,18 @@ const ViewMolecularResult = ({ auth, results }) => {
                                         >
                                             <FaFileInvoice className="h-5 w-5" />
                                         </Link>
+
+                                        <Link
+                                            className="p-2 text-white bg-green-700 rounded inline-flex items-center"
+                                            href={route(
+                                                "results.sign",
+                                                result.patient_id
+                                            )}
+                                            title="Molecular Report"
+                                        >
+                                            <PiSignature className="h-5 w-5" />
+                                        </Link>
+
                                         <Link
                                             className="mx-1 p-2 text-white bg-green-700 rounded inline-flex items-center"
                                             href={route(

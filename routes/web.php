@@ -127,6 +127,7 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('/results/{patient_id}/createReport', [MolecularResultController::class, 'molecularResultCreate'])->name('results.createReport');
 
     Route::get('/results/{patientId}/reports', [MolecularResultController::class, 'generateReport'])->name('results.reports');
+    Route::get('/results/{patientId}/report-sign', [MolecularResultController::class, 'generateReportWithSign'])->name('results.sign');
 });
 
 // Route::middleware('auth')->group(function () {
