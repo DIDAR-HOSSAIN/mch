@@ -4,10 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\molecularReg;
-use App\Models\MolecularTest;
 use App\Models\Sample;
-use App\Models\MolecularResult;
 
 class MolecularRegTest extends Model
 {

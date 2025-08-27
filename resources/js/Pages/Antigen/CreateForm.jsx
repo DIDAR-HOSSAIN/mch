@@ -146,7 +146,8 @@ const CreateForm = ({ auth, districts }) => {
                 const patientId = data.patient_id;
                 Inertia.visit(route("antigen.invoice", { id: patientId }));
             },
-        });        
+        }
+    );        
     };
 
     return (
@@ -166,7 +167,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="name" value="Name" />
 
                             <TextInput
-                                id="name"
                                 name="name"
                                 value={data.name.toUpperCase()}
                                 className="mt-1 block w-full"
@@ -192,7 +192,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="email" value="Email" />
 
                             <TextInput
-                                id="email"
                                 type="email"
                                 name="email"
                                 value={data.email}
@@ -225,7 +224,6 @@ const CreateForm = ({ auth, districts }) => {
                         <div>
                             <InputLabel htmlFor="age" value="Age" />
                             <TextInput
-                                id="age"
                                 name="age"
                                 value={data.age}
                                 className="mt-1 block w-full"
@@ -240,7 +238,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="sex" value="Sex" />
 
                             <select
-                                id="sex"
                                 name="sex"
                                 value={data.sex}
                                 className="mt-1 block w-full"
@@ -259,7 +256,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="address" value="Address" />
 
                             <TextInput
-                                id="address"
                                 name="address"
                                 value={data.address ? data.address : ""}
                                 className="mt-1 block w-full"
@@ -283,7 +279,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <TextInput
-                                id="contact_no"
                                 type="text"
                                 name="contact_no"
                                 value={data.contact_no}
@@ -379,7 +374,6 @@ const CreateForm = ({ auth, districts }) => {
                         <div>
                             <InputLabel htmlFor="reg_fee" value="Reg Fee" />
                             <TextInput
-                                id="reg_fee"
                                 type="number"
                                 name="reg_fee"
                                 value={data.reg_fee}
@@ -400,7 +394,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="discount" value="Discount" />
 
                             <TextInput
-                                id="discount"
                                 type="number"
                                 name="discount"
                                 value={data.discount}
@@ -426,7 +419,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="paid" value="Paid" />
 
                             <TextInput
-                                id="paid"
                                 type="number"
                                 name="paid"
                                 value={data.paid}
@@ -448,7 +440,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="due" value="Due" />
 
                             <TextInput
-                                id="due"
                                 type="number"
                                 name="due"
                                 value={data.due}
@@ -467,7 +458,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="total" value="Total" />
 
                             <TextInput
-                                id="total"
                                 type="number"
                                 name="total"
                                 value={data.total}
@@ -491,7 +481,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <TextInput
-                                id="discount_reference"
                                 name="discount_reference"
                                 value={data.discount_reference}
                                 className="mt-1 block w-full"
@@ -517,7 +506,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <TextInput
-                                id="contact_no_relation"
                                 name="contact_no_relation"
                                 value={data.contact_no_relation}
                                 className="mt-1 block w-full"
@@ -543,7 +531,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <TextInput
-                                id="sample_collected_by"
                                 name="sample_collected_by"
                                 value={data.sample_collected_by}
                                 className="mt-1 block w-full"
@@ -569,7 +556,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <select
-                                id="hospital_name"
                                 name="hospital_name"
                                 value={data.hospital_name}
                                 className="mt-1 block w-full"
@@ -615,7 +601,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <select
-                                id="payment_type"
                                 name="payment_type"
                                 value={data.payment_type}
                                 className="mt-1 block w-full"
@@ -640,7 +625,6 @@ const CreateForm = ({ auth, districts }) => {
                             />
 
                             <TextInput
-                                id="account_head"
                                 name="account_head"
                                 value={data.account_head || "Cash in hand"} // Set default value here
                                 className="mt-1 block w-full"
@@ -660,7 +644,6 @@ const CreateForm = ({ auth, districts }) => {
                             <InputLabel htmlFor="nid" value="Nid No" />
 
                             <TextInput
-                                id="nid"
                                 type="number"
                                 name="nid"
                                 value={data.nid}
