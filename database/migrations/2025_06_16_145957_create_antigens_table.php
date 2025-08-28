@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('antigens', function (Blueprint $table) {
             $table->id();
-            $table->string('patient_id')->unique();
+            $table->string('patient_id', 20)->unique();
             $table->string('name');
             $table->string('email')->nullable();
             $table->date('dob')->nullable(false);

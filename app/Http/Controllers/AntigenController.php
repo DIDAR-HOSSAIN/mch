@@ -89,18 +89,15 @@ class AntigenController extends Controller
         $antigen = Antigen::create($data);
 
         // Redirect to the money invoice route with the ID
-        return response()->json([
-            'id' => $antigen->id,
-            'patient_id' => $antigen->patient_id,
-        ]);
-        
+        return redirect()->route('antigen.invoice', ['id' => $antigen->id])->with('success', 'Antigen Added successfully.');
+      
         
     }
 
 
     private function generatePatientId()
     {
-        $prefix = 'MCH';
+        $prefix = 'MCHA';
         $currentDate = now()->format('ymd');
 
         // Loop until a unique patient_id is generated
