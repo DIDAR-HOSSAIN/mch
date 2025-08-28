@@ -223,7 +223,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
                                 <option value="HBV DNA">HBV DNA</option>
                                 <option value="HCV RNA">HCV RNA</option>
                                 <option value="HPV DNA">HPV DNA</option>
-                                <option value="RT-PCR for Dengue and Chikungunya Virus Detection">RT-PCR for Dengue, Chikungunya & Zika Virus Detection</option>
+                                <option value="RT-PCR for Dengue, Chikungunya & Zika Virus Detection">RT-PCR for Dengue, Chikungunya & Zika Virus Detection</option>
                             </select>
                             <InputError message={errors.test_advised} />
                         </div>

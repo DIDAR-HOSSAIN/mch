@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('patient_id', 20);
             $table->unsignedBigInteger('test_id')->nullable();
             $table->enum('result_status', ['Negative', 'Positive']);
-            $table->enum('specimen', ['Whole Blood', 'Plasma', 'Serum', 'Cervical Swab']);
+            $table->enum('specimen', ['Whole Blood', 'Plasma', 'Serum', 'Cervical Swab', 'EDTA Whole Blood']);
             $table->string('investigation');
             $table->string('pathogen_name_dengue')->nullable();
             $table->string('pathogen_name_chikungunya')->nullable();
