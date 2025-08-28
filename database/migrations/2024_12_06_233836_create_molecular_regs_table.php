@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('contact_no')->nullable(false);
             $table->integer('age')->nullable(false);
             $table->enum('age_type', ['Y', 'M'])->nullable(false);
-            $table->enum('test_advised', ['HLA B27', 'HBV DNA', 'HCV RNA', 'HPV DNA', 'RT-PCR for Dengue and Chikungunya Virus Detection']);
+            $table->enum('test_advised', ['HLA B27', 'HBV DNA', 'HCV RNA', 'HPV DNA', 'RT-PCR for Dengue, Chikungunya & Zika Virus Detection']);
             $table->string('gender')->nullable(false);
             $table->date('reg_date')->useCurrent();
             $table->float('discount')->nullable();
