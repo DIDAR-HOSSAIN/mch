@@ -23,7 +23,6 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
             methodology: "Real-Time PCR based on TaqMan Technology",
             remarks: "",
             comments: "",
-            // Multiplex extra fields
             dengue_result: "",
             chikungunya_result: "",
             zika_result: "",
@@ -265,108 +264,112 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                     </>
                                 ) : (
                                     <>
-                                        {/* Other Tests: Original Fields */}
-                                        <div>
-                                            <label className="block text-gray-700 font-medium mb-1">
-                                                Result Status
-                                            </label>
-                                            <select
-                                                value={result.result_status}
-                                                onChange={(e) =>
-                                                    handleChange(index, "result_status", e.target.value)
-                                                }
-                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
-                                            >
-                                                <option value="Negative">Negative</option>
-                                                <option value="Positive">Positive</option>
-                                            </select>
-                                        </div>
+                                    <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Result Status
+                                    </label>
+                                    <select
+                                        id={`result_status_${index}`} // Unique id for each select
+                                        value={result.result_status}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                index,
+                                                "result_status",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                        <option value="Negative">
+                                            Negative
+                                        </option>
+                                        <option value="Positive">
+                                            Positive
+                                        </option>
+                                    </select>
+                                </div>
 
-                                        <div>
-                                            <label className="block text-gray-700 font-medium mb-1">
-                                                Specimen Type
-                                            </label>
-                                            <select
-                                                value={result.specimen}
-                                                onChange={(e) =>
-                                                    handleChange(index, "specimen", e.target.value)
-                                                }
-                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
-                                            >
-                                                <option value="">Select Specimen</option>
-                                                <option value="Whole Blood">Whole Blood</option>
-                                                <option value="Plasma">Plasma</option>
-                                                <option value="Serum">Serum</option>
-                                                <option value="Cervical Swab">Cervical Swab</option>
-                                                <option value="EDTA Whole Blood">EDTA Whole Blood</option>
-                                            </select>
-                                        </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Result
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Result"
+                                        value={result.results}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                index,
+                                                "results",
+                                                e.target.value
+                                            )
+                                        }
+                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
 
+                                {result.investigation !==
+                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                    result.result_status === "Negative" && (
                                         <div>
                                             <label className="block text-gray-700 font-medium mb-1">
-                                                Result
+                                                Unit
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="Enter Result"
-                                                value={result.results}
+                                                placeholder="Enter Unit"
+                                                value={result.unit}
                                                 onChange={(e) =>
-                                                    handleChange(index, "results", e.target.value)
+                                                    handleChange(
+                                                        index,
+                                                        "unit",
+                                                        e.target.value
+                                                    )
                                                 }
                                                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
+                                    )}
 
-                                        {result.result_status === "Negative" && (
-                                            <div>
-                                                <label className="block text-gray-700 font-medium mb-1">
-                                                    Unit
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter Unit"
-                                                    value={result.unit}
-                                                    onChange={(e) =>
-                                                        handleChange(index, "unit", e.target.value)
-                                                    }
-                                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                                />
-                                            </div>
-                                        )}
-
-                                        {result.result_status === "Positive" && (
-                                            <div>
-                                                <label className="block text-gray-700 font-medium mb-1">
-                                                    Result Copies
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Result Copies"
-                                                    value={result.result_copies}
-                                                    onChange={(e) =>
-                                                        handleChange(index, "result_copies", e.target.value)
-                                                    }
-                                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                                />
-                                            </div>
-                                        )}
-
+                                {result.investigation !==
+                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                    result.result_status === "Positive" && (
                                         <div>
                                             <label className="block text-gray-700 font-medium mb-1">
-                                                Report Date
+                                                Result Copies
                                             </label>
-                                            <CustomDatePicker
-                                                selectedDate={
-                                                    result.report_date
-                                                        ? new Date(result.report_date)
-                                                        : new Date()
+                                            <input
+                                                type="text"
+                                                placeholder="Result Copies"
+                                                value={result.result_copies}
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        index,
+                                                        "result_copies",
+                                                        e.target.value
+                                                    )
                                                 }
-                                                handleDateChange={(date) =>
-                                                    handleReportDateChange(index, date)
-                                                }
+                                                className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                                             />
                                         </div>
-                                    </>
+                                    )}
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Report Date
+                                    </label>
+                                    <CustomDatePicker
+                                        selectedDate={
+                                            result.report_date
+                                                ? new Date(result.report_date)
+                                                : new Date()
+                                        }
+                                        handleDateChange={(date) =>
+                                            handleReportDateChange(index, date)
+                                        }
+                                    />
+                                </div>
+                               </>
                                 )}
                             </div>
 
