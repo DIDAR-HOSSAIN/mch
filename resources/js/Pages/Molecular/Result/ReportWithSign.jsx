@@ -2,9 +2,13 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import sign1 from "@/assets/images/sign/zakir_sign.png";
 import sign2 from "@/assets/images/sign/zohir_sign.png";
+// import pad from "@/assets/images/pcr_pad.png";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularReport = ({ auth, tests = [], sample = {} }) => {
+    console.log("Molecular tests Report ", tests);
+    console.log("Molecular sample Report ", sample);
+
     const formatBDDateTime = (date) =>
         new Date(date).toLocaleString("en-GB", {
             timeZone: "Asia/Dhaka",
@@ -17,6 +21,8 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
             hour12: true,
         });
 
+
+    // Dengue/Chikungunya/Zika Pathogen Data
     const getPathogenData = (test) => [
         { name: test.pathogen_name_dengue, result: test.dengue_result },
         { name: test.pathogen_name_chikungunya, result: test.chikungunya_result },
@@ -29,12 +35,21 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
         documentTitle: `Receipt_${sample.patient_id}`,
         content: () => contentToPrint.current,
         pageStyle: `
-            @page { size: A4; margin-top: 5cm;; }
-            body { margin: 0; font-family: Arial, sans-serif; }
-            .page-break { page-break-after: always; }
-            table { border-collapse: collapse; }
+            @page {
+                size: A4;
+                margin-top: 5cm;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .page-break {
+                page-break-after: always;
+            }
         `,
     });
+
+
 
     return (
         <AdminDashboardLayout
@@ -56,25 +71,14 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                         tests.map((test, index) => (
                             // <div key={index} className="a4-page p-4 bg-white rounded-md mb-6">
                             <div key={index} className="a4-page p-4 bg-white rounded-md mb-6 flex flex-col min-h-[100vh]">
-                                {/* Patient Details Table */}
+                                {/* ✅ Patient Details Table */}
                                 <table className="w-full text-[14px] text-gray-800 border border-gray-900 border-collapse mb-2">
                                     <tbody>
                                         <tr>
                                             <td className="font-semibold border border-gray-900 p-1">Patient Name:</td>
-                                            <td
-                                                className="border border-gray-900 p-1"
-                                                style={{
-                                                    minWidth: "150px",
-                                                    maxWidth: "200px",
-                                                    whiteSpace: "normal",
-                                                    wordBreak: "break-word",
-                                                    lineHeight: "1.4",
-                                                    minHeight: "40px"
-                                                }}
-                                            >
+                                            <td className="border border-gray-900 p-1" style={{ minWidth: "180px", whiteSpace: "normal", wordBreak: "break-word" }}>
                                                 {sample.molecular_patient_reg?.name || "N/A"}
                                             </td>
-
                                             <td className="font-semibold border border-gray-900 p-1">Gender:</td>
                                             <td className="border border-gray-900 p-1">{sample.molecular_patient_reg?.gender || "N/A"}</td>
                                             <td className="font-semibold border border-gray-900 p-1">Age:</td>
@@ -109,53 +113,171 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     </tbody>
                                 </table>
 
+                                {/* Test Details */}
+                                <h1 className="text-xl font-bold text-center mt-4">
+                                    Molecular Test Report
+                                </h1>
 
-                                {/* Test Report Table */}
-                                <h1 className="text-[16px] font-bold text-center mt-2 mb-2">Molecular Test Report</h1>
-                                <table className="w-full text-[14px] text-gray-800 border border-gray-900 border-collapse mb-2">
-                                    <thead>
-                                        <tr className="bg-gray-200 border border-gray-900">
-                                            <th className="border border-gray-900 p-1 text-center w-1/2">Test Name</th>
-                                            <th className="border border-gray-900 p-1 text-center w-1/4">Pathogen Name</th>
-                                            <th className="border border-gray-900 p-1 text-center w-1/4">Result</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {getPathogenData(test).map((p, idx) => (
-                                            <tr key={idx} className="border border-gray-900">
-                                                {idx === 0 && (
-                                                    <td
-                                                        className="border border-gray-900 p-1 text-center font-semibold w-1/2"
-                                                        rowSpan={getPathogenData(test).length}
-                                                    >
-                                                        {test.molecular_reg_test?.test_name || "N/A"}
-                                                    </td>
-                                                )}
-                                                <td className="border border-gray-900 p-1 text-center w-1/4">{p.name || "N/A"}</td>
-                                                <td className="border border-gray-900 p-1 text-center w-1/4">{p.result || "N/A"}</td>
+                                {test.molecular_reg_test?.test_name ===
+                                    "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses" ? (
+                                    <table className="w-full text-[14px] text-gray-800 border-collapse border border-black mb-2">
+                                        <thead>
+                                            <tr className="bg-gray-200 border border-black">
+                                                <th className="border border-black p-1 text-center w-1/2">Test Name</th>
+                                                <th className="border border-black p-1 text-center w-1/4">Pathogen Name</th>
+                                                <th className="border border-black p-1 text-center w-1/4">Result</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {getPathogenData(test).map((p, idx) => {
+                                                const isBold = ["Detected", "Positive"].includes(p.result);
+                                                return (
+                                                    <tr key={idx} className="border border-black">
+                                                        {idx === 0 && (
+                                                            <td
+                                                                className="border border-black p-1 text-center font-semibold w-1/2"
+                                                                rowSpan={getPathogenData(test).length}
+                                                            >
+                                                                {test.molecular_reg_test?.test_name || "N/A"}
+                                                            </td>
+                                                        )}
+                                                        <td className="border border-black p-1 text-center w-1/4">{p.name || "N/A"}</td>
+                                                        <td
+                                                            className={`border border-black p-1 text-center w-1/4 ${isBold ? "font-bold" : "font-normal"
+                                                                }`}
+                                                        >
+                                                            {p.result || "N/A"}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <table className="w-full text-[16px] text-gray-700 border-collapse border border-black">
+                                        <thead>
+                                            <tr className="border border-black">
+                                                <th className="text-[16px] text-center border border-black p-2">Test Name</th>
+                                                <th
+                                                    className="text-[16px] text-center border border-black p-2"
+                                                    colSpan={
+                                                        test.investigation ===
+                                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
+                                                            test.result_status === "Positive"
+                                                            ? 2
+                                                            : 1
+                                                    }
+                                                >
+                                                    Result
+                                                </th>
+                                                {test.investigation !==
+                                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                                    test.result_status === "Negative" && (
+                                                        <th className="p-2 text-center border border-black">Unit</th>
+                                                    )}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr className="text-lg border border-black">
+                                                <td className="text-[16px] p-2 text-center border border-black">
+                                                    {test.molecular_reg_test?.test_name || "N/A"}
+                                                </td>
 
-                                {/* Methodology */}
-                                <div className="text-sm flex items-center mt-2">
-                                    <span className="font-semibold">Methodology :</span>
-                                    <span className="ml-1">{test.methodology || "No methodology available."}</span>
+                                                {test.investigation ===
+                                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                                    <td
+                                                        className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                            ? "font-bold"
+                                                            : "font-normal"
+                                                            }`}
+                                                    >
+                                                        {test.results || "N/A"}
+                                                    </td>
+                                                ) : test.result_status === "Negative" ? (
+                                                    <>
+                                                        <td
+                                                            className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                                ? "font-bold"
+                                                                : "font-normal"
+                                                                }`}
+                                                        >
+                                                            {test.results || "N/A"}
+                                                        </td>
+                                                        <td className="text-[16px] p-2 text-center border border-black">
+                                                            {test.unit || "N/A"}
+                                                        </td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <td
+                                                            className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                                ? "font-bold"
+                                                                : "font-normal"
+                                                                }`}
+                                                            rowSpan={3}
+                                                        >
+                                                            {test.results || "N/A"}
+                                                        </td>
+                                                        <td
+                                                            className="text-[16px] p-2 text-center border border-black"
+                                                            rowSpan={3}
+                                                        >
+                                                            {test.result_copies || "N/A"}
+                                                        </td>
+                                                    </>
+                                                )}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                )}
+
+
+                                <div className="text-sm flex items-center mt-4">
+                                    <span className="font-semibold">
+                                        Methodology :
+                                    </span>
+                                    <span className="ml-2">
+                                        {test.methodology ||
+                                            "No methodology available."}
+                                    </span>
                                 </div>
 
                                 {/* Remarks & Comments */}
-                                <h3 className="text-sm mt-1 font-semibold">Remarks :</h3>
-                                <ul className="text-sm list-disc pl-4 mb-1">
-                                    {test.remarks ? test.remarks.split(/[|]/).filter(i => i.trim() !== "").map((item, idx) => <li key={idx}>{item.trim()}</li>) : <li>No remarks available.</li>}
+                                <h3 className="text-sm mt-2 font-semibold">
+                                    Remarks :
+                                </h3>
+                                <ul className="text-sm list-disc pl-6 mb-2">
+                                    {test.remarks ? (
+                                        test.remarks
+                                            .split(/[|]/) // Split the remarks based on ., |, or /
+                                            .filter(
+                                                (item) => item.trim() !== ""
+                                            ) // Filter out any empty entries
+                                            .map((item, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="mb-1"
+                                                >
+                                                    {item.trim()}
+                                                </li>
+                                            ))
+                                    ) : (
+                                        <li>No remarks available.</li>
+                                    )}
                                 </ul>
-                                <div className="text-sm mt-1">
-                                    <strong>Comments: </strong>{test.comments || "No comments available."}
+
+                                <span className="text-sm mt-2 font-semibold">
+                                    Comments :
+                                </span>
+                                <span className="text-sm ml-2">
+                                    {test.comments || "No comments available."}
+                                </span>
+
+                                <div className="mt-4 text-center">
+                                    <p>----------End of Report----------</p>
                                 </div>
 
-                                <div className="mt-2 text-center"><p>----------End of Report----------</p></div>
-
-                                {/* Signatures */}
+                                {/* ✅ Signatures */}
                                 <div className="flex justify-between mt-auto text-sm">
                                     <div className="text-center">
                                         <img src={sign2} alt="Zahirul Signature" className="w-12 mx-auto" />
@@ -169,7 +291,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <p>Medical Centre Hospital (RT-PCR Lab)</p>
                                     </div>
                                     <div className="text-center">
-                                        <img src={sign1} alt="Zakir Signature" className="w-12 mx-auto" />
+                                         <img src={sign1} alt="Zakir Signature" className="w-12 mx-auto" />
                                         <hr className="border-t border-gray-900 my-1" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>
@@ -180,13 +302,13 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <p>Medical Centre Hospital (RT-PCR Lab)</p>
                                     </div>
                                 </div>
-
-
                                 <div className="page-break"></div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center py-4">No test results available.</p>
+                        <p className="text-gray-500 text-center py-4">
+                            No test results available.
+                        </p>
                     )}
                 </div>
             </div>

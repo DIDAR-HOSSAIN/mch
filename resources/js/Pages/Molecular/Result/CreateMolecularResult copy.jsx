@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm, usePage } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,13 +8,13 @@ import CustomDatePicker from "@/Components/DatePicker";
 const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
     const { message } = usePage().props;
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         results: tests.map((test) => ({
             sample_id: test.sample?.sample_id || "",
             patient_id: test.patient_id || "",
             test_id: test.test_id || test.id,
             investigation: test.test_name || "",
-            result: "",
+            results: "",
             unit: "",
             result_status: "Negative",
             specimen: "",
@@ -23,11 +23,13 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
             methodology: "Real-Time PCR based on TaqMan Technology",
             remarks: "",
             comments: "",
+            dengue_result: "",
+            chikungunya_result: "",
+            zika_result: "",
         })),
     });
 
-    console.log("create molecular results", data);
-    console.log("create molecular molecularReg", molecularReg);
+    console.log('result data', data)
 
     const handleChange = (index, field, value) => {
         const updatedResults = [...data.results];
@@ -42,12 +44,10 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Submit Data:", data);
         post(route("results.store"), {
             onSuccess: () => {
                 console.log("Form submitted successfully!");
             },
-
             onError: (errors) => {
                 alert("An error occurred. Please try again.");
                 console.error(errors);
@@ -70,28 +70,14 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                 </h2>
 
                 {message && (
-                    <div
-                        className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3"
-                        role="alert"
-                    >
-                        <div className="flex">
-                            <div>
-                                <p className="text-sm">{message}</p>
-                            </div>
-                        </div>
+                    <div className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3">
+                        <p className="text-sm">{message}</p>
                     </div>
                 )}
 
                 {errors.error && (
-                    <div
-                        className="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3"
-                        role="alert"
-                    >
-                        <div className="flex">
-                            <div>
-                                <p className="text-sm">{errors.error}</p>
-                            </div>
-                        </div>
+                    <div className="bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md my-3">
+                        <p className="text-sm">{errors.error}</p>
                     </div>
                 )}
 
@@ -108,7 +94,7 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                 </h3>
                             </div>
 
-                            {/* Test Details */}
+                            {/* Patient/Test Details */}
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">
@@ -176,21 +162,109 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Enter Methodology"
                                         value={result.methodology}
                                         readOnly
                                         className="w-full px-4 py-2 border rounded-md bg-gray-100"
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "methodology",
-                                                e.target.value
-                                            )
-                                        }
                                     />
                                 </div>
 
                                 <div>
+                                    <label className="block text-gray-700 font-medium mb-1">
+                                        Specimen Type
+                                    </label>
+                                    <select
+                                        value={result.specimen}
+                                        onChange={(e) =>
+                                            handleChange(index, "specimen", e.target.value)
+                                        }
+                                        className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
+                                    >
+                                        <option value="">Select Specimen</option>
+                                        <option value="Whole Blood">Whole Blood</option>
+                                        <option value="Plasma">Plasma</option>
+                                        <option value="Serum">Serum</option>
+                                        <option value="Cervical Swab">Cervical Swab</option>
+                                        <option value="EDTA Whole Blood">EDTA Whole Blood</option>
+                                    </select>
+                                </div>
+
+                                {/* If Multiplex, only 3 select boxes */}
+                                {result.investigation ===
+                                    "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses" ? (
+                                    <>
+                                        {/* Dengue */}
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                Dengue Virus RNA
+                                            </label>
+                                            <select
+                                                value={result.dengue_result}
+                                                onChange={(e) =>
+                                                    handleChange(index, "dengue_result", e.target.value)
+                                                }
+                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="Detected">Detected</option>
+                                                <option value="Not Detected">Not Detected</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Chikungunya */}
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                Chikungunya Virus RNA
+                                            </label>
+                                            <select
+                                                value={result.chikungunya_result}
+                                                onChange={(e) =>
+                                                    handleChange(index, "chikungunya_result", e.target.value)
+                                                }
+                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="Detected">Detected</option>
+                                                <option value="Not Detected">Not Detected</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Zika */}
+                                        <div>
+                                            <label className="block text-gray-700 font-medium mb-1">
+                                                Zika Virus RNA
+                                            </label>
+                                            <select
+                                                value={result.zika_result}
+                                                onChange={(e) =>
+                                                    handleChange(index, "zika_result", e.target.value)
+                                                }
+                                                className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm"
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="Detected">Detected</option>
+                                                <option value="Not Detected">Not Detected</option>
+                                            </select>
+                                        </div>
+
+                                            <div>
+                                                <label className="block text-gray-700 font-medium mb-1">
+                                                    Report Date
+                                                </label>
+                                                <CustomDatePicker
+                                                    selectedDate={
+                                                        result.report_date
+                                                            ? new Date(result.report_date)
+                                                            : new Date()
+                                                    }
+                                                    handleDateChange={(date) =>
+                                                        handleReportDateChange(index, date)
+                                                    }
+                                                />
+                                            </div>
+                                    </>
+                                ) : (
+                                    <>
+                                    <div>
                                     <label className="block text-gray-700 font-medium mb-1">
                                         Result Status
                                     </label>
@@ -217,49 +291,16 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
 
                                 <div>
                                     <label className="block text-gray-700 font-medium mb-1">
-                                        Specimen Type
-                                    </label>
-                                    <select
-                                        id={`specimen${index}`} // Unique id for each select
-                                        value={result.specimen}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "specimen",
-                                                e.target.value
-                                            )
-                                        }
-                                        className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                        <option value="" disabled>
-                                            Select Specimen
-                                        </option>
-                                        <option value="Whole Blood">
-                                            Whole Blood
-                                        </option>
-                                        <option value="Plasma">Plasma</option>
-                                        <option value="Serum">Serum</option>
-                                        <option value="Cervical Swab">
-                                            Cervical Swab
-                                        </option>
-                                        <option value=" EDTA Whole Blood">
-                                            EDTA Whole Blood
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 font-medium mb-1">
                                         Result
                                     </label>
                                     <input
                                         type="text"
                                         placeholder="Enter Result"
-                                        value={result.result}
+                                        value={result.results}
                                         onChange={(e) =>
                                             handleChange(
                                                 index,
-                                                "result",
+                                                "results",
                                                 e.target.value
                                             )
                                         }
@@ -328,6 +369,8 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                         }
                                     />
                                 </div>
+                               </>
+                                )}
                             </div>
 
                             <div className="flex gap-4">
@@ -339,13 +382,9 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                         placeholder="Enter Remarks"
                                         value={result.remarks}
                                         onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "remarks",
-                                                e.target.value
-                                            )
+                                            handleChange(index, "remarks", e.target.value)
                                         }
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border rounded-md"
                                         rows="3"
                                     ></textarea>
                                 </div>
@@ -358,19 +397,16 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
                                         placeholder="Enter Comments"
                                         value={result.comments}
                                         onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "comments",
-                                                e.target.value
-                                            )
+                                            handleChange(index, "comments", e.target.value)
                                         }
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border rounded-md"
                                         rows="3"
                                     ></textarea>
                                 </div>
                             </div>
                         </div>
                     ))}
+
                     <div className="flex justify-center">
                         <button
                             type="submit"

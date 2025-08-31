@@ -125,9 +125,17 @@ class MolecularResultController extends Controller
                 'specimen' => $result['specimen'],
                 'investigation' => $result['investigation'],
                 'results' => $result['results'] ?? null,
-                'pathogen_name_dengue'       => 'Dengue Virus RNA',
-                'pathogen_name_chikungunya'  => 'Chikungunya Virus RNA',
-                'pathogen_name_zika'         => 'Zika Virus RNA',
+                'pathogen_name_dengue'      => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
+                    ? "Dengue Virus RNA"
+                    : ($result['pathogen_name_dengue'] ?? null),
+
+                'pathogen_name_chikungunya' => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
+                    ? "Chikungunya Virus RNA"
+                    : ($result['pathogen_name_chikungunya'] ?? null),
+
+                'pathogen_name_zika'        => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
+                    ? "Zika Virus RNA"
+                    : ($result['pathogen_name_zika'] ?? null),
                 'dengue_result'      => $result['dengue_result'] ?? null,
                 'chikungunya_result' => $result['chikungunya_result'] ?? null,
                 'zika_result'        => $result['zika_result'] ?? null,
@@ -224,6 +232,9 @@ class MolecularResultController extends Controller
                 'specimen' => 'required|string',
                 'investigation' => 'required|string',
                 'results' => 'nullable|string',
+                'dengue_result' => 'nullable|string',
+                'chikungunya_result' => 'nullable|string',
+                'zika_result' => 'nullable|string',
                 'unit' => 'nullable|string',
                 'result_copies' => 'nullable|string',
                 'report_date' => 'nullable|date',
