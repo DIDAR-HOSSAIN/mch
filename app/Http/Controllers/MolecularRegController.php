@@ -152,10 +152,12 @@ class MolecularRegController extends Controller
     private function generateMolecularRegId()
     {
         $prefix = 'MCHM';
-        $currentDate = now()->format('ymd');
+        $currentDate = now()->format('ymd'); // Year+Month+Day (e.g., 250901)
+        $yearMonth = now()->format('ym');    // Year+Month (for resetting each month)
         $serialNumber = 1;
 
-        $latestRegId = MolecularReg::where('patient_id', 'like', "$prefix-$currentDate-%")
+        // Find latest ID for the current month
+        $latestRegId = MolecularReg::where('patient_id', 'like', "$prefix-$yearMonth%")
             ->latest('patient_id')
             ->value('patient_id');
 
@@ -166,6 +168,8 @@ class MolecularRegController extends Controller
         $serialNumberFormatted = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
         return "$prefix-$currentDate-$serialNumberFormatted";
     }
+
+
 
     /**
      * Display the specified resource.
