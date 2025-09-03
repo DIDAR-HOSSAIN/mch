@@ -257,11 +257,21 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
 
                                                 {/* ✅ Extra row under table */}
                                                 <tr className="border border-black">
-                                                    <td colSpan="3" className="px-3 py-2 text-sm">
+                                                    <td
+                                                        colSpan={
+                                                            test.investigation === "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                                                ? 2
+                                                                : test.result_status === "Negative"
+                                                                    ? 3
+                                                                    : 1 // Positive হলে এখানে 2 রাখবো
+                                                        }
+                                                        className="px-3 py-2 text-sm text-left align-top"
+                                                    >
                                                         <span className="font-semibold">Comments :</span>{" "}
                                                         {test.comments || "No comments available."}
                                                     </td>
                                                 </tr>
+
 
                                         </tbody>
                                     </table>
