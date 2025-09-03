@@ -77,20 +77,22 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         {/* Row 1 */}
                                         <tr className="bg-gray-50">
                                             <td className="font-semibold whitespace-nowrap">Patient Name:</td>
-                                            <td className="text-left pl-2 whitespace-nowrap overflow-hidden text-ellipsis">{sample.molecular_patient_reg?.name || "N/A"}</td>
-                                            <td className="font-semibold pr-2 whitespace-nowrap">Patient ID:</td>
-                                            <td className="text-left pl-2 whitespace-nowrap">{sample.patient_id || "N/A"}</td>
-                                            <td className="font-semibold pr-2 whitespace-nowrap">Gender:</td>
+                                            <td className="text-left pl-2 whitespace-nowrap overflow-hidden text-ellipsis mr-4">{sample.molecular_patient_reg?.name || "N/A"}</td>
+                                            <td className="font-semibold pl-8 whitespace-nowrap">Gender:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{sample.molecular_patient_reg?.gender || "N/A"}</td>
+                                            <td className="font-semibold pl-4 whitespace-nowrap">Age:</td>
+                                            <td className="text-left pl-2 whitespace-nowrap">
+                                                {sample.molecular_patient_reg?.age || "N/A"} {sample.molecular_patient_reg?.age_type || ""}
+                                            </td>
                                         </tr>
 
                                         {/* Row 2 */}
                                         <tr>
                                             <td className="font-semibold pr-2 whitespace-nowrap">Bill No:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{sample.molecular_patient_reg?.bill_no || "N/A"}</td>
-                                            <td className="font-semibold pr-2 whitespace-nowrap">Contact No:</td>
+                                            <td className="font-semibold pl-8 whitespace-nowrap">Contact No:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{sample.molecular_patient_reg?.contact_no || "N/A"}</td>
-                                            <td className="font-semibold pr-2 whitespace-nowrap">Sample Collected:</td>
+                                            <td className="font-semibold pl-4 whitespace-nowrap">Sample Collected:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{formatBDDateTime(sample.collection_date || "N/A")}</td>
                                         </tr>
 
@@ -98,19 +100,17 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <tr className="bg-gray-50">
                                             <td className="font-semibold pr-2 whitespace-nowrap">Sample Received:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{formatBDDateTime(sample.received_date || "N/A")}</td>
-                                            <td className="font-semibold pl-6 whitespace-nowrap">Report Date:</td>
+                                            <td className="font-semibold pl-8 whitespace-nowrap">Report Date:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{formatBDDateTime(test.report_date || "N/A")}</td>
-                                            <td className="font-semibold pl-2 whitespace-nowrap">Age:</td>
-                                            <td className="text-left pl-2 whitespace-nowrap">
-                                                {sample.molecular_patient_reg?.age || "N/A"} {sample.molecular_patient_reg?.age_type || ""}
-                                            </td>
+                                            <td className="font-semibold pl-4 whitespace-nowrap">Patient ID:</td>
+                                            <td className="text-left pl-2 whitespace-nowrap">{sample.patient_id || "N/A"}</td>
                                         </tr>
 
                                         {/* Row 4 */}
                                         <tr>
                                             <td className="font-semibold pr-2 whitespace-nowrap">Specimen:</td>
                                             <td className="text-left pl-2 whitespace-nowrap">{test.specimen || "N/A"}</td>
-                                            <td className="font-semibold pr-2 whitespace-nowrap">Test Advised:</td>
+                                            <td className="font-semibold pl-8 whitespace-nowrap">Test Advised:</td>
                                             <td className="text-left pl-2 whitespace-nowrap" colSpan="5">{sample.molecular_patient_reg?.test_advised || "N/A"}</td>
                                         </tr>
 
@@ -181,100 +181,185 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                             </tbody>
                                         </table>
                                 ) : (
-                                    <table className="w-full text-[16px] text-gray-700 border-collapse border border-black">
-                                        <thead>
-                                            <tr className="border border-black">
-                                                <th className="text-[16px] text-center border border-black p-2">Test Name</th>
-                                                <th
-                                                    className="text-[16px] text-center border border-black p-2"
-                                                    colSpan={
-                                                        test.investigation ===
-                                                            "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
-                                                            test.result_status === "Positive"
-                                                            ? 2
-                                                            : 1
-                                                    }
-                                                >
-                                                    Result
-                                                </th>
-                                                {test.investigation !==
-                                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
-                                                    test.result_status === "Negative" && (
-                                                        <th className="p-2 text-center border border-black">Unit</th>
-                                                    )}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr className="text-lg border border-black">
-                                                    <td className="text-[16px] p-2 text-center border border-black font-semibold align-middle">
-                                                    {test.molecular_reg_test?.test_name || "N/A"}
-                                                </td>
 
-                                                {test.investigation ===
-                                                    "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
-                                                    <td
-                                                        className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
-                                                            ? "font-bold"
-                                                            : "font-normal"
-                                                            }`}
-                                                    >
-                                                        {test.results || "N/A"}
-                                                    </td>
-                                                ) : test.result_status === "Negative" ? (
-                                                    <>
-                                                        <td
-                                                            className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
-                                                                ? "font-bold"
-                                                                : "font-normal"
-                                                                }`}
-                                                        >
-                                                            {test.results || "N/A"}
-                                                        </td>
-                                                        <td className="text-[16px] p-2 text-center border border-black">
-                                                            {test.unit || "N/A"}
-                                                        </td>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <td
-                                                            className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
-                                                                ? "font-bold"
-                                                                : "font-normal"
-                                                                }`}
-                                                            rowSpan={3}
-                                                        >
-                                                            {test.results || "N/A"}
-                                                        </td>
-                                                        <td
-                                                            className="text-[16px] p-2 text-center border border-black"
-                                                            rowSpan={3}
-                                                        >
-                                                            {test.result_copies || "N/A"}
-                                                        </td>
-                                                    </>
-                                                )}
-                                            </tr>
 
-                                                {/* ✅ Extra row under table */}
+
+                                        <table className="w-full text-[16px] text-gray-700 border-collapse border border-black">
+                                            <thead>
                                                 <tr className="border border-black">
-                                                    <td
+                                                    <th className="text-[16px] text-center border border-black p-2 w-[55%]">Test Name</th>
+                                                    <th
+                                                        className="text-[16px] text-center border border-black p-2 w-[28%]"
                                                         colSpan={
-                                                            test.investigation === "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                                            test.investigation ===
+                                                                "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
+                                                                test.result_status === "Positive"
                                                                 ? 2
-                                                                : test.result_status === "Negative"
-                                                                    ? 3
-                                                                    : 1 // Positive হলে এখানে 2 রাখবো
+                                                                : 1
                                                         }
-                                                        className="px-3 py-2 text-sm text-left align-top"
                                                     >
+                                                        Result
+                                                    </th>
+                                                    {test.investigation !==
+                                                        "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                                        test.result_status === "Negative" && (
+                                                            <th className="p-2 text-center border border-black">Unit</th>
+                                                        )}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr className="text-lg border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-black font-semibold align-middle">
+                                                        {test.molecular_reg_test?.test_name || "N/A"}
+                                                    </td>
+
+                                                    {test.investigation ===
+                                                        "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                                        <td
+                                                            className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                                    ? "font-bold"
+                                                                    : "font-normal"
+                                                                }`}
+                                                        >
+                                                            {test.results || "N/A"}
+                                                        </td>
+                                                    ) : test.result_status === "Negative" ? (
+                                                        <>
+                                                            <td
+                                                                className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                                        ? "font-bold"
+                                                                        : "font-normal"
+                                                                    }`}
+                                                            >
+                                                                {test.results || "N/A"}
+                                                            </td>
+                                                            <td className="text-[16px] p-2 text-center border border-black">
+                                                                {test.unit || "N/A"}
+                                                            </td>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <td
+                                                                className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                                                        ? "font-bold"
+                                                                        : "font-normal"
+                                                                    }`}
+                                                            >
+                                                                {test.results || "N/A"}
+                                                            </td>
+                                                            <td className="text-[16px] p-2 text-center border border-black">
+                                                                {test.result_copies || "N/A"}
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                </tr>
+
+                                                {/* ✅ Comments full row under table */}
+                                                <tr className="border border-black">
+                                                    <td colSpan="100%" className="px-3 py-2 text-sm text-left align-top">
                                                         <span className="font-semibold">Comments :</span>{" "}
                                                         {test.comments || "No comments available."}
                                                     </td>
                                                 </tr>
+                                            </tbody>
+                                        </table>
 
 
-                                        </tbody>
-                                    </table>
+
+                                    // <table className="w-full text-[16px] text-gray-700 border-collapse border border-black">
+                                    //     <thead>
+                                    //         <tr className="border border-black">
+                                    //             <th className="text-[16px] text-center border border-black p-2">Test Name</th>
+                                    //             <th
+                                    //                 className="text-[16px] text-center border border-black p-2"
+                                    //                 colSpan={
+                                    //                     test.investigation ===
+                                    //                         "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ||
+                                    //                         test.result_status === "Positive"
+                                    //                         ? 2
+                                    //                         : 1
+                                    //                 }
+                                    //             >
+                                    //                 Result
+                                    //             </th>
+                                    //             {test.investigation !==
+                                    //                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" &&
+                                    //                 test.result_status === "Negative" && (
+                                    //                     <th className="p-2 text-center border border-black">Unit</th>
+                                    //                 )}
+                                    //         </tr>
+                                    //     </thead>
+                                    //     <tbody>
+                                    //         <tr className="text-lg border border-black">
+                                    //                 <td className="text-[16px] p-2 text-center border border-black font-semibold align-middle">
+                                    //                 {test.molecular_reg_test?.test_name || "N/A"}
+                                    //             </td>
+
+                                    //             {test.investigation ===
+                                    //                 "Human Leukocyte Antigen B 27 (HLA B27) Qualitative" ? (
+                                    //                 <td
+                                    //                     className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                    //                         ? "font-bold"
+                                    //                         : "font-normal"
+                                    //                         }`}
+                                    //                 >
+                                    //                     {test.results || "N/A"}
+                                    //                 </td>
+                                    //             ) : test.result_status === "Negative" ? (
+                                    //                 <>
+                                    //                     <td
+                                    //                         className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                    //                             ? "font-bold"
+                                    //                             : "font-normal"
+                                    //                             }`}
+                                    //                     >
+                                    //                         {test.results || "N/A"}
+                                    //                     </td>
+                                    //                     <td className="text-[16px] p-2 text-center border border-black">
+                                    //                         {test.unit || "N/A"}
+                                    //                     </td>
+                                    //                 </>
+                                    //             ) : (
+                                    //                 <>
+                                    //                     <td
+                                    //                         className={`text-[16px] p-2 text-center border border-black ${["Detected", "Positive"].includes(test.results)
+                                    //                             ? "font-bold"
+                                    //                             : "font-normal"
+                                    //                             }`}
+                                    //                         rowSpan={3}
+                                    //                     >
+                                    //                         {test.results || "N/A"}
+                                    //                     </td>
+                                    //                     <td
+                                    //                         className="text-[16px] p-2 text-center border border-black"
+                                    //                         rowSpan={3}
+                                    //                     >
+                                    //                         {test.result_copies || "N/A"}
+                                    //                     </td>
+                                    //                 </>
+                                    //             )}
+                                    //         </tr>
+
+                                    //             {/* ✅ Extra row under table */}
+                                    //             <tr className="border border-black">
+                                    //                 <td
+                                    //                     colSpan={
+                                    //                         test.investigation === "Human Leukocyte Antigen B 27 (HLA B27) Qualitative"
+                                    //                             ? 2
+                                    //                             : test.result_status === "Negative"
+                                    //                                 ? 3
+                                    //                                 : 1 // Positive হলে এখানে 2 রাখবো
+                                    //                     }
+                                    //                     className="px-3 py-2 text-sm text-left align-top"
+                                    //                 >
+                                    //                     <span className="font-semibold">Comments :</span>{" "}
+                                    //                     {test.comments || "No comments available."}
+                                    //                 </td>
+                                    //             </tr>
+
+
+                                    //     </tbody>
+                                    // </table>
                                 )}
 
 
