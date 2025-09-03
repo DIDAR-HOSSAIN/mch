@@ -126,15 +126,15 @@ class MolecularResultController extends Controller
                 'investigation' => $result['investigation'],
                 'results' => $result['results'] ?? null,
                 'pathogen_name_dengue'      => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
-                    ? "Dengue Virus RNA"
+                    ? "Dengue Virus"
                     : ($result['pathogen_name_dengue'] ?? null),
 
                 'pathogen_name_chikungunya' => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
-                    ? "Chikungunya Virus RNA"
+                    ? "Chikungunya Virus"
                     : ($result['pathogen_name_chikungunya'] ?? null),
 
                 'pathogen_name_zika'        => $result['investigation'] === "Multiplex Real-Time RT-PCR for Dengue, Chikungunya & Zika Viruses"
-                    ? "Zika Virus RNA"
+                    ? "Zika Virus"
                     : ($result['pathogen_name_zika'] ?? null),
                 'dengue_result'      => $result['dengue_result'] ?? null,
                 'chikungunya_result' => $result['chikungunya_result'] ?? null,

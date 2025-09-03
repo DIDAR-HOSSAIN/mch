@@ -22,7 +22,7 @@ const CreateMolecular = ({ auth, tests = [], references = [] }) => {
             discount: 0,
             paid: 0,
             account_head: "Cash in hand",
-            payment_type: "",
+            payment_type: "Cash",
             reference_name: "",
             remarks: "",
         }

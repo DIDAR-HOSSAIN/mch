@@ -150,7 +150,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                         >
                                                             {idx === 0 && (
                                                                 <td
-                                                                    className="border border-black px-3 py-2 text-center font-semibold align-middle"
+                                                                    className="border border-black px-24 py-2 text-center font-semibold align-middle"
                                                                     rowSpan={getPathogenData(test).length}
                                                                 >
                                                                     {test.molecular_reg_test?.test_name || "N/A"}
@@ -168,6 +168,16 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                         </tr>
                                                     );
                                                 })}
+
+                                                {/* ✅ Extra row under table */}
+                                                <tr className="border border-black">
+                                                    <td colSpan="3" className="px-3 py-2">
+                                                        <span className="font-semibold">Comments :</span>{" "}
+                                                        {test.comments || "No comments available."}
+                                                    </td>
+                                                </tr>
+
+
                                             </tbody>
                                         </table>
                                 ) : (
@@ -196,7 +206,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         </thead>
                                         <tbody>
                                             <tr className="text-lg border border-black">
-                                                <td className="text-[16px] p-2 text-center border border-black">
+                                                    <td className="text-[16px] p-2 text-center border border-black font-semibold align-middle">
                                                     {test.molecular_reg_test?.test_name || "N/A"}
                                                 </td>
 
@@ -244,6 +254,15 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                                     </>
                                                 )}
                                             </tr>
+
+                                                {/* ✅ Extra row under table */}
+                                                <tr className="border border-black">
+                                                    <td colSpan="3" className="px-3 py-2 text-sm">
+                                                        <span className="font-semibold">Comments :</span>{" "}
+                                                        {test.comments || "No comments available."}
+                                                    </td>
+                                                </tr>
+
                                         </tbody>
                                     </table>
                                 )}
@@ -283,10 +302,10 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                     )}
                                 </ul>
 
-                                <p className="text-sm mt-2">
+                                {/* <p className="text-sm mt-2">
                                     <span className="font-semibold">Comments :</span>{" "}
                                     {test.comments || "No comments available."}
-                                </p>
+                                </p> */}
 
 
                                 <div className="mt-4 mb-32  text-center">
@@ -309,6 +328,7 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <hr className="border-t border-gray-900 my-1" />
                                         <strong>Dr. Md. Zakir Hossain</strong>
                                         <p>MBBS, BCS, M.Phil (Microbiology)</p>
+                                        <p>SLMTA Fellow, US-CDC</p>
                                         <p>Assistant Professor & Head</p>
                                         <p>Dept. of Microbiology & Immunology</p>
                                         <p>BITID, Fouzderhat, Chattogram</p>
