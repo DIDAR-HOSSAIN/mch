@@ -134,9 +134,9 @@ const MolecularReport = ({ auth, tests = [], sample = {} }) => {
                                         <table className="w-full text-[15px] text-gray-800 border border-black mb-4">
                                             <thead>
                                                 <tr className="bg-gray-100">
-                                                    <th className="border border-black px-3 py-2 text-center w-[55%]">Test Name</th>
+                                                    <th className="border border-black px-3 py-2 text-center w-[54%]">Test Name</th>
                                                     <th className="border border-black px-3 py-2 text-center w-[28%]">Pathogen Name</th>
-                                                    <th className="border border-black px-3 py-2 text-center w-[17%]">Result</th>
+                                                    <th className="border border-black px-3 py-2 text-center w-[18%]">Result</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
