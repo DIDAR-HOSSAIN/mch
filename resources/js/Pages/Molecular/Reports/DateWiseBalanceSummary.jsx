@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
-import DateWiseReport from "./DateWiseReport";
+import DateWiseReport from "./DateWiseReport"; // আপনার date picker component
 
 const DateWiseBalanceSummary = ({ auth, data }) => {
     const [filteredData, setFilteredData] = useState([]);
@@ -11,35 +11,48 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
 
     useEffect(() => {
         filterData(selectedUser, startDate, endDate);
-    }, [selectedUser, startDate, endDate]);
+    }, [selectedUser, startDate, endDate, data]);
 
     const handleUserChange = (e) => {
         setSelectedUser(e.target.value);
     };
 
-    const handleDateRangeChange = (startDate, endDate) => {
-        setStartDate(startDate);
-        setEndDate(endDate);
-        filterData(selectedUser, startDate, endDate);
+    const handleDateRangeChange = (start, end) => {
+        setStartDate(start);
+        setEndDate(end);
+        filterData(selectedUser, start, end);
     };
 
     const filterData = (user, start, end) => {
-        const filteredData = data.filter((item) => {
-            const entryDate = new Date(item.entry_date);
-            const isUserMatch = user ? item.user_name === user : true;
-            const isDateRangeMatch =
-                (!start || entryDate >= start) &&
-                (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
-            return isUserMatch && isDateRangeMatch;
+        const filtered = data.filter((item) => {
+            const entryDate = new Date(item.reg_date); // DB থেকে আসা date string
+
+            // start, end date conversion
+            const startObj = start ? new Date(start) : null;
+            const endObj = end ? new Date(end) : null;
+
+            // Adjust end date to include entire day
+            if (endObj) {
+                endObj.setHours(23, 59, 59, 999);
+            }
+
+            // User filter
+            const isUserMatch = user ? item.user_name?.trim() === user?.trim() : true;
+
+            // Date filter
+            const isDateMatch =
+                (!startObj || entryDate >= startObj) &&
+                (!endObj || entryDate <= endObj);
+
+            return isUserMatch && isDateMatch;
         });
-        setFilteredData(filteredData);
+
+        setFilteredData(filtered);
     };
 
+
     const getColumnSummary = (key) => {
-        const count = filteredData.reduce((acc, curr) => {
-            return acc + parseFloat(curr[key] || 0);
-        }, 0);
-        return count;
+        return filteredData.reduce((acc, curr) => acc + parseFloat(curr[key] || 0), 0);
     };
 
     return (
@@ -62,23 +75,18 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
                             className="form-select w-64 rounded-md"
                         >
                             <option value="">All Users</option>
-                            {Array.from(
-                                new Set(data.map((item) => item.user_name))
-                            ).map((user, index) => (
-                                <option key={index} value={user}>
+                            {Array.from(new Set(data.map((item) => item.user_name))).map((user, idx) => (
+                                <option key={idx} value={user}>
                                     {user}
                                 </option>
                             ))}
                         </select>
 
-                        <DateWiseReport
-                            data={data}
-                            onSearch={handleDateRangeChange}
-                        />
+                        <DateWiseReport data={data} onSearch={handleDateRangeChange} />
                     </div>
 
                     {filteredData.length > 0 ? (
-                        <table className="min-w-full divide-y divide-gray-200">
+                        <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -91,60 +99,33 @@ const DateWiseBalanceSummary = ({ auth, data }) => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Total Bill
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {getColumnSummary("total")}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Total Bill</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{getColumnSummary("total")}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Net Bill
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {getColumnSummary("net_payable")}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Net Bill</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{getColumnSummary("net_payable")}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Total Discount
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {getColumnSummary("discount")}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Total Discount</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{getColumnSummary("discount")}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Total Due
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {getColumnSummary("due")}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Total Due</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{getColumnSummary("due")}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Total Paid
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {getColumnSummary("paid")}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Total Paid</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{getColumnSummary("paid")}</td>
                                 </tr>
                                 <tr className="bg-gray-100">
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        Total Count
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                        {filteredData.length}
-                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">Total Count</td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-bold">{filteredData.length}</td>
                                 </tr>
                             </tbody>
                         </table>
                     ) : (
-                        <p className="text-gray-500">
-                            No data available for the selected user and date
-                            range.
-                        </p>
+                        <p className="text-gray-500 mt-4">No data available for the selected user and date range.</p>
                     )}
                 </div>
             </div>

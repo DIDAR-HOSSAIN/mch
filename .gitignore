@@ -8,6 +8,7 @@
 /vendor
 .env
 app.zip
+/bootstrap.zip
 /vite.config.js
 .env.backup
 .env.production

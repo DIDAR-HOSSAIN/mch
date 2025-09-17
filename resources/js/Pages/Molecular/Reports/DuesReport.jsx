@@ -3,49 +3,46 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import { Head } from "@inertiajs/react";
 import DateWiseReport from "./DateWiseReport";
 
-    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
-
 const DuesReport = ({ auth, data }) => {
     const [filteredData, setFilteredData] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
+
     useEffect(() => {
         filterData(selectedUser, startDate, endDate);
-    }, [selectedUser, startDate, endDate]);
+    }, [selectedUser, startDate, endDate, data]);
 
-    const handleUserChange = (e) => {
-        setSelectedUser(e.target.value);
-    };
+    const handleUserChange = (e) => setSelectedUser(e.target.value);
 
-    const handleDateRangeChange = (startDate, endDate) => {
-        setStartDate(startDate);
-        setEndDate(endDate);
-        filterData(selectedUser, startDate, endDate);
+    const handleDateRangeChange = (start, end) => {
+        setStartDate(start);
+        setEndDate(end);
     };
 
     const filterData = (user, start, end) => {
-        const filteredData = data.filter((item) => {
-            const entryDate = new Date(item.entry_date);
+        const filtered = data.filter((item) => {
+            const entryDate = new Date(item.reg_date);
+
             const isUserMatch = user ? item.user_name === user : true;
-            const isDateRangeMatch =
-                (!start || entryDate >= start) &&
-                (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
-            const isDueNotNullOrZero =
-                item.due !== null && parseFloat(item.due) !== 0; // Filter out null or zero dues
-            return isUserMatch && isDateRangeMatch && isDueNotNullOrZero;
+
+            const isDateMatch =
+                (!start || entryDate >= new Date(start.setHours(0, 0, 0, 0))) &&
+                (!end || entryDate <= new Date(end.setHours(23, 59, 59, 999)));
+
+            const isDueValid =
+                item.due !== null && parseFloat(item.due) > 0;
+
+            return isUserMatch && isDateMatch && isDueValid;
         });
-        setFilteredData(filteredData);
+
+        setFilteredData(filtered);
     };
 
-
-    const getColumnSummary = (key) => {
-        const count = filteredData.reduce((acc, curr) => {
-            return acc + parseFloat(curr[key] || 0);
-        }, 0);
-        return count;
-    };
+    const getColumnSummary = (key) =>
+        filteredData.reduce((acc, curr) => acc + parseFloat(curr[key] || 0), 0);
 
     return (
         <AdminDashboardLayout
@@ -59,50 +56,38 @@ const DuesReport = ({ auth, data }) => {
             <Head title="Dues Report" />
 
             <div className="py-4">
-                <div className="mx-auto max-w-4xl">
-                    <div className="flex items-center justify-between mb-4">
+                <div className="mx-auto max-w-6xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
                         <select
                             value={selectedUser}
                             onChange={handleUserChange}
-                            className="form-select w-64 rounded-md"
+                            className="form-select w-full sm:w-64 rounded-md"
                         >
                             <option value="">All Users</option>
-                            {Array.from(
-                                new Set(data.map((item) => item.user_name))
-                            ).map((user, index) => (
-                                <option key={index} value={user}>
-                                    {user}
-                                </option>
-                            ))}
+                            {Array.from(new Set(data.map((item) => item.user_name))).map(
+                                (user, index) => (
+                                    <option key={index} value={user}>
+                                        {user}
+                                    </option>
+                                )
+                            )}
                         </select>
 
-                        <DateWiseReport
-                            data={data}
-                            onSearch={handleDateRangeChange}
-                        />
+                        <DateWiseReport data={data} onSearch={handleDateRangeChange} />
                     </div>
 
                     {filteredData.length > 0 ? (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto border rounded">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Date
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Patient ID
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Due
                                         </th>
                                     </tr>
@@ -116,17 +101,13 @@ const DuesReport = ({ auth, data }) => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.patient_id}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.due}
-                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{item.due}</td>
                                         </tr>
                                     ))}
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold"></td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                            Total
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                    <tr className="bg-gray-100 font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap"></td>
+                                        <td className="px-6 py-4 whitespace-nowrap">Total</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("due")}
                                         </td>
                                     </tr>
@@ -134,9 +115,8 @@ const DuesReport = ({ auth, data }) => {
                             </table>
                         </div>
                     ) : (
-                        <p className="text-gray-500">
-                            No data available for the selected user and date
-                            range.
+                        <p className="text-gray-500 text-center py-4">
+                            No data available for the selected user and date range.
                         </p>
                     )}
                 </div>

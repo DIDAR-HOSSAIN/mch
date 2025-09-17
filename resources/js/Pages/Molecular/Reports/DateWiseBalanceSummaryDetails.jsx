@@ -13,117 +13,90 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
 
     useEffect(() => {
         filterData(selectedUser, startDate, endDate);
-    }, [selectedUser, startDate, endDate]);
+    }, [selectedUser, startDate, endDate, data]);
 
-    const handleUserChange = (e) => {
-        setSelectedUser(e.target.value);
-    };
+    const handleUserChange = (e) => setSelectedUser(e.target.value);
 
-    const handleDateRangeChange = (startDate, endDate) => {
-        setStartDate(startDate);
-        setEndDate(endDate);
-        filterData(selectedUser, startDate, endDate);
+    const handleDateRangeChange = (start, end) => {
+        setStartDate(start);
+        setEndDate(end);
     };
 
     const filterData = (user, start, end) => {
-        const filteredData = data.filter((item) => {
-            const entryDate = new Date(item.entry_date);
+        const filtered = data.filter((item) => {
+            const entryDate = new Date(item.reg_date);
+
             const isUserMatch = user ? item.user_name === user : true;
-            const isDateRangeMatch =
-                (!start || entryDate >= start) &&
-                (!end || entryDate <= new Date(end.getTime() + 86400000)); // Add one day to include records on the end date
-            return isUserMatch && isDateRangeMatch;
+
+            const isDateMatch =
+                (!start || entryDate >= new Date(start.setHours(0, 0, 0, 0))) &&
+                (!end || entryDate <= new Date(end.setHours(23, 59, 59, 999)));
+
+            return isUserMatch && isDateMatch;
         });
-        setFilteredData(filteredData);
+
+        setFilteredData(filtered);
     };
 
-    const getColumnSummary = (key) => {
-        const count = filteredData.reduce((acc, curr) => {
-            return acc + parseFloat(curr[key] || 0);
-        }, 0);
-        return count;
-    };
+    const getColumnSummary = (key) =>
+        filteredData.reduce((acc, curr) => acc + parseFloat(curr[key] || 0), 0);
 
     return (
         <AdminDashboardLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Date Wise Balance Summary (Molecular)
+                    Date Wise Balance Summary Details (Molecular)
                 </h2>
             }
         >
             <Head title="Molecular Summary" />
 
             <div className="py-4">
-                <div className="mx-auto max-w-4xl">
-                    <div className="flex items-center justify-between mb-4">
+                <div className="mx-auto max-w-6xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
                         <select
                             value={selectedUser}
                             onChange={handleUserChange}
-                            className="form-select w-64 rounded-md"
+                            className="form-select w-full sm:w-64 rounded-md"
                         >
                             <option value="">All Users</option>
-                            {Array.from(
-                                new Set(data.map((item) => item.user_name))
-                            ).map((user, index) => (
-                                <option key={index} value={user}>
-                                    {user}
-                                </option>
-                            ))}
+                            {Array.from(new Set(data.map((item) => item.user_name))).map(
+                                (user, index) => (
+                                    <option key={index} value={user}>
+                                        {user}
+                                    </option>
+                                )
+                            )}
                         </select>
 
-                        <DateWiseReport
-                            data={data}
-                            onSearch={handleDateRangeChange}
-                        />
+                        <DateWiseReport data={data} onSearch={handleDateRangeChange} />
                     </div>
 
                     {filteredData.length > 0 ? (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto border rounded">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Date
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Patient ID
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Total Bill
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Net Bill
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Discount
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Due
                                         </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                        >
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Paid
                                         </th>
                                     </tr>
@@ -137,41 +110,31 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.patient_id}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.total}
-                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{item.total}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {item.net_payable}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.discount}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.due}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {item.paid}
-                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{item.discount}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{item.due}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{item.paid}</td>
                                         </tr>
                                     ))}
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold"></td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
-                                            Total
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                    <tr className="bg-gray-100 font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap"></td>
+                                        <td className="px-6 py-4 whitespace-nowrap">Total</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("total")}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("net_payable")}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("discount")}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("due")}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {getColumnSummary("paid")}
                                         </td>
                                     </tr>
@@ -179,9 +142,8 @@ const DateWiseBalanceSummaryDetails = ({ auth, data }) => {
                             </table>
                         </div>
                     ) : (
-                        <p className="text-gray-500">
-                            No data available for the selected user and date
-                            range.
+                        <p className="text-gray-500 text-center py-4">
+                            No data available for the selected user and date range.
                         </p>
                     )}
                 </div>
