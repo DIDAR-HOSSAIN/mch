@@ -15,8 +15,6 @@ const UserList = ({ auth }) => {
             await put(route("users.toggleActive", { id: id }), {
                 user_status: !isActive,
             });
-
-            console.log("User active status toggled successfully");
             // Optionally handle success response here
         } catch (error) {
             console.error("Error toggling user active status:", errors);
@@ -27,7 +25,6 @@ const UserList = ({ auth }) => {
         if (confirm("Are you sure you want to delete this user?")) {
             Inertia.delete(route("users.destroy", { id: id }))
                 .then(() => {
-                    console.log("User deleted successfully");
                     // Optionally handle success response here
                 })
                 .catch((error) => {

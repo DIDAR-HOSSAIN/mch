@@ -9,7 +9,6 @@ import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 
 const SampleReceive = ({ auth, collectedSamples }) => {
-    console.log('from sample receive',collectedSamples);
     const [sampleReceivedDate, setSampleReceivedDate] = useState(new Date());
     const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
     const [selectedPatient, setSelectedPatient] = useState(null);

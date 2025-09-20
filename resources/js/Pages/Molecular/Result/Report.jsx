@@ -6,8 +6,6 @@ import sign2 from "@/assets/images/sign/zohir_sign.png";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const MolecularReport = ({ auth, tests = [], sample = {} }) => {
-    console.log("Molecular tests Report ", tests);
-    console.log("Molecular sample Report ", sample);
 
     const formatBDDateTime = (date) =>
         new Date(date).toLocaleString("en-GB", {

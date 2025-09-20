@@ -29,8 +29,6 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
         })),
     });
 
-    console.log('result data', data)
-
     const handleChange = (index, field, value) => {
         const updatedResults = [...data.results];
         updatedResults[index][field] = value;
@@ -46,7 +44,7 @@ const CreateMolecularResult = ({ auth, tests, molecularReg }) => {
         e.preventDefault();
         post(route("results.store"), {
             onSuccess: () => {
-                console.log("Form submitted successfully!");
+    
             },
             onError: (errors) => {
                 alert("An error occurred. Please try again.");

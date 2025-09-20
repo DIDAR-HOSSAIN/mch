@@ -9,8 +9,6 @@ const BarcodeGenerate = ({auth, barcodeData}) => {
     const contentToPrint = useRef(null);
     const handlePrint = useReactToPrint({
         documentTitle: `${barcodeData.patient_id || "N/A"}`,
-        onBeforePrint: () => console.log("before printing..."),
-        onAfterPrint: () => console.log("after printing..."),
         removeAfterPrint: true,
         content: () => contentToPrint.current,
         pageStyle: `

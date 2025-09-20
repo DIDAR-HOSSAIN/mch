@@ -8,7 +8,6 @@ import InputError from "@/Components/InputError";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 export default function EditMolecularSample({ auth, sample }) {
-    // console.log('edit molecular sample', sample);
     const [sampleReceivedDate, setSampleReceivedDate] = useState(
         sample.received_date ? parseISO(sample.received_date) : new Date()
     );

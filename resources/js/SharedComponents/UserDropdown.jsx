@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import avatar from '@/assets/images/avatar.jpg';
 
 const UserDropdown = ({ user }) => {
-    // console.log("from user dropdown", auth.user);
     const [isEndHovered, setIsEndHovered] = useState(false);
 
     const handleEndMenuHover = () => {

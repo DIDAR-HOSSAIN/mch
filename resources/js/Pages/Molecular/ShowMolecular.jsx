@@ -1,7 +1,6 @@
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const ShowMolecular = ({ auth, molecularReg }) => {
-    console.log(molecularReg);
 
     // Format Date function
     const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");

@@ -33,7 +33,6 @@ const CreateForm = ({ auth, districts, references }) => {
         age: 0, 
     });
 
-    console.log('dope reg data', data);
 
     const calculateAge = (dob) => {
         const currentDate = new Date();

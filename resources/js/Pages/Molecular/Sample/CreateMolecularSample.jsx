@@ -26,12 +26,36 @@ const CreateMolecularSample = ({ auth, regIds }) => {
     useEffect(() => {
         if (data.patient_id) {
             const patient = regIds.find(
-                (p) => p.patient_id === data.patient_id
+                (p) => String(p.patient_id) === String(data.patient_id)
             );
-            setSelectedPatient(patient || "");
-            setData("name", patient?.name || "");
+
+            if (patient) {
+                setSelectedPatient(patient);
+
+                const createdDate = patient.created_at
+                    ? new Date(patient.created_at)
+                    : new Date();
+
+                setSampleCollectionDate(createdDate);
+
+                setData((prev) => ({
+                    ...prev,
+                    name: patient.name || "",
+                    collection_date: format(createdDate, "yyyy-MM-dd HH:mm:ss"),
+                }));
+            } else {
+                setSelectedPatient("");
+                setSampleCollectionDate(new Date());
+                setData((prev) => ({
+                    ...prev,
+                    name: "",
+                    collection_date: "",
+                }));
+            }
         }
-    }, [data.patient_id]);
+    }, [data.patient_id, regIds]);
+
+
 
     const handleCollectionDateChange = (date) => {
         setSampleCollectionDate(date);
@@ -52,7 +76,7 @@ const CreateMolecularSample = ({ auth, regIds }) => {
                     className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8 space-y-6"
                 >
                     <h1 className="text-2xl font-bold text-gray-800 text-center">
-                        Create Molecular Sample
+                        Molecular Sample Collection
                     </h1>
 
                     {/* Patient ID and Name */}
@@ -65,9 +89,7 @@ const CreateMolecularSample = ({ auth, regIds }) => {
                             <select
                                 id="patient_id"
                                 value={data.patient_id}
-                                onChange={(e) =>
-                                    setData("patient_id", e.target.value)
-                                }
+                                onChange={(e) => setData("patient_id", e.target.value)}
                                 className="block w-full mt-1 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
                             >
                                 <option value="">Select Patient</option>
@@ -76,10 +98,11 @@ const CreateMolecularSample = ({ auth, regIds }) => {
                                         key={patient.id}
                                         value={patient.patient_id}
                                     >
-                                        {patient.patient_id}
+                                        {patient.patient_id} - {patient.name}
                                     </option>
                                 ))}
                             </select>
+
                             <InputError
                                 message={errors.patient_id}
                                 className="mt-2"

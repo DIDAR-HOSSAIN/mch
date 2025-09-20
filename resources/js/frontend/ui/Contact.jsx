@@ -21,7 +21,6 @@ const Contact = () => {
             inquiry,
         });
 
-        console.log(response.data); // You can handle the response as needed
         setSuccessMessage("Data added successfully.");
         form.reset(); // Reset the form fields
         setTimeout(() => {

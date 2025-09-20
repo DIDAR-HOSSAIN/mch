@@ -9,7 +9,6 @@ import { Inertia } from "@inertiajs/inertia";
 import { FaEye, FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 
 const ViewMolecularSample = ({ auth, molecularSamples }) => {
-    console.log("view molecularSamples", molecularSamples);
     const [filteredData, setFilteredData] = useState(molecularSamples);
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);

@@ -5,7 +5,6 @@ import { Head, useForm } from "@inertiajs/react";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const EditMolecular = ({ auth, molecularReg, references, tests }) => {
-    console.log("EditMolecular", molecularReg);
     const [testFields, setTestFields] = useState(
         molecularReg?.molecular_tests || [{ test_id: "", test_fee: 0 }]
     );
@@ -33,8 +32,6 @@ const EditMolecular = ({ auth, molecularReg, references, tests }) => {
         payment_type: molecularReg?.payment_type || "",
         account_head: molecularReg?.account_head || "Cash in hand",
     });
-
-    console.log("EditMolecular data", data);
 
     useEffect(() => {
         setTestFields(molecularReg?.molecular_tests || []);
