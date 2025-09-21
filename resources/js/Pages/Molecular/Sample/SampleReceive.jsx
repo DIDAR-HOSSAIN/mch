@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 
 const SampleReceive = ({ auth, collectedSamples }) => {
+    console.log('sample receive', collectedSamples);
     const [sampleReceivedDate, setSampleReceivedDate] = useState(new Date());
     const [sampleCollectionDate, setSampleCollectionDate] = useState(new Date());
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -28,33 +29,46 @@ const SampleReceive = ({ auth, collectedSamples }) => {
     useEffect(() => {
         if (data.patient_id) {
             const patient = collectedSamples.find(
-                (sample) => sample.patient_id === data.patient_id
+                (sample) => String(sample.patient_id) === String(data.patient_id)
             );
+
             if (patient) {
                 setSelectedPatient(patient);
+
+                const receivedDate = patient.molecular_patient_reg?.created_at
+                    ? new Date(patient.molecular_patient_reg.created_at)
+                    : new Date();
+
+                setSampleReceivedDate(receivedDate);
+
                 setData((prev) => ({
                     ...prev,
-                    name: patient.molecular_patient_reg.name || "",
+                    name: patient.molecular_patient_reg?.name || "",
                     collection_date: patient.collection_date || "",
                     collection_status: patient.collection_status || "",
                     remarks: patient.remarks || "",
+                    received_date: format(receivedDate, "yyyy-MM-dd HH:mm:ss"),
                 }));
+
                 if (patient.collection_date) {
                     setSampleCollectionDate(new Date(patient.collection_date));
                 }
             }
         } else {
             setSelectedPatient(null);
+            setSampleCollectionDate(new Date());
+            setSampleReceivedDate(new Date());
             setData((prev) => ({
                 ...prev,
                 name: "",
                 collection_date: "",
                 collection_status: "",
                 remarks: "",
+                received_date: "",
             }));
-            setSampleCollectionDate(new Date());
         }
     }, [data.patient_id, collectedSamples]);
+
 
     const handleCollectionDateChange = (date) => {
         setSampleCollectionDate(date);
@@ -105,7 +119,7 @@ const SampleReceive = ({ auth, collectedSamples }) => {
                                 <option value="">Select Patient</option>
                                 {collectedSamples.map((sample) => (
                                     <option key={sample.id} value={sample.patient_id}>
-                                        {sample.patient_id}
+                                        {sample.patient_id}- {sample.molecular_patient_reg.name}
                                     </option>
                                 ))}
                             </select>
