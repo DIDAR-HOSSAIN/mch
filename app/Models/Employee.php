@@ -11,13 +11,13 @@ class Employee extends Model
 
     protected $fillable = ['name', 'employee_id', 'device_user_id', 'roster_id'];
 
+    public function rosters()
+    {
+        return $this->hasMany(EmployeeRoster::class);
+    }
+
     public function attendance()
     {
         return $this->hasMany(Attendance::class);
-    }
-
-    public function roster()
-    {
-        return $this->belongsTo(Roster::class);
     }
 }

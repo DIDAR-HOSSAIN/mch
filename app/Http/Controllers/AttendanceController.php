@@ -7,7 +7,9 @@ use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Models\Employee;
 use App\Models\Holiday;
+use App\Models\Leave;
 use App\Models\Roster;
+use App\Models\WeeklyHoliday;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,10 +21,43 @@ class AttendanceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Attendance::with('employee');
+
+        // 🔹 Date filter
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('date', [$request->start_date, $request->end_date]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('date', $request->start_date);
+        }
+
+        // 🔹 Employee filter
+        if ($request->filled('employee_id') && $request->employee_id !== 'all') {
+            $query->where('employee_id', $request->employee_id);
+        }
+
+        // 🔹 Status filter
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $attendances = $query->orderBy('date', 'desc')->get();
+
+        $employees = Employee::select('id', 'name')->get();
+
+        return Inertia::render('Payroll/PayrollReport', [
+            'attendances' => $attendances ?? [],
+            'employees' => $employees ?? [],
+            'filters' => [
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'employee_id' => $request->employee_id ?? 'all',
+                'status' => $request->status ?? 'all',
+            ],
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -95,73 +130,12 @@ class AttendanceController extends Controller
         //
     }
 
-    // public function syncCreate()
-    // {
-    //     return Inertia::render('Payroll/DataPull');
-    // }
-
-    // public function sync()
-    // {
-    //     $zk = new \MehediJaman\LaravelZkteco\LaravelZkteco('192.168.1.40');
-
-    //     if (!$zk->connect()) {
-    //         return back()->with('error', 'Unable to connect to device.');
-    //     }
-
-    //     $data = $zk->getAttendance();
-
-    //     // Ensure a default roster exists
-    //     $defaultRoster = \App\Models\Roster::firstOrCreate(
-    //         ['office_start' => '09:00:00', 'office_end' => '17:00:00']
-    //     );
-
-    //     foreach ($data as $entry) {
-    //         // 1. Find or create employee
-    //         $employee = \App\Models\Employee::firstOrCreate(
-    //             ['employee_id' => $entry['id']],
-    //             [
-    //                 'name' => 'Unknown ' . $entry['id'], // Default name if unknown
-    //                 'roster_id' => $defaultRoster->id
-    //             ]
-    //         );
-
-    //         // 2. Parse time and date
-    //         $date = date('Y-m-d', strtotime($entry['timestamp']));
-    //         $time = date('H:i:s', strtotime($entry['timestamp']));
-
-    //         // 3. Find existing attendance for the day
-    //         $attendance = \App\Models\Attendance::where('employee_id', $employee->id)
-    //             ->where('date', $date)
-    //             ->first();
-
-    //         if (!$attendance) {
-    //             \App\Models\Attendance::create([
-    //                 'employee_id' => $employee->id,
-    //                 'date' => $date,
-    //                 'in_time' => $time,
-    //                 'out_time' => $time,
-    //                 'status' => 'Present',
-    //                 'source' => 'device',
-    //             ]);
-    //         } else {
-    //             if (strtotime($time) < strtotime($attendance->in_time)) {
-    //                 $attendance->in_time = $time;
-    //             }
-    //             if (strtotime($time) > strtotime($attendance->out_time)) {
-    //                 $attendance->out_time = $time;
-    //             }
-    //             $attendance->save();
-    //         }
-    //     }
-
-    //     $zk->disconnect();
-    //     return back()->with('success', 'Attendance synced and employees/roster created dynamically.');
-    // }
-
+    
     public function syncCreate()
     {
         return Inertia::render('Payroll/DataPull'); // তোমার React পেজ অনুযায়ী নাম দাও
     }
+
 
 
     public function sync()
@@ -178,130 +152,96 @@ class AttendanceController extends Controller
             return back()->with('error', 'No attendance data found on device.');
         }
 
-        $today = now()->toDateString();
-        $employees = Employee::with('roster')->get();
+        $todayDate = Carbon::today();
+        $dayOfWeek = $todayDate->format('l'); // Monday, Tuesday etc.
+        $employees = Employee::with('rosters.roster')->get();
 
         foreach ($employees as $employee) {
-            // রোস্টার খুঁজে বের করো
-            $roster = $employee->roster;
 
-            // যদি আজকে ছুটি হয়
-            if (Holiday::whereDate('date', $today)->exists()) {
-                Attendance::updateOrCreate(
-                    ['employee_id' => $employee->id, 'date' => $today],
-                    [
-                        'in_time' => null,
-                        'out_time' => null,
-                        'device_user_id'    => $employee->device_user_id,
-                        'device_ip'         => $deviceIp,
-                        'source' => 'device',
-                        'status' => 'Holiday',
-                    ]
-                );
-                continue;
+            $status = 'Absent';
+            $remarks = '';
+
+            // ✅ Holiday
+            if (Holiday::whereDate('date', $todayDate)->exists()) {
+                $status = 'Holiday';
+                $remarks = 'Official Holiday';
             }
 
-            // ওই employee-এর আজকের সব attendance রেকর্ড ডিভাইস থেকে বের করো
+            // ✅ Leave
+            elseif (Leave::where('employee_id', $employee->id)
+                ->where('start_date', '<=', $todayDate)
+                ->where('end_date', '>=', $todayDate)
+                ->where('status', 'Approved')
+                ->exists()
+            ) {
+                $status = 'Leave';
+                $remarks = 'On Leave';
+            }
+
+            // ✅ Weekly Off
+            elseif (WeeklyHoliday::where('employee_id', $employee->id)
+                ->where('day_of_week', $dayOfWeek)
+                ->exists()
+            ) {
+                $status = 'Weekly Off';
+                $remarks = 'Weekly Holiday';
+            }
+
+            // ✅ Today's roster
+            $todayRoster = $employee->rosters->firstWhere('day_of_week', $dayOfWeek);
+            $rosterStart = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_start) : null;
+            $rosterEnd   = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_end) : null;
+
+            // ✅ Device records
             $deviceRecords = collect($data)
                 ->where('id', (string) $employee->employee_id)
-                ->filter(fn($rec) => date('Y-m-d', strtotime($rec['timestamp'])) == $today)
+                ->filter(fn($rec) => date('Y-m-d', strtotime($rec['timestamp'])) == $todayDate->toDateString())
                 ->sortBy('timestamp');
 
-            if ($deviceRecords->isNotEmpty()) {
-                $firstTime = date('H:i:s', strtotime($deviceRecords->first()['timestamp']));
-                $lastTime  = date('H:i:s', strtotime($deviceRecords->last()['timestamp']));
+            $firstTime = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->first()['timestamp']))) : null;
+            $lastTime  = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->last()['timestamp']))) : null;
 
-                Attendance::updateOrCreate(
-                    ['employee_id' => $employee->id, 'date' => $today],
-                    [
-                        'in_time' => $firstTime,
-                        'out_time' => $lastTime,
-                        'device_user_id'    => $employee->device_user_id,
-                        'device_ip'         => $deviceIp,
-                        'source' => 'device',
-                        'status' => 'Present',
-                    ]
-                );
-            } else {
-                // কোনো রেকর্ড না পেলে → Absent
-                Attendance::updateOrCreate(
-                    ['employee_id' => $employee->id, 'date' => $today],
-                    [
-                        'in_time' => null,
-                        'out_time' => null,
-                        'device_user_id'    => $employee->device_user_id,
-                        'device_ip'         => $deviceIp,
-                        'source' => 'device',
-                        'status' => 'Absent',
-                    ]
-                );
+            // ✅ Late / Early leave / Present
+            if ($deviceRecords->isNotEmpty() && !in_array($status, ['Holiday', 'Leave', 'Weekly Off'])) {
+                $status = 'Present';
+                $remarks = '';
+
+                if ($rosterStart && $rosterEnd) {
+                    // Handle night shift
+                    if ($rosterEnd->lt($rosterStart)) $rosterEnd->addDay();
+
+                    if ($firstTime && $firstTime->gt($rosterStart)) {
+                        $status = 'Late';
+                        $remarks = 'Arrived Late';
+                    }
+                    if ($lastTime && $lastTime->lt($rosterEnd)) {
+                        $status = $status === 'Late' ? 'Late & Early Leave' : 'Early Leave';
+                        $remarks = trim(($remarks ? $remarks . ', ' : '') . 'Left Early');
+                    }
+                    if ($firstTime && $lastTime && $firstTime->lte($rosterStart) && $lastTime->gte($rosterEnd)) {
+                        $status = 'Present';
+                        $remarks = 'On Time';
+                    }
+                }
             }
+
+            // ✅ Save Attendance
+            Attendance::updateOrCreate(
+                ['employee_id' => $employee->id, 'date' => $todayDate->toDateString()],
+                [
+                    'in_time' => $firstTime?->format('H:i:s'),
+                    'out_time' => $lastTime?->format('H:i:s'),
+                    'device_user_id' => $employee->device_user_id,
+                    'device_ip' => $deviceIp,
+                    'source' => 'device',
+                    'status' => $status,
+                    'remarks' => $remarks,
+                ]
+            );
         }
 
         $zk->disconnect();
-        return back()->with('success', 'Attendance synced successfully!');
+        return back()->with('success', 'Attendance synced successfully with multiple rosters!');
     }
 
-
-
-    public function report(Request $request)
-    {
-        $filterDate = $request->date ?? now()->toDateString();
-
-        // Step 1: Fetch all employees
-        $allEmployees = Employee::with('roster')->get();
-
-        // Step 2: Fetch attendances only for the selected date
-        $attendances = Attendance::where('date', $filterDate)->get()->keyBy('employee_id');
-
-        // Step 3: Build report for all employees
-        $report = $allEmployees->map(function ($employee) use ($attendances, $filterDate) {
-            $attendance = $attendances->get($employee->id);
-
-            $rosterStart = $employee?->roster?->office_start ?? '09:00:00';
-            $rosterEnd = $employee?->roster?->office_end ?? '17:00:00';
-
-            if (!$attendance) {
-                return [
-                    'employee_id' => $employee->id,
-                    'name' => $employee->name,
-                    'date' => $filterDate,
-                    'in_time' => null,
-                    'out_time' => null,
-                    'status' => 'Absent',
-                    'source' => null,
-                ];
-            }
-
-            // If attendance is found, calculate status
-            $inTime = Carbon::parse($attendance->in_time);
-            $outTime = Carbon::parse($attendance->out_time);
-            $rosterStartTime = Carbon::parse($rosterStart);
-            $rosterEndTime = Carbon::parse($rosterEnd);
-
-            if ($inTime->eq($outTime)) {
-                $status = 'Absent';
-            } elseif ($inTime->gt($rosterStartTime)) {
-                $status = 'Late';
-            } elseif ($outTime->lt($rosterEndTime)) {
-                $status = 'Left Early';
-            } else {
-                $status = 'Present';
-            }
-
-            return [
-                'employee_id' => $employee->id,
-                'name' => $employee->name,
-                'date' => $attendance->date,
-                'in_time' => $attendance->in_time,
-                'out_time' => $attendance->out_time,
-                'status' => $status,
-                'source' => $attendance->source,
-            ];
-        });
-
-        return Inertia::render('Payroll/PayrollReport', [
-            'reportData' => $report,
-        ]);
-    }
 }
