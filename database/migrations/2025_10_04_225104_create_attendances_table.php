@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('device_user_id');
             $table->date('date');
             $table->time('in_time');
             $table->time('out_time');
             $table->string('status')->default('Present');
+            $table->string('device_ip');
             $table->string('source')->default('device');
             $table->timestamps();
         });

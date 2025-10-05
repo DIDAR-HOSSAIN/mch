@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('employee_id')->unique();
+            $table->string('device_user_id')->unique();
             $table->unsignedBigInteger('roster_id')->nullable();
             $table->timestamps();
         });

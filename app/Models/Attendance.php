@@ -11,10 +11,12 @@ class Attendance extends Model
 
     protected $fillable = [
         'employee_id',
+        'device_user_id',
         'date',
         'in_time',
         'out_time',
         'status',
+        'device_ip',
         'source'
     ];
 

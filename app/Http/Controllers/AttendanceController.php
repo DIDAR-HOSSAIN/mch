@@ -167,10 +167,10 @@ class AttendanceController extends Controller
     public function sync()
     {
         $deviceIp = '192.168.1.40';
-        $zk = new \MehediJaman\LaravelZkteco\LaravelZkteco($deviceIp);
+        $zk = new LaravelZkteco($deviceIp);
 
         if (!$zk->connect()) {
-            return back()->with('error', 'Unable to connect to device.');
+            return back()->with('error', 'Unable to connect to attendance device.');
         }
 
         $data = $zk->getAttendance();
@@ -179,67 +179,60 @@ class AttendanceController extends Controller
         }
 
         $today = now()->toDateString();
-        $students = Employee::all();
+        $employees = Employee::with('roster')->get();
 
-        foreach ($students as $student) {
-            // ওই student's জন্য schedule
-            $schedule = Roster::where('school_class_id', $student->school_class_id)
-                ->where('section_id', $student->section_id)
-                ->first();
+        foreach ($employees as $employee) {
+            // রোস্টার খুঁজে বের করো
+            $roster = $employee->roster;
 
-            // 🔹 Holiday হলে শুধু row create হবে
+            // যদি আজকে ছুটি হয়
             if (Holiday::whereDate('date', $today)->exists()) {
                 Attendance::updateOrCreate(
-                    ['student_id' => $student->id, 'date' => $today],
+                    ['employee_id' => $employee->id, 'date' => $today],
                     [
-                        'class_schedule_id' => $schedule?->id,
-                        'in_time'           => null,
-                        'out_time'          => null,
-                        'device_user_id'    => $student->device_user_id,
+                        'in_time' => null,
+                        'out_time' => null,
+                        'device_user_id'    => $employee->device_user_id,
                         'device_ip'         => $deviceIp,
-                        'source'            => 'device',
+                        'source' => 'device',
+                        'status' => 'Holiday',
                     ]
                 );
                 continue;
             }
 
-            // ওই student এর সব ডিভাইস রেকর্ড (আজকের তারিখের)
+            // ওই employee-এর আজকের সব attendance রেকর্ড ডিভাইস থেকে বের করো
             $deviceRecords = collect($data)
-                ->where('id', (string) $student->device_user_id)
+                ->where('id', (string) $employee->employee_id)
                 ->filter(fn($rec) => date('Y-m-d', strtotime($rec['timestamp'])) == $today)
                 ->sortBy('timestamp');
 
             if ($deviceRecords->isNotEmpty()) {
-                // প্রথম ফিঙ্গার → in_time
-                $firstRecord = $deviceRecords->first();
-                $firstTime = date('H:i:s', strtotime($firstRecord['timestamp']));
-
-                // শেষ ফিঙ্গার → out_time
-                $lastRecord = $deviceRecords->last();
-                $lastTime = date('H:i:s', strtotime($lastRecord['timestamp']));
+                $firstTime = date('H:i:s', strtotime($deviceRecords->first()['timestamp']));
+                $lastTime  = date('H:i:s', strtotime($deviceRecords->last()['timestamp']));
 
                 Attendance::updateOrCreate(
-                    ['student_id' => $student->id, 'date' => $today],
+                    ['employee_id' => $employee->id, 'date' => $today],
                     [
-                        'class_schedule_id' => $schedule?->id,
-                        'device_user_id'    => $student->device_user_id,
+                        'in_time' => $firstTime,
+                        'out_time' => $lastTime,
+                        'device_user_id'    => $employee->device_user_id,
                         'device_ip'         => $deviceIp,
-                        'in_time'           => $firstTime,
-                        'out_time'          => $lastTime,
-                        'source'            => 'device',
+                        'source' => 'device',
+                        'status' => 'Present',
                     ]
                 );
             } else {
-                // Absent → শুধু row create হবে কিন্তু in/out null
+                // কোনো রেকর্ড না পেলে → Absent
                 Attendance::updateOrCreate(
-                    ['student_id' => $student->id, 'date' => $today],
+                    ['employee_id' => $employee->id, 'date' => $today],
                     [
-                        'class_schedule_id' => $schedule?->id,
-                        'device_user_id'    => $student->device_user_id,
+                        'in_time' => null,
+                        'out_time' => null,
+                        'device_user_id'    => $employee->device_user_id,
                         'device_ip'         => $deviceIp,
-                        'in_time'           => null,
-                        'out_time'          => null,
-                        'source'            => 'device',
+                        'source' => 'device',
+                        'status' => 'Absent',
                     ]
                 );
             }
@@ -248,7 +241,6 @@ class AttendanceController extends Controller
         $zk->disconnect();
         return back()->with('success', 'Attendance synced successfully!');
     }
-
 
 
 
