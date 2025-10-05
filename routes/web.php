@@ -8,6 +8,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\AntigenController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\MolecularResultController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
+use App\Http\Controllers\RosterController;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -129,6 +132,13 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('/results/{patientId}/reports', [MolecularResultController::class, 'generateReport'])->name('results.reports');
     Route::get('/results/{patientId}/report-sign', [MolecularResultController::class, 'generateReportWithSign'])->name('results.sign');
 });
+
+Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
+Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
+Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+Route::resource('/attendance', AttendanceController::class);
+Route::resource('employees', EmployeeController::class);
+Route::resource('rosters', RosterController::class);
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
