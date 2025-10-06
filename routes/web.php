@@ -10,6 +10,7 @@ use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\AntigenController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeRosterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
@@ -137,8 +138,10 @@ Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate'
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
 Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
 Route::resource('/attendance', AttendanceController::class);
-Route::resource('employees', EmployeeController::class);
-Route::resource('rosters', RosterController::class);
+Route::resource('/employees', EmployeeController::class);
+Route::resource('/employee-rosters', EmployeeRosterController::class);
+Route::resource('/rosters', RosterController::class);
+
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

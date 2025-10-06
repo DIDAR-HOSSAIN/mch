@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\EmployeeRoster;
 use App\Http\Requests\StoreEmployeeRosterRequest;
 use App\Http\Requests\UpdateEmployeeRosterRequest;
+use App\Models\Employee;
+use App\Models\Roster;
+use App\Models\WeeklyHoliday;
+use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class EmployeeRosterController extends Controller
 {
@@ -13,7 +18,19 @@ class EmployeeRosterController extends Controller
      */
     public function index()
     {
-        //
+        // Load employees with their roster assignments and roster details
+        $employees = Employee::with(['rosters.roster'])
+            ->orderBy('name')
+            ->get();
+
+        $rosters = Roster::orderBy('roster_name')->get();
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        return Inertia::render('Payroll/Roster-Assign/ViewRosterAssign', [
+            'employees' => $employees,
+            'rosters'   => $rosters,
+            'days'      => $days,
+        ]);
     }
 
     /**
@@ -21,7 +38,16 @@ class EmployeeRosterController extends Controller
      */
     public function create()
     {
-        //
+        $employees = Employee::orderBy('name')->get();
+        $rosters   = Roster::orderBy('roster_name')->get();
+        $days      = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        return Inertia::render('Payroll/Roster-Assign/CreateRosterAssign', [
+            'employees' => $employees,
+            'rosters'   => $rosters,
+            'days'      => $days,
+            'editing'   => false,
+        ]);
     }
 
     /**
@@ -29,7 +55,36 @@ class EmployeeRosterController extends Controller
      */
     public function store(StoreEmployeeRosterRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'employee_id' => 'required|string',
+            'assignments' => 'required|array',
+        ]);
+
+        $employeeId = $validated['employee_id'];
+        $assignments = $validated['assignments'];
+
+        // পুরনো ডেটা মুছে ফেলো
+        EmployeeRoster::where('employee_id', $employeeId)->delete();
+        WeeklyHoliday::where('employee_id', $employeeId)->delete();
+
+        foreach ($assignments as $assign) {
+            if (isset($assign['is_holiday']) && $assign['is_holiday'] === true) {
+                // Weekly holiday table এ ইনসার্ট করো
+                WeeklyHoliday::create([
+                    'employee_id' => $employeeId,
+                    'day_of_week' => $assign['day_of_week'],
+                ]);
+            } elseif (!empty($assign['roster_id'])) {
+                // সাধারণ roster assign table এ ইনসার্ট করো
+                EmployeeRoster::create([
+                    'employee_id' => $employeeId,
+                    'day_of_week' => $assign['day_of_week'],
+                    'roster_id' => $assign['roster_id'],
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Roster & Weekly Holidays saved successfully!');
     }
 
     /**
@@ -45,7 +100,25 @@ class EmployeeRosterController extends Controller
      */
     public function edit(EmployeeRoster $employeeRoster)
     {
-        //
+        $employee = Employee::with('rosters.roster')->findOrFail($employeeRoster);
+        $rosters  = Roster::orderBy('roster_name')->get();
+        $days     = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        $assignments = $employee->rosters->map(function ($r) {
+            return [
+                'id'          => $r->id,
+                'day_of_week' => $r->day_of_week,
+                'roster_id'   => $r->roster_id,
+            ];
+        });
+
+        return Inertia::render('Payroll/Roster-Assign/CreateRosterAssign', [
+            'employee'    => $employee,
+            'rosters'     => $rosters,
+            'days'        => $days,
+            'assignments' => $assignments,
+            'editing'     => true,
+        ]);
     }
 
     /**
@@ -53,7 +126,25 @@ class EmployeeRosterController extends Controller
      */
     public function update(UpdateEmployeeRosterRequest $request, EmployeeRoster $employeeRoster)
     {
-        //
+        $data = $request->validate([
+            'assignments'        => ['required', 'array'],
+            'assignments.*.day_of_week' => ['required', Rule::in(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])],
+            'assignments.*.roster_id'   => ['required', 'exists:rosters,id'],
+        ]);
+
+        // Remove old assignments for this employee
+        EmployeeRoster::where('employee_id', $employeeRoster)->delete();
+
+        // Insert updated ones
+        foreach ($data['assignments'] as $assign) {
+            EmployeeRoster::create([
+                'employee_id' => $employeeRoster,
+                'roster_id'   => $assign['roster_id'],
+                'day_of_week' => $assign['day_of_week'],
+            ]);
+        }
+
+        return redirect()->route('employee-rosters.index')->with('success', 'Roster assignments updated successfully.');
     }
 
     /**
@@ -61,6 +152,8 @@ class EmployeeRosterController extends Controller
      */
     public function destroy(EmployeeRoster $employeeRoster)
     {
-        //
+        $er = EmployeeRoster::findOrFail($employeeRoster);
+        $er->delete();
+        return back()->with('success', 'Assignment removed.');
     }
 }

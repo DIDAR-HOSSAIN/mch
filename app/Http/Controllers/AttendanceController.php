@@ -168,9 +168,10 @@ class AttendanceController extends Controller
             }
 
             // ✅ Leave
-            elseif (Leave::where('employee_id', $employee->id)
-                ->where('start_date', '<=', $todayDate)
-                ->where('end_date', '>=', $todayDate)
+            elseif (
+                Leave::where('employee_id', $employee->id)
+                ->whereDate('start_date', '<=', $todayDate)
+                ->whereDate('end_date', '>=', $todayDate)
                 ->where('status', 'Approved')
                 ->exists()
             ) {
