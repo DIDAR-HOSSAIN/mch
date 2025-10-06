@@ -11,7 +11,9 @@ use App\Http\Controllers\AntigenController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRosterController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
@@ -23,6 +25,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\RosterController;
+use App\Models\Holiday;
+use App\Models\Leave;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -141,6 +145,8 @@ Route::resource('/attendance', AttendanceController::class);
 Route::resource('/employees', EmployeeController::class);
 Route::resource('/employee-rosters', EmployeeRosterController::class);
 Route::resource('/rosters', RosterController::class);
+Route::resource('/leaves', LeaveController::class);
+Route::resource('/holidays', HolidayController::class);
 
 
 // Route::middleware('auth')->group(function () {

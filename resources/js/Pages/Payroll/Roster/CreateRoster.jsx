@@ -1,52 +1,50 @@
-import { useForm } from '@inertiajs/inertia-react';
-import React from 'react';
+import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
+import { useForm } from '@inertiajs/react';
+
 
 const CreateRoster = () => {
-    const { data, setData, post, processing, errors } = useForm({
-        office_start: '',
-        office_end: '',
+    const { data, setData, post, processing, reset, errors } = useForm({
+        roster_name: '',
+        office_start: '09:00',
+        office_end: '17:00',
     });
 
-    const handleSubmit = (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        post(route('rosters.store'));
+        post('/rosters', { onSuccess: () => reset() });
     };
 
     return (
-        <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md mt-10">
-            <h2 className="text-2xl font-bold mb-6 text-center">Add New Roster</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Office Start</label>
-                    <input
-                        type="time"
-                        value={data.office_start}
-                        onChange={e => setData('office_start', e.target.value)}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                    />
-                    {errors.office_start && <div className="text-red-500 text-sm">{errors.office_start}</div>}
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Office End</label>
-                    <input
-                        type="time"
-                        value={data.office_end}
-                        onChange={e => setData('office_end', e.target.value)}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                    />
-                    {errors.office_end && <div className="text-red-500 text-sm">{errors.office_end}</div>}
-                </div>
-
-                <button
-                    type="submit"
-                    disabled={processing}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                >
-                    {processing ? 'Saving...' : 'Save Roster'}
-                </button>
-            </form>
-        </div>
+        <AdminDashboardLayout title="Create Roster">
+            <div className="max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-md">
+                <h2 className="text-xl font-bold mb-5 text-center">Create New Roster</h2>
+                <form onSubmit={submit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Roster Name</label>
+                        <input
+                            type="text"
+                            value={data.roster_name}
+                            onChange={(e) => setData('roster_name', e.target.value)}
+                            className="w-full border p-2 rounded"
+                        />
+                        {errors.roster_name && <p className="text-red-500 text-sm">{errors.roster_name}</p>}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Office Start</label>
+                            <input type="time" value={data.office_start} onChange={(e) => setData('office_start', e.target.value)} className="border p-2 rounded w-full" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Office End</label>
+                            <input type="time" value={data.office_end} onChange={(e) => setData('office_end', e.target.value)} className="border p-2 rounded w-full" />
+                        </div>
+                    </div>
+                    <button disabled={processing} className="bg-blue-600 text-white px-4 py-2 rounded w-full">
+                        {processing ? 'Saving...' : 'Save Roster'}
+                    </button>
+                </form>
+            </div>
+        </AdminDashboardLayout>
     );
 };
 

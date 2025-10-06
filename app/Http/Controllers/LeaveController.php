@@ -6,6 +6,7 @@ use App\Models\Leave;
 use App\Http\Requests\StoreLeaveRequest;
 use App\Http\Requests\UpdateLeaveRequest;
 use App\Models\Employee;
+use Inertia\Inertia;
 
 class LeaveController extends Controller
 {
@@ -14,8 +15,16 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        $leaves = Leave::with('student')->orderBy('start_date', 'desc')->paginate(10);
-        return inertia('Payroll/Leaves/ViewLeaves', compact('leaves'));
+        // $leaves = Leave::with('student')->orderBy('start_date', 'desc')->paginate(10);
+        // return inertia('Payroll/Leaves/ViewLeaves', compact('leaves'));
+
+        $leaves = Leave::with('employee')->latest()->get();
+        return Inertia::render('Payrool/Leaves/ViewLeaves', [
+            'leaves' => $leaves
+        ]);
+
+        // $leaves = Leave::all();
+        // return Inertia::render('Payrool/Leaves/ViewLeaves', ['leaves' => $leaves]);
     }
 
     /**
@@ -23,8 +32,10 @@ class LeaveController extends Controller
      */
     public function create()
     {
-        $employees = Employee::select('id', 'student_name', 'roll_number')->get();
-        return inertia('Payroll/Leaves/CreateLeave', compact('employees'));
+        $employees = Employee::select('id', 'name')->get();
+        return Inertia::render('Payroll/Leaves/CreateLeave', [
+            'employees' => $employees
+        ]);
     }
 
     /**
@@ -34,21 +45,21 @@ class LeaveController extends Controller
     {
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'reason'     => 'nullable|string',
-            'status'     => 'required|in:Approved,Pending,Rejected',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'reason'      => 'nullable|string',
+            'status'      => 'required|in:Approved,Pending,Rejected',
         ]);
 
         Leave::create([
-            'employee_id' => $request->input('employee_id'),
-            'start_date' => $request->input('start_date'),
-            'end_date'   => $request->input('end_date'),
-            'reason'     => $request->input('reason'),
-            'status'     => $request->input('status', 'Pending'), // default Pending
+            'employee_id' => $request->employee_id,
+            'start_date'  => $request->start_date,
+            'end_date'    => $request->end_date,
+            'reason'      => $request->reason,
+            'status'      => $request->status,
         ]);
 
-        return redirect()->route('leaves.index')->with('success', 'Leave created successfully.');
+        return redirect()->route('leaves.index')->with('success', 'Leave added successfully!');
     }
 
     /**

@@ -14,7 +14,7 @@ class RosterController extends Controller
      */
     public function index()
     {
-        $rosters = Roster::all();
+        $rosters = Roster::latest()->get();
         return Inertia::render('Payroll/Roster/ViewRoster', ['rosters' => $rosters]);
     }
 
@@ -32,13 +32,13 @@ class RosterController extends Controller
     public function store(StoreRosterRequest $request)
     {
         $request->validate([
-            'office_start' => 'required|date_format:H:i',
-            'office_end' => 'required|date_format:H:i|after:office_start',
+            'roster_name' => 'required|string|max:255',
+            'office_start' => 'required',
+            'office_end' => 'required',
         ]);
 
-        Roster::create($request->only('office_start', 'office_end'));
-
-        return redirect()->route('rosters.index')->with('success', 'Roster created successfully!');
+        Roster::create($request->all());
+        return redirect()->back()->with('success', 'Roster created successfully.');
     }
 
     /**
