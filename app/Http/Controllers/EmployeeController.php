@@ -15,7 +15,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::with('roster')->get();
+        // $employees = Employee::with('rosters')->latest()->get();
+        $employees = Employee::with('roster')->latest()->get();
         return Inertia::render('Payroll/Employee/ViewEmployee', ['employees' => $employees]);
     }
 
@@ -24,7 +25,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $rosters = Roster::all();
+        $rosters = Roster::select('id', 'roster_name')->get();
         return Inertia::render('Payroll/Employee/CreateEmployee', ['rosters' => $rosters]);
     }
 
@@ -36,10 +37,11 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'employee_id' => 'required|string|unique:employees,employee_id',
+            'device_user_id' => 'required|string|unique:employees,device_user_id',
             'roster_id' => 'nullable|exists:rosters,id',
         ]);
 
-        Employee::create($request->only('name', 'employee_id', 'roster_id'));
+        Employee::create($request->all());
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully!');
     }
@@ -57,7 +59,8 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $rosters = Roster::all();
+        $rosters = Roster::select('id', 'roster_name')->get();
+
         return Inertia::render('Payroll/Employee/EditEmployee', [
             'employee' => $employee,
             'rosters' => $rosters,
@@ -70,14 +73,15 @@ class EmployeeController extends Controller
     public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
         $request->validate([
-            'name' => 'required|string',
-            'employee_id' => 'required|unique:employees,employee_id,' . $employee->id,
+            'name' => 'required|string|max:255',
+            'employee_id' => 'required|string|unique:employees,employee_id,' . $employee->id,
+            'device_user_id' => 'required|string|unique:employees,device_user_id,' . $employee->id,
             'roster_id' => 'nullable|exists:rosters,id',
         ]);
 
         $employee->update($request->all());
 
-        return redirect()->route('employees.index')->with('success', 'Employee updated.');
+        return redirect()->route('employees.index')->with('success', 'Employee updated successfully!');
     }
 
     /**
@@ -86,6 +90,6 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         $employee->delete();
-        return redirect()->route('employees.index')->with('success', 'Employee deleted.');
+        return back()->with('success', 'Employee deleted successfully!');
     }
 }

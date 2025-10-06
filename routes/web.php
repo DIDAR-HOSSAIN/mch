@@ -25,8 +25,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\RosterController;
-use App\Models\Holiday;
-use App\Models\Leave;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -145,7 +143,7 @@ Route::resource('/attendance', AttendanceController::class);
 Route::resource('/employees', EmployeeController::class);
 Route::resource('/employee-rosters', EmployeeRosterController::class);
 Route::resource('/rosters', RosterController::class);
-Route::resource('/leaves', LeaveController::class);
+Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
 
 

@@ -20,4 +20,10 @@ class Employee extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    public function roster()
+    {
+        return $this->belongsTo(Roster::class);
+    }
+
 }
