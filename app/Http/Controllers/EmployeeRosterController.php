@@ -98,28 +98,29 @@ class EmployeeRosterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(EmployeeRoster $employeeRoster)
+    public function edit(Employee $employee)
     {
-        $employee = Employee::with('rosters.roster')->findOrFail($employeeRoster);
-        $rosters  = Roster::orderBy('roster_name')->get();
-        $days     = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        $rosters = Roster::all();
+        $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-        $assignments = $employee->rosters->map(function ($r) {
-            return [
-                'id'          => $r->id,
-                'day_of_week' => $r->day_of_week,
-                'roster_id'   => $r->roster_id,
-            ];
-        });
-
-        return Inertia::render('Payroll/Roster-Assign/CreateRosterAssign', [
-            'employee'    => $employee,
-            'rosters'     => $rosters,
-            'days'        => $days,
+        $assignments = EmployeeRoster::where('employee_id', $employee->id)->get();
+        $holidays = WeeklyHoliday::where('employee_id', $employee->id)->get();
+        dd([
+            'rosters' => $rosters,
+            'holidays' => $holidays,
             'assignments' => $assignments,
-            'editing'     => true,
+        ]);
+
+
+        return Inertia::render('Payroll/Roster-Assign/EditRosterAssign', [
+            'employee' => $employee,
+            'rosters' => $rosters,
+            'days' => $days,
+            'assignments' => $assignments,
+            'holidays' => $holidays,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.

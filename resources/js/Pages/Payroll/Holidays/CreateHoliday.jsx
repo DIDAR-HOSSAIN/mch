@@ -1,8 +1,8 @@
 import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 
-const CreateHoliday = () => {
+const CreateHoliday = ({auth}) => {
     const { data, setData, post, processing, reset, errors } = useForm({
         date: '',
         title: '',
@@ -15,7 +15,15 @@ const CreateHoliday = () => {
     };
 
     return (
-        <AdminDashboardLayout title="Create Holiday">
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Create Holiday
+                </h1>
+            }
+        >
+            <Head title=" Create Holiday" />
             <div className="max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-md">
                 <h2 className="text-xl font-bold mb-5 text-center">Add New Holiday</h2>
                 <form onSubmit={submit} className="space-y-4">

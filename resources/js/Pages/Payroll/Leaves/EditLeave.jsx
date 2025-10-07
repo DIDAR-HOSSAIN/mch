@@ -1,7 +1,8 @@
 import React from "react";
 import { useForm, Link, Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-export default function EditLeave({ leave }) {
+export default function EditLeave({ auth, leave }) {
     const { data, setData, put, processing, errors } = useForm({
         employee_id: leave.employee_id || "",
         start_date: leave.start_date || "",
@@ -12,10 +13,18 @@ export default function EditLeave({ leave }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(route("leave.update", leave.id));
+        put(route("leave.update", leave.id)); // ✅ Correct route name
     };
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Edit Leave
+                </h1>
+            }
+        >
         <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-6 mt-10">
             <Head title="Edit Leave" />
             <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
@@ -34,8 +43,22 @@ export default function EditLeave({ leave }) {
                         className="w-full border-gray-300 rounded-lg"
                     />
                     {errors.employee_id && (
-                        <p className="text-red-500 text-sm mt-1">{errors.employee_id}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                            {errors.employee_id}
+                        </p>
                     )}
+                </div>
+
+                <div>
+                    <label className="block text-gray-700 font-medium mb-1">
+                        Leave Type
+                    </label>
+                    <input
+                        type="text"
+                        value={data.leave_type}
+                        onChange={(e) => setData("leave_type", e.target.value)}
+                        className="w-full border-gray-300 rounded-lg"
+                    />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -50,7 +73,9 @@ export default function EditLeave({ leave }) {
                             className="w-full border-gray-300 rounded-lg"
                         />
                         {errors.start_date && (
-                            <p className="text-red-500 text-sm mt-1">{errors.start_date}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.start_date}
+                            </p>
                         )}
                     </div>
 
@@ -65,7 +90,9 @@ export default function EditLeave({ leave }) {
                             className="w-full border-gray-300 rounded-lg"
                         />
                         {errors.end_date && (
-                            <p className="text-red-500 text-sm mt-1">{errors.end_date}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.end_date}
+                            </p>
                         )}
                     </div>
                 </div>
@@ -116,5 +143,6 @@ export default function EditLeave({ leave }) {
                 </div>
             </form>
         </div>
+        </AdminDashboardLayout>
     );
 }

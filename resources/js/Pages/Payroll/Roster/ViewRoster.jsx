@@ -1,7 +1,7 @@
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import AdminDashboardLayout from '@/Layouts/AdminDashboardLayout';
 
-const ViewRoster = ({ rosters }) => {
+const ViewRoster = ({ auth, rosters }) => {
     const { data, setData, post, reset } = useForm({
         roster_name: '',
         office_start: '09:00',
@@ -14,7 +14,15 @@ const ViewRoster = ({ rosters }) => {
     };
 
     return (
-        <AdminDashboardLayout title="Rosters">
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    View Rosters
+                </h1>
+            }
+        >
+            <Head title=" View Rosters" />
             <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow">
                 <h2 className="text-xl font-bold mb-4">Create Roster</h2>
                 <form onSubmit={submit} className="space-y-4">

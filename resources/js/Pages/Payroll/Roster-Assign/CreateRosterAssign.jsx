@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const CreateRosterAssign = ({
+    auth,
     employees = [],
     rosters = [],
     days = [],
@@ -42,10 +44,19 @@ const CreateRosterAssign = ({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route("employee-rosters.store"));
+        post(route("employee-roster.store"));
     };
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                Roster Assign
+                </h1>
+            }
+        >
+            <Head title="Roster Assign" />
         <div className="max-w-6xl mx-auto p-6 bg-white rounded shadow">
             <Head title="Assign Weekly Roster & Holidays" />
 
@@ -130,6 +141,7 @@ const CreateRosterAssign = ({
                 </div>
             </form>
         </div>
+    </AdminDashboardLayout>
     );
 };
 

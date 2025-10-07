@@ -57,7 +57,7 @@ class LeaveController extends Controller
             'status'      => $request->status,
         ]);
 
-        return redirect()->route('leaves.index')->with('success', 'Leave added successfully!');
+        return redirect()->route('leave.index')->with('success', 'Leave added successfully!');
     }
 
     /**
@@ -73,8 +73,6 @@ class LeaveController extends Controller
      */
     public function edit(Leave $leave)
     {
-        // dd($leave);
-
         return Inertia::render('Payroll/Leaves/EditLeave', [
             'leave' => $leave,
         ]);
@@ -86,16 +84,24 @@ class LeaveController extends Controller
     public function update(UpdateLeaveRequest $request, Leave $leave)
     {
         $request->validate([
-            'leave_type' => 'required|string',
+            'employee_id' => 'required|integer',
+            'leave_type' => 'nullable|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'nullable|string',
             'status' => 'required|string|in:Pending,Approved,Rejected',
         ]);
 
-        $leave->update($request->all());
+        $leave->update($request->only([
+            'employee_id',
+            'leave_type',
+            'start_date',
+            'end_date',
+            'reason',
+            'status',
+        ]));
 
-        return redirect()->route('leaves.index')->with('success', 'Leave updated successfully!');
+        return redirect()->route('leave.index')->with('success', 'Leave updated successfully!');
     }
 
     /**

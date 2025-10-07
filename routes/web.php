@@ -140,8 +140,8 @@ Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate'
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
 Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
 Route::resource('/attendance', AttendanceController::class);
+Route::resource('/employee-roster', EmployeeRosterController::class);
 Route::resource('/employees', EmployeeController::class);
-Route::resource('/employee-rosters', EmployeeRosterController::class);
 Route::resource('/rosters', RosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);

@@ -1,8 +1,8 @@
 import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 
-const CreateRoster = () => {
+const CreateRoster = ({auth}) => {
     const { data, setData, post, processing, reset, errors } = useForm({
         roster_name: '',
         office_start: '09:00',
@@ -15,7 +15,15 @@ const CreateRoster = () => {
     };
 
     return (
-        <AdminDashboardLayout title="Create Roster">
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Create Roster
+                </h1>
+            }
+        >
+            <Head title=" Create Roster" />
             <div className="max-w-lg mx-auto bg-white p-6 rounded-2xl shadow-md">
                 <h2 className="text-xl font-bold mb-5 text-center">Create New Roster</h2>
                 <form onSubmit={submit} className="space-y-4">

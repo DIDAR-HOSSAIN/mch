@@ -1,8 +1,8 @@
 import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
-import { Link, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import Swal from 'sweetalert2';
 
-const ViewLeaves = ({ leaves }) => {
+const ViewLeaves = ({ auth, leaves }) => {
     // ✅ Delete function with SweetAlert confirmation
     const handleDelete = (id) => {
         Swal.fire({
@@ -25,7 +25,15 @@ const ViewLeaves = ({ leaves }) => {
     };
 
     return (
-        <AdminDashboardLayout title="Leaves List">
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    View Leaves
+                </h1>
+            }
+        >
+            <Head title=" View Leaves" />
             <div className="max-w-6xl mx-auto bg-white p-6 rounded-2xl shadow">
                 <div className="flex justify-between items-center mb-5">
                     <h2 className="text-xl font-bold">Leave Records</h2>
