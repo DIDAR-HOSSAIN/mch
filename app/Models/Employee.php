@@ -16,6 +16,16 @@ class Employee extends Model
         return $this->hasMany(EmployeeRoster::class);
     }
 
+    public function assignEmployeeRoster()
+    {
+        return $this->hasMany(AssignEmployeeRoster::class, 'employee_id');
+    }
+
+    public function weeklyHolidays()
+    {
+        return $this->hasMany(WeeklyHoliday::class, 'employee_id');
+    }
+
     public function attendance()
     {
         return $this->hasMany(Attendance::class);

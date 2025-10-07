@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DopeController;
 use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\AntigenController;
+use App\Http\Controllers\AssignEmployeeRosterController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EmployeeRosterController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\RosterController;
+use App\Models\AssignEmployeeRoster;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -140,9 +142,10 @@ Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate'
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
 Route::get('/attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
 Route::resource('/attendance', AttendanceController::class);
-Route::resource('/employee-roster', EmployeeRosterController::class);
 Route::resource('/employees', EmployeeController::class);
 Route::resource('/rosters', RosterController::class);
+Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
+
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
 
