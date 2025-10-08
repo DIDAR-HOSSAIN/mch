@@ -15,7 +15,6 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // $employees = Employee::with('rosters')->latest()->get();
         $employees = Employee::with('roster')->latest()->get();
         return Inertia::render('Payroll/Employee/ViewEmployee', ['employees' => $employees]);
     }
@@ -34,14 +33,40 @@ class EmployeeController extends Controller
      */
     public function store(StoreEmployeeRequest $request)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'employee_id' => 'required|string|max:50|unique:employees,employee_id',
             'name' => 'required|string|max:255',
-            'employee_id' => 'required|string|unique:employees,employee_id',
-            'device_user_id' => 'required|string|unique:employees,device_user_id',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'nullable|in:Male,Female,Other',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:500',
+            'joining_date' => 'nullable|date',
+            'designation' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
             'roster_id' => 'nullable|exists:rosters,id',
+            'employment_type' => 'nullable|string|max:100',
+            'basic_salary' => 'nullable|numeric|min:0',
+            'allowance' => 'nullable|numeric|min:0',
+            'deduction' => 'nullable|numeric|min:0',
+            'device_user_id' => 'nullable|string|unique:employees,device_user_id',
+            'is_active' => 'boolean',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:20',
+            'emergency_contact_relation' => 'nullable|string|max:100',
+            'nid_number' => 'nullable|string|max:50',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        Employee::create($request->all());
+        // Handle image upload if provided
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('employee_photos', 'public');
+            $validated['photo'] = $photoPath;
+        }
+
+        Employee::create($validated);
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully!');
     }
@@ -61,7 +86,7 @@ class EmployeeController extends Controller
     {
         $rosters = Roster::select('id', 'roster_name')->get();
 
-        return Inertia::render('Payroll/Employee/EditEmployee', [
+        return inertia('Payroll/Employee/EditEmployee', [
             'employee' => $employee,
             'rosters' => $rosters,
         ]);
@@ -72,12 +97,38 @@ class EmployeeController extends Controller
      */
     public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
+        // dd($employee);
+
         $request->validate([
-            'name' => 'required|string|max:255',
             'employee_id' => 'required|string|unique:employees,employee_id,' . $employee->id,
-            'device_user_id' => 'required|string|unique:employees,device_user_id,' . $employee->id,
+            'name' => 'required|string|max:255',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'nullable|in:Male,Female,Other',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:255',
+            'joining_date' => 'nullable|date',
+            'designation' => 'nullable|string|max:100',
+            'department' => 'nullable|string|max:100',
             'roster_id' => 'nullable|exists:rosters,id',
+            'employment_type' => 'nullable|string|max:50',
+            'basic_salary' => 'nullable|numeric|min:0',
+            'allowance' => 'nullable|numeric|min:0',
+            'deduction' => 'nullable|numeric|min:0',
+            'device_user_id' => 'required|string|unique:employees,device_user_id,' . $employee->id,
+            'is_active' => 'boolean',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:20',
+            'emergency_contact_relation' => 'nullable|string|max:50',
+            'nid_number' => 'nullable|string|max:50',
+            'photo' => 'nullable|image|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('employee_photos', 'public');
+        }
 
         $employee->update($request->all());
 
