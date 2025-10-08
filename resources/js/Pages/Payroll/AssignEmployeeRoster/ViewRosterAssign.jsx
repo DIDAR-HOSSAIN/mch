@@ -6,13 +6,13 @@ const ViewRosterAssign = ({ auth, employees = [], rosters = [], days = [] }) => 
     return (
         <AdminDashboardLayout
             user={auth.user}
-            header={<h1 className="font-semibold text-xl text-gray-800 leading-tight">Employee Roster Assignments</h1>}
+            header={<h1 className="font-semibold text-xl text-gray-800 leading-tight">Employee Roster Assignm</h1>}
         >
             <Head title="View Roster Assign" />
 
             <div className="max-w-6xl mx-auto p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">Roster Assignments</h2>
+                    <h2 className="text-xl font-semibold">Roster Assign</h2>
                     <Link
                         href={route('assign-employee-roster.create')}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"

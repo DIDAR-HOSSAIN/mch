@@ -85,20 +85,20 @@ const CreateRosterAssign = ({
 
                 {/* Roster & Holiday Table */}
                 <table className="w-full border rounded text-sm">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="p-2 border">Day</th>
-                            {rosters.map((r) => (
-                                <th key={r.id} className="p-2 border text-center">
-                                    {r.roster_name}
-                                    <div className="text-xs text-gray-500">
-                                        ({r.office_start} - {r.office_end})
-                                    </div>
-                                </th>
-                            ))}
-                            <th className="p-2 border text-center">Holiday</th>
-                        </tr>
-                    </thead>
+                        <thead className="bg-gray-100 text-gray-700">
+                            <tr>
+                                <th className="p-2 border">Day</th>
+                                {rosters.map((r) => (
+                                    <th key={r.id} className="p-2 border text-center">
+                                        {r.roster_name}
+                                        <div className="text-xs text-gray-500">
+                                            ({r.office_start} - {r.office_end})
+                                        </div>
+                                    </th>
+                                ))}
+                                <th className="p-2 border text-center">Holiday</th>
+                            </tr>
+                        </thead>
                     <tbody>
                         {data.assignments.map((a) => (
                             <tr key={a.day_of_week}>
@@ -136,7 +136,7 @@ const CreateRosterAssign = ({
                         disabled={processing}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                     >
-                        Save Assignments
+                        Roster Assign
                     </button>
                 </div>
             </form>

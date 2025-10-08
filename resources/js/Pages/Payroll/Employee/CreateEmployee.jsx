@@ -1,7 +1,8 @@
 import React from "react";
-import { useForm, Link } from "@inertiajs/react";
+import { useForm, Link, Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const CreateEmployee = ({ rosters }) => {
+const CreateEmployee = ({ auth, rosters }) => {
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         employee_id: "",
@@ -15,6 +16,15 @@ const CreateEmployee = ({ rosters }) => {
     };
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Add Employee
+                </h1>
+            }
+        >
+            <Head title="Add Employee" />
         <div className="max-w-lg mx-auto bg-white shadow p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Add Employee</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,6 +92,7 @@ const CreateEmployee = ({ rosters }) => {
                 </div>
             </form>
         </div>
+    </AdminDashboardLayout>
     );
 };
 

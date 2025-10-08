@@ -15,6 +15,7 @@ const SidebarMenu = () => {
         sampleDropdown: false,
         resultDropdown: false,
         reportApproveDropdown: false,
+        dataPullDropdown: false,
         settings: false,
     });
 
@@ -623,6 +624,84 @@ const SidebarMenu = () => {
                             Approve Report
                         </Link>
                     )}
+                </div>
+            )}
+
+            <div className="flex">
+                <button
+                    onClick={() => toggleDropdown("dataPullDropdown")}
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {dropdownState.dataPullDropdown
+                        ? "Payroll System ▲"
+                        : "Payroll System ▼"}
+                </button>
+            </div>
+            {dropdownState.dataPullDropdown && (
+                <div className="flex flex-col gap-1">
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/attendance/sync/create"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Data Pull From Device
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/employees"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Employee Manage
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/attendance"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Attendance Report
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/rosters"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Roster Manage
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/assign-employee-roster"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Assign Roster
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/holidays"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Holiday Manage
+                        </Link>
+                    )}
+
+                    {hasAnyRole(auth.user, ["super-admin", "admin"]) && (
+                        <Link
+                            href="/leave"
+                            className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
+                        >
+                            Leave Manage
+                        </Link>
+                    )}
+
                 </div>
             )}
 

@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { useEffect, useState, useRef } from 'react';
+import { Head, router } from '@inertiajs/react';
 import { HiOutlineCheckCircle, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { FaSpinner } from 'react-icons/fa';
+import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
 
-const AttendanceSync = () => {
+const AttendanceSync = ({auth}) => {
     const [status, setStatus] = useState(null);
     const [loading, setLoading] = useState(false);
+    const intervalRef = useRef(null);
 
     const syncAttendance = () => {
+        if (loading) return; // একসাথে একবারই চলবে
         setLoading(true);
         setStatus(null);
 
@@ -15,34 +18,47 @@ const AttendanceSync = () => {
             method: 'get',
             preserveScroll: true,
             onSuccess: () => {
-                setStatus({ type: 'success', message: 'Attendance synced successfully!' });
+                setStatus({ type: 'success', message: '✅ Attendance synced successfully!' });
             },
             onError: () => {
-                setStatus({ type: 'error', message: 'Unable to sync attendance. Check device connection.' });
+                setStatus({ type: 'error', message: '❌ Unable to sync attendance. Check device connection.' });
             },
             onFinish: () => setLoading(false),
         });
     };
 
     useEffect(() => {
-        // Auto sync every 1 hour
-        const interval = setInterval(() => {
+        // 🔹 প্রতি ১ ঘন্টা পর অটো সিঙ্ক করবে
+        intervalRef.current = setInterval(() => {
+            console.log("⏱ Auto Sync Triggered...");
             syncAttendance();
         }, 3600000); // 3,600,000 ms = 1 hour
 
-        return () => clearInterval(interval); // Clean up on unmount
+        // 🔹 কম্পোনেন্ট আনমাউন্ট হলে টাইমার বন্ধ করে দাও
+        return () => clearInterval(intervalRef.current);
     }, []);
 
-
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Data Pull From Device
+                </h1>
+            }
+        >
+            <Head title="Data Pull From Device" />
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 px-4 py-8">
             <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
-                <h1 className="text-3xl font-semibold text-gray-800 mb-2">Sync Attendance</h1>
-                <p className="text-sm text-gray-500 mb-6">Click the button or wait for auto sync every 1 minute.</p>
+                <h1 className="text-3xl font-semibold text-gray-800 mb-2">Attendance Sync</h1>
+                <p className="text-sm text-gray-500 mb-6">
+                    Click the button or wait — auto sync runs every <strong>1 minute</strong>.
+                </p>
 
+                {/* Status Message */}
                 {status && (
                     <div
-                        className={`flex items-center gap-3 mb-5 px-4 py-3 rounded-lg text-sm font-medium
+                        className={`flex items-center gap-3 mb-5 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300
                             ${status.type === 'success'
                                 ? 'bg-green-100 text-green-700'
                                 : 'bg-red-100 text-red-700'}`}
@@ -56,6 +72,7 @@ const AttendanceSync = () => {
                     </div>
                 )}
 
+                {/* Sync Button */}
                 <button
                     onClick={syncAttendance}
                     disabled={loading}
@@ -73,6 +90,7 @@ const AttendanceSync = () => {
                 </button>
             </div>
         </div>
+    </AdminDashboardLayout>
     );
 };
 

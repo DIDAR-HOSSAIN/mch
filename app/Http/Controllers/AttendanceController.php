@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
+use App\Models\AssignEmployeeRoster;
 use App\Models\Employee;
 use App\Models\Holiday;
 use App\Models\Leave;
-use App\Models\Roster;
 use App\Models\WeeklyHoliday;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,7 +46,7 @@ class AttendanceController extends Controller
 
         $employees = Employee::select('id', 'name')->get();
 
-        return Inertia::render('Payroll/PayrollReport', [
+        return Inertia::render('Payroll/AttendanceReport', [
             'attendances' => $attendances ?? [],
             'employees' => $employees ?? [],
             'filters' => [
@@ -64,9 +64,9 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        $employees = Employee::all();
+        $employees = Employee::orderBy('name')->get();
 
-        return Inertia::render('Payroll/ManualAttendance', [
+        return Inertia::render('Payroll/ManualAttendance/ManualAttendance', [
             'employees' => $employees,
         ]);
     }
@@ -78,25 +78,63 @@ class AttendanceController extends Controller
     {
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            'date' => 'required|date',
-            'in_time' => 'required|date_format:H:i',
-            'out_time' => 'required|date_format:H:i|after_or_equal:in_time',
+            'date'        => 'required|date',
+            'in_time'     => 'required|date_format:H:i',
+            'out_time'    => 'required|date_format:H:i|after_or_equal:in_time',
         ]);
 
-        $status = $request->in_time === $request->out_time ? 'Absent' : 'Present';
+        $employeeId = $request->input('employee_id');
+        $date       = $request->input('date');
+        $inTime     = $request->input('in_time');
+        $outTime    = $request->input('out_time');
 
-        Attendance::updateOrCreate([
-            'employee_id' => $request->employee_id,
-            'date' => $request->date,
-        ], [
-            'in_time' => $request->in_time,
-            'out_time' => $request->out_time,
-            'source' => 'manual',
-            'status' => $status,
-        ]);
+        $dayOfWeek = date('l', strtotime($date));
 
-        return redirect()->route('attendance.index')->with('success', 'Manual attendance saved.');
+        $assignedRoster = AssignEmployeeRoster::with('roster')
+            ->where('employee_id', $employeeId)
+            ->where('day_of_week', $dayOfWeek)
+            ->first();
+
+        $status = $inTime === $outTime ? 'Absent' : 'Present';
+
+        Attendance::updateOrCreate(
+            [
+                'employee_id' => $employeeId,
+                'date'        => $date,
+            ],
+            [
+                'in_time' => $inTime,
+                'out_time' => $outTime,
+                'source' => 'manual',
+                'status' => $status,
+            ]
+        );
+
+        return redirect()->route('attendance.index')
+            ->with('success', 'Manual attendance saved successfully with correct roster!');
     }
+
+    public function getRoster($employee_id, $date)
+    {
+        $dayOfWeek = date('l', strtotime($date)); // Monday, Tuesday ...
+
+        $assignedRoster = AssignEmployeeRoster::with('roster')
+            ->where('employee_id', $employee_id)
+            ->where('day_of_week', $dayOfWeek)
+            ->first();
+
+        if ($assignedRoster && $assignedRoster->roster) {
+            return response()->json([
+                'roster_name' => $assignedRoster->roster->roster_name,
+                'start'       => $assignedRoster->roster->office_start,
+                'end'         => $assignedRoster->roster->office_end,
+            ]);
+        }
+
+        return response()->json(['message' => 'No roster assigned for this day.'], 404);
+    }
+
+
 
     /**
      * Display the specified resource.
@@ -154,7 +192,7 @@ class AttendanceController extends Controller
 
         $todayDate = Carbon::today();
         $dayOfWeek = $todayDate->format('l'); // Monday, Tuesday etc.
-        $employees = Employee::with('rosters.roster')->get();
+        $employees = Employee::with('assignEmployeeRoster.roster')->get();
 
         foreach ($employees as $employee) {
 
@@ -189,7 +227,7 @@ class AttendanceController extends Controller
             }
 
             // ✅ Today's roster
-            $todayRoster = $employee->rosters->firstWhere('day_of_week', $dayOfWeek);
+            $todayRoster = $employee->assignEmployeeRoster->firstWhere('day_of_week', $dayOfWeek);
             $rosterStart = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_start) : null;
             $rosterEnd   = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_end) : null;
 

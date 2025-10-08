@@ -15,7 +15,7 @@ class HolidayController extends Controller
     public function index()
     {
         $holidays = Holiday::orderBy('date', 'desc')->paginate(10);
-        return inertia('Payroll/Holidays/ViewHolidays', compact('holidays'));
+        return Inertia::render('Payroll/Holidays/ViewHolidays', compact('holidays'));
     }
 
     /**

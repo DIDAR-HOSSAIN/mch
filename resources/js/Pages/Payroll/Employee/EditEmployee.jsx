@@ -1,7 +1,8 @@
 import React from "react";
-import { useForm, Link } from "@inertiajs/react";
+import { useForm, Link, Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const EditEmployee = ({ employee, rosters }) => {
+const EditEmployee = ({ auth, employee, rosters }) => {
     const { data, setData, put, processing, errors } = useForm({
         name: employee.name || "",
         employee_id: employee.employee_id || "",
@@ -15,6 +16,15 @@ const EditEmployee = ({ employee, rosters }) => {
     };
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Edit Employee
+                </h1>
+            }
+        >
+            <Head title="Edit Employee" />
         <div className="max-w-lg mx-auto bg-white shadow p-6 rounded-lg mt-6">
             <h2 className="text-xl font-semibold mb-4">Edit Employee</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,6 +106,7 @@ const EditEmployee = ({ employee, rosters }) => {
                 </div>
             </form>
         </div>
+    </AdminDashboardLayout>
     );
 };
 

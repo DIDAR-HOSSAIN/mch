@@ -1,5 +1,6 @@
+import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
 import { Head, useForm } from '@inertiajs/react';
-import AdminDashboardLayout from '@/Layouts/AdminDashboardLayout';
+
 
 const ViewRoster = ({ auth, rosters }) => {
     const { data, setData, post, reset } = useForm({

@@ -1,6 +1,9 @@
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
 
-export default function ManualAttendance({ employees }) {
+export default function ManualAttendance({ auth, employees }) {
     const { data, setData, post, processing, errors } = useForm({
         employee_id: '',
         date: '',
@@ -8,12 +11,29 @@ export default function ManualAttendance({ employees }) {
         out_time: '',
     });
 
+    const [roster, setRoster] = useState(null);
+
+    useEffect(() => {
+        if (data.employee_id && data.date) {
+            axios.get(`/attendance/roster/${data.employee_id}/${data.date}`)
+                .then(res => setRoster(res.data))
+                .catch(() => setRoster(null));
+        } else {
+            setRoster(null);
+        }
+    }, [data.employee_id, data.date]);
+
     const submit = (e) => {
         e.preventDefault();
         post(route('attendance.store'));
     };
 
     return (
+        <AdminDashboardLayout
+                    user={auth.user}
+                    header={<h1 className="font-semibold text-xl text-gray-800 leading-tight">Manual Attendance</h1>}
+                >
+        <Head title="Manual Attendance" />
         <div className="max-w-xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Manual Attendance Entry</h2>
 
@@ -43,6 +63,13 @@ export default function ManualAttendance({ employees }) {
                     />
                     {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
                 </div>
+
+                {roster && (
+                    <div className="p-3 bg-blue-50 rounded-md mb-2">
+                        <p><strong>Shift:</strong> {roster.roster_name}</p>
+                        <p><strong>Time:</strong> {roster.start} - {roster.end}</p>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -77,5 +104,6 @@ export default function ManualAttendance({ employees }) {
                 </button>
             </form>
         </div>
+    </AdminDashboardLayout>
     );
 }

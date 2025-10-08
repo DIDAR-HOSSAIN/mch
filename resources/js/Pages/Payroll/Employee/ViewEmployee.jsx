@@ -1,8 +1,9 @@
 import React from "react";
-import { Link, usePage, router } from "@inertiajs/react";
+import { Link, usePage, router, Head } from "@inertiajs/react";
 import Swal from "sweetalert2";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const ViewEmployee = () => {
+const ViewEmployee = ({auth}) => {
     const { employees, flash } = usePage().props;
     console.log('employee index', employees);
 
@@ -29,9 +30,18 @@ const ViewEmployee = () => {
     };
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Manage Employee
+                </h1>
+            }
+        >
+            <Head title="Manage Employee" />
         <div className="max-w-5xl mx-auto p-4">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Employees</h1>
+                    <h1 className="text-2xl font-bold">Manage Employees</h1>
                 <Link
                     href="/employees/create"
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
@@ -80,6 +90,7 @@ const ViewEmployee = () => {
                 </table>
             </div>
         </div>
+    </AdminDashboardLayout>
     );
 };
 

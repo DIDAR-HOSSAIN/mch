@@ -42,7 +42,8 @@ class AssignEmployeeRosterController extends Controller
     public function create()
     {
         $employees = Employee::orderBy('name')->get();
-        $rosters   = Roster::orderBy('roster_name')->get();
+        // $rosters   = Roster::orderBy('roster_name')->get();
+        $rosters = Roster::orderBy('office_start')->get();
         $days      = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         return Inertia::render('Payroll/AssignEmployeeRoster/CreateRosterAssign', [
@@ -105,7 +106,8 @@ class AssignEmployeeRosterController extends Controller
     {
         $employee = Employee::findOrFail($assignEmployeeRoster->employee_id);
 
-        $rosters = Roster::orderBy('roster_name')->get();
+        // $rosters = Roster::orderBy('roster_name')->get();
+        $rosters = Roster::orderBy('office_start')->get();
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         $assignments = AssignEmployeeRoster::where('employee_id', $employee->id)->get();
