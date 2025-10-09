@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class PreMedical extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'short_code',
+        'passport_no',
+        'ten_years',
+        'first_name',
+        'last_name',
+        'father_name',
+        'mother_name',
+        'date_of_issue',
+        'place_of_issue',
+        'date_of_birth',
+        'sex',
+        'nationality',
+        'religion',
+        'profession',
+        'report_date',
+        'report_after_days',
+        'mobile_no',
+        'serial_no',
+        'country_name',
+        'amount',
+        'is_free',
+        'free_amount',
+        'gcc_slip_no',
+        'gcc_slip_date',
+        'expire_days',
+        'photo',
+    ];
+
+    protected $casts = [
+        'ten_years' => 'boolean',
+        'is_free' => 'boolean',
+        'report_date' => 'date',
+        'gcc_slip_date' => 'date',
+    ];
+}

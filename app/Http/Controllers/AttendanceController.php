@@ -168,11 +168,13 @@ class AttendanceController extends Controller
         //
     }
 
-
+    
     public function syncCreate()
     {
         return Inertia::render('Payroll/DataPull'); // তোমার React পেজ অনুযায়ী নাম দাও
     }
+
+
 
     public function sync()
     {

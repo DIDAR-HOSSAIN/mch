@@ -24,6 +24,7 @@ use App\Http\Controllers\MolecularResultController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
+use App\Http\Controllers\PreMedicalController;
 use App\Http\Controllers\RosterController;
 use App\Models\Thana;
 use Illuminate\Support\Facades\Route;
@@ -145,6 +146,9 @@ Route::resource('/rosters', RosterController::class);
 Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
+
+//Gamca System
+Route::resource('/pre-medical', PreMedicalController::class);
 
 
 // Route::middleware('auth')->group(function () {
