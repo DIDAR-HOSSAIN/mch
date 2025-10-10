@@ -31,7 +31,7 @@ class PermissionController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        return Inertia::render('User-Manage/Permissions/CreatePermission', ['permissions'=> $permissions]);
+        return Inertia::render('User-Manage/Permissions/PermissionList', ['permissions'=> $permissions]);
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\AntigenController;
 use App\Http\Controllers\AssignEmployeeRosterController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
@@ -137,8 +138,10 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('/results/{patientId}/report-sign', [MolecularResultController::class, 'generateReportWithSign'])->name('results.sign');
 });
 
-Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
-Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
+// Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
+// Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
+Route::get('/attendance/sync-create', [AttendanceLogController::class, 'syncCreate']);
+Route::get('/attendance/sync-f35', [AttendanceLogController::class, 'syncF35']);
 Route::resource('/attendance', AttendanceController::class);
 Route::get('/attendance/roster/{employee_id}/{date}', [AttendanceController::class, 'getRoster']);
 Route::resource('/employees', EmployeeController::class);

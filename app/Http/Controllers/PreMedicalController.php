@@ -9,6 +9,17 @@ use Inertia\Inertia;
 
 class PreMedicalController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:pre-medical-list|pre-medical-create|pre-medical-edit|pre-medical-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:pre-medical-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:pre-medical-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:pre-medical-delete', ['only' => ['destroy']]);
+        // $this->middleware('permission:pre-medical-summary-report', ['only' => ['summaryReport']]);
+        // $this->middleware('permission:pre-medical-summary-details', ['only' => ['summaryDetails']]);
+        // $this->middleware('permission:pre-medical-due-check', ['only' => ['duesCheck']]);
+    }
+
     /**
      * Display a listing of the resource.
      */

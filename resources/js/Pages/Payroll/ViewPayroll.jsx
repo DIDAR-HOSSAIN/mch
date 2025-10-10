@@ -1,5 +1,4 @@
 const ViewPayroll = ({ attendances }) => {
-    console.log("view attendances", attendances);
 
     return (
         <div className="p-4">

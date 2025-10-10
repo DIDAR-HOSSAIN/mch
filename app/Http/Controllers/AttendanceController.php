@@ -18,6 +18,14 @@ use MehediJaman\LaravelZkteco\LaravelZkteco;
 
 class AttendanceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:attendance-list|attendance-create|attendance-edit|attendance-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:attendance-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:attendance-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:attendance-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:attendance-sync-create', ['only' => ['syncCreate', 'sync']]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -168,12 +176,11 @@ class AttendanceController extends Controller
         //
     }
 
-    
+
     public function syncCreate()
     {
         return Inertia::render('Payroll/DataPull'); // তোমার React পেজ অনুযায়ী নাম দাও
     }
-
 
 
     public function sync()
