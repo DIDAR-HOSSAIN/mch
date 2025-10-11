@@ -14,6 +14,17 @@ use Illuminate\Http\Request;
 
 class AssignEmployeeRosterController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:assign-employee-roster-list|assign-employee-roster-create|assign-employee-roster-edit|assign-employee-roster-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:assign-employee-roster-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:assign-employee-roster-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:assign-employee-roster-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:assign-employee-roster-summary-report', ['only' => ['summaryReport']]);
+        $this->middleware('permission:assign-employee-roster-summary-details', ['only' => ['summaryDetails']]);
+        $this->middleware('permission:assign-employee-roster-due-check', ['only' => ['duesCheck']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */

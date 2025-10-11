@@ -11,10 +11,10 @@ class PreMedicalController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:pre-medical-list|pre-medical-create|pre-medical-edit|pre-medical-delete', ['only' => ['index', 'store']]);
-        $this->middleware('permission:pre-medical-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:pre-medical-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:pre-medical-delete', ['only' => ['destroy']]);
+        // $this->middleware('permission:pre-medical-list|pre-medical-create|pre-medical-edit|pre-medical-delete', ['only' => ['index', 'store']]);
+        // $this->middleware('permission:pre-medical-create', ['only' => ['create', 'store']]);
+        // $this->middleware('permission:pre-medical-edit', ['only' => ['edit', 'update']]);
+        // $this->middleware('permission:pre-medical-delete', ['only' => ['destroy']]);
         // $this->middleware('permission:pre-medical-summary-report', ['only' => ['summaryReport']]);
         // $this->middleware('permission:pre-medical-summary-details', ['only' => ['summaryDetails']]);
         // $this->middleware('permission:pre-medical-due-check', ['only' => ['duesCheck']]);
@@ -43,41 +43,47 @@ class PreMedicalController extends Controller
     public function store(StorePreMedicalRequest $request)
     {
         $data = $request->validate([
-            'short_code' => 'required|string|max:50|unique:pre_medicals,short_code',
-            'passport_no' => 'nullable|string|max:50',
-            'ten_years' => 'boolean',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'father_name' => 'nullable|string|max:100',
-            'mother_name' => 'nullable|string|max:100',
-            'date_of_issue' => 'nullable|date',
-            'place_of_issue' => 'nullable|string|max:100',
-            'date_of_birth' => 'nullable|date',
-            'sex' => 'required|in:MALE,FEMALE,OTHER',
-            'nationality' => 'nullable|string|max:100',
-            'religion' => 'nullable|string|max:100',
-            'profession' => 'nullable|string|max:100',
-            'report_date' => 'nullable|date',
+            // ✅ Required Fields
+            'short_code'        => 'required|string|max:50|unique:pre_medicals,short_code',
+            'passport_no'       => 'required|string|max:50',
+            'first_name'        => 'required|string|max:100',
+            'date_of_issue'     => 'required|date',
+            'place_of_issue'    => 'required|string|max:100',
+            'date_of_birth'     => 'required|date',
+            'sex'               => 'required|in:MALE,FEMALE,OTHER',
+            'nationality'       => 'required|string|max:100',
+            'religion'          => 'required|string|max:100',
+            'profession'        => 'required|string|max:100',
+            'mobile_no'         => 'required|string|max:20',
+            'country_name'      => 'required|string|max:100',
+
+            // ✅ Optional Fields
+            'short_code'        => 'nullable|string|max:50|unique:pre_medicals,short_code',
+            'last_name'         => 'nullable|string|max:100',
+            'father_name'       => 'nullable|string|max:100',
+            'mother_name'       => 'nullable|string|max:100',
             'report_after_days' => 'nullable|integer',
-            'mobile_no' => 'nullable|string|max:20',
-            'serial_no' => 'nullable|string|max:50',
-            'country_name' => 'nullable|string|max:100',
-            'amount' => 'nullable|numeric',
-            'is_free' => 'boolean',
-            'free_amount' => 'nullable|numeric',
-            'gcc_slip_no' => 'nullable|string|max:50',
-            'gcc_slip_date' => 'nullable|date',
-            'expire_days' => 'nullable|integer',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'report_date'       => 'nullable|date',
+            'serial_no'         => 'nullable|string|max:50',
+            'amount'            => 'nullable|numeric',
+            'is_free'           => 'boolean',
+            'discount'          => 'nullable|numeric',
+            'gcc_slip_no'       => 'nullable|string|max:50',
+            'gcc_slip_date'     => 'nullable|date',
+            'expire_days'       => 'nullable|integer',
+            'photo'             => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        $data['passport_validity'] = $request->boolean('passport_validity') ? 10 : 5;
+
+        // ✅ File upload
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('passenger_photos', 'public');
         }
 
         PreMedical::create($data);
 
-        return back()->with('success', 'Passenger saved successfully.');
+        return back()->with('success', '✅ Passenger saved successfully.');
     }
 
     /**
@@ -104,7 +110,7 @@ class PreMedicalController extends Controller
         $data = $request->validate([
             'short_code' => 'required|string|max:50|unique:pre_medicals,short_code,' . $preMedical->id,
             'passport_no' => 'nullable|string|max:50',
-            'ten_years' => 'boolean',
+            'passport_validity' => 'boolean',
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'father_name' => 'nullable|string|max:100',

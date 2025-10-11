@@ -138,8 +138,8 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
     Route::get('/results/{patientId}/report-sign', [MolecularResultController::class, 'generateReportWithSign'])->name('results.sign');
 });
 
-// Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
-// Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
+Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
+Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
 Route::get('/attendance/sync-create', [AttendanceLogController::class, 'syncCreate']);
 Route::get('/attendance/sync-f35', [AttendanceLogController::class, 'syncF35']);
 Route::resource('/attendance', AttendanceController::class);
