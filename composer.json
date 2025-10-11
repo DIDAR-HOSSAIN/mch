@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "mehedijaman/laravel-zkteco": "^1.0",
+        "rats/zkteco": "^002.0",
         "spatie/laravel-permission": "^6.9",
         "tightenco/ziggy": "^1.0"
     },

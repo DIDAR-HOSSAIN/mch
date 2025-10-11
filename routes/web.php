@@ -28,8 +28,10 @@ use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\PreMedicalController;
 use App\Http\Controllers\RosterController;
 use App\Models\Thana;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Rats\Zkteco\Lib\ZKTeco;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,7 +142,7 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
 
 Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
-Route::get('/attendance/sync-create', [AttendanceLogController::class, 'syncCreate']);
+Route::get('/test-zkteco', [AttendanceLogController::class, 'test']);
 Route::get('/attendance/sync-f35', [AttendanceLogController::class, 'syncF35']);
 Route::resource('/attendance', AttendanceController::class);
 Route::get('/attendance/roster/{employee_id}/{date}', [AttendanceController::class, 'getRoster']);
@@ -149,6 +151,11 @@ Route::resource('/rosters', RosterController::class);
 Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
+// Route::get('/api/get-attendance', [AttendanceLogController::class, 'getAttendance']);
+Route::get('/sync-device', [AttendanceLogController::class, 'syncFromDevice']);
+
+
+
 
 //Gamca System
 Route::resource('/pre-medical', PreMedicalController::class);

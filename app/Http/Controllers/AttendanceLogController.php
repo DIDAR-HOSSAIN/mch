@@ -10,6 +10,42 @@ use MehediJaman\LaravelZkteco\LaravelZkteco;
 
 class AttendanceLogController extends Controller
 {
+
+    public function getAttendance()
+    {
+        // return "test get attendance";
+        $deviceIp = '192.168.1.40'; // ZKTeco Device IP
+        $zk = new LaravelZkteco($deviceIp);
+
+        if (!$zk->connect()) {
+            return response()->json(['error' => 'Cannot connect to device'], 500);
+        }
+
+        $data = $zk->getAttendance();
+        $zk->disconnect();
+
+        return response()->json($data);
+    }
+
+    public function test()
+    {
+        $deviceIp = '103.25.83.69';
+        $zk = new LaravelZkteco($deviceIp);
+
+        if (!$zk->connect()) {
+            return '❌ Cannot connect to ZKTeco device from hosting server';
+        }
+
+        $data = $zk->getAttendance();
+        $zk->disconnect();
+
+        return response()->json([
+            'message' => '✅ Connected successfully!',
+            'records_found' => count($data),
+            'sample' => array_slice($data, 0, 3)
+        ]);
+    }
+
     // React পেজ
     public function syncCreate()
     {
@@ -19,7 +55,8 @@ class AttendanceLogController extends Controller
     // F35 Device Sync
     public function syncF35()
     {
-        $deviceIp = '192.168.1.40';
+        // $deviceIp = '192.168.1.40';
+        $deviceIp = '103.25.83.69';
         $zk = new LaravelZkteco($deviceIp);
 
         try {
