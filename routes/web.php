@@ -15,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\LocalZktecoController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
@@ -151,8 +152,9 @@ Route::resource('/rosters', RosterController::class);
 Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
-// Route::get('/api/get-attendance', [AttendanceLogController::class, 'getAttendance']);
+Route::get('/get-attendance', [AttendanceLogController::class, 'getAttendance']);
 Route::get('/sync-device', [AttendanceLogController::class, 'syncFromDevice']);
+Route::get('/api/get-attendance', [LocalZktecoController::class, 'getAttendance']);
 
 
 
