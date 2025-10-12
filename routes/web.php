@@ -15,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\LocalZktecoController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
@@ -151,35 +152,6 @@ Route::resource('/rosters', RosterController::class);
 Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
-
-
-Route::post('/api/sync-zkteco', function (Request $request) {
-    $records = $request->input('records');
-    $device_ip = $request->input('device_ip');
-
-    if (!$records) {
-        return response()->json(['error' => 'No records found'], 400);
-    }
-
-    foreach ($records as $record) {
-        Attendance::updateOrCreate(
-            [
-                'device_user_id' => $record['id'],
-                'date' => date('Y-m-d', strtotime($record['timestamp']))
-            ],
-            [
-                'employee_id' => $record['id'],
-                'in_time' => $record['timestamp'],
-                'out_time' => $record['timestamp'],
-                'status' => 'present',
-                'device_ip' => $device_ip ?? 'unknown',
-                'source' => 'ZKTeco'
-            ]
-        );
-    }
-
-    return response()->json(['message' => '✅ Data synced to hosting DB successfully']);
-});
 
 
 //Gamca System
