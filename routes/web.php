@@ -143,8 +143,6 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
 
 Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
-Route::get('/test-zkteco', [AttendanceLogController::class, 'test']);
-Route::get('/attendance/sync-f35', [AttendanceLogController::class, 'syncF35']);
 Route::resource('/attendance', AttendanceController::class);
 Route::get('/attendance/roster/{employee_id}/{date}', [AttendanceController::class, 'getRoster']);
 Route::resource('/employees', EmployeeController::class);
