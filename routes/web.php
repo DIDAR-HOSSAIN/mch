@@ -153,6 +153,20 @@ Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
 
+Route::get('/test-zk', function () {
+    $ip = '192.168.1.40'; // তোমার ZKTeco device IP
+    $port = 4370;
+
+    $socket = @fsockopen($ip, $port, $errno, $errstr, 2);
+
+    if (!$socket) {
+        return "❌ Connection failed: $errstr ($errno)";
+    } else {
+        fclose($socket);
+        return "✅ Connected to ZKTeco device ($ip:$port)";
+    }
+});
+
 
 //Gamca System
 Route::resource('/pre-medical', PreMedicalController::class);
