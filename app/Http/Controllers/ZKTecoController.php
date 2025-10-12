@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Rats\Zkteco\Lib\ZKTeco;
 use App\Models\Attendance;
 
@@ -10,10 +9,10 @@ class ZKTecoController extends Controller
 {
     public function sync()
     {
-        $zk = new ZKTeco('192.168.1.40'); // Device IP
+        $zk = new ZKTeco('192.168.1.40');
         $zk->connect();
 
-        $attendanceData = $zk->getAttendance(); // Get all attendance records
+        $attendanceData = $zk->getAttendance();
         $zk->disconnect();
 
         foreach ($attendanceData as $record) {

@@ -27,7 +27,9 @@ use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\PreMedicalController;
 use App\Http\Controllers\RosterController;
+use App\Models\Attendance;
 use App\Models\Thana;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -142,8 +144,6 @@ Route::middleware(['auth', 'check_roles:super-admin, admin, sub-admin, user, gen
 
 Route::get('/attendance/sync/create', [AttendanceController::class, 'syncCreate']);
 Route::get('/attendance/sync', [AttendanceController::class, 'sync']);
-Route::get('/test-zkteco', [AttendanceLogController::class, 'test']);
-Route::get('/attendance/sync-f35', [AttendanceLogController::class, 'syncF35']);
 Route::resource('/attendance', AttendanceController::class);
 Route::get('/attendance/roster/{employee_id}/{date}', [AttendanceController::class, 'getRoster']);
 Route::resource('/employees', EmployeeController::class);
@@ -151,10 +151,35 @@ Route::resource('/rosters', RosterController::class);
 Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class);
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
-// Route::get('/api/get-attendance', [AttendanceLogController::class, 'getAttendance']);
-Route::get('/sync-device', [AttendanceLogController::class, 'syncFromDevice']);
 
 
+Route::post('/api/sync-zkteco', function (Request $request) {
+    $records = $request->input('records');
+    $device_ip = $request->input('device_ip');
+
+    if (!$records) {
+        return response()->json(['error' => 'No records found'], 400);
+    }
+
+    foreach ($records as $record) {
+        Attendance::updateOrCreate(
+            [
+                'device_user_id' => $record['id'],
+                'date' => date('Y-m-d', strtotime($record['timestamp']))
+            ],
+            [
+                'employee_id' => $record['id'],
+                'in_time' => $record['timestamp'],
+                'out_time' => $record['timestamp'],
+                'status' => 'present',
+                'device_ip' => $device_ip ?? 'unknown',
+                'source' => 'ZKTeco'
+            ]
+        );
+    }
+
+    return response()->json(['message' => '✅ Data synced to hosting DB successfully']);
+});
 
 
 //Gamca System

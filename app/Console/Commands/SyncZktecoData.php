@@ -4,50 +4,55 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Rats\Zkteco\Lib\ZKTeco;
-use App\Models\Attendance;
+use Illuminate\Support\Facades\Http;
 
-class SyncZktecoData extends Command
+class SyncZKTecoData extends Command
 {
     protected $signature = 'zkteco:sync';
-    protected $description = 'Sync ZKTeco attendance data to DB';
+    protected $description = 'Pull data from ZKTeco device and sync with hosting API';
 
     public function handle()
     {
-        $this->info('Connecting to ZKTeco device...');
+        $zk_ip = env('ZKTECO_IP');
+        $zk_port = env('ZKTECO_PORT', 4370);
+        $hosting_url = env('HOSTING_SYNC_URL');
 
-        $zk = new ZKTeco('192.168.1.40');
-        $zk->connect();
+        $this->info("Connecting to ZKTeco device ($zk_ip:$zk_port)...");
+
+        $zk = new ZKTeco($zk_ip, $zk_port);
+
+        if (!$zk->connect()) {
+            $this->error("❌ Cannot connect to ZKTeco device");
+            return;
+        }
+
         $attendance = $zk->getAttendance();
         $zk->disconnect();
 
-        foreach ($attendance as $record) {
-            $date = date('Y-m-d', strtotime($record['timestamp']));
-            $time = date('H:i:s', strtotime($record['timestamp']));
-
-            if ($record['type'] == 0) {
-                Attendance::updateOrCreate(
-                    ['employee_id' => $record['id'], 'date' => $date],
-                    [
-                        'device_user_id' => $record['id'],
-                        'in_time' => $time,
-                        'device_ip' => '192.168.1.40',
-                        'source' => 'ZKTeco',
-                        'status' => 'present'
-                    ]
-                );
-            } else {
-                Attendance::updateOrCreate(
-                    ['employee_id' => $record['id'], 'date' => $date],
-                    [
-                        'out_time' => $time,
-                        'device_ip' => '192.168.1.40',
-                        'source' => 'ZKTeco',
-                        'status' => 'present'
-                    ]
-                );
-            }
+        if (empty($attendance)) {
+            $this->warn("⚠️ No attendance data found.");
+            return;
         }
 
-        $this->info("✅ Synced " . count($attendance) . " records successfully.");
+        $this->info("✅ Pulled " . count($attendance) . " records from device.");
+
+        $records = [];
+        foreach ($attendance as $log) {
+            $records[] = [
+                'id' => $log['uid'] ?? null,
+                'timestamp' => $log['timestamp'] ?? null,
+            ];
+        }
+
+        $response = Http::post($hosting_url, [
+            'device_ip' => $zk_ip,
+            'records' => $records,
+        ]);
+
+        if ($response->successful()) {
+            $this->info("✅ Synced to hosting successfully!");
+        } else {
+            $this->error("❌ Failed to sync to hosting: " . $response->body());
+        }
     }
 }
