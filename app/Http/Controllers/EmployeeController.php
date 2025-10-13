@@ -6,6 +6,10 @@ use App\Models\Employee;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Roster;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -13,11 +17,26 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $employees = Employee::with('rosters')->latest()->get();
-        $employees = Employee::with('roster')->latest()->get();
-        return Inertia::render('Payroll/Employee/ViewEmployee', ['employees' => $employees]);
+        $search = $request->input('search');
+
+        $employees = Employee::with('roster')
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('employee_id', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
+
+        return Inertia::render('Payroll/Employee/ViewEmployee', [
+            'employees' => $employees,
+            'filters' => [
+                'search' => $search,
+            ],
+        ]);
     }
 
     /**
@@ -26,7 +45,7 @@ class EmployeeController extends Controller
     public function create()
     {
         $rosters = Roster::select('id', 'roster_name')->get();
-        return Inertia::render('Payroll/Employee/CreateEmployee', ['rosters' => $rosters]);
+        return Inertia::render('Payroll/Employee/CreateEmployee', ['rosters' => $rosters, 'message' => session('message')]);
     }
 
     /**
@@ -34,16 +53,50 @@ class EmployeeController extends Controller
      */
     public function store(StoreEmployeeRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'employee_id' => 'required|string|unique:employees,employee_id',
-            'device_user_id' => 'required|string|unique:employees,device_user_id',
-            'roster_id' => 'nullable|exists:rosters,id',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'employee_id' => 'required|string|max:50|unique:employees',
+                'device_user_id' => 'required|string|max:50',
+                'roster_id' => 'required|exists:rosters,id',
+                'designation' => 'required|string|max:100',
+                'department' => 'nullable|string|max:100',
+                'joining_date' => 'required|date',
+                'salary' => 'nullable|numeric|min:0',
+                'phone' => 'required|string|max:20',
+                'email' => 'nullable|email|max:255',
+                'address' => 'nullable|string',
+                'nid_no' => 'nullable|string|max:50',
+                'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
 
-        Employee::create($request->all());
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator) // Pass validation errors
+                    ->withInput(); // Keep old input values
+            }
 
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully!');
+            $validated = $validator->validated();
+
+            // Handle file upload
+            if ($request->hasFile('photo')) {
+                $validator['photo'] = $request->file('photo')->store('employees', 'public');
+            }
+
+
+
+            // ✅ Step 4: Create employee record
+            Employee::create($validated);
+
+            // ✅ Step 5: Redirect with success
+            return redirect()
+                ->route('employees.create')
+                ->with('message', 'Employee added successfully!');
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Failed: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
@@ -59,11 +112,9 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $rosters = Roster::select('id', 'roster_name')->get();
-
         return Inertia::render('Payroll/Employee/EditEmployee', [
             'employee' => $employee,
-            'rosters' => $rosters,
+            'rosters' => Roster::all(),
         ]);
     }
 
@@ -72,14 +123,30 @@ class EmployeeController extends Controller
      */
     public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'employee_id' => 'required|string|unique:employees,employee_id,' . $employee->id,
-            'device_user_id' => 'required|string|unique:employees,device_user_id,' . $employee->id,
-            'roster_id' => 'nullable|exists:rosters,id',
+            'employee_id' => 'required|string|max:50|unique:employees,employee_id,' . $employee->id,
+            'device_user_id' => 'required|string|max:50',
+            'roster_id' => 'required|exists:rosters,id',
+            'designation' => 'required|string|max:100',
+            'department' => 'nullable|string|max:100',
+            'joining_date' => 'required|date',
+            'salary' => 'nullable|numeric|min:0',
+            'phone' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string',
+            'nid_no' => 'nullable|string|max:50',
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $employee->update($request->all());
+        if ($request->hasFile('photo')) {
+            if ($employee->photo && Storage::disk('public')->exists($employee->photo)) {
+                Storage::disk('public')->delete($employee->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('employees', 'public');
+        }
+
+        $employee->update($validated);
 
         return redirect()->route('employees.index')->with('success', 'Employee updated successfully!');
     }
@@ -89,7 +156,16 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        $employee->delete();
-        return back()->with('success', 'Employee deleted successfully!');
+        try {
+            if ($employee->photo && Storage::disk('public')->exists($employee->photo)) {
+                Storage::disk('public')->delete($employee->photo);
+            }
+
+            $employee->delete();
+
+            return back()->with('success', 'Employee deleted successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error deleting employee: ' . $e->getMessage());
+        }
     }
 }

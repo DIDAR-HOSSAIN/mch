@@ -9,7 +9,21 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'employee_id', 'device_user_id', 'roster_id'];
+    protected $fillable = [
+        'name',
+        'employee_id',
+        'device_user_id',
+        'roster_id',
+        'designation',
+        'department',
+        'joining_date',
+        'salary',
+        'phone',
+        'email',
+        'address',
+        'nid_no',
+        'photo',
+    ];
 
     public function assignEmployeeRoster()
     {
@@ -30,5 +44,4 @@ class Employee extends Model
     {
         return $this->belongsTo(Roster::class);
     }
-
 }

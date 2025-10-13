@@ -12,16 +12,6 @@ class SyncAttendance extends Command
      *
      * @var string
      */
-    // protected $signature = 'attendance:sync';
-    // protected $description = 'Sync attendance from ZKTeco device';
-
-    // public function handle()
-    // {
-    //     $controller = new AttendanceController();
-    //     $controller->sync();
-    //     $this->info('Attendance synced successfully.');
-    // }
-
     protected $signature = 'attendance:sync';
     protected $description = 'Sync attendance from ZKTeco device';
 
@@ -29,7 +19,7 @@ class SyncAttendance extends Command
     {
         $controller = new AttendanceController();
         $controller->sync();
-        $this->info('Attendance synced!');
+        $this->info('Attendance synced successfully.');
     }
     
 }

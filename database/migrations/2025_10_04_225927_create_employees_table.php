@@ -16,7 +16,16 @@ return new class extends Migration
             $table->string('name');
             $table->string('employee_id')->unique();
             $table->string('device_user_id')->unique();
-            $table->unsignedBigInteger('roster_id')->nullable();
+            $table->unsignedBigInteger('roster_id');
+            $table->string('designation');
+            $table->string('department')->nullable();
+            $table->date('joining_date');
+            $table->decimal('salary', 10, 2)->nullable();
+            $table->string('phone');
+            $table->string('email')->nullable();
+            $table->text('address')->nullable();
+            $table->string('nid_no')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }
