@@ -10,12 +10,10 @@ use App\Http\Controllers\GpcrController;
 use App\Http\Controllers\AntigenController;
 use App\Http\Controllers\AssignEmployeeRosterController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\AttendanceLogController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaveController;
-use App\Http\Controllers\LocalZktecoController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\ResultController;
@@ -28,13 +26,9 @@ use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\PreMedicalController;
 use App\Http\Controllers\RosterController;
-use App\Models\Attendance;
 use App\Models\Thana;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Rats\Zkteco\Lib\ZKTeco;
 
 /*
 |--------------------------------------------------------------------------
@@ -153,23 +147,10 @@ Route::resource('/assign-employee-roster', AssignEmployeeRosterController::class
 Route::resource('/leave', LeaveController::class);
 Route::resource('/holidays', HolidayController::class);
 
-Route::get('/test-zk', function () {
-    $ip = '192.168.1.40'; // তোমার ZKTeco device IP
-    $port = 4370;
-
-    $socket = @fsockopen($ip, $port, $errno, $errstr, 2);
-
-    if (!$socket) {
-        return "❌ Connection failed: $errstr ($errno)";
-    } else {
-        fclose($socket);
-        return "✅ Connected to ZKTeco device ($ip:$port)";
-    }
-});
-
 
 //Gamca System
 Route::resource('/pre-medical', PreMedicalController::class);
+Route::get('pre-medical-inv/{id}', [PreMedicalController::class, 'premedicalMoneyReceipt'])->name('premedical.receipt');
 
 
 // Route::middleware('auth')->group(function () {

@@ -20,11 +20,8 @@ class AssignEmployeeRosterController extends Controller
         $this->middleware('permission:assign-employee-roster-create', ['only' => ['create', 'store']]);
         $this->middleware('permission:assign-employee-roster-edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:assign-employee-roster-delete', ['only' => ['destroy']]);
-        $this->middleware('permission:assign-employee-roster-summary-report', ['only' => ['summaryReport']]);
-        $this->middleware('permission:assign-employee-roster-summary-details', ['only' => ['summaryDetails']]);
-        $this->middleware('permission:assign-employee-roster-due-check', ['only' => ['duesCheck']]);
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -34,7 +31,7 @@ class AssignEmployeeRosterController extends Controller
             'assignEmployeeRoster.roster',
             'weeklyHolidays'
         ])
-            ->orderBy('name')
+            ->orderBy('id')
             ->get();
 
         $rosters = Roster::orderBy('roster_name')->get();

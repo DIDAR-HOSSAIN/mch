@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\PreMedical;
 use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PreMedicalController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('permission:pre-medical-list|pre-medical-create|pre-medical-edit|pre-medical-delete', ['only' => ['index', 'store']]);
-        // $this->middleware('permission:pre-medical-create', ['only' => ['create', 'store']]);
-        // $this->middleware('permission:pre-medical-edit', ['only' => ['edit', 'update']]);
-        // $this->middleware('permission:pre-medical-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:pre-medical-list|pre-medical-create|pre-medical-edit|pre-medical-delete', ['only' => ['index', 'store']]);
+        $this->middleware('permission:pre-medical-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:pre-medical-edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:pre-medical-delete', ['only' => ['destroy']]);
         // $this->middleware('permission:pre-medical-summary-report', ['only' => ['summaryReport']]);
         // $this->middleware('permission:pre-medical-summary-details', ['only' => ['summaryDetails']]);
         // $this->middleware('permission:pre-medical-due-check', ['only' => ['duesCheck']]);
@@ -23,11 +24,30 @@ class PreMedicalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Request $request)
     {
-        $passengers = PreMedical::latest()->paginate(20);
-        return Inertia::render('Gamca/Pre-Medical/ViewPreMedical', compact('passengers'));
+        $search = $request->get('search');
+        $pre_medicals = PreMedical::query()
+            ->when(
+                $search,
+                fn($q) =>
+                $q->where('passport_no', 'like', "%{$search}%")
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+            )
+            ->latest()
+            ->paginate(10);
+            // ->withQueryString();
+
+        return inertia('Gamca/Pre-Medical/ViewPreMedical', [
+            'auth' => ['user' => auth()->user()],
+            'pre_medicals' => $pre_medicals,
+            'filters' => ['search' => $search],
+            'flash' => session()->get('flash'),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -152,5 +172,16 @@ class PreMedicalController extends Controller
     {
         $preMedical->delete();
         return back()->with('success', 'Passenger deleted.');
+    }
+
+    public function premedicalMoneyReceipt($id)
+    {
+        // শুধু ID দিয়ে ডেটা আনবে (রিলেশন ছাড়াই)
+        $record = \App\Models\PreMedical::findOrFail($id);
+
+        // React (Inertia) Component এ পাঠানো হবে
+        return Inertia::render('Gamca/Pre-Medical/MoneyReceipt', [
+            'record' => $record
+        ]);
     }
 }

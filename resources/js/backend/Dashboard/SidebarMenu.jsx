@@ -64,10 +64,10 @@ const SidebarMenu = () => {
                         "general",
                     ]) && (
                             <Link
-                                href="/pcr"
+                            href="/pre-medical"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
-                                Manage Pcr
+                                Manage Pre-Medical
                             </Link>
                         )}
 
@@ -78,7 +78,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/pcr/summary/report"
+                                href="/pre-medical/summary/report"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Summary
@@ -92,7 +92,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/pcr/summary/details"
+                            href="/pre-medical/summary/details"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Summary Details
@@ -106,7 +106,7 @@ const SidebarMenu = () => {
                         "user",
                     ]) && (
                             <Link
-                                href="/pcr/dues/details"
+                                href="/pre-medical/dues/details"
                                 className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
                             >
                                 Date Wise Dues Details

@@ -12,7 +12,6 @@ const AttendanceReport = ({ auth, attendances = [], employees = [], filters = {}
     });
 
     const [loading, setLoading] = useState(false);
-
     const tableRef = useRef(); // 🔹 print reference
 
     const handlePrint = useReactToPrint({
@@ -53,7 +52,6 @@ const AttendanceReport = ({ auth, attendances = [], employees = [], filters = {}
         >
             <Head title="Attendance Report" />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <Head title="Attendance Report" />
                 <h1 className="text-2xl font-semibold mb-6 text-gray-800">Attendance Report</h1>
 
                 {/* Filter Form */}
@@ -99,18 +97,29 @@ const AttendanceReport = ({ auth, attendances = [], employees = [], filters = {}
                     <button type="button" onClick={handlePrint} className="px-4 py-2 bg-green-600 text-white rounded">
                         Print / PDF
                     </button>
-
                     <Link
                         href={route('attendance.create')}
                         className="px-4 py-2 bg-green-600 text-white rounded"
                     >
                         Add Attendance
                     </Link>
-
                 </form>
 
-                {/* Table */}
-                <div ref={tableRef} className="overflow-x-auto bg-white rounded-lg shadow">
+                {/* Printable Area */}
+                <div ref={tableRef} className="overflow-x-auto bg-white rounded-lg shadow p-6">
+
+                    {/* 🔹 HEADER (for print) */}
+                    <div className="text-center mb-6 border-b pb-4">
+                        <h2 className="text-2xl font-bold text-gray-800">Medical Centre</h2>
+                        <p className="text-lg text-gray-700 font-semibold">Attendance Report</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                            Address: 953 O.R Nizam Road, Panchlaish, Chattogram
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            Mobile: +8801883077569 | Email: medicalcentrebdbd@gmail.com
+                        </p>
+                    </div>
+
                     <table className="w-full border border-gray-200 text-sm">
                         <thead className="bg-gray-100">
                             <tr>

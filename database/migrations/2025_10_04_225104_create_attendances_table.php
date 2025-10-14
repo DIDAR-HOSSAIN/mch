@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('device_user_id');
             $table->date('date');
-            $table->time('in_time');
-            $table->time('out_time');
+            $table->time('in_time')->nullable();
+            $table->time('out_time')->nullable();
             $table->string('status')->default('Present');
             $table->string('device_ip');
             $table->string('source')->default('device');

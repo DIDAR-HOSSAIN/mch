@@ -96,7 +96,7 @@ const CreateRosterAssign = ({
                                         </div>
                                     </th>
                                 ))}
-                                <th className="p-2 border text-center">Holiday</th>
+                                <th className="p-2 border text-center">Weekly Holiday</th>
                             </tr>
                         </thead>
                     <tbody>

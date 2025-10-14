@@ -256,19 +256,42 @@ class AttendanceController extends Controller
                     // Handle night shift
                     if ($rosterEnd->lt($rosterStart)) $rosterEnd->addDay();
 
-                    if ($firstTime && $firstTime->gt($rosterStart)) {
+                    // ✅ Grace time (e.g. 10 minutes)
+                    $graceTime = $rosterStart->copy()->addMinutes(10);
+
+                    if ($firstTime && $firstTime->gt($graceTime)) {
                         $status = 'Late';
                         $remarks = 'Arrived Late';
                     }
+
                     if ($lastTime && $lastTime->lt($rosterEnd)) {
                         $status = $status === 'Late' ? 'Late & Early Leave' : 'Early Leave';
                         $remarks = trim(($remarks ? $remarks . ', ' : '') . 'Left Early');
                     }
-                    if ($firstTime && $lastTime && $firstTime->lte($rosterStart) && $lastTime->gte($rosterEnd)) {
+
+                    if ($firstTime && $lastTime && $firstTime->lte($graceTime) && $lastTime->gte($rosterEnd)) {
                         $status = 'Present';
                         $remarks = 'On Time';
                     }
                 }
+
+                // if ($rosterStart && $rosterEnd) {
+                //     // Handle night shift
+                //     if ($rosterEnd->lt($rosterStart)) $rosterEnd->addDay();
+
+                //     if ($firstTime && $firstTime->gt($rosterStart)) {
+                //         $status = 'Late';
+                //         $remarks = 'Arrived Late';
+                //     }
+                //     if ($lastTime && $lastTime->lt($rosterEnd)) {
+                //         $status = $status === 'Late' ? 'Late & Early Leave' : 'Early Leave';
+                //         $remarks = trim(($remarks ? $remarks . ', ' : '') . 'Left Early');
+                //     }
+                //     if ($firstTime && $lastTime && $firstTime->lte($rosterStart) && $lastTime->gte($rosterEnd)) {
+                //         $status = 'Present';
+                //         $remarks = 'On Time';
+                //     }
+                // }
             }
 
             // ✅ Save Attendance
@@ -289,5 +312,4 @@ class AttendanceController extends Controller
         $zk->disconnect();
         return back()->with('success', 'Attendance synced successfully with multiple rosters!');
     }
-
 }
