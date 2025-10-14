@@ -50,7 +50,7 @@ const AttendanceSync = ({ auth }) => {
             user={auth.user}
             header={
                 <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Data Pull From Device dddd
+                    Data Pull From Device
                 </h1>
             }
         >

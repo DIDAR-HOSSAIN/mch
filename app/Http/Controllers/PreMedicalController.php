@@ -38,7 +38,7 @@ class PreMedicalController extends Controller
             )
             ->latest()
             ->paginate(10);
-            // ->withQueryString();
+        // ->withQueryString();
 
         return inertia('Gamca/Pre-Medical/ViewPreMedical', [
             'auth' => ['user' => auth()->user()],
@@ -119,7 +119,9 @@ class PreMedicalController extends Controller
      */
     public function edit(PreMedical $preMedical)
     {
-        return Inertia::render('Gamca/Pre-Medical/EditPreMedical', compact('preMedical'));
+        return Inertia::render('Gamca/Pre-Medical/EditPreMedical', [
+            'preMedical' => $preMedical,
+        ]);
     }
 
     /**
@@ -128,41 +130,46 @@ class PreMedicalController extends Controller
     public function update(UpdatePreMedicalRequest $request, PreMedical $preMedical)
     {
         $data = $request->validate([
-            'short_code' => 'required|string|max:50|unique:pre_medicals,short_code,' . $preMedical->id,
-            'passport_no' => 'nullable|string|max:50',
+            'short_code'        => 'nullable|string|max:50',
+            'passport_no'       => 'required|string|max:50',
             'passport_validity' => 'boolean',
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
-            'father_name' => 'nullable|string|max:100',
-            'mother_name' => 'nullable|string|max:100',
-            'date_of_issue' => 'nullable|date',
-            'place_of_issue' => 'nullable|string|max:100',
-            'date_of_birth' => 'nullable|date',
-            'sex' => 'required|in:MALE,FEMALE,OTHER',
-            'nationality' => 'nullable|string|max:100',
-            'religion' => 'nullable|string|max:100',
-            'profession' => 'nullable|string|max:100',
-            'report_date' => 'nullable|date',
+            'first_name'        => 'required|string|max:100',
+            'last_name'         => 'nullable|string|max:100',
+            'father_name'       => 'nullable|string|max:100',
+            'mother_name'       => 'nullable|string|max:100',
+            'date_of_issue'     => 'nullable|date',
+            'place_of_issue'    => 'nullable|string|max:100',
+            'date_of_birth'     => 'nullable|date',
+            'sex'               => 'required|in:MALE,FEMALE,OTHER',
+            'nationality'       => 'nullable|string|max:100',
+            'religion'          => 'nullable|string|max:100',
+            'profession'        => 'nullable|string|max:100',
             'report_after_days' => 'nullable|integer',
-            'mobile_no' => 'nullable|string|max:20',
-            'serial_no' => 'nullable|string|max:50',
-            'country_name' => 'nullable|string|max:100',
-            'amount' => 'nullable|numeric',
-            'is_free' => 'boolean',
-            'free_amount' => 'nullable|numeric',
-            'gcc_slip_no' => 'nullable|string|max:50',
-            'gcc_slip_date' => 'nullable|date',
-            'expire_days' => 'nullable|integer',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'report_date'       => 'nullable|date',
+            'mobile_no'         => 'nullable|string|max:20',
+            'serial_no'         => 'nullable|string|max:50',
+            'country_name'      => 'nullable|string|max:100',
+            'amount'            => 'nullable|numeric',
+            'is_free'           => 'boolean',
+            'discount'          => 'nullable|numeric',
+            'gcc_slip_no'       => 'nullable|string|max:50',
+            'gcc_slip_date'     => 'nullable|date',
+            'expire_days'       => 'nullable|integer',
+            'photo'             => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        // Handle checkboxes correctly
+        $data['passport_validity'] = $request->boolean('passport_validity');
+        $data['is_free'] = $request->boolean('is_free');
+
+        // Handle photo upload
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('passenger_photos', 'public');
         }
 
         $preMedical->update($data);
 
-        return back()->with('success', 'Passenger updated successfully.');
+        return redirect()->route('pre-medical.index')->with('success', '✅ Passenger updated successfully.');
     }
 
     /**
@@ -176,12 +183,10 @@ class PreMedicalController extends Controller
 
     public function premedicalMoneyReceipt($id)
     {
-        // শুধু ID দিয়ে ডেটা আনবে (রিলেশন ছাড়াই)
-        $record = \App\Models\PreMedical::findOrFail($id);
+        $record = PreMedical::findOrFail($id);
 
-        // React (Inertia) Component এ পাঠানো হবে
         return Inertia::render('Gamca/Pre-Medical/MoneyReceipt', [
-            'record' => $record
+            'record' => $record,
         ]);
     }
 }
