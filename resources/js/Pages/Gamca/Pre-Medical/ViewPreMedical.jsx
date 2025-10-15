@@ -63,7 +63,6 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
 
                 {/* 🔹 Top Controls: Search + Add + Print Buttons */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-                    {/* Search Bar */}
                     <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
                         <input
                             type="text"
@@ -91,7 +90,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                             onClick={handlePrint}
                             className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
                         >
-                            🖨️ Print
+                            🖨️ Print All
                         </button>
                     </div>
                 </div>
@@ -108,6 +107,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Report Date</th>
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Expire Days</th>
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Amount</th>
+                                <th className="px-4 py-2 text-center font-semibold text-gray-700">Actions</th>
                             </tr>
                         </thead>
 
@@ -116,9 +116,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                 pre_medicals.data.map((item, index) => (
                                     <tr key={item.id} className="hover:bg-gray-50">
                                         <td className="px-4 py-2">{pre_medicals.from + index}</td>
-                                        <td className="px-4 py-2 font-medium text-gray-800">
-                                            {item.passport_no}
-                                        </td>
+                                        <td className="px-4 py-2 font-medium text-gray-800">{item.passport_no}</td>
                                         <td className="px-4 py-2 text-gray-700">
                                             {item.first_name} {item.last_name}
                                         </td>
@@ -132,11 +130,48 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                         <td className="px-4 py-2 text-gray-700">
                                             {item.amount ? `${item.amount} BDT` : "N/A"}
                                         </td>
+
+                                        {/* 🔹 Action Buttons */}
+                                        <td className="px-4 py-2 text-center flex justify-center gap-2">
+                                            {/* Show Button */}
+                                            <Link
+                                                href={`/pre-medical/${item.id}`}
+                                                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 text-xs"
+                                            >
+                                                👁️ Show
+                                            </Link>
+
+                                            {/* Edit Button */}
+                                            <Link
+                                                href={`/pre-medical/${item.id}/edit`}
+                                                className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 text-xs"
+                                            >
+                                                ✏️ Edit
+                                            </Link>
+
+                                            {/* Print Button */}
+                                            {/* Money Receipt Button (New) */}
+                                            <Link
+                                                href={route("premedical.receipt", item.id)}
+                                                target="_blank"
+                                                className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                                            >
+                                                💰 Receipt
+                                            </Link>
+
+                                            {/* Delete Button */}
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
+                                            >
+                                                🗑️ Delete
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="text-center text-gray-500 py-4">
+                                    <td colSpan="8" className="text-center text-gray-500 py-4">
                                         No Pre-Medical data found.
                                     </td>
                                 </tr>
@@ -157,8 +192,8 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                 disabled={!link.url}
                                 onClick={() => link.url && router.visit(link.url)}
                                 className={`px-3 py-1 rounded text-sm ${link.active
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                             />

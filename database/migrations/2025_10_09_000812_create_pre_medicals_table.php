@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('country_name');
             $table->decimal('amount', 10, 2)->default(0);
             $table->boolean('is_free')->default(false);
-            $table->decimal('discount', 10, 2)->default(0);
+            $table->decimal('discount', 10, 2)->default(0)->nullable();
             $table->string('gcc_slip_no')->nullable();
             $table->date('gcc_slip_date')->nullable();
             $table->integer('expire_days')->nullable();

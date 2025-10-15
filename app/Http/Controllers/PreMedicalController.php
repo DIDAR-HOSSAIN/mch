@@ -101,9 +101,10 @@ class PreMedicalController extends Controller
             $data['photo'] = $request->file('photo')->store('passenger_photos', 'public');
         }
 
-        PreMedical::create($data);
+        $preMedical = PreMedical::create($data);
 
-        return back()->with('success', '✅ Passenger saved successfully.');
+        // ✅ Redirect using the newly created record's ID
+        return redirect()->route('premedical.receipt', ['id' => $preMedical->id]);
     }
 
     /**
@@ -183,10 +184,11 @@ class PreMedicalController extends Controller
 
     public function premedicalMoneyReceipt($id)
     {
-        $record = PreMedical::findOrFail($id);
+        $receipt = PreMedical::findOrFail($id);
+        // dd($receipt);
 
         return Inertia::render('Gamca/Pre-Medical/MoneyReceipt', [
-            'record' => $record,
+            'receipt' => $receipt,
         ]);
     }
 }
