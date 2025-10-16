@@ -25,9 +25,6 @@ const EditPreMedical = ({ auth, preMedical }) => {
     const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth);
     const [reportDate, setReportDate] = useState(initialReportDate);
     const [gccSlipDate, setGccSlipDate] = useState(initialGccSlipDate);
-    const [photoPreview, setPhotoPreview] = useState(
-        preMedical.photo ? `/storage/${preMedical.photo}` : null
-    );
 
     const countryOptions = [
         { value: "qa", label: "Qatar" },
@@ -71,6 +68,10 @@ const EditPreMedical = ({ auth, preMedical }) => {
         expire_days: preMedical.expire_days ?? 0,
         photo: null,
     });
+
+    const [imagePreview, setImagePreview] = useState(
+        preMedical.photo ? `/images/passengers/${preMedical.photo}` : null
+    );
 
     // =================== Auto report_date ===================
     useEffect(() => {
@@ -120,13 +121,11 @@ const EditPreMedical = ({ auth, preMedical }) => {
     };
 
     // =================== Photo Change Handler ===================
-    const handlePhotoChange = (e) => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setData("photo", file);
-            const reader = new FileReader();
-            reader.onloadend = () => setPhotoPreview(reader.result);
-            reader.readAsDataURL(file);
+            setData((prevData) => ({ ...prevData, photo: file }));
+            setImagePreview(URL.createObjectURL(file));
         }
     };
 
@@ -310,10 +309,33 @@ const EditPreMedical = ({ auth, preMedical }) => {
 
                         {/* RIGHT SIDE */}
                         <div className="space-y-3">
-                            <div className="mx-auto border border-gray-400 w-[140px] h-[160px] bg-gray-100 flex items-center justify-center text-sm text-gray-500">
+                            {/* <div className="mx-auto border border-gray-400 w-[140px] h-[160px] bg-gray-100 flex items-center justify-center text-sm text-gray-500">
                                 Photo Preview
                             </div>
-                            <input type="file" onChange={(e) => setData("photo", e.target.files[0])} />
+                            <input type="file" onChange={(e) => setData("photo", e.target.files[0])} /> */}
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Upload Image
+                                </label>
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    accept="photo/*"
+                                    onChange={handleImageChange}
+                                    className="mt-1 block w-full text-gray-700"
+                                />
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="mt-2 h-32 w-32 object-cover"
+                                    />
+                                {errors.photo && (
+                                    <div className="text-red-600 text-sm mt-1">
+                                        {errors.photo}
+                                    </div>
+                                )}
+                            </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-800 mb-1">Serial No #</label>

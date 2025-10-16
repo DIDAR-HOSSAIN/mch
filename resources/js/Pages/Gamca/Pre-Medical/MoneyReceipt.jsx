@@ -11,9 +11,9 @@ const MoneyReceipt = ({ receipt }) => {
         documentTitle: "Money Receipt",
     });
 
-    const photoUrl =
-        receipt?.photo ||
-        "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+    // const photoUrl =
+    //     receipt?.photo ||
+    //     "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
 
     const passengerName = `${receipt?.first_name || ""} ${receipt?.last_name || ""}`.trim();
 
@@ -46,7 +46,6 @@ const MoneyReceipt = ({ receipt }) => {
                     title="Money Receipt (Office Copy)"
                     receipt={receipt}
                     passengerName={passengerName}
-                    photoUrl={photoUrl}
                     formatDate={formatDate}
                     showAuthTable={false}
                 />
@@ -57,7 +56,6 @@ const MoneyReceipt = ({ receipt }) => {
                     title="Money Receipt (Passenger Copy)"
                     receipt={receipt}
                     passengerName={passengerName}
-                    photoUrl={photoUrl}
                     formatDate={formatDate}
                     showAuthTable={true}
                 />
@@ -70,7 +68,7 @@ const ReceiptSection = ({
     title,
     receipt,
     passengerName,
-    photoUrl,
+    photo,
     formatDate,
     showAuthTable,
 }) => {
@@ -97,11 +95,12 @@ const ReceiptSection = ({
                 <h2 className="text-lg font-semibold underline text-center flex-1">
                     {title}
                 </h2>
-                <img
-                    src={photoUrl}
-                    alt="Passenger"
-                    className="w-16 h-16 object-cover border rounded ml-4"
-                />
+                    <img
+                        // src={`/public/images/passengers/${item.photo}`}
+                        src={`/images/passengers/${receipt.photo}`}
+                        alt="Passenger Image"
+                        className="w-24 h-auto object-cover"
+                    />
             </div>
 
             {/* Info Rows */}

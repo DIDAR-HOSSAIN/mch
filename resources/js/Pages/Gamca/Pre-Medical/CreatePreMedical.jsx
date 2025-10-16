@@ -7,6 +7,7 @@ import Select from "react-select";
 
 const CreatePreMedical = ({ auth }) => {
 
+    const [imagePreview, setImagePreview] = useState(null);
     const [dateOfIssue, setDateOfIssue] = useState(new Date());
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [reportDate, setReportDate] = useState(new Date());
@@ -112,7 +113,24 @@ const CreatePreMedical = ({ auth }) => {
 
         setData(field, date ? date.toISOString().split("T")[0] : null);
     };
-    
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+
+        // Validate photo file (optional)
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+                setData((prevData) => ({
+                    ...prevData,
+                    photo: file,
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -166,7 +184,7 @@ const CreatePreMedical = ({ auth }) => {
                                 className="w-full"
                             />
                         </div>
-                            
+
 
                             {/* PASSPORT */}
                             <div className="flex items-end gap-3">
@@ -405,10 +423,30 @@ const CreatePreMedical = ({ auth }) => {
 
                             {/* Photo Upload */}
 
-                            <div className="mx-auto border border-gray-400 w-[140px] h-[160px] bg-gray-100 flex items-center justify-center text-sm text-gray-500">
-                                Photo Preview
+                            <div>
+
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="mx-auto border border-gray-400 w-[140px] h-[158px] bg-gray-100 flex items-center justify-center text-sm text-gray-500"
+                                    />
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Upload Image
+                                </label>
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    accept="photo/*"
+                                    onChange={handleImageChange}
+                                    className="mt-1 block w-full text-gray-700"
+                                />
+                                {errors.photo && (
+                                    <div className="text-red-600 text-sm mt-1">
+                                        {errors.photo}
+                                    </div>
+                                )}
                             </div>
-                            <input type="file" onChange={(e) => setData("photo", e.target.files[0])} />
+
                             {/* Serial No */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-800 mb-1">

@@ -7,6 +7,10 @@ use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class PreMedicalController extends Controller
 {
@@ -91,14 +95,33 @@ class PreMedicalController extends Controller
             'gcc_slip_no'       => 'nullable|string|max:50',
             'gcc_slip_date'     => 'nullable|date',
             'expire_days'       => 'nullable|integer',
-            'photo'             => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:80',
+                'required_if:gender,Male',
+            ],
         ]);
 
         $data['passport_validity'] = $request->boolean('passport_validity') ? 10 : 5;
 
-        // ✅ File upload
+        $imagePath = public_path('images/passengers/');
+
+        // Check if the directory exists, if not, create it
+        if (!File::exists($imagePath)) {
+            File::makeDirectory($imagePath, 0755, true);
+        }
+
+        // Initialize ImageManager without specifying the driver
+        $manager = new ImageManager(new Driver());
+
+        // Handle image1
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('passenger_photos', 'public');
+            $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
+            $img->save($imagePath . $name_gen, 80);
+            $data['photo'] = $name_gen;
         }
 
         $preMedical = PreMedical::create($data);
@@ -130,7 +153,7 @@ class PreMedicalController extends Controller
      */
     public function update(UpdatePreMedicalRequest $request, PreMedical $preMedical)
     {
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'short_code'        => 'nullable|string|max:50',
             'passport_no'       => 'required|string|max:50',
             'passport_validity' => 'boolean',
@@ -156,19 +179,45 @@ class PreMedicalController extends Controller
             'gcc_slip_no'       => 'nullable|string|max:50',
             'gcc_slip_date'     => 'nullable|date',
             'expire_days'       => 'nullable|integer',
-            'photo'             => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'photo' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:80',
+                'required_if:gender,Male',
+            ],
         ]);
 
         // Handle checkboxes correctly
         $data['passport_validity'] = $request->boolean('passport_validity');
         $data['is_free'] = $request->boolean('is_free');
 
-        // Handle photo upload
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('passenger_photos', 'public');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator) // Pass validation errors
+                ->withInput(); // Keep old input values
         }
 
-        $preMedical->update($data);
+        $imagePath = public_path('images/passengers/');
+
+        // Check if the directory exists, if not, create it
+        if (!File::exists($imagePath)) {
+            File::makeDirectory($imagePath, 0755, true);
+        }
+
+        // Initialize ImageManager without specifying the driver
+        $manager = new ImageManager(new Driver());
+
+        // Handle image1
+        if ($request->hasFile('photo')) {
+            $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
+            $img->save($imagePath . $name_gen, 80);
+            $data['photo'] = $name_gen;
+        }
+
+        // $preMedical->update($data);
+        PreMedical::create($data);
 
         return redirect()->route('pre-medical.index')->with('success', '✅ Passenger updated successfully.');
     }
@@ -179,7 +228,7 @@ class PreMedicalController extends Controller
     public function destroy(PreMedical $preMedical)
     {
         $preMedical->delete();
-        return back()->with('success', 'Passenger deleted.');
+        return redirect()->route('pre-medical.index')->with('success', '✅ Passenger Deleted successfully.');
     }
 
     public function premedicalMoneyReceipt($id)

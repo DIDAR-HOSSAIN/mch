@@ -44,7 +44,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                router.delete(`/premedicals/${id}`);
+                router.delete(`/pre-medical/${id}`);
             }
         });
     };
@@ -105,7 +105,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Name</th>
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Country</th>
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Report Date</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Expire Days</th>
+                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Photo</th>
                                 <th className="px-4 py-2 text-left font-semibold text-gray-700">Amount</th>
                                 <th className="px-4 py-2 text-center font-semibold text-gray-700">Actions</th>
                             </tr>
@@ -124,15 +124,20 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                         <td className="px-4 py-2 text-gray-700">
                                             {item.report_date ?? "-"}
                                         </td>
-                                        <td className="px-4 py-2 text-gray-700">
-                                            {item.expire_days ? `${item.expire_days} Days` : "-"}
+                                        <td className="border px-4 py-2">
+                                            <img
+                                                // src={`/public/images/passengers/${item.photo}`}
+                                                src={`/images/passengers/${item?.photo}`}
+                                                alt="Passenger Image"
+                                                className="w-24 h-auto object-cover"
+                                            />
                                         </td>
                                         <td className="px-4 py-2 text-gray-700">
                                             {item.amount ? `${item.amount} BDT` : "N/A"}
                                         </td>
 
                                         {/* 🔹 Action Buttons */}
-                                        <td className="px-4 py-2 text-center flex justify-center gap-2">
+                                        <td className="text-gray-700">
                                             {/* Show Button */}
                                             <Link
                                                 href={`/pre-medical/${item.id}`}
