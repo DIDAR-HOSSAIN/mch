@@ -7,32 +7,31 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 const ViewPreMedical = ({ auth, filters = {} }) => {
     const { pre_medicals, flash } = usePage().props;
     const [search, setSearch] = useState(filters.search || "");
+    const printRef = useRef();
 
-    const printRef = useRef(); // 🔹 Reference for printable area
-
-    // 🔹 ReactToPrint handler
+    // ✅ Print handler
     const handlePrint = useReactToPrint({
         content: () => printRef.current,
-        documentTitle: "Pre-Medical List",
+        documentTitle: "Pre-Medical Report List",
     });
 
-    // 🔹 Search Handler
+    // ✅ Search handler
     const handleSearch = (e) => {
         e.preventDefault();
-        router.get("/premedicals", { search }, { preserveState: true });
+        router.get("/pre-medical", { search }, { preserveState: true });
     };
 
-    // 🔹 Success message
+    // ✅ Flash message
     if (flash?.success) {
         Swal.fire({
             icon: "success",
             title: flash.success,
+            timer: 1500,
             showConfirmButton: false,
-            timer: 2000,
         });
     }
 
-    // 🔹 Delete Confirmation
+    // ✅ Delete confirmation
     const handleDelete = (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -52,122 +51,119 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
     return (
         <AdminDashboardLayout
             user={auth.user}
-            header={
-                <h1 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Pre-Medical List
-                </h1>
-            }
+            header={<h1 className="font-semibold text-xl text-gray-800">Pre-Medical List</h1>}
         >
             <Head title="Pre-Medical List" />
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-                {/* 🔹 Top Controls: Search + Add + Print Buttons */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
-                    <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8">
+                {/* 🔹 Search + Action Buttons */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
+                    >
                         <input
                             type="text"
-                            placeholder="Search by passport or name..."
-                            className="border rounded px-3 py-2 w-full sm:w-64"
+                            placeholder="Search by Passport / Name"
+                            className="border rounded-lg px-3 py-2 w-full sm:w-64 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
                         >
                             Search
                         </button>
                     </form>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap justify-center sm:justify-end gap-2">
                         <Link
                             href="/pre-medical/create"
-                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
                         >
-                            + Add Pre-Medical
+                            + Add New
                         </Link>
                         <button
                             onClick={handlePrint}
-                            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700"
                         >
-                            🖨️ Print All
+                            🖨️ Print
                         </button>
                     </div>
                 </div>
 
-                {/* 🔹 Printable Area */}
-                <div ref={printRef} className="overflow-x-auto bg-white rounded-lg shadow">
-                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                {/* 🔹 Table (Printable Area) */}
+                <div
+                    ref={printRef}
+                    className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-100 print:shadow-none"
+                >
+                    <table className="min-w-full text-sm text-left text-gray-700 border-collapse">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">#</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Passport No</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Name</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Country</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Report Date</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Photo</th>
-                                <th className="px-4 py-2 text-left font-semibold text-gray-700">Amount</th>
-                                <th className="px-4 py-2 text-center font-semibold text-gray-700">Actions</th>
+                                <th className="px-3 py-2 font-semibold">#</th>
+                                <th className="px-3 py-2 font-semibold">Passport No</th>
+                                <th className="px-3 py-2 font-semibold">Name</th>
+                                <th className="px-3 py-2 font-semibold">Country</th>
+                                <th className="px-3 py-2 font-semibold">Report Date</th>
+                                <th className="px-3 py-2 font-semibold">Photo</th>
+                                <th className="px-3 py-2 font-semibold">Amount</th>
+                                <th className="px-3 py-2 font-semibold print:hidden text-center">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-gray-200">
-                            {pre_medicals.data.length > 0 ? (
+                        <tbody>
+                            {pre_medicals?.data?.length ? (
                                 pre_medicals.data.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2">{pre_medicals.from + index}</td>
-                                        <td className="px-4 py-2 font-medium text-gray-800">{item.passport_no}</td>
-                                        <td className="px-4 py-2 text-gray-700">
-                                            {item.first_name} {item.last_name}
+                                    <tr key={item.id} className="hover:bg-gray-50 transition">
+                                        <td className="px-3 py-2">{pre_medicals.from + index}</td>
+                                        <td className="px-3 py-2 font-medium">{item.passport_no}</td>
+                                        <td className="px-3 py-2">{`${item.first_name || ""} ${item.last_name || ""}`}</td>
+                                        <td className="px-3 py-2">{item.country_name}</td>
+                                        <td className="px-3 py-2">
+                                            {item.report_date
+                                                ? new Date(item.report_date).toLocaleDateString()
+                                                : "-"}
                                         </td>
-                                        <td className="px-4 py-2 text-gray-700">{item.country_name}</td>
-                                        <td className="px-4 py-2 text-gray-700">
-                                            {item.report_date ?? "-"}
+                                        <td className="px-3 py-2">
+                                            {item.photo ? (
+                                                <img
+                                                    src={`/images/passengers/${item.photo}`}
+                                                    alt="Passenger"
+                                                    className="w-16 h-12 object-cover rounded border"
+                                                />
+                                            ) : (
+                                                <span className="text-gray-400">No Photo</span>
+                                            )}
                                         </td>
-                                        <td className="border px-4 py-2">
-                                            <img
-                                                // src={`/public/images/passengers/${item.photo}`}
-                                                src={`/images/passengers/${item?.photo}`}
-                                                alt="Passenger Image"
-                                                className="w-24 h-auto object-cover"
-                                            />
-                                        </td>
-                                        <td className="px-4 py-2 text-gray-700">
-                                            {item.amount ? `${item.amount} BDT` : "N/A"}
-                                        </td>
+                                        <td className="px-3 py-2">{item.amount}</td>
 
                                         {/* 🔹 Action Buttons */}
-                                        <td className="text-gray-700">
-                                            {/* Show Button */}
+                                        <td className="px-3 py-2 flex flex-wrap gap-1 justify-center print:hidden">
                                             <Link
                                                 href={`/pre-medical/${item.id}`}
-                                                className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 text-xs"
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
                                             >
                                                 👁️ Show
                                             </Link>
-
-                                            {/* Edit Button */}
                                             <Link
                                                 href={`/pre-medical/${item.id}/edit`}
-                                                className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 text-xs"
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs"
                                             >
                                                 ✏️ Edit
                                             </Link>
-
-                                            {/* Print Button */}
-                                            {/* Money Receipt Button (New) */}
                                             <Link
-                                                href={route("premedical.receipt", item.id)}
+                                                href={`/pre-medical-inv/${item.id}`}
                                                 target="_blank"
-                                                className="bg-teal-600 text-white px-2 py-1 rounded hover:bg-teal-700 text-xs"
+                                                className="bg-teal-600 hover:bg-teal-700 text-white px-2 py-1 rounded text-xs"
                                             >
                                                 💰 Receipt
                                             </Link>
-
-                                            {/* Delete Button */}
                                             <button
                                                 onClick={() => handleDelete(item.id)}
-                                                className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
+                                                className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
                                             >
                                                 🗑️ Delete
                                             </button>
@@ -177,7 +173,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                             ) : (
                                 <tr>
                                     <td colSpan="8" className="text-center text-gray-500 py-4">
-                                        No Pre-Medical data found.
+                                        No records found.
                                     </td>
                                 </tr>
                             )}
@@ -186,19 +182,21 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                 </div>
 
                 {/* 🔹 Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                    <p className="text-sm text-gray-600">
-                        Showing {pre_medicals.from || 0} - {pre_medicals.to || 0} of {pre_medicals.total} records
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3 text-sm text-gray-600">
+                    <p>
+                        Showing {pre_medicals.from || 0} - {pre_medicals.to || 0} of{" "}
+                        {pre_medicals.total || 0} records
                     </p>
-                    <div className="flex gap-2">
+
+                    <div className="flex flex-wrap gap-2">
                         {pre_medicals.links.map((link, i) => (
                             <button
                                 key={i}
                                 disabled={!link.url}
                                 onClick={() => link.url && router.visit(link.url)}
-                                className={`px-3 py-1 rounded text-sm ${link.active
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                className={`px-3 py-1 rounded ${link.active
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                     }`}
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                             />

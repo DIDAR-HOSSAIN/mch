@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PreMedical;
 use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
@@ -141,86 +142,131 @@ class PreMedicalController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PreMedical $preMedical)
+    // public function edit(PreMedical $preMedical)
+    // {
+    //     return Inertia::render('Gamca/Pre-Medical/EditPreMedical', [
+    //         'preMedical' => $preMedical,
+    //     ]);
+    // }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
+    // public function update(UpdatePreMedicalRequest $request, PreMedical $preMedical)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'short_code'        => 'nullable|string|max:50',
+    //         'passport_no'       => 'required|string|max:50',
+    //         'passport_validity' => 'boolean',
+    //         'first_name'        => 'required|string|max:100',
+    //         'last_name'         => 'nullable|string|max:100',
+    //         'father_name'       => 'nullable|string|max:100',
+    //         'mother_name'       => 'nullable|string|max:100',
+    //         'date_of_issue'     => 'nullable|date',
+    //         'place_of_issue'    => 'nullable|string|max:100',
+    //         'date_of_birth'     => 'nullable|date',
+    //         'sex'               => 'required|in:MALE,FEMALE,OTHER',
+    //         'nationality'       => 'nullable|string|max:100',
+    //         'religion'          => 'nullable|string|max:100',
+    //         'profession'        => 'nullable|string|max:100',
+    //         'report_after_days' => 'nullable|integer',
+    //         'report_date'       => 'nullable|date',
+    //         'mobile_no'         => 'nullable|string|max:20',
+    //         'serial_no'         => 'nullable|string|max:50',
+    //         'country_name'      => 'nullable|string|max:100',
+    //         'amount'            => 'nullable|numeric',
+    //         'is_free'           => 'boolean',
+    //         'discount'          => 'nullable|numeric',
+    //         'gcc_slip_no'       => 'nullable|string|max:50',
+    //         'gcc_slip_date'     => 'nullable|date',
+    //         'expire_days'       => 'nullable|integer',
+    //         'photo' => [
+    //             'nullable',
+    //             'image',
+    //             'mimes:jpeg,png,jpg,gif',
+    //             'max:80',
+    //             'required_if:gender,Male',
+    //         ],
+    //     ]);
+
+    //     // Handle checkboxes correctly
+    //     $data['passport_validity'] = $request->boolean('passport_validity');
+    //     $data['is_free'] = $request->boolean('is_free');
+
+    //     if ($validator->fails()) {
+    //         return redirect()->back()
+    //             ->withErrors($validator) // Pass validation errors
+    //             ->withInput(); // Keep old input values
+    //     }
+
+    //     $imagePath = public_path('images/passengers/');
+
+    //     // Check if the directory exists, if not, create it
+    //     if (!File::exists($imagePath)) {
+    //         File::makeDirectory($imagePath, 0755, true);
+    //     }
+
+    //     // Initialize ImageManager without specifying the driver
+    //     $manager = new ImageManager(new Driver());
+
+    //     // Handle image1
+    //     if ($request->hasFile('photo')) {
+    //         $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
+    //         $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
+    //         $img->save($imagePath . $name_gen, 80);
+    //         $data['photo'] = $name_gen;
+    //     }
+
+    //     // $preMedical->update($data);
+    //     PreMedical::create($data);
+
+    //     return redirect()->route('pre-medical.index')->with('success', '✅ Passenger updated successfully.');
+    // }
+
+    public function edit($id)
     {
+        $preMedical = PreMedical::findOrFail($id);
+
+        if (!$preMedical) {
+            abort(404); // Or handle the error as needed
+        }
+
         return Inertia::render('Gamca/Pre-Medical/EditPreMedical', [
             'preMedical' => $preMedical,
+            'message' => session('message'),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePreMedicalRequest $request, PreMedical $preMedical)
+    public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'short_code'        => 'nullable|string|max:50',
-            'passport_no'       => 'required|string|max:50',
-            'passport_validity' => 'boolean',
-            'first_name'        => 'required|string|max:100',
-            'last_name'         => 'nullable|string|max:100',
-            'father_name'       => 'nullable|string|max:100',
-            'mother_name'       => 'nullable|string|max:100',
-            'date_of_issue'     => 'nullable|date',
-            'place_of_issue'    => 'nullable|string|max:100',
-            'date_of_birth'     => 'nullable|date',
-            'sex'               => 'required|in:MALE,FEMALE,OTHER',
-            'nationality'       => 'nullable|string|max:100',
-            'religion'          => 'nullable|string|max:100',
-            'profession'        => 'nullable|string|max:100',
-            'report_after_days' => 'nullable|integer',
-            'report_date'       => 'nullable|date',
-            'mobile_no'         => 'nullable|string|max:20',
-            'serial_no'         => 'nullable|string|max:50',
-            'country_name'      => 'nullable|string|max:100',
-            'amount'            => 'nullable|numeric',
-            'is_free'           => 'boolean',
-            'discount'          => 'nullable|numeric',
-            'gcc_slip_no'       => 'nullable|string|max:50',
-            'gcc_slip_date'     => 'nullable|date',
-            'expire_days'       => 'nullable|integer',
-            'photo' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif',
-                'max:80',
-                'required_if:gender,Male',
-            ],
-        ]);
+        $preMedical = PreMedical::findOrFail($id);
 
-        // Handle checkboxes correctly
-        $data['passport_validity'] = $request->boolean('passport_validity');
-        $data['is_free'] = $request->boolean('is_free');
+        // সব ফিল্ড আপডেট
+        $preMedical->fill($request->except('photo'));
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator) // Pass validation errors
-                ->withInput(); // Keep old input values
-        }
-
-        $imagePath = public_path('images/passengers/');
-
-        // Check if the directory exists, if not, create it
-        if (!File::exists($imagePath)) {
-            File::makeDirectory($imagePath, 0755, true);
-        }
-
-        // Initialize ImageManager without specifying the driver
-        $manager = new ImageManager(new Driver());
-
-        // Handle image1
+        // 🔥 ইমেজ চেক করা হচ্ছে
         if ($request->hasFile('photo')) {
-            $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
-            $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
-            $img->save($imagePath . $name_gen, 80);
-            $data['photo'] = $name_gen;
+            // আগের ইমেজ থাকলে মুছে ফেলো
+            if ($preMedical->photo && file_exists(public_path('images/passengers/' . $preMedical->photo))) {
+                unlink(public_path('images/passengers/' . $preMedical->photo));
+            }
+
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/passengers'), $filename);
+            $preMedical->photo = $filename;
         }
 
-        // $preMedical->update($data);
-        PreMedical::create($data);
+        $preMedical->save();
 
-        return redirect()->route('pre-medical.index')->with('success', '✅ Passenger updated successfully.');
+        return back()->with('flash', [
+            'message' => 'Pre-Medical updated successfully!',
+        ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
