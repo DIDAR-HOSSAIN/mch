@@ -55,56 +55,63 @@
 // });
 
 
-// import { defineConfig } from 'vite';
-// import laravel from 'laravel-vite-plugin';
-// import react from '@vitejs/plugin-react';
-// import os from 'os';
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
+import os from 'os';
 
-// // 🔍 Auto-detect local IP
-// const networkInterfaces = os.networkInterfaces();
-// let localIP = 'localhost';
-// for (const iface of Object.values(networkInterfaces)) {
-//     for (const config of iface) {
-//         if (config.family === 'IPv4' && !config.internal && config.address.startsWith('192.168.')) {
-//             localIP = config.address;
-//         }
-//     }
-// }
+// 🔍 Auto-detect local IP (LAN)
+const networkInterfaces = os.networkInterfaces();
+let localIP = 'localhost';
+for (const iface of Object.values(networkInterfaces)) {
+    for (const config of iface) {
+        if (config.family === 'IPv4' && !config.internal && config.address.startsWith('192.168.1.7')) {
+            localIP = config.address;
+        }
+    }
+}
 
-// // 🔄 Decide which IP to use for HMR (local or public)
-// const PUBLIC_IP = '103.25.83.69';
-// const isLocal = localIP && !process.env.APP_ENV?.includes('production');
+// 🌍 Your server’s public IP (replace if needed)
+const PUBLIC_IP = '103.25.83.69';
 
-// export default defineConfig({
-//     plugins: [
-//         laravel({
-//             input: ['resources/js/app.jsx'],
-//             refresh: true,
-//         }),
-//         react(),
-//     ],
+// 🔄 Detect environment
+const isProduction = process.env.APP_ENV === 'production';
+const currentHost = isProduction ? PUBLIC_IP : localIP;
 
-//     server: {
-//         host: '0.0.0.0',
-//         port: 5173,
-//         strictPort: true,
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/js/app.jsx'],
+            refresh: true,
+        }),
+        react(),
+    ],
 
-//         cors: {
-//             origin: [
-//                 `http://${localIP}:8082`,
-//                 `http://${PUBLIC_IP}:8082`,
-//                 'http://localhost:8082',
-//             ],
-//             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//             allowedHeaders: ['Content-Type', 'Authorization'],
-//         },
+    server: {
+        host: '0.0.0.0', // listen on all interfaces
+        port: 5173,
+        strictPort: true,
 
-//         hmr: {
-//             host: isLocal ? localIP : PUBLIC_IP,
-//             port: 5173,
-//         },
-//     },
-// });
+        // ✅ Allow both LAN & public connections
+        cors: {
+            origin: [
+                `http://${currentHost}:8082`,
+                `http://${PUBLIC_IP}:8082`,
+                `http://${localIP}:8082`,
+                'http://localhost:8082',
+            ],
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization'],
+        },
+
+        // ✅ HMR works on both LAN & Public IP
+        hmr: {
+            host: currentHost,
+            port: 5173,
+        },
+    },
+});
+
 
 
 
@@ -134,26 +141,26 @@
 
 
 
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
+// import { defineConfig } from 'vite';
+// import laravel from 'laravel-vite-plugin';
+// import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: 'resources/js/app.jsx',
-            refresh: [{
-                paths: ['http://localhost:8000/'],
-                config: {
-                    delay: 300,
-                },
-            }],
-        }),
-        react(),
-    ],
-    server: {
-        host: 'localhost',
-        port: 5173,
-    },
-});
+// export default defineConfig({
+//     plugins: [
+//         laravel({
+//             input: 'resources/js/app.jsx',
+//             refresh: [{
+//                 paths: ['http://localhost:8000/'],
+//                 config: {
+//                     delay: 300,
+//                 },
+//             }],
+//         }),
+//         react(),
+//     ],
+//     server: {
+//         host: 'localhost',
+//         port: 5173,
+//     },
+// });
 

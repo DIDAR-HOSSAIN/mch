@@ -106,8 +106,17 @@ const EditPreMedical = ({ auth, preMedical }) => {
             default:
                 break;
         }
-        setData(field, date ? date.toISOString().split("T")[0] : null);
+
+        if (date) {
+            const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                .toISOString()
+                .split("T")[0];
+            setData(field, localDate);
+        } else {
+            setData(field, null);
+        }
     };
+
 
     // --- Image Change Handler ---
     const handleImageChange = (e) => {
