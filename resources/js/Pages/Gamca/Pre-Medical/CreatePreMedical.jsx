@@ -5,7 +5,7 @@ import NormalDatePicker from "@/Components/NormalDatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 
-const CreatePreMedical = ({ auth }) => {
+const CreatePreMedical = ({ auth, countries }) => {
 
     const [imagePreview, setImagePreview] = useState(null);
     const [dateOfIssue, setDateOfIssue] = useState(new Date());
@@ -13,14 +13,6 @@ const CreatePreMedical = ({ auth }) => {
     const [reportDate, setReportDate] = useState(new Date());
     const [gccSlipDate, setGccSlipDate] = useState(new Date());
 
-    const countryOptions = [
-        { value: "qa", label: "Qatar" },
-        { value: "ksa", label: "Saudi Arabia" },
-        { value: "bh", label: "Bahrain" },
-        { value: "om", label: "Oman" },
-        { value: "kw", label: "Kuwait" },
-        { value: "ae", label: "United Arab Emirates" },
-    ];
 
     const { data, setData, post, processing, errors, reset } = useForm({
         short_code: "",
@@ -52,6 +44,13 @@ const CreatePreMedical = ({ auth }) => {
     });
 
     console.log(errors);
+
+    // ✅ Country Options তৈরি
+    const countryOptions = countries.map((c) => ({
+        value: c.country_code,
+        label: `${c.name} (${c.country_code})`,
+    }));
+
 
 
     // useEffect দিয়ে report_after_days অনুযায়ী report_date অটো ক্যালকুলেট
@@ -139,11 +138,7 @@ const CreatePreMedical = ({ auth }) => {
         });
     };
 
-    // Get selected option for react-select
-    const selectedShortCode = countryOptions.find(
-        (option) => option.value === data.short_code
-    );
-
+    
 
     return (
         <AdminDashboardLayout
@@ -167,23 +162,16 @@ const CreatePreMedical = ({ auth }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* LEFT COLUMN */}
                         <div className="space-y-3 mt-[14px]">
-                           {/* SHORT CODE */}
-                        <div>
-                            <label className="block text-sm font-semibold text-green-700 mb-1">
-                                SHORT CODE # <span className="text-red-600">*</span>
+                            {/* Country */}
+                            <label className="block font-medium mb-1">
+                                Country Code
                             </label>
                             <Select
                                 options={countryOptions}
-                                value={selectedShortCode || null}
-                                onChange={(option) => {
-                                    setData("short_code", option?.value || "");
-                                    setData("country_name", option?.label || "");
-                                }}
-                                placeholder="Type or select short code..."
-                                isClearable
-                                className="w-full"
+                                onChange={(option) => setData('country_code', option?.value || '')}
+                                placeholder="Select Country"
                             />
-                        </div>
+                            {errors.country_code && <p className="text-red-500">{errors.country_code}</p>}
 
 
                             {/* PASSPORT */}
@@ -468,9 +456,8 @@ const CreatePreMedical = ({ auth }) => {
                                 <input
                                     type="text"
                                     value={data.country_name}
-                                    required
-                                    onChange={(e) => setData("country_name", e.target.value)}
-                                    className="w-full border rounded px-2 py-1"
+                                    readOnly
+                                    className="w-full border rounded px-2 py-1 bg-gray-100"
                                 />
                             </div>
 

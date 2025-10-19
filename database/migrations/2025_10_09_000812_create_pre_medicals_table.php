@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('pre_medicals', function (Blueprint $table) {
             $table->id();
-            $table->string('short_code')->unique()->nullable();
+            $table->string('pre_medical_id')->unique()->nullable(); 
+            $table->string('country_code');
             $table->string('passport_no');
             $table->integer('passport_validity')->default(5);
             $table->string('first_name');

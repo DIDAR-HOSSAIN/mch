@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PreMedical;
 use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
+use App\Models\Country;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -59,17 +60,21 @@ class PreMedicalController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Gamca/Pre-Medical/CreatePreMedical');
+        $countries = Country::select('name', 'country_code')->get();
+
+        return inertia('Gamca/Pre-Medical/CreatePreMedical', [
+            'auth' => ['user' => auth()->user()],
+            'countries' => $countries,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePreMedicalRequest $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
             // ✅ Required Fields
-            'short_code'        => 'required|string|max:50|unique:pre_medicals,short_code',
             'passport_no'       => 'required|string|max:50',
             'first_name'        => 'required|string|max:100',
             'date_of_issue'     => 'required|date',
@@ -80,10 +85,12 @@ class PreMedicalController extends Controller
             'religion'          => 'required|string|max:100',
             'profession'        => 'required|string|max:100',
             'mobile_no'         => 'required|string|max:20',
-            'country_name'      => 'required|string|max:100',
+
+            // ✅ Must have
+            'country_code'      => 'required|string|max:10',
 
             // ✅ Optional Fields
-            'short_code'        => 'nullable|string|max:50|unique:pre_medicals,short_code',
+            'country_name'      => 'nullable|string|max:100',
             'last_name'         => 'nullable|string|max:100',
             'father_name'       => 'nullable|string|max:100',
             'mother_name'       => 'nullable|string|max:100',
@@ -100,43 +107,83 @@ class PreMedicalController extends Controller
                 'nullable',
                 'image',
                 'mimes:jpeg,png,jpg,gif',
-                'max:80',
-                'required_if:gender,Male',
+                'max:1024',
             ],
         ]);
 
+        // $countryCode = $data['country_code'] ?? null;
+
+        // if ($countryCode) {
+        //     $country = Country::where('country_code', $countryCode)->first();
+        //     $data['country_name'] = $country?->name ?? 'Unknown';
+        //     $data['pre_medical_id'] = $this->generatePreMedicalId($countryCode);
+        // } else {
+        //     $data['country_name'] = 'Unknown';
+        //     $data['pre_medical_id'] = $this->generatePreMedicalId('XX'); // Default
+        // }
+
+
+        // ✅ Country name auto-fill
+        $country = Country::where('country_code', $data['country_code'])->first();
+        $data['country_name'] = $country?->name ?? 'Unknown';
+
+        // ✅ Generate ID (e.g., 25KU101)
+        $data['pre_medical_id'] = $this->generatePreMedicalId($data['country_code']);
+
+
+        // ✅ Passport validity checkbox logic (optional)
         $data['passport_validity'] = $request->boolean('passport_validity') ? 10 : 5;
 
-        $imagePath = public_path('images/passengers/');
-
-        // Check if the directory exists, if not, create it
-        if (!File::exists($imagePath)) {
-            File::makeDirectory($imagePath, 0755, true);
-        }
-
-        // Initialize ImageManager without specifying the driver
-        $manager = new ImageManager(new Driver());
-
-        // Handle image1
+        // ✅ Handle image upload (optional)
         if ($request->hasFile('photo')) {
+            $imagePath = public_path('images/passengers/');
+            if (!File::exists($imagePath)) {
+                File::makeDirectory($imagePath, 0755, true);
+            }
+
+            $manager = new ImageManager(new Driver());
             $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
             $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
             $img->save($imagePath . $name_gen, 80);
             $data['photo'] = $name_gen;
         }
 
-        $preMedical = PreMedical::create($data);
+        PreMedical::create($data);
 
-        // ✅ Redirect using the newly created record's ID
-        return redirect()->route('premedical.receipt', ['id' => $preMedical->id]);
+        return redirect()->route('pre-medical.index')->with('success', 'Pre-Medical entry created successfully!');
     }
+
+    private function generatePreMedicalId($countryCode)
+    {
+        $countryCode = strtoupper($countryCode ?? 'XX'); // fallback protection
+
+        $year = now()->format('y'); // 25 for 2025
+
+        // Find the last serial number for this year + country
+        $latest = PreMedical::where('pre_medical_id', 'like', "{$year}{$countryCode}%")
+            ->latest('id')
+            ->value('pre_medical_id');
+
+        if ($latest) {
+            $lastSerial = intval(substr($latest, -3)) + 1;
+        } else {
+            $lastSerial = 101; // starting number
+        }
+
+        $serial = str_pad($lastSerial, 3, '0', STR_PAD_LEFT);
+
+        return "{$year}{$countryCode}{$serial}";
+    }
+
+
+
 
     /**
      * Display the specified resource.
      */
     public function show(PreMedical $preMedical)
     {
-        return Inertia::render('Gamca/Pre-Medical/ShowPreMedical', ['preMedical'=> $preMedical]);
+        return Inertia::render('Gamca/Pre-Medical/ShowPreMedical', ['preMedical' => $preMedical]);
     }
 
     /**

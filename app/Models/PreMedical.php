@@ -10,7 +10,8 @@ class PreMedical extends Model
     use HasFactory;
 
     protected $fillable = [
-        'short_code',
+        'pre_medical_id',
+        'country_code',
         'passport_no',
         'passport_validity',
         'ten_years',
