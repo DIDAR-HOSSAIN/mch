@@ -111,18 +111,6 @@ class PreMedicalController extends Controller
             ],
         ]);
 
-        // $countryCode = $data['country_code'] ?? null;
-
-        // if ($countryCode) {
-        //     $country = Country::where('country_code', $countryCode)->first();
-        //     $data['country_name'] = $country?->name ?? 'Unknown';
-        //     $data['pre_medical_id'] = $this->generatePreMedicalId($countryCode);
-        // } else {
-        //     $data['country_name'] = 'Unknown';
-        //     $data['pre_medical_id'] = $this->generatePreMedicalId('XX'); // Default
-        // }
-
-
         // ✅ Country name auto-fill
         $country = Country::where('country_code', $data['country_code'])->first();
         $data['country_name'] = $country?->name ?? 'Unknown';
@@ -134,14 +122,33 @@ class PreMedicalController extends Controller
         // ✅ Passport validity checkbox logic (optional)
         $data['passport_validity'] = $request->boolean('passport_validity') ? 10 : 5;
 
-        // ✅ Handle image upload (optional)
-        if ($request->hasFile('photo')) {
-            $imagePath = public_path('images/passengers/');
-            if (!File::exists($imagePath)) {
-                File::makeDirectory($imagePath, 0755, true);
-            }
+        // // ✅ Handle image upload (optional)
+        // if ($request->hasFile('photo')) {
+        //     $imagePath = public_path('images/passengers/');
+        //     if (!File::exists($imagePath)) {
+        //         File::makeDirectory($imagePath, 0755, true);
+        //     }
 
-            $manager = new ImageManager(new Driver());
+        //     $manager = new ImageManager(new Driver());
+        //     $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
+        //     $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
+        //     $img->save($imagePath . $name_gen, 80);
+        //     $data['photo'] = $name_gen;
+        // }
+
+
+        $imagePath = public_path('images/passengers/');
+
+        // Check if the directory exists, if not, create it
+        if (!File::exists($imagePath)) {
+            File::makeDirectory($imagePath, 0755, true);
+        }
+
+        // Initialize ImageManager without specifying the driver
+        $manager = new ImageManager(new Driver());
+
+        // Handle image1
+        if ($request->hasFile('photo')) {
             $name_gen = hexdec(uniqid()) . '.' . $request->file('photo')->getClientOriginalExtension();
             $img = $manager->read($request->file('photo')->getRealPath())->resize(300, 300);
             $img->save($imagePath . $name_gen, 80);

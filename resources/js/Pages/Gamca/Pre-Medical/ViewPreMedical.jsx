@@ -102,6 +102,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="px-3 py-2 font-semibold">#</th>
+                                <th className="px-3 py-2 font-semibold">Pre Medical ID</th>
                                 <th className="px-3 py-2 font-semibold">Passport No</th>
                                 <th className="px-3 py-2 font-semibold">Name</th>
                                 <th className="px-3 py-2 font-semibold">Country</th>
@@ -119,6 +120,7 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                                 pre_medicals.data.map((item, index) => (
                                     <tr key={item.id} className="hover:bg-gray-50 transition">
                                         <td className="px-3 py-2">{pre_medicals.from + index}</td>
+                                        <td className="px-3 py-2 font-medium">{item.pre_medical_id}</td>
                                         <td className="px-3 py-2 font-medium">{item.passport_no}</td>
                                         <td className="px-3 py-2">{`${item.first_name || ""} ${item.last_name || ""}`}</td>
                                         <td className="px-3 py-2">{item.country_name}</td>
