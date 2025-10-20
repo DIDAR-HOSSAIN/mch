@@ -196,9 +196,9 @@ const CreatePreMedical = ({ auth, countries }) => {
                                     </label>
                                     <input
                                         type="text"
-                                        value={data.passport_no}
+                                        value={data.passport_no.toUpperCase()}
                                         required
-                                        onChange={(e) => setData("passport_no", e.target.value)}
+                                        onChange={(e) => setData("passport_no", e.target.value.toUpperCase())}
                                         className="border border-gray-300 rounded px-2 py-1 w-full focus:ring focus:ring-blue-100 focus:border-blue-400"
                                     />
                                 </div>

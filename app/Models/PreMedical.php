@@ -12,6 +12,7 @@ class PreMedical extends Model
     protected $fillable = [
         'pre_medical_id',
         'country_code',
+        'entry_date',
         'passport_no',
         'passport_validity',
         'ten_years',
@@ -38,6 +39,7 @@ class PreMedical extends Model
         'gcc_slip_date',
         'expire_days',
         'photo',
+        'user_name'
     ];
 
     protected $casts = [

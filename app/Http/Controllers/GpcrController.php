@@ -73,13 +73,9 @@ class GpcrController extends Controller
         // Generate patient_id
         $data['patient_id'] = $this->generatePatientId();
 
-        // Check if there is an authenticated user
         if ($user = Auth::user()) {
-            // Access user properties safely
             $data['user_name'] = $user->name;
         } else {
-            // Handle the case where there is no authenticated user
-            // For example, you could set a default value or return an error response
             return response()->json(['error' => 'User not authenticated'], 401);
         }
 

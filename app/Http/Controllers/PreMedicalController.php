@@ -6,8 +6,10 @@ use App\Models\PreMedical;
 use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
 use App\Models\Country;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -110,6 +112,14 @@ class PreMedicalController extends Controller
                 'max:1024',
             ],
         ]);
+
+        if ($user = Auth::user()) {
+            $data['user_name'] = $user->name;
+        } else {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $data['entry_date'] = $data['entry_date'] ?? now()->toDateString();
 
         // ✅ Country name auto-fill
         $country = Country::where('country_code', $data['country_code'])->first();
@@ -274,4 +284,68 @@ class PreMedicalController extends Controller
             'receipt' => $receipt,
         ]);
     }
+
+    public function summaryReport(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = PreMedical::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Gamca/Pre-Medical/Reports/DateWiseBalanceSummary', [
+            'data' => $data
+        ]);
+    }
+
+    public function summaryDetails(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = PreMedical::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Gamca/Pre-Medical/Reports/DateWiseBalanceSummaryDetails', [
+            'data' => $data
+        ]);
+    }
+
+    public function duesCheck(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = PreMedical::query();
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
+
+            $query->whereBetween('entry_date', [$startDate, $endDate]);
+        }
+
+        $data = $query->get();
+
+        return Inertia::render('Gamca/Pre-Medical/Reports/DuesReport', [
+            'data' => $data
+        ]);
+    }
+    
 }
