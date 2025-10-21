@@ -4,7 +4,7 @@ import { Head } from "@inertiajs/react";
 import DateWiseReport from "./DateWiseReport"; // আপনার date picker component
 
 const DateWiseBalanceSummary = ({ auth, data }) => {
-    console.log('data',data);
+    console.log('data', data);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
     const [startDate, setStartDate] = useState(null);

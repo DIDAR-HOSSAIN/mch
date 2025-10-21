@@ -25,6 +25,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MolecularRegController;
 use App\Http\Controllers\MolecularRegTestController;
 use App\Http\Controllers\PreMedicalController;
+use App\Http\Controllers\RepeatTestController;
 use App\Http\Controllers\RosterController;
 use App\Models\PreMedical;
 use App\Models\Thana;
@@ -155,6 +156,7 @@ Route::get('pre-medical-inv/{id}', [PreMedicalController::class, 'premedicalMone
 Route::get('pre-medical/summary/report', [PreMedicalController::class, 'summaryReport'])->name('pre-medical.summary');
 Route::get('pre-medical/summary/details', [PreMedicalController::class, 'summaryDetails'])->name('pre-medical.summary.details');
 Route::get('pre-medical/dues/details', [PreMedicalController::class, 'duesCheck'])->name('pre-medical.dues.details');
+Route::resource('/repeat-test', RepeatTestController::class);
 
 
 // Route::middleware('auth')->group(function () {
