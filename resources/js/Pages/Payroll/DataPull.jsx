@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import { HiOutlineCheckCircle, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { FaSpinner } from 'react-icons/fa';
 import AdminDashboardLayout from '@/backend/Dashboard/AdminDashboardLayout';
@@ -9,41 +10,41 @@ const AttendanceSync = ({ auth }) => {
     const [loading, setLoading] = useState(false);
     const intervalRef = useRef(null);
 
-    const syncAttendance = () => {
+    const syncAttendance = async () => {
         if (loading) return; // একসাথে একবারই চলবে
         setLoading(true);
         setStatus(null);
 
-        router.visit('/attendance/sync', {
-            method: 'get',
-            preserveScroll: true,
-            onSuccess: () => {
+        try {
+            const res = await axios.get('/attendance/sync');
+            if (res.status === 200) {
                 setStatus({
                     type: 'success',
                     message: '✅ Attendance synced successfully!',
                 });
-            },
-            onError: () => {
-                setStatus({
-                    type: 'error',
-                    message: '❌ Unable to sync attendance. Check device connection.',
-                });
-            },
-            onFinish: () => setLoading(false),
-        });
+            } else {
+                throw new Error('Server returned error');
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus({
+                type: 'error',
+                message: '❌ Unable to sync attendance. Check device connection.',
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        // 🔹 প্রতি ১ ঘন্টা পর অটো সিঙ্ক হবে
+        // 🔹 প্রতি ১ মিনিট পর অটো সিঙ্ক হবে (পরীক্ষার জন্য ১ মিনিট রাখা হয়েছে)
         intervalRef.current = setInterval(() => {
             console.log("⏱ Auto Sync Triggered...");
             syncAttendance();
-        }, 3600000); // 3,600,000 ms = 1 hour
+        }, 60000); // 1 minute (তুমি চাইলে 3600000 করে দিতে পারো ১ ঘণ্টার জন্য)
 
-        // 🔹 কম্পোনেন্ট আনমাউন্ট হলে টাইমার বন্ধ করে দাও
         return () => clearInterval(intervalRef.current);
     }, []);
-
 
     return (
         <AdminDashboardLayout
@@ -59,7 +60,7 @@ const AttendanceSync = ({ auth }) => {
                 <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md text-center">
                     <h1 className="text-3xl font-semibold text-gray-800 mb-2">Attendance Sync</h1>
                     <p className="text-sm text-gray-500 mb-6">
-                        Click the button or wait — auto sync runs every <strong>1 minute</strong>.
+                        Click the button or wait — auto sync runs every <strong>1 hour</strong>.
                     </p>
 
                     {/* Status Message */}

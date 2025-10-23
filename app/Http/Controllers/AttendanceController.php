@@ -183,10 +183,12 @@ class AttendanceController extends Controller
     }
 
 
+
     public function sync()
     {
         $deviceIp = '192.168.1.40';
         $zk = new LaravelZkteco($deviceIp);
+
 
         if (!$zk->connect()) {
             return back()->with('error', 'Unable to connect to attendance device.');
@@ -197,105 +199,239 @@ class AttendanceController extends Controller
             return back()->with('error', 'No attendance data found on device.');
         }
 
-        $todayDate = Carbon::today();
-        $dayOfWeek = $todayDate->format('l'); // Monday, Tuesday etc.
+        // Convert device data to a structured collection
+        $records = collect($data)->map(fn($rec) => [
+            'device_user_id' => (string) $rec['id'],
+            'timestamp' => Carbon::parse($rec['timestamp']),
+            'date' => Carbon::parse($rec['timestamp'])->format('Y-m-d'),
+            'time' => Carbon::parse($rec['timestamp'])->format('H:i:s'),
+        ]);
+
+        // তারিখ অনুযায়ী গ্রুপ করে ফেলি
+        $recordsByDate = $records->groupBy('date');
+
         $employees = Employee::with('assignEmployeeRoster.roster')->get();
 
-        foreach ($employees as $employee) {
+        foreach ($recordsByDate as $date => $dailyRecords) {
+            $dayOfWeek = Carbon::parse($date)->format('l');
 
-            $status = 'Absent';
-            $remarks = '';
+            foreach ($employees as $employee) {
 
-            // âœ… Holiday
-            if (Holiday::whereDate('date', $todayDate)->exists()) {
-                $status = 'Holiday';
-                $remarks = 'Official Holiday';
-            }
+                // যদি ঐ তারিখে ডাটা ইতিমধ্যে থাকে তাহলে skip করবো
+                if (Attendance::where('employee_id', $employee->id)->whereDate('date', $date)->exists()) {
+                    continue;
+                }
 
-            // âœ… Leave
-            elseif (
-                Leave::where('employee_id', $employee->id)
-                ->whereDate('start_date', '<=', $todayDate)
-                ->whereDate('end_date', '>=', $todayDate)
-                ->where('status', 'Approved')
-                ->exists()
-            ) {
-                $status = 'Leave';
-                $remarks = 'On Leave';
-            }
-
-            // âœ… Weekly Off
-            elseif (WeeklyHoliday::where('employee_id', $employee->id)
-                ->where('day_of_week', $dayOfWeek)
-                ->exists()
-            ) {
-                $status = 'Weekly Off';
-                $remarks = 'Weekly Holiday';
-            }
-
-            // âœ… Today's roster
-            $todayRoster = $employee->assignEmployeeRoster->firstWhere('day_of_week', $dayOfWeek);
-            $rosterStart = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_start) : null;
-            $rosterEnd   = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_end) : null;
-
-            // âœ… Device records
-            $deviceRecords = collect($data)
-                ->where('id', (string) $employee->employee_id)
-                ->filter(fn($rec) => date('Y-m-d', strtotime($rec['timestamp'])) == $todayDate->toDateString())
-                ->sortBy('timestamp');
-
-            $firstTime = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->first()['timestamp']))) : null;
-            $lastTime  = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->last()['timestamp']))) : null;
-
-            // âœ… Late / Early leave / Present
-            if ($deviceRecords->isNotEmpty() && !in_array($status, ['Holiday', 'Leave', 'Weekly Off'])) {
-                $status = 'Present';
+                $status = 'Absent';
                 $remarks = '';
 
-                if ($rosterStart && $rosterEnd) {
-                    // Handle night shift
-                    if ($rosterEnd->lt($rosterStart)) $rosterEnd->addDay();
+                // 🔹 Holiday check
+                if (Holiday::whereDate('date', $date)->exists()) {
+                    $status = 'Holiday';
+                    $remarks = 'Official Holiday';
+                }
 
-                    // âœ… Grace time (e.g. 10 minutes)
-                    $graceTime = $rosterStart->copy()->addMinutes(10);
+                // 🔹 Leave check
+                elseif (
+                    Leave::where('employee_id', $employee->id)
+                    ->whereDate('start_date', '<=', $date)
+                    ->whereDate('end_date', '>=', $date)
+                    ->where('status', 'Approved')
+                    ->exists()
+                ) {
+                    $status = 'Leave';
+                    $remarks = 'On Leave';
+                }
 
-                    if ($firstTime && $firstTime->gt($graceTime)) {
+                // 🔹 Weekly Off
+                elseif (
+                    WeeklyHoliday::where('employee_id', $employee->id)
+                    ->where('day_of_week', $dayOfWeek)
+                    ->exists()
+                ) {
+                    $status = 'Weekly Off';
+                    $remarks = 'Weekly Holiday';
+                }
+
+                // 🔹 Roster
+                $todayRoster = $employee->assignEmployeeRoster->firstWhere('day_of_week', $dayOfWeek);
+                $rosterStart = $todayRoster ? Carbon::parse($date . ' ' . $todayRoster->roster->office_start) : null;
+                $rosterEnd   = $todayRoster ? Carbon::parse($date . ' ' . $todayRoster->roster->office_end) : null;
+
+                // 🔹 Device records for that employee on that date
+                $userRecords = $dailyRecords
+                    ->where('device_user_id', (string) $employee->employee_id)
+                    ->sortBy('timestamp')
+                    ->values();
+
+                $firstTime = $userRecords->isNotEmpty() ? $userRecords->first()['timestamp'] : null;
+                $lastTime  = $userRecords->isNotEmpty() ? $userRecords->last()['timestamp'] : null;
+
+                // 🔹 Late / Early Leave / Present / Incomplete Punch
+                if ($userRecords->isNotEmpty() && !in_array($status, ['Holiday', 'Leave', 'Weekly Off'])) {
+
+                    // Handle night shift (end time next day)
+                    if ($rosterStart && $rosterEnd && $rosterEnd->lt($rosterStart)) {
+                        $rosterEnd->addDay();
+                    }
+
+                    $status = 'Present';
+                    $remarks = 'On Time';
+                    $graceTime = $rosterStart ? $rosterStart->copy()->addMinutes(10) : null;
+
+                    if ($rosterStart && $firstTime && $firstTime->gt($graceTime)) {
                         $status = 'Late';
                         $remarks = 'Arrived Late';
                     }
 
-                    if ($lastTime && $lastTime->lt($rosterEnd)) {
+                    if ($rosterEnd && $lastTime && $lastTime->lt($rosterEnd)) {
                         $status = $status === 'Late' ? 'Late & Early Leave' : 'Early Leave';
                         $remarks = trim(($remarks ? $remarks . ', ' : '') . 'Left Early');
                     }
 
-                    if ($firstTime && $lastTime && $firstTime->lte($graceTime) && $lastTime->gte($rosterEnd)) {
-                        $status = 'Present';
-                        $remarks = 'On Time';
+                    // 🔹 Incomplete punch detection
+                    if ($firstTime && !$lastTime) {
+                        $status = 'Incomplete Punch';
+                        $remarks = 'Only IN time recorded';
+                    } elseif (!$firstTime && $lastTime) {
+                        $status = 'Incomplete Punch';
+                        $remarks = 'Only OUT time recorded';
                     }
                 }
-            }
 
-            // âœ… Save Attendance
-            Attendance::updateOrCreate(
-                ['employee_id' => $employee->id, 'date' => $todayDate->toDateString()],
-                [
-                    'in_time' => $firstTime?->format('H:i:s'),
-                    'out_time' => $lastTime?->format('H:i:s'),
-                    'device_user_id' => $employee->device_user_id,
-                    'device_ip' => $deviceIp,
-                    'source' => 'device',
-                    'status' => $status,
-                    'remarks' => $remarks,
-                ]
-            );
+                Attendance::updateOrCreate(
+                    ['employee_id' => $employee->id, 'date' => $date],
+                    [
+                        'in_time' => $firstTime?->format('H:i:s'),
+                        'out_time' => $lastTime?->format('H:i:s'),
+                        'device_user_id' => $employee->device_user_id,
+                        'device_ip' => $deviceIp,
+                        'source' => 'device',
+                        'status' => $status,
+                        'remarks' => $remarks,
+                    ]
+                );
+            }
         }
 
         $zk->disconnect();
-        return back()->with('success', 'Attendance synced successfully with multiple rosters!');
+        return back()->with('success', 'Attendance synced successfully including missing dates!');
     }
 
-    
+
+    // public function sync()
+    // {
+    //     $deviceIp = '192.168.1.40';
+    //     $zk = new LaravelZkteco($deviceIp);
+
+    //     if (!$zk->connect()) {
+    //         return back()->with('error', 'Unable to connect to attendance device.');
+    //     }
+
+    //     $data = $zk->getAttendance();
+    //     if (empty($data)) {
+    //         return back()->with('error', 'No attendance data found on device.');
+    //     }
+
+    //     $todayDate = Carbon::today();
+    //     $dayOfWeek = $todayDate->format('l'); // Monday, Tuesday etc.
+    //     $employees = Employee::with('assignEmployeeRoster.roster')->get();
+
+    //     foreach ($employees as $employee) {
+
+    //         $status = 'Absent';
+    //         $remarks = '';
+
+    //         // âœ… Holiday
+    //         if (Holiday::whereDate('date', $todayDate)->exists()) {
+    //             $status = 'Holiday';
+    //             $remarks = 'Official Holiday';
+    //         }
+
+    //         // âœ… Leave
+    //         elseif (
+    //             Leave::where('employee_id', $employee->id)
+    //             ->whereDate('start_date', '<=', $todayDate)
+    //             ->whereDate('end_date', '>=', $todayDate)
+    //             ->where('status', 'Approved')
+    //             ->exists()
+    //         ) {
+    //             $status = 'Leave';
+    //             $remarks = 'On Leave';
+    //         }
+
+    //         // âœ… Weekly Off
+    //         elseif (WeeklyHoliday::where('employee_id', $employee->id)
+    //             ->where('day_of_week', $dayOfWeek)
+    //             ->exists()
+    //         ) {
+    //             $status = 'Weekly Off';
+    //             $remarks = 'Weekly Holiday';
+    //         }
+
+    //         // âœ… Today's roster
+    //         $todayRoster = $employee->assignEmployeeRoster->firstWhere('day_of_week', $dayOfWeek);
+    //         $rosterStart = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_start) : null;
+    //         $rosterEnd   = $todayRoster ? Carbon::createFromFormat('H:i:s', $todayRoster->roster->office_end) : null;
+
+    //         // âœ… Device records
+    //         $deviceRecords = collect($data)
+    //             ->where('id', (string) $employee->employee_id)
+    //             ->filter(fn($rec) => date('Y-m-d', strtotime($rec['timestamp'])) == $todayDate->toDateString())
+    //             ->sortBy('timestamp');
+
+    //         $firstTime = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->first()['timestamp']))) : null;
+    //         $lastTime  = $deviceRecords->isNotEmpty() ? Carbon::createFromFormat('H:i:s', date('H:i:s', strtotime($deviceRecords->last()['timestamp']))) : null;
+
+    //         // âœ… Late / Early leave / Present
+    //         if ($deviceRecords->isNotEmpty() && !in_array($status, ['Holiday', 'Leave', 'Weekly Off'])) {
+    //             $status = 'Present';
+    //             $remarks = '';
+
+    //             if ($rosterStart && $rosterEnd) {
+    //                 // Handle night shift
+    //                 if ($rosterEnd->lt($rosterStart)) $rosterEnd->addDay();
+
+    //                 // âœ… Grace time (e.g. 10 minutes)
+    //                 $graceTime = $rosterStart->copy()->addMinutes(10);
+
+    //                 if ($firstTime && $firstTime->gt($graceTime)) {
+    //                     $status = 'Late';
+    //                     $remarks = 'Arrived Late';
+    //                 }
+
+    //                 if ($lastTime && $lastTime->lt($rosterEnd)) {
+    //                     $status = $status === 'Late' ? 'Late & Early Leave' : 'Early Leave';
+    //                     $remarks = trim(($remarks ? $remarks . ', ' : '') . 'Left Early');
+    //                 }
+
+    //                 if ($firstTime && $lastTime && $firstTime->lte($graceTime) && $lastTime->gte($rosterEnd)) {
+    //                     $status = 'Present';
+    //                     $remarks = 'On Time';
+    //                 }
+    //             }
+    //         }
+
+    //         // âœ… Save Attendance
+    //         Attendance::updateOrCreate(
+    //             ['employee_id' => $employee->id, 'date' => $todayDate->toDateString()],
+    //             [
+    //                 'in_time' => $firstTime?->format('H:i:s'),
+    //                 'out_time' => $lastTime?->format('H:i:s'),
+    //                 'device_user_id' => $employee->device_user_id,
+    //                 'device_ip' => $deviceIp,
+    //                 'source' => 'device',
+    //                 'status' => $status,
+    //                 'remarks' => $remarks,
+    //             ]
+    //         );
+    //     }
+
+    //     $zk->disconnect();
+    //     return back()->with('success', 'Attendance synced successfully with multiple rosters!');
+    // }
+
+
 
 
     // public function sync(Request $request)
