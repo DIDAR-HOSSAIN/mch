@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRepeatTestRequest;
 use App\Models\MedicalTest;
 use App\Models\PreMedical;
 use App\Models\RepeatTestItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -24,16 +25,26 @@ class RepeatTestController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($preMedicalId)
+    public function create(Request $request)
     {
-        $preMedical = PreMedical::findOrFail($preMedicalId);
+        $passportNo = $request->query('passport_no'); // URL থেকে পাসপোর্ট নম্বর
+        $preMedical = null;
+
+        if ($passportNo) {
+            $preMedical = PreMedical::where('passport_no', $passportNo)->first();
+        }
+
         $tests = MedicalTest::select('id', 'test_name', 'fee')->get();
 
+        // সবসময় ফর্ম রেন্ডার করবে (পাসপোর্ট না থাকলেও)
         return Inertia::render('Gamca/RepeatTest/CreateRepeatTest', [
             'preMedical' => $preMedical,
             'tests' => $tests,
         ]);
     }
+
+
+
 
 
     /**

@@ -158,8 +158,10 @@ Route::get('pre-medical/summary/details', [PreMedicalController::class, 'summary
 Route::get('pre-medical/dues/details', [PreMedicalController::class, 'duesCheck'])->name('pre-medical.dues.details');
 // Route::resource('/repeat-test', RepeatTestController::class);
 
-Route::get('/repeat-test/create/{preMedicalId}', [RepeatTestController::class, 'create'])->name('repeat-tests.create');
-Route::post('/repeat-test', [RepeatTestController::class, 'store'])->name('repeat-tests.store');
+// routes/web.php
+// Route::get('/repeat-tests/search', [RepeatTestController::class, 'searchPreMedical'])->name('repeat-tests.search');
+// Route::get('/repeat-test/create/{preMedicalId}', [RepeatTestController::class, 'create'])->name('repeat-tests.create');
+Route::resource('/repeat-test', RepeatTestController::class);
 
 
 // Route::middleware('auth')->group(function () {
