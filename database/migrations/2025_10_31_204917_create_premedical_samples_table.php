@@ -14,16 +14,8 @@ return new class extends Migration
         Schema::create('premedical_samples', function (Blueprint $table) {
             $table->id();
             $table->string('pre_medical_id')->nullable();
-            $table->date('entry_date')->nullable();
-            $table->string('passport_no')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->date('date_of_birth')->nullable();
-            $table->string('sex')->nullable();
-            $table->string('serial_no')->nullable();
-            $table->string('country_name')->nullable();
-            $table->string('gcc_slip_no')->nullable();
-            $table->string('photo')->nullable();
+            $table->date('collection_date');
+            $table->string('barcode_no')->unique();
             $table->string('user_name')->nullable();
             $table->timestamps();
         });

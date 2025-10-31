@@ -1,69 +1,130 @@
-import React, { useState } from 'react';
-import { Inertia } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
+import React, { useState, useRef } from "react";
+import { router, usePage } from "@inertiajs/react";
+import Barcode from "react-barcode";
+import axios from "axios";
+import { useReactToPrint } from "react-to-print";
 
-const Index = ({ entries, filters }) => {
-    const [search, setSearch] = useState(filters.search || '');
-    const [form, setForm] = useState({ first_name: '', last_name: '', passport_no: '', pre_medical_id: '', serial_no: '' });
+export default function CreateUpdateSample() {
+    const { patient: initialPatient, search: initialSearch, auth } = usePage().props;
+    const [searchInput, setSearchInput] = useState(initialSearch || "");
+    const [patient, setPatient] = useState(initialPatient || null);
+    const [form, setForm] = useState({
+        pre_medical_id: initialPatient?.pre_medical_id || "",
+        collection_date: "",
+    });
+    const [barcode, setBarcode] = useState(null);
 
-    const handleAdd = (e) => {
-        e.preventDefault();
-        Inertia.post('/sample-entries', form);
-        setForm({ first_name: '', last_name: '', passport_no: '', pre_medical_id: '', serial_no: '' });
-    };
+    const printRef = useRef();
 
+    // 🔹 React-to-print hook
+    const handlePrint = useReactToPrint({
+        content: () => printRef.current,
+        documentTitle: `${form.pre_medical_id}_label`,
+    });
+
+    // 🔍 Search patient
     const handleSearch = (e) => {
         e.preventDefault();
-        Inertia.get('/sample-entries', { search });
+        if (!searchInput) return;
+
+        router.get(route("premedical-sample.create"), { search: searchInput }, {
+            onSuccess: (page) => {
+                setPatient(page.props.patient || null);
+                setForm({
+                    pre_medical_id: page.props.patient?.pre_medical_id || "",
+                    collection_date: "",
+                });
+                setBarcode(null);
+            },
+        });
+    };
+
+    // 💾 Save and print
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!patient) return;
+
+        try {
+            const response = await axios.post(route("premedical-sample.store"), form);
+            setBarcode(response.data.sample?.barcode_no || form.pre_medical_id);
+
+            // 🔹 Print label after save
+            setTimeout(() => {
+                handlePrint();
+            }, 300);
+        } catch (err) {
+            console.error(err);
+            alert("Error saving sample");
+        }
     };
 
     return (
-        <div className="p-6 max-w-5xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Sample Entries</h1>
+        <div className="p-6 bg-white shadow rounded max-w-md mx-auto">
+            <h2 className="text-lg font-semibold mb-4 text-center">
+                Pre-Medical Sample Label
+            </h2>
 
-            {/* Add Form */}
-            <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <input type="text" placeholder="First Name" value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="border px-2 py-1 rounded" required />
-                <input type="text" placeholder="Last Name" value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="border px-2 py-1 rounded" />
-                <input type="text" placeholder="Passport No" value={form.passport_no} onChange={e => setForm({ ...form, passport_no: e.target.value })} className="border px-2 py-1 rounded" />
-                <input type="text" placeholder="Pre Medical ID" value={form.pre_medical_id} onChange={e => setForm({ ...form, pre_medical_id: e.target.value })} className="border px-2 py-1 rounded" />
-                <input type="text" placeholder="Serial No" value={form.serial_no} onChange={e => setForm({ ...form, serial_no: e.target.value })} className="border px-2 py-1 rounded" />
-                <button type="submit" className="bg-blue-600 text-white rounded px-4 py-1 col-span-1 md:col-span-3">Add Entry</button>
+            {/* 🔹 Search Form */}
+            <form onSubmit={handleSearch} className="flex gap-2 mb-4">
+                <input
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Search by Pre-Medical ID or Passport..."
+                    className="border rounded p-2 flex-1"
+                />
+                <button className="bg-blue-600 text-white px-4 py-2 rounded">
+                    Search
+                </button>
             </form>
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="mb-4 flex gap-2">
-                <input type="text" placeholder="Search" value={search} onChange={e => setSearch(e.target.value)} className="border px-2 py-1 rounded w-full" />
-                <button type="submit" className="bg-gray-600 text-white px-4 py-1 rounded">Search</button>
-            </form>
+            {/* 🔹 Patient Info */}
+            {patient && (
+                <div className="border p-4 rounded mb-4 bg-gray-50 text-sm space-y-1">
+                    <p><b>ID:</b> {patient.pre_medical_id}</p>
+                    <p><b>Passport:</b> {patient.passport_no}</p>
+                    <p><b>Name:</b> {patient.first_name} {patient.last_name}</p>
+                </div>
+            )}
 
-            {/* Table */}
-            <table className="w-full border border-gray-300 border-collapse text-sm">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="border p-2 text-left">First Name</th>
-                        <th className="border p-2 text-left">Last Name</th>
-                        <th className="border p-2 text-left">Passport No</th>
-                        <th className="border p-2 text-left">Serial No</th>
-                        <th className="border p-2 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {entries.data.map(entry => (
-                        <tr key={entry.id} className="even:bg-gray-50">
-                            <td className="border p-2">{entry.first_name}</td>
-                            <td className="border p-2">{entry.last_name}</td>
-                            <td className="border p-2">{entry.passport_no}</td>
-                            <td className="border p-2">{entry.serial_no}</td>
-                            <td className="border p-2 text-center space-x-2">
-                                <Link href={`/sample-entries/${entry.id}/print`} className="text-green-600 hover:underline" target="_blank">Print</Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {/* 🔹 Sample Form */}
+            {patient && (
+                <form onSubmit={handleSubmit} className="border-t pt-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <input
+                            type="text"
+                            value={form.pre_medical_id}
+                            readOnly
+                            className="border p-2 rounded bg-gray-100"
+                        />
+                        <input
+                            type="date"
+                            value={form.collection_date}
+                            onChange={(e) =>
+                                setForm({ ...form, collection_date: e.target.value })
+                            }
+                            className="border p-2 rounded"
+                            required
+                        />
+                    </div>
+                    <button className="mt-4 bg-green-600 text-white px-6 py-2 rounded">
+                        Save & Print Label
+                    </button>
+                </form>
+            )}
+
+            {/* 🔹 Barcode Preview for printing */}
+            {barcode && (
+                <div style={{ display: "none" }}>
+                    <div ref={printRef} className="text-center border p-3 inline-block"
+                        style={{ width: "4cm", height: "2.5cm", padding: "0.2cm" }}
+                    >
+                        <div className="text-sm font-semibold mb-1">{barcode}</div>
+                        <Barcode value={barcode} width={1} height={40} displayValue={false} />
+                        <div className="text-xs mt-1">{auth?.user?.name || "Collected By"}</div>
+                    </div>
+                </div>
+            )}
         </div>
     );
-};
-
-export default Index;
+}
