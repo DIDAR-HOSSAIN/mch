@@ -17,9 +17,51 @@ class RepeatTestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = RepeatTest::with('preMedical')->orderBy('created_at', 'desc');
+
+        // Search by passenger name or passport
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->whereHas('preMedical', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('passport_no', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by delivery_date range
+        if ($request->filled('from_date')) {
+            $query->whereDate('delivery_date', '>=', $request->input('from_date'));
+        }
+        if ($request->filled('to_date')) {
+            $query->whereDate('delivery_date', '<=', $request->input('to_date'));
+        }
+
+        // Pagination (10 per page)
+        $repeatTests = $query->paginate(10)->through(function ($test) {
+            return [
+                'id' => $test->id,
+                'serial_no' => $test->serial_no,
+                'delivery_date' => $test->delivery_date,
+                'total' => $test->total,
+                'net_pay' => $test->net_pay,
+                'is_free' => $test->is_free,
+                'deduct' => $test->deduct,
+                'passenger_name' => $test->preMedical
+                    ? $test->preMedical->first_name . ' ' . $test->preMedical->last_name
+                    : '-',
+                'passport_no' => $test->preMedical
+                    ? $test->preMedical->passport_no
+                    : '-',
+            ];
+        });
+
+        return Inertia::render('Gamca/RepeatTest/ViewRepeatTest', [
+            'repeatTests' => $repeatTests,
+            'filters' => $request->only(['search', 'from_date', 'to_date'])
+        ]);
     }
 
     /**
@@ -52,43 +94,51 @@ class RepeatTestController extends Controller
      */
     public function store(StoreRepeatTestRequest $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
-            'pre_medical_id' => 'required|integer',
+            'pre_medical_id' => 'required|integer|exists:pre_medicals,id',
             'delivery_date' => 'nullable|date',
             'is_free' => 'boolean',
             'deduct' => 'nullable|numeric',
             'total' => 'nullable|numeric',
             'net_pay' => 'nullable|numeric',
-            'items' => 'required|array',
+            'items' => 'nullable|array|min:1',
             'items.*.medical_test_id' => 'required|integer|exists:medical_tests,id',
             'items.*.amount' => 'required|numeric',
         ]);
 
-        // Generate serial number automatically
+        // 🔹 Serial number auto generate
         $serialNo = 'RT-' . str_pad(RepeatTest::count() + 1, 6, '0', STR_PAD_LEFT);
 
-        $repeatTest = RepeatTest::create([
-            'pre_medical_id' => $validated['pre_medical_id'],
-            'delivery_date' => $validated['delivery_date'] ?? now(),
-            'is_free' => $validated['is_free'] ?? false,
-            'deduct' => $validated['deduct'] ?? 0,
-            'total' => $validated['total'] ?? 0,
-            'net_pay' => $validated['net_pay'] ?? 0,
-            'serial_no' => $serialNo,
-        ]);
-
-        foreach ($validated['items'] as $item) {
-            RepeatTestItem::create([
-                'repeat_test_id' => $repeatTest->id,
-                'medical_test_id' => $item['medical_test_id'],
-                'amount' => $item['amount'],
+        DB::beginTransaction();
+        try {
+            $repeatTest = RepeatTest::create([
+                'pre_medical_id' => $validated['pre_medical_id'],
+                'delivery_date' => $validated['delivery_date'] ?? now(),
+                'is_free' => $validated['is_free'] ?? false,
+                'deduct' => $validated['deduct'] ?? 0,
+                'total' => $validated['total'] ?? 0,
+                'net_pay' => $validated['net_pay'] ?? 0,
+                'serial_no' => $serialNo,
             ]);
-        }
 
-        return redirect()
-            ->route('repeat-tests.create', $validated['pre_medical_id'])
-            ->with('success', 'Repeat Test saved successfully!');
+            foreach ($validated['items'] as $item) {
+                RepeatTestItem::create([
+                    'repeat_test_id' => $repeatTest->id,
+                    'medical_test_id' => $item['medical_test_id'],
+                    'amount' => $item['amount'],
+                ]);
+            }
+
+            DB::commit();
+            // ✅ Redirect to print view
+            return redirect()->route('repeat-tests.print', $repeatTest->id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -147,4 +197,13 @@ class RepeatTestController extends Controller
     {
         //
     }
+
+    public function print($id)
+    {
+        $data = RepeatTest::with(['items.medicalTest', 'preMedical'])->findOrFail($id);
+        return Inertia::render('Gamca/RepeatTest/RepeatMoneyReceipt', [
+            'data' => $data
+        ]);
+    }
+
 }

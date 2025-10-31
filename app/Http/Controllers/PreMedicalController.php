@@ -173,11 +173,11 @@ class PreMedicalController extends Controller
     private function generatePreMedicalId($countryCode)
     {
         $countryCode = strtoupper($countryCode ?? 'XX'); // fallback protection
-
+        $prefix = 'P';
         $year = now()->format('y'); // 25 for 2025
 
         // Find the last serial number for this year + country
-        $latest = PreMedical::where('pre_medical_id', 'like', "{$year}{$countryCode}%")
+        $latest = PreMedical::where('pre_medical_id', 'like', "{$prefix}-{$year}{$countryCode}%")
             ->latest('id')
             ->value('pre_medical_id');
 
@@ -189,7 +189,7 @@ class PreMedicalController extends Controller
 
         $serial = str_pad($lastSerial, 3, '0', STR_PAD_LEFT);
 
-        return "{$year}{$countryCode}{$serial}";
+        return "{$prefix}-{$year}{$countryCode}{$serial}";
     }
 
 
@@ -347,5 +347,5 @@ class PreMedicalController extends Controller
             'data' => $data
         ]);
     }
-    
+
 }

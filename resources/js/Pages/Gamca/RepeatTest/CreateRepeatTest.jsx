@@ -48,13 +48,29 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
     // ✅ সাবমিট হ্যান্ডলার
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // ✅ selectedTests থেকে items বানাও
         const items = selectedTests.map((t) => ({
             medical_test_id: t.id,
             amount: t.fee,
         }));
 
-        post(route("repeat-test.store"), { ...data, items });
+        // ✅ নতুন ডেটা প্যাকেজ বানাও
+        const payload = {
+            ...data,
+            items: items,
+        };
+
+        // ✅ Inertia post
+        router.post(route("repeat-test.store"), payload, {
+            preserveScroll: true,
+            onError: (errors) => console.error("Validation errors:", errors),
+            onSuccess: () => console.log("✅ Repeat Test saved!"),
+        });
     };
+
+
+
 
     return (
         <>

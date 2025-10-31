@@ -33,5 +33,5 @@ class RepeatTest extends Model
     {
         return $this->belongsTo(PreMedical::class);
     }
-    
+
 }
