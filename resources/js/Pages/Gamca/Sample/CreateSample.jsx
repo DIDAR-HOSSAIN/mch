@@ -121,7 +121,6 @@ export default function CreateUpdateSample() {
                     >
                         <div className="text-sm font-semibold mb-1">{barcode}</div>
                         <Barcode value={barcode} width={1} height={40} displayValue={false} />
-                        <div className="text-xs mt-1">{auth?.user?.name || "Collected By"}</div>
                     </div>
                 </div>
             )}
