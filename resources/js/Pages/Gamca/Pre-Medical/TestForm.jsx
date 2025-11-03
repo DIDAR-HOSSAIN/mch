@@ -1,27 +1,38 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
-export default function MedicalExaminationForm() {
+export default function MedicalExaminationForm({ receipt }) {
+    console.log('from test', receipt);
     const printRef = useRef();
     const handlePrint = useReactToPrint({
         content: () => printRef.current,
         documentTitle: "Medical_Examination_Report",
     });
 
+
     const cell = "border border-black px-3 py-2 text-sm align-middle font-bold";
     const val = "border border-black px-3 py-6 text-sm w-56 text-center align-middle";
 
     return (
         <div className="bg-gray-100 p-6 min-h-screen">
+            <div className="flex justify-center mb-4">
+                <button
+                    onClick={handlePrint}
+                    className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 print:hidden"
+                >
+                    Print Form
+                </button>
+            </div>
+
             <div
                 ref={printRef}
-                className="bg-white mx-auto p-8 shadow-lg w-[210mm] min-h-[297mm] text-[13px] border border-black print:shadow-none print:p-8"
+                className="bg-white mx-auto p-8 shadow-lg w-[210mm] min-h-[297mm] text-[13px] border border-black print:shadow-none print:p-8 print:w-[210mm] print:min-h-[297mm]"
             >
                 {/* Header */}
                 <div className="text-center border-b border-black pb-3 mb-4">
                     <h1 className="font-bold text-xl uppercase">Medical Centre</h1>
                     <p>953, O.R. Nizam Road, Panchlaish, Chattogram-400</p>
-                    <p>Mobile: +88018883077569 | GCC Code: 05.02.23</p>
+                    <p>Mobile: +88018883077569 | GCC Code: 05/02/23</p>
                     <h2 className="font-bold underline mt-1 text-base">
                         MEDICAL EXAMINATION REPORT
                     </h2>
@@ -30,18 +41,18 @@ export default function MedicalExaminationForm() {
                 {/* Patient Info */}
                 <div className="grid grid-cols-2 gap-6 mb-4">
                     <div className="space-y-2">
-                        <p>Reg No: __________________________</p>
-                        <p>Name: ____________________________</p>
-                        <p>Passport No: ______________________</p>
-                        <p>Profession: ________________________</p>
-                        <p>Country: __________________________</p>
+                        <p>Reg No: {receipt.pre_medical_id} </p>
+                        <p>Name: {receipt.first_name} {receipt.last_name}</p>
+                        <p>Passport No: {receipt.passport_no}</p>
+                        <p>Profession: {receipt.profession}</p>
+                        <p>Country: {receipt.country_name}</p>
                     </div>
                     <div className="space-y-2">
-                        <p>Date: ____________________________</p>
-                        <p>Age: _______ Sex: _______</p>
-                        <p>Date of Birth: ____________________</p>
-                        <p>Daily S/L: ________________________</p>
-                        <p>Physician: ________________________</p>
+                        <p>Date: {receipt.entry_date}</p>
+                        <p>Age: _______ Sex: {receipt.sex}</p>
+                        <p>Date of Birth: {receipt.date_of_birth}</p>
+                        {/* <p>Daily S/L: ________________________</p>
+                        <p>Physician: ________________________</p> */}
                     </div>
                 </div>
 
@@ -50,7 +61,7 @@ export default function MedicalExaminationForm() {
                     Medical Examination: General
                 </h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-2 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>BP</td>
                             <td className={val}></td>
@@ -67,11 +78,11 @@ export default function MedicalExaminationForm() {
                     Visual Acuity (Aided & Unaided)
                 </h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Colour Vision</td>
                             <td className={`${val} text-left`}>
-                                <div className="flex items-center justify-around px-4">
+                                <div className="flex items-center justify-around gap-2">
                                     <label className="flex items-center gap-2">
                                         <input type="checkbox" className="w-4 h-4" />
                                         <span>Normal</span>
@@ -133,7 +144,7 @@ export default function MedicalExaminationForm() {
                 {/* --- Hearing --- */}
                 <h4 className="font-semibold underline mb-1">Hearing</h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Left Ear</td>
                             <td className={`${val} text-left`}>
@@ -170,7 +181,7 @@ export default function MedicalExaminationForm() {
                 {/* {System Examination} */}
                 <h4 className="font-semibold underline mb-1">System Examination</h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>General Appearance</td>
                             <td className={`${val} text-left`}>
@@ -238,7 +249,7 @@ export default function MedicalExaminationForm() {
                     <tr className="bg-gray-100 font-semibold text-center">
                         <td colSpan="8" className={cell}>Gastro Intestinal</td>
                     </tr>
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Abdomen (Mass, tenderness)
                             </td>
@@ -277,7 +288,7 @@ export default function MedicalExaminationForm() {
                     <tr className="bg-gray-100 font-semibold text-center">
                         <td colSpan="8" className={cell}>Genitourinary</td>
                     </tr>
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Genitourinary
                             </td>
@@ -313,7 +324,7 @@ export default function MedicalExaminationForm() {
 
                 {/* {Musculoskeletal } */}
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr className="bg-gray-100 font-semibold text-center">
                             <td colSpan="8" className={cell}>Musculoskeletal</td>
                         </tr>
@@ -397,7 +408,7 @@ export default function MedicalExaminationForm() {
 
                 {/* --- Mental Status --- */}
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr className="bg-gray-100 font-semibold text-center">
                             <td colSpan="8" className={cell}>Mental status examination</td>
                         </tr>
@@ -452,7 +463,7 @@ export default function MedicalExaminationForm() {
 
                 {/* {Cognition} */}
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr className="bg-gray-100 font-semibold text-center">
                             <td colSpan="8" className={cell}>Cognition</td>
                         </tr>
@@ -564,7 +575,7 @@ export default function MedicalExaminationForm() {
                 {/* --- Investigation --- */}
                 <h4 className="font-semibold underline mb-1">Investigation</h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Chest X-Ray</td>
                             <td className={`${val} text-left`}>
@@ -588,7 +599,7 @@ export default function MedicalExaminationForm() {
                 {/* --- Laboratory Investigation --- */}
                 <h4 className="font-semibold underline mb-1">Laboratory Investigation</h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr className="bg-gray-100 font-semibold text-center">
                             <td colSpan="8" className={cell}>Blood</td>
                         </tr>
@@ -606,7 +617,7 @@ export default function MedicalExaminationForm() {
                     <tr className="bg-gray-100 font-semibold text-center">
                         <td colSpan="8" className={cell}>Thick film for</td>
                     </tr>
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Malaria
                             </td>
@@ -645,7 +656,7 @@ export default function MedicalExaminationForm() {
                     <tr className="bg-gray-100 font-semibold text-center">
                         <td colSpan="8" className={cell}>Biochemistry</td>
                     </tr>
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>R.B.S
                             </td>
@@ -676,7 +687,7 @@ export default function MedicalExaminationForm() {
 
                 {/* {Serology } */}
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr className="bg-gray-100 font-semibold text-center">
                             <td colSpan="8" className={cell}>Serology</td>
                         </tr>
@@ -763,7 +774,7 @@ export default function MedicalExaminationForm() {
                     <tr className="bg-gray-100 font-semibold text-center">
                         <td colSpan="8" className={cell}>Urine</td>
                     </tr>
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Sugar
                             </td>
@@ -801,7 +812,7 @@ export default function MedicalExaminationForm() {
                 {/* {Stool/Routine } */}
                 <h4 className="font-semibold underline mb-1">Stool/Routine </h4>
                 <table className="w-full mb-3 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Helminthes</td>
                             <td className={`${val} text-left`}>
@@ -858,7 +869,7 @@ export default function MedicalExaminationForm() {
                 {/* --- Vaccination --- */}
                 <h4 className="font-semibold underline mb-1">Vaccination Status</h4>
                 <table className="w-full mb-6 border border-black">
-                    <tbody>
+                    <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
                         <tr>
                             <td className={cell}>Polio</td>
                             <td className={val}></td>
@@ -895,13 +906,33 @@ export default function MedicalExaminationForm() {
                 </div>
             </div>
 
+            {/* Print-specific CSS */}
+            <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 10mm 12mm;
+          }
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .page {
+            page-break-inside: avoid;
+          }
+          div {
+            overflow: visible !important;
+          }
+        }
+      `}</style>
+
             {/* Print Button */}
             <div className="text-center mt-6">
                 <button
                     onClick={handlePrint}
                     className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-md"
                 >
-                    🖨️ Print Blank Form
+                    🖨️ Print Form
                 </button>
             </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import logo from "../../../assets/images/Logo/mch-logo.png";
+import MedicalExaminationForm from "./TestForm";
+import XrayReport from "./XrayForm";
 
 const MoneyReceipt = ({ receipt }) => {
     const componentRef = useRef();
@@ -79,6 +81,16 @@ const MoneyReceipt = ({ receipt }) => {
                     formatDate={formatDate}
                     showAuthTable={true}
                 />
+            </div>
+
+            {/* পেজ ২: Medical Examination Form */}
+            <div className="page a4-page border border-gray-400 rounded-md shadow-md p-6">
+                <MedicalExaminationForm receipt={receipt} />
+            </div>
+
+            {/* পেজ 3: Medical Examination Form */}
+            <div className="page a4-page border border-gray-400 rounded-md shadow-md p-6">
+                <XrayReport receipt={receipt} />
             </div>
         </div>
     );
