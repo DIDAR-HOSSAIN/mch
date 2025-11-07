@@ -1,58 +1,42 @@
-import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import React from "react";
+import logo from "../../../assets/images/Logo/mch-logo.png";
 
 export default function MedicalExaminationForm({ receipt }) {
-    console.log('from test', receipt);
-    const printRef = useRef();
-    const handlePrint = useReactToPrint({
-        content: () => printRef.current,
-        documentTitle: "Medical_Examination_Report",
-    });
 
 
     const cell = "border border-black px-3 py-2 text-sm align-middle font-bold";
     const val = "border border-black px-3 py-6 text-sm w-56 text-center align-middle";
 
     return (
-        <div className="bg-gray-100 p-6 min-h-screen">
-            <div className="flex justify-center mb-4">
-                <button
-                    onClick={handlePrint}
-                    className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 print:hidden"
-                >
-                    Print Form
-                </button>
-            </div>
-
-            <div
-                ref={printRef}
-                className="bg-white mx-auto p-8 shadow-lg w-[210mm] min-h-[297mm] text-[13px] border border-black print:shadow-none print:p-8 print:w-[210mm] print:min-h-[297mm]"
-            >
-                {/* Header */}
-                <div className="text-center border-b border-black pb-3 mb-4">
-                    <h1 className="font-bold text-xl uppercase">Medical Centre</h1>
-                    <p>953, O.R. Nizam Road, Panchlaish, Chattogram-400</p>
-                    <p>Mobile: +88018883077569 | GCC Code: 05/02/23</p>
-                    <h2 className="font-bold underline mt-1 text-base">
-                        MEDICAL EXAMINATION REPORT
-                    </h2>
+        <div className="min-h-screen bg-gray-100 p-4">
+            <div className="a4-page w-[210mm] mx-auto bg-white p-4">
+                <div className="flex justify-between items-center mb-2">
+                    <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+                    {/* Header */}
+                    <div className="text-center pb-2 mb-4">
+                        <h1 className="font-bold text-xl uppercase">Medical Centre</h1>
+                        <p>953, O.R. Nizam Road, Panchlaish, Chattogram-400</p>
+                        <p>Mobile: +88018883077569 | GCC Code: 05/02/23</p>
+                        <h2 className="font-bold underline mt-1 text-base">
+                            MEDICAL EXAMINATION REPORT
+                        </h2>
+                    </div>
+                    <div className="w-10 h-2" />
                 </div>
 
                 {/* Patient Info */}
                 <div className="grid grid-cols-2 gap-6 mb-4">
-                    <div className="space-y-2">
+                    <div>
                         <p>Reg No: {receipt.pre_medical_id} </p>
                         <p>Name: {receipt.first_name} {receipt.last_name}</p>
                         <p>Passport No: {receipt.passport_no}</p>
                         <p>Profession: {receipt.profession}</p>
                         <p>Country: {receipt.country_name}</p>
                     </div>
-                    <div className="space-y-2">
+                    <div>
                         <p>Date: {receipt.entry_date}</p>
                         <p>Age: _______ Sex: {receipt.sex}</p>
                         <p>Date of Birth: {receipt.date_of_birth}</p>
-                        {/* <p>Daily S/L: ________________________</p>
-                        <p>Physician: ________________________</p> */}
                     </div>
                 </div>
 
@@ -246,10 +230,10 @@ export default function MedicalExaminationForm({ receipt }) {
 
                 {/* {Gastro Intestinal } */}
                 <table className="w-full mb-3 border border-black">
-                    <tr className="bg-gray-100 font-semibold text-center">
-                        <td colSpan="8" className={cell}>Gastro Intestinal</td>
-                    </tr>
                     <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
+                        <tr className="bg-gray-100 font-semibold text-center">
+                            <td colSpan="8" className={cell}>Gastro Intestinal</td>
+                        </tr>
                         <tr>
                             <td className={cell}>Abdomen (Mass, tenderness)
                             </td>
@@ -285,10 +269,10 @@ export default function MedicalExaminationForm({ receipt }) {
 
                 {/* {Genitourinary} */}
                 <table className="w-full mb-3 border border-black">
-                    <tr className="bg-gray-100 font-semibold text-center">
-                        <td colSpan="8" className={cell}>Genitourinary</td>
-                    </tr>
                     <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
+                        <tr className="bg-gray-100 font-semibold text-center">
+                            <td colSpan="8" className={cell}>Genitourinary</td>
+                        </tr>
                         <tr>
                             <td className={cell}>Genitourinary
                             </td>
@@ -614,10 +598,10 @@ export default function MedicalExaminationForm({ receipt }) {
 
                 {/* {Thick film for} */}
                 <table className="w-full mb-3 border border-black">
-                    <tr className="bg-gray-100 font-semibold text-center">
-                        <td colSpan="8" className={cell}>Thick film for</td>
-                    </tr>
                     <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
+                        <tr className="bg-gray-100 font-semibold text-center">
+                            <td colSpan="8" className={cell}>Thick film for</td>
+                        </tr>
                         <tr>
                             <td className={cell}>Malaria
                             </td>
@@ -653,10 +637,10 @@ export default function MedicalExaminationForm({ receipt }) {
 
                 {/* {Biochemistry} */}
                 <table className="w-full mb-3 border border-black">
-                    <tr className="bg-gray-100 font-semibold text-center">
-                        <td colSpan="8" className={cell}>Biochemistry</td>
-                    </tr>
                     <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
+                        <tr className="bg-gray-100 font-semibold text-center">
+                            <td colSpan="8" className={cell}>Biochemistry</td>
+                        </tr>
                         <tr>
                             <td className={cell}>R.B.S
                             </td>
@@ -771,10 +755,10 @@ export default function MedicalExaminationForm({ receipt }) {
 
                 {/* {Urine } */}
                 <table className="w-full mb-3 border border-black">
-                    <tr className="bg-gray-100 font-semibold text-center">
-                        <td colSpan="8" className={cell}>Urine</td>
-                    </tr>
                     <tbody className="[&>tr>td]:py-1 [&>tr>td]:px-2">
+                        <tr className="bg-gray-100 font-semibold text-center">
+                            <td colSpan="8" className={cell}>Urine</td>
+                        </tr>
                         <tr>
                             <td className={cell}>Sugar
                             </td>
@@ -906,35 +890,34 @@ export default function MedicalExaminationForm({ receipt }) {
                 </div>
             </div>
 
-            {/* Print-specific CSS */}
-            <style jsx global>{`
+            {/* Print CSS */}
+            <style>{`
         @media print {
           @page {
             size: A4;
             margin: 10mm 12mm;
           }
+
           body {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .page {
-            page-break-inside: avoid;
+
+          .a4-page {
+            page-break-inside: auto;
+            break-inside: auto;
           }
+
+          table, tr, td, th {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+
           div {
             overflow: visible !important;
           }
         }
       `}</style>
-
-            {/* Print Button */}
-            <div className="text-center mt-6">
-                <button
-                    onClick={handlePrint}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-md"
-                >
-                    🖨️ Print Form
-                </button>
-            </div>
         </div>
     );
 }

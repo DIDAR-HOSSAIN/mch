@@ -53,8 +53,13 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
             amount: t.fee,
         }));
 
-        post(route("repeat-test.store"), { ...data, items });
+        setData("items", items);
+
+        setTimeout(() => {
+            post(route("repeat-test.store"));
+        }, 0);
     };
+
 
     return (
         <>

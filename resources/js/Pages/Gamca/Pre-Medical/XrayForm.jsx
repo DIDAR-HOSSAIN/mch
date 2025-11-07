@@ -1,60 +1,28 @@
-import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
-import logo from "../../../assets/images/Logo/mch-logo.png"; // ← তোমার লোগো ফাইলের পথ ঠিক করে নিও
+import React from "react";
+import logo from "../../../assets/images/Logo/mch-logo.png";
 
 const XrayReport = ({ receipt }) => {
-    const componentRef = useRef();
-
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        documentTitle: "X-Ray Report",
-        pageStyle: `
-      @page {
-        size: A4;
-        margin: 15mm;
-      }
-      body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      button {
-        display: none !important;
-      }
-    `,
-    });
-
     return (
         <div className="flex flex-col items-center my-6">
-            <button
-                onClick={handlePrint}
-                className="mb-4 bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 print:hidden"
-            >
-                🖨️ Print X-Ray Report
-            </button>
-
-            <div
-                ref={componentRef}
-                className="a4-page w-[210mm] h-[297mm] bg-white border border-black p-10 text-[12px] leading-tight font-sans"
-            >
+            {/* মূল কনটেন্ট */}
+            <div className="a4-page w-[210mm]">
                 {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                    <img src={logo} alt="Logo" className="w-20 h-20 object-contain" />
-                    <div className="text-center flex-1">
-                        <h1 className="text-lg font-bold uppercase">Medical Centre</h1>
-                        <p className="text-[11px] leading-tight">
-                            953, O.R Nizam Road, Panchlaish, Chattogram-4000.
-                        </p>
-                        <p className="text-[11px] leading-tight font-semibold">
-                            Mobile Phone: +88 01883077569
-                        </p>
-                        <p className="text-[11px] italic">www.medicalcentreg.com</p>
-                        <p className="text-[11px] font-bold mt-1">GCC Code : 05.02.23</p>
+                <div className="flex justify-between items-center mb-2">
+                    <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
+                    <div className="text-center pb-2 mb-4">
+                        <h1 className="font-bold text-xl uppercase">Medical Centre</h1>
+                        <p>953, O.R. Nizam Road, Panchlaish, Chattogram-400</p>
+                        <p>Mobile: +88018883077569 | GCC Code: 05/02/23</p>
+                        <h2 className="font-bold underline mt-1 text-base">
+                            MEDICAL EXAMINATION REPORT
+                        </h2>
                     </div>
+                    <div className="w-10 h-2" />
                 </div>
 
                 {/* Report Title */}
                 <div className="text-center mb-3">
-                    <h2 className="border border-black inline-block px-4 py-1 font-bold">
+                    <h2 className="border border-black inline-block px-4 py-1 font-bold tracking-wide bg-gray-100">
                         X-RAY REPORT
                     </h2>
                 </div>
@@ -84,7 +52,9 @@ const XrayReport = ({ receipt }) => {
                             <td className="w-[40px] text-center border-r border-black">1</td>
                             <td className="px-2 py-1 w-1/4">Name</td>
                             <td className="w-1 text-center">:</td>
-                            <td className="px-2">{receipt?.first_name || ""} {receipt?.last_name || ""}</td>
+                            <td className="px-2">
+                                {receipt?.first_name || ""} {receipt?.last_name || ""}
+                            </td>
                         </tr>
                         <tr className="border-b border-black">
                             <td className="text-center border-r border-black">2</td>
@@ -108,11 +78,11 @@ const XrayReport = ({ receipt }) => {
                 </table>
 
                 {/* X-Ray Section */}
-                <h3 className="text-center text-[14px] font-bold mb-2">
+                <h3 className="text-center text-[14px] font-bold mb-2 text-gray-800">
                     X-RAY CHEST P / A VIEW
                 </h3>
 
-                <div className="border border-black h-[500px] w-full mb-6"></div>
+                <div className="border border-black h-[500px] w-full mb-6 rounded-sm"></div>
 
                 {/* Doctor Info */}
                 <div className="text-right mt-8 text-[11px] leading-tight">

@@ -16,12 +16,7 @@ class RepeatTest extends Model
         'deduct',
         'total',
         'net_pay',
-        'serial_no'
-    ];
-
-    protected $casts = [
-        'is_free' => 'boolean',
-        'delivery_date' => 'date',
+        'serial_no',
     ];
 
     public function items()

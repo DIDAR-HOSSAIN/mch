@@ -94,7 +94,7 @@ class RepeatTestController extends Controller
      */
     public function store(StoreRepeatTestRequest $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $validated = $request->validate([
             'pre_medical_id' => 'required|integer|exists:pre_medicals,id',
             'delivery_date' => 'nullable|date',
