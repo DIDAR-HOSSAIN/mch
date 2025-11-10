@@ -138,7 +138,6 @@ class RepeatTestController extends Controller
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
-    }
 
 
 
