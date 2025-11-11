@@ -48,6 +48,7 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
     // ✅ সাবমিট হ্যান্ডলার
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const items = selectedTests.map((t) => ({
             medical_test_id: t.id,
             amount: t.fee,
@@ -55,10 +56,13 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
 
         setData("items", items);
 
-        setTimeout(() => {
-            post(route("repeat-test.store"));
-        }, 0);
+        // ✅ পরের লাইনে post() না লিখে callback ব্যবহার করো
+        post(route("repeat-test.store"), {
+            onBefore: () => console.log("Form submitting with:", { ...data, items }),
+        });
     };
+
+
 
 
     return (
