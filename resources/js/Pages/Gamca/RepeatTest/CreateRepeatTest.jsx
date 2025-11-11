@@ -54,13 +54,26 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
             amount: t.fee,
         }));
 
-        setData("items", items);
+        const payload = {
+            ...data,
+            items, // সরাসরি items যোগ করো
+        };
 
-        // ✅ পরের লাইনে post() না লিখে callback ব্যবহার করো
-        post(route("repeat-test.store"), {
-            onBefore: () => console.log("Form submitting with:", { ...data, items }),
+        console.log("🟢 Form submitting with:", payload);
+
+        router.post(route("repeat-test.store"), payload, {
+            preserveScroll: true,
+            onStart: () => console.log("Submitting..."),
+            onSuccess: () => {
+                console.log("✅ Saved successfully");
+                reset();
+            },
+            onError: (errors) => {
+                console.error("❌ Error:", errors);
+            },
         });
     };
+
 
 
 
