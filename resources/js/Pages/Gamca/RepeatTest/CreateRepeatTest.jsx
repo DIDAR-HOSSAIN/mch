@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Head, useForm, router } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 export default function CreateRepeatTest({ auth, preMedical, tests }) {
     const { data, setData, post, processing, reset } = useForm({
@@ -79,7 +80,14 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
 
 
     return (
-        <>
+        <AdminDashboardLayout
+            user={auth.user}
+            header={
+                <h2 className="text-xl font-semibold">
+                    Repeat Test Entry
+                </h2>
+            }
+        >
             <Head title="Repeat Test Entry" />
             <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-xl p-6 mt-6 space-y-6">
 
@@ -213,6 +221,6 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
                     </div>
                 </div>
             </div>
-        </>
+        </AdminDashboardLayout>
     );
 }

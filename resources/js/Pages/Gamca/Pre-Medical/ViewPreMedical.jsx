@@ -1,37 +1,83 @@
-import React, { useRef, useState } from "react";
-import { Link, usePage, router, Head } from "@inertiajs/react";
+import React, { useRef, useState, useEffect } from "react";
+import { Link, Head, usePage, router } from "@inertiajs/react";
 import Swal from "sweetalert2";
+import { CSVLink } from "react-csv";
 import { useReactToPrint } from "react-to-print";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const ViewPreMedical = ({ auth, filters = {} }) => {
-    const { pre_medicals, flash } = usePage().props;
-    const [search, setSearch] = useState(filters.search || "");
+const ViewPreMedical = ({ auth, preMedicals = [] }) => {
+    const { flash } = usePage().props;
+
+    // 🔹 States
+    const [searchTerm, setSearchTerm] = useState("");
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
+    const [perPage, setPerPage] = useState(30);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [filteredData, setFilteredData] = useState([]);
+
     const printRef = useRef();
 
-    // ✅ Print handler
-    const handlePrint = useReactToPrint({
-        content: () => printRef.current,
-        documentTitle: "Pre-Medical Report List",
-    });
+    // ✅ Flash Message
+    useEffect(() => {
+        if (flash?.success) {
+            Swal.fire({
+                icon: "success",
+                title: flash.success,
+                timer: 1500,
+                showConfirmButton: false,
+            });
+        } else if (flash?.error) {
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: flash.error,
+                showConfirmButton: true,
+            });
+        }
+    }, [flash]);
 
-    // ✅ Search handler
-    const handleSearch = (e) => {
-        e.preventDefault();
-        router.get("/pre-medical", { search }, { preserveState: true });
-    };
+    // ✅ Filter Data (search + date range)
+    useEffect(() => {
+        let data = preMedicals;
 
-    // ✅ Flash message
-    if (flash?.success) {
-        Swal.fire({
-            icon: "success",
-            title: flash.success,
-            timer: 1500,
-            showConfirmButton: false,
-        });
-    }
+        if (searchTerm.trim() !== "") {
+            const lower = searchTerm.toLowerCase();
+            data = data.filter(
+                (item) =>
+                    item.passport_no?.toLowerCase().includes(lower) ||
+                    item.first_name?.toLowerCase().includes(lower) ||
+                    item.last_name?.toLowerCase().includes(lower)
+            );
+        }
 
-    // ✅ Delete confirmation
+        if (fromDate) {
+            data = data.filter(
+                (item) => new Date(item.created_at) >= new Date(fromDate)
+            );
+        }
+
+        if (toDate) {
+            data = data.filter(
+                (item) => new Date(item.created_at) <= new Date(toDate)
+            );
+        }
+
+        setFilteredData(data);
+        setCurrentPage(1);
+    }, [searchTerm, fromDate, toDate, preMedicals]);
+
+    // ✅ Pagination Logic
+    const totalPages = Math.ceil(filteredData.length / perPage);
+    const paginatedData =
+        perPage === "all"
+            ? filteredData
+            : filteredData.slice(
+                (currentPage - 1) * perPage,
+                currentPage * perPage
+            );
+
+    // ✅ Delete Record
     const handleDelete = (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -48,6 +94,12 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
         });
     };
 
+    // ✅ Print
+    const handlePrint = useReactToPrint({
+        content: () => printRef.current,
+        documentTitle: "Pre-Medical Report List",
+    });
+
     return (
         <AdminDashboardLayout
             user={auth.user}
@@ -56,125 +108,137 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
             <Head title="Pre-Medical List" />
 
             <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8">
-                {/* 🔹 Search + Action Buttons */}
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
-                    <form
-                        onSubmit={handleSearch}
-                        className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
-                    >
+                {/* 🔹 Filters */}
+                <div className="bg-white shadow-sm rounded-lg p-4 flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-end gap-3 mb-4">
+                    <div className="flex flex-col">
+                        <label className="text-sm font-medium">Search</label>
                         <input
                             type="text"
-                            placeholder="Search by Passport / Name"
-                            className="border rounded-lg px-3 py-2 w-full sm:w-64 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Name / Passport"
+                            className="border rounded-lg px-3 py-2 w-full sm:w-52 md:w-60 text-sm"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <button
-                            type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
-                        >
-                            Search
-                        </button>
-                    </form>
+                    </div>
 
-                    <div className="flex flex-wrap justify-center sm:justify-end gap-2">
+                    <div className="flex flex-col">
+                        <label className="text-sm font-medium">From</label>
+                        <input
+                            type="date"
+                            className="border rounded-lg px-3 py-2 text-sm w-full sm:w-44"
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="text-sm font-medium">To</label>
+                        <input
+                            type="date"
+                            className="border rounded-lg px-3 py-2 text-sm w-full sm:w-44"
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="text-sm font-medium">Per Page</label>
+                        <select
+                            className="border rounded-lg px-3 py-2 text-sm w-full sm:w-28"
+                            value={perPage}
+                            onChange={(e) => setPerPage(e.target.value)}
+                        >
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 sm:ml-auto w-full sm:w-auto">
                         <Link
                             href="/pre-medical/create"
-                            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 w-full sm:w-auto text-center"
                         >
                             + Add New
                         </Link>
+                        <CSVLink
+                            data={filteredData || []}
+                            filename="PreMedical_Report.csv"
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 w-full sm:w-auto text-center"
+                        >
+                            📤 Export CSV
+                        </CSVLink>
                         <button
                             onClick={handlePrint}
-                            className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700"
+                            type="button"
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 w-full sm:w-auto"
                         >
                             🖨️ Print
                         </button>
                     </div>
                 </div>
 
-                {/* 🔹 Table (Printable Area) */}
+                {/* 🔹 Table */}
                 <div
                     ref={printRef}
-                    className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-100 print:shadow-none"
+                    className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-100"
                 >
                     <table className="min-w-full text-sm text-left text-gray-700 border-collapse">
-                        <thead className="bg-gray-100">
+                        <thead className="bg-gray-100 text-gray-800">
                             <tr>
-                                <th className="px-3 py-2 font-semibold">#</th>
-                                <th className="px-3 py-2 font-semibold">Pre Medical ID</th>
-                                <th className="px-3 py-2 font-semibold">Passport No</th>
-                                <th className="px-3 py-2 font-semibold">Name</th>
-                                <th className="px-3 py-2 font-semibold">Country</th>
-                                <th className="px-3 py-2 font-semibold">Report Date</th>
-                                <th className="px-3 py-2 font-semibold">Photo</th>
-                                <th className="px-3 py-2 font-semibold">Amount</th>
-                                <th className="px-3 py-2 font-semibold print:hidden text-center">
-                                    Actions
-                                </th>
+                                <th className="px-3 py-2">#</th>
+                                <th className="px-3 py-2">Passport No</th>
+                                <th className="px-3 py-2">Name</th>
+                                <th className="px-3 py-2">Country</th>
+                                <th className="px-3 py-2">Report Date</th>
+                                <th className="px-3 py-2 text-right">Amount</th>
+                                <th className="px-3 py-2 print:hidden text-center">Actions</th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            {pre_medicals?.data?.length ? (
-                                pre_medicals.data.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-50 transition">
-                                        <td className="px-3 py-2">{pre_medicals.from + index}</td>
-                                        <td className="px-3 py-2 font-medium">{item.pre_medical_id}</td>
+                            {paginatedData.length ? (
+                                paginatedData.map((item, i) => (
+                                    <tr key={item.id} className="hover:bg-gray-50 border-b last:border-0">
+                                        <td className="px-3 py-2">{(currentPage - 1) * perPage + i + 1}</td>
                                         <td className="px-3 py-2 font-medium">{item.passport_no}</td>
-                                        <td className="px-3 py-2">{`${item.first_name || ""} ${item.last_name || ""}`}</td>
+                                        <td className="px-3 py-2">
+                                            {item.first_name} {item.last_name}
+                                        </td>
                                         <td className="px-3 py-2">{item.country_name}</td>
                                         <td className="px-3 py-2">
                                             {item.report_date
                                                 ? new Date(item.report_date).toLocaleDateString()
                                                 : "-"}
                                         </td>
-                                        <td className="px-3 py-2">
-                                            {item.photo ? (
-                                                <img
-                                                    src={`/images/passengers/${item.photo}`}
-                                                    alt="Passenger"
-                                                    className="w-16 h-12 object-cover rounded border"
-                                                />
-                                            ) : (
-                                                <span className="text-gray-400">No Photo</span>
-                                            )}
+                                        <td className="px-3 py-2 text-right">
+                                            {item.amount ? parseFloat(item.amount).toFixed(2) : "0.00"}
                                         </td>
-                                        <td className="px-3 py-2">{item.amount}</td>
-
-                                        {/* 🔹 Action Buttons */}
-                                        <td className="px-3 py-2 flex flex-wrap gap-1 justify-center print:hidden">
+                                        <td className="px-3 py-2 text-center space-x-1 print:hidden">
                                             <Link
                                                 href={`/pre-medical/${item.id}`}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
                                             >
-                                                👁️ Show
+                                                View
                                             </Link>
                                             <Link
                                                 href={`/pre-medical/${item.id}/edit`}
                                                 className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs"
                                             >
-                                                ✏️ Edit
-                                            </Link>
-                                            <Link
-                                                href={`/pre-medical-inv/${item.id}`}
-                                                target="_blank"
-                                                className="bg-teal-600 hover:bg-teal-700 text-white px-2 py-1 rounded text-xs"
-                                            >
-                                                💰 Receipt
+                                                Edit
                                             </Link>
                                             <button
                                                 onClick={() => handleDelete(item.id)}
                                                 className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs"
                                             >
-                                                🗑️ Delete
+                                                Delete
                                             </button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="8" className="text-center text-gray-500 py-4">
+                                    <td colSpan="7" className="text-center text-gray-500 py-4">
                                         No records found.
                                     </td>
                                 </tr>
@@ -184,27 +248,30 @@ const ViewPreMedical = ({ auth, filters = {} }) => {
                 </div>
 
                 {/* 🔹 Pagination */}
-                <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3 text-sm text-gray-600">
-                    <p>
-                        Showing {pre_medicals.from || 0} - {pre_medicals.to || 0} of{" "}
-                        {pre_medicals.total || 0} records
-                    </p>
+                {perPage !== "all" && totalPages > 1 && (
+                    <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3 text-sm text-gray-600">
+                        <p>
+                            Showing {(currentPage - 1) * perPage + 1} -{" "}
+                            {Math.min(currentPage * perPage, filteredData.length)} of{" "}
+                            {filteredData.length} records
+                        </p>
 
-                    <div className="flex flex-wrap gap-2">
-                        {pre_medicals.links.map((link, i) => (
-                            <button
-                                key={i}
-                                disabled={!link.url}
-                                onClick={() => link.url && router.visit(link.url)}
-                                className={`px-3 py-1 rounded ${link.active
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className={`px-3 py-1 rounded transition-all duration-150 ${currentPage === i + 1
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        }`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </AdminDashboardLayout>
     );

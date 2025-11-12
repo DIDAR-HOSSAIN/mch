@@ -33,25 +33,12 @@ class PreMedicalController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->get('search');
-        $pre_medicals = PreMedical::query()
-            ->when(
-                $search,
-                fn($q) =>
-                $q->where('passport_no', 'like', "%{$search}%")
-                    ->orWhere('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-            )
-            ->latest()
-            ->paginate(10);
-        // ->withQueryString();
-
+        $preMedicals = Premedical::all();
         return inertia('Gamca/Pre-Medical/ViewPreMedical', [
             'auth' => ['user' => auth()->user()],
-            'pre_medicals' => $pre_medicals,
-            'filters' => ['search' => $search],
+            'preMedicals' => $preMedicals,
             'flash' => session()->get('flash'),
         ]);
     }

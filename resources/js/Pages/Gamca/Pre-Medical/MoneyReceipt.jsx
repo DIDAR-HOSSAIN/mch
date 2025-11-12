@@ -1,10 +1,12 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import { Head } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import logo from "../../../assets/images/Logo/mch-logo.png";
 import MedicalExaminationForm from "./TestForm";
 import XrayReport from "./XrayForm";
 
-const MoneyReceipt = ({ receipt }) => {
+const MoneyReceipt = ({ auth, receipt }) => {
     const printRef = useRef();
 
     const handlePrint = useReactToPrint({
@@ -38,7 +40,8 @@ const MoneyReceipt = ({ receipt }) => {
             font-family: Arial, sans-serif !important;
             box-sizing: border-box !important;
           }
-          button {
+          /* Hide non-print elements */
+          button, .no-print, header, aside {
             display: none !important;
           }
         `,
@@ -55,47 +58,58 @@ const MoneyReceipt = ({ receipt }) => {
     };
 
     return (
-        <div className="min-h-screen w-2/3 mx-auto">
-            {/* Print Button */}
-            <button
-                onClick={handlePrint}
-                className="mb-6 bg-blue-700 hover:bg-blue-800 text-white px-2 py-2 rounded-md shadow-md font-semibold print:hidden"
-            >
-                🖨️ Print
-            </button>
+        <AdminDashboardLayout
+            user={auth?.user}
+            header={
+                <h2 className="text-xl font-semibold">Pre Medical Money Receipt</h2>
+            }
+        >
+            <Head title="Pre Medical Money Receipt" />
 
-            {/* 👇 সব প্রিন্টযোগ্য কন্টেন্ট এখানে */}
-            <div ref={printRef} className="">
-                {/* Page 1: Money Receipt */}
-                <div className="a4-page shadow-lg rounded-md">
-                    <ReceiptSection
-                        title="MONEY RECEIPT (OFFICE COPY)"
-                        receipt={receipt}
-                        formatDate={formatDate}
-                        showAuthTable={false}
-                    />
+            <div className="min-h-screen w-2/3 mx-auto">
+                {/* Print Button */}
+                
+                    <button
+                        className="w-full mb-6 bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded-md shadow-md font-semibold print:hidden"
+                        onClick={handlePrint}
+                    >
+                        🖨️ Print
+                    </button>
 
-                    <div className="my-3 border-t border-dashed border-gray-700" />
 
-                    <ReceiptSection
-                        title="MONEY RECEIPT (PASSENGER COPY)"
-                        receipt={receipt}
-                        formatDate={formatDate}
-                        showAuthTable={true}
-                    />
-                </div>
+                {/* 👇 Printable Area */}
+                <div ref={printRef}>
+                    {/* Page 1: Money Receipt */}
+                    <div className="a4-page shadow-lg rounded-md">
+                        <ReceiptSection
+                            title="MONEY RECEIPT (OFFICE COPY)"
+                            receipt={receipt}
+                            formatDate={formatDate}
+                            showAuthTable={false}
+                        />
 
-                {/* Page 2: Medical Examination Form */}
-                <div className="">
-                    <MedicalExaminationForm receipt={receipt} />
-                </div>
+                        <div className="my-3 border-t border-dashed border-gray-700" />
 
-                {/* Page 3: X-ray Report */}
-                <div className="">
-                    <XrayReport receipt={receipt} />
+                        <ReceiptSection
+                            title="MONEY RECEIPT (PASSENGER COPY)"
+                            receipt={receipt}
+                            formatDate={formatDate}
+                            showAuthTable={true}
+                        />
+                    </div>
+
+                    {/* Page 2: Medical Examination Form */}
+                    <div>
+                        <MedicalExaminationForm receipt={receipt} />
+                    </div>
+
+                    {/* Page 3: X-ray Report */}
+                    <div>
+                        <XrayReport receipt={receipt} />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AdminDashboardLayout>
     );
 };
 
