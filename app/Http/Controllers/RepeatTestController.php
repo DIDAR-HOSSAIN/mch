@@ -33,7 +33,7 @@ class RepeatTestController extends Controller
      */
     public function create(Request $request)
     {
-        $passportNo = $request->query('passport_no'); // URL থেকে পাসপোর্ট নম্বর
+        $passportNo = $request->query('passport_no');
         $preMedical = null;
 
         if ($passportNo) {

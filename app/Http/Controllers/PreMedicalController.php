@@ -7,12 +7,10 @@ use App\Http\Requests\StorePreMedicalRequest;
 use App\Http\Requests\UpdatePreMedicalRequest;
 use App\Models\Country;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
