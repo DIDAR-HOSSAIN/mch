@@ -12,6 +12,7 @@ class RepeatTest extends Model
     protected $fillable = [
         'pre_medical_id',
         'delivery_date',
+        'entry_date',
         'is_free',
         'deduct',
         'total',

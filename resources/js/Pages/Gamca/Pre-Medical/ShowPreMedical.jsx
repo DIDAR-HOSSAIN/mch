@@ -1,19 +1,17 @@
 import React from "react";
 import { Head, Link } from "@inertiajs/react";
+import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
-const ShowPreMedical = ({ preMedical }) => {
-    const professionColors = {
-        LABOUR: "bg-blue-200 text-blue-800",
-        ENGINEER: "bg-green-200 text-green-800",
-        DOCTOR: "bg-red-200 text-red-800",
-        TEACHER: "bg-yellow-200 text-yellow-800",
-        MANAGER: "bg-purple-200 text-purple-800",
-        DEFAULT: "bg-gray-200 text-gray-800",
-    };
-
-    const professionClass = professionColors[preMedical.profession] || professionColors.DEFAULT;
+const ShowPreMedical = ({ auth, preMedical }) => {
+    
+    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
     return (
+        <AdminDashboardLayout
+            user={auth.user}
+            header={<h1 className="font-semibold text-xl text-gray-800">Passenger Details</h1>}
+        >
+            <Head title="Passenger Details" />
         <div className="max-w-6xl mx-auto mt-10 p-6">
             <Head title={`Pre-Medical: ${preMedical.first_name} ${preMedical.last_name}`} />
 
@@ -65,11 +63,11 @@ const ShowPreMedical = ({ preMedical }) => {
                     <div>
                         <span className="font-semibold text-gray-800">Religion:</span> {preMedical.religion}
                     </div>
-                    <div className="sm:col-span-2 flex items-center gap-2">
-                        <span className="font-semibold text-gray-800">Profession:</span>
-                        <span className={`px-3 py-1 rounded-full font-medium ${professionClass}`}>
-                            {preMedical.profession}
-                        </span>
+                    <div>
+                            <span className="font-semibold text-gray-800">Reg Date:</span> {formatDate(preMedical.entry_date)}
+                    </div>
+                    <div>
+                            <span className="font-semibold text-gray-800">Profession:</span> {preMedical.profession}
                     </div>
                 </div>
             </div>
@@ -116,6 +114,7 @@ const ShowPreMedical = ({ preMedical }) => {
                 </Link>
             </div>
         </div>
+        </AdminDashboardLayout>
     );
 };
 

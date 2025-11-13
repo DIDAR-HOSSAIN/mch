@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('pre_medical_id')->nullable();
             $table->date('delivery_date')->nullable();
+            $table->date('entry_date');
             $table->boolean('is_free')->default(false);
             $table->decimal('deduct', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);

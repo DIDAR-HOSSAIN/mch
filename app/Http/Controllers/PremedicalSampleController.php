@@ -16,23 +16,12 @@ class PremedicalSampleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = PreMedical::query();
-
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('pre_medical_id', 'like', "%{$request->search}%")
-                    ->orWhere('passport_no', 'like', "%{$request->search}%")
-                    ->orWhere('first_name', 'like', "%{$request->search}%");
-            });
-        }
-
-        $samples = $query->latest()->paginate(10);
+        $samples = PreMedicalSample::orderBy('id', 'desc')->get();
 
         return Inertia::render('Gamca/Sample/ViewSample', [
             'samples' => $samples,
-            'search' => $request->search,
         ]);
     }
 
@@ -51,9 +40,7 @@ class PremedicalSampleController extends Controller
         }
 
         return Inertia::render('Gamca/Sample/CreateSample', [
-            'auth' => [
-                'user' => Auth::user(),
-            ],
+            'auth' => ['user' => Auth::user()],
             'patient' => $patient,
             'search' => $search,
         ]);
@@ -65,20 +52,34 @@ class PremedicalSampleController extends Controller
     public function store(StorePremedicalSampleRequest $request)
     {
         $request->validate([
-            'pre_medical_id' => 'required',
-            'collection_date' => 'required|date',
+            'pre_medical_id' => 'required|exists:pre_medicals,pre_medical_id',
         ]);
 
-        $barcode = 'PM-' . strtoupper(uniqid());
+        // Check existing sample
+        $existingSample = PreMedicalSample::where('pre_medical_id', $request->pre_medical_id)
+            ->whereDate('collection_date', Carbon::today('Asia/Dhaka'))
+            ->first();
 
+        if ($existingSample) {
+            return back()->withErrors([
+                'pre_medical_id' => 'Sample already collected!!',
+            ])->withInput();
+        }
+
+        // Create new sample
+        $barcode = 'PM-' . strtoupper(uniqid());
         $sample = PreMedicalSample::create([
             'pre_medical_id' => $request->pre_medical_id,
-            'collection_date' => Carbon::parse($request->collection_date),
+            'collection_date' => Carbon::now('Asia/Dhaka')->toDateString(),
             'barcode_no' => $barcode,
             'user_name' => Auth::user()->name,
         ]);
 
-        return redirect()->back()->with('sample', $sample);
+        // ✅ Return sample directly for Inertia
+        return Inertia::render('Gamca/Sample/CreateSample', [
+            'patient' => $request->pre_medical_id ? PreMedical::where('pre_medical_id', $request->pre_medical_id)->first() : null,
+            'sample' => $sample,
+        ]);
     }
 
     /**

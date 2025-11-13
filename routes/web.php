@@ -162,10 +162,6 @@ Route::get('pre-medical/dues/details', [PreMedicalController::class, 'duesCheck'
 //Sample Collection
 Route::resource('/premedical-sample', PremedicalSampleController::class);
 
-Route::get('/test-form', function () {
-    return Inertia::render('Gamca/Pre-Medical/TestForm');
-})->name('test.form');
-
 //Repeat Test
 Route::resource('/repeat-test', RepeatTestController::class);
 Route::get('/repeat-tests/{id}/print', [RepeatTestController::class, 'print'])->name('repeat-tests.print');

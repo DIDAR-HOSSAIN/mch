@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateRepeatTestRequest;
 use App\Models\MedicalTest;
 use App\Models\PreMedical;
 use App\Models\RepeatTestItem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -59,6 +60,7 @@ class RepeatTestController extends Controller
         $validated = $request->validate([
             'pre_medical_id' => 'required|integer|exists:pre_medicals,id',
             'delivery_date' => 'nullable|date',
+            'entry_date' => 'nullable|date',
             'is_free' => 'boolean',
             'deduct' => 'nullable|numeric',
             'total' => 'nullable|numeric',
@@ -76,6 +78,7 @@ class RepeatTestController extends Controller
             $repeatTest = RepeatTest::create([
                 'pre_medical_id' => $validated['pre_medical_id'],
                 'delivery_date' => $validated['delivery_date'] ?? now(),
+                'entry_date' => Carbon::now('Asia/Dhaka')->toDateString(),
                 'is_free' => $validated['is_free'] ?? false,
                 'deduct' => $validated['deduct'] ?? 0,
                 'total' => $validated['total'] ?? 0,
@@ -117,7 +120,8 @@ class RepeatTestController extends Controller
      */
     public function edit(RepeatTest $repeatTest)
     {
-        $repeatTest->load('items.medicalTest');
+        $repeatTest->load('items.medicalTest', 'preMedical');
+        // $repeatTest = RepeatTest::with(['items', 'preMedical']);
         $tests = MedicalTest::all();
 
         return Inertia::render('Gamca/RepeatTest/EditRepeatTest', [

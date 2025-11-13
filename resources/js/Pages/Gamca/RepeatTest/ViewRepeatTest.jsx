@@ -18,40 +18,46 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
     useEffect(() => {
         let data = repeatTests;
 
-        // Search filter
+        // 🔍 Search filter
         if (searchTerm.trim() !== "") {
             const lower = searchTerm.toLowerCase();
+
+            data = data.filter((item) => {
+                const firstName = item.pre_medical?.first_name?.toLowerCase() || "";
+                const lastName = item.pre_medical?.last_name?.toLowerCase() || "";
+                const passport = item.pre_medical?.passport_no?.toLowerCase() || "";
+                const fullName = `${firstName} ${lastName}`;
+
+                return (
+                    firstName.includes(lower) ||
+                    lastName.includes(lower) ||
+                    fullName.includes(lower) ||
+                    passport.includes(lower)
+                );
+            });
+        }
+
+        // 🗓️ Date filter (fixed to include full "to date")
+        if (fromDate) {
+            const from = new Date(fromDate);
+            from.setHours(0, 0, 0, 0);
             data = data.filter(
-                (item) =>
-                    item.pre_medical?.passport_no
-                        ?.toLowerCase()
-                        .includes(lower) ||
-                    item.pre_medical?.first_name
-                        ?.toLowerCase()
-                        .includes(lower) ||
-                    item.pre_medical?.last_name
-                        ?.toLowerCase()
-                        .includes(lower)
+                (item) => new Date(item.created_at) >= from
             );
         }
 
-        // Date filter
-        if (fromDate) {
-            data = data.filter(
-                (item) =>
-                    new Date(item.created_at) >= new Date(fromDate)
-            );
-        }
         if (toDate) {
+            const to = new Date(toDate);
+            to.setHours(23, 59, 59, 999);
             data = data.filter(
-                (item) =>
-                    new Date(item.created_at) <= new Date(toDate)
+                (item) => new Date(item.created_at) <= to
             );
         }
 
         setFilteredData(data);
         setCurrentPage(1);
     }, [searchTerm, fromDate, toDate, repeatTests]);
+
 
     // 🔹 Pagination
     const totalPages = Math.ceil(filteredData.length / perPage);
@@ -60,7 +66,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
         currentPage * perPage
     );
 
-    // 🔹 SweetAlert message
+    // 🔹 Flash message
     useEffect(() => {
         if (flash?.success) {
             Swal.fire({
@@ -79,7 +85,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
         }
     }, [flash]);
 
-    // 🔹 Delete handler
+    // 🔹 Delete
     const handleDelete = (id) => {
         Swal.fire({
             title: "Are you sure?",
@@ -109,10 +115,10 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                     <div className="flex flex-wrap gap-2">
                         <input
                             type="text"
-                            placeholder="Search passport or name..."
+                            placeholder="Search by name or passport..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="border px-3 py-2 rounded-md w-48"
+                            className="border px-3 py-2 rounded-md w-56"
                         />
                         <input
                             type="date"
@@ -169,7 +175,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                                 <th className="border p-2 text-left">#</th>
                                 <th className="border p-2 text-left">Passenger Name</th>
                                 <th className="border p-2 text-left">Passport No</th>
-                                <th className="border p-2 text-left">Delivery Date</th>
+                                <th className="border p-2 text-left">Entry Date</th>
                                 <th className="border p-2 text-right">Total</th>
                                 <th className="border p-2 text-right">Net Pay</th>
                                 <th className="border p-2 text-center">Actions</th>
@@ -195,7 +201,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                                         <td className="border p-2">
                                             {test.delivery_date
                                                 ? new Date(
-                                                    test.delivery_date
+                                                    test.entry_date
                                                 ).toLocaleDateString("en-GB")
                                                 : "-"}
                                         </td>
@@ -230,10 +236,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td
-                                        colSpan={7}
-                                        className="text-center text-gray-500 py-4"
-                                    >
+                                    <td colSpan={7} className="text-center text-gray-500 py-4">
                                         No records found.
                                     </td>
                                 </tr>
@@ -242,7 +245,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                     </table>
                 </div>
 
-                {/* 🔹 Pagination Buttons */}
+                {/* 🔹 Pagination */}
                 {totalPages > 1 && (
                     <div className="flex justify-center mt-4 gap-2">
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map(

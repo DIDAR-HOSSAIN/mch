@@ -33,14 +33,14 @@ class PreMedicalController extends Controller
 
     public function index()
     {
-        $preMedicals = Premedical::all();
+        $preMedicals = Premedical::orderBy('id', 'desc')->get();
+
         return inertia('Gamca/Pre-Medical/ViewPreMedical', [
             'auth' => ['user' => auth()->user()],
             'preMedicals' => $preMedicals,
             'flash' => session()->get('flash'),
         ]);
     }
-
 
     /**
      * Show the form for creating a new resource.

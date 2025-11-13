@@ -7,16 +7,15 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 const ViewPreMedical = ({ auth, preMedicals = [] }) => {
     const { flash } = usePage().props;
-
-    // 🔹 States
     const [searchTerm, setSearchTerm] = useState("");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [perPage, setPerPage] = useState(30);
     const [currentPage, setCurrentPage] = useState(1);
     const [filteredData, setFilteredData] = useState([]);
-
     const printRef = useRef();
+
+    const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
     // ✅ Flash Message
     useEffect(() => {
@@ -41,25 +40,39 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
     useEffect(() => {
         let data = preMedicals;
 
+        // 🔍 Search filter
         if (searchTerm.trim() !== "") {
             const lower = searchTerm.toLowerCase();
-            data = data.filter(
-                (item) =>
-                    item.passport_no?.toLowerCase().includes(lower) ||
-                    item.first_name?.toLowerCase().includes(lower) ||
-                    item.last_name?.toLowerCase().includes(lower)
-            );
+
+            data = data.filter((item) => {
+                const firstName = item.first_name?.toLowerCase() || "";
+                const lastName = item.last_name?.toLowerCase() || "";
+                const passport = item.passport_no?.toLowerCase() || "";
+                const fullName = `${firstName} ${lastName}`;
+
+                return (
+                    firstName.includes(lower) ||
+                    lastName.includes(lower) ||
+                    fullName.includes(lower) ||
+                    passport.includes(lower)
+                );
+            });
         }
 
+        // 🗓️ Date filter (fixed to include full "to date")
         if (fromDate) {
+            const from = new Date(fromDate);
+            from.setHours(0, 0, 0, 0);
             data = data.filter(
-                (item) => new Date(item.created_at) >= new Date(fromDate)
+                (item) => new Date(item.created_at) >= from
             );
         }
 
         if (toDate) {
+            const to = new Date(toDate);
+            to.setHours(23, 59, 59, 999);
             data = data.filter(
-                (item) => new Date(item.created_at) <= new Date(toDate)
+                (item) => new Date(item.created_at) <= to
             );
         }
 
@@ -67,15 +80,13 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
         setCurrentPage(1);
     }, [searchTerm, fromDate, toDate, preMedicals]);
 
-    // ✅ Pagination Logic
+
+    // 🔹 Pagination
     const totalPages = Math.ceil(filteredData.length / perPage);
-    const paginatedData =
-        perPage === "all"
-            ? filteredData
-            : filteredData.slice(
-                (currentPage - 1) * perPage,
-                currentPage * perPage
-            );
+    const paginatedData = filteredData.slice(
+        (currentPage - 1) * perPage,
+        currentPage * perPage
+    );
 
     // ✅ Delete Record
     const handleDelete = (id) => {
@@ -144,13 +155,19 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                     <div className="flex flex-col">
                         <label className="text-sm font-medium">Per Page</label>
                         <select
-                            className="border rounded-lg px-3 py-2 text-sm w-full sm:w-28"
                             value={perPage}
-                            onChange={(e) => setPerPage(e.target.value)}
+                            onChange={(e) =>
+                                setPerPage(
+                                    e.target.value === "all"
+                                        ? filteredData.length
+                                        : parseInt(e.target.value)
+                                )
+                            }
+                            className="border px-6 py-2 rounded-md"
                         >
-                            <option value="30">30</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
+                            <option value={30}>30</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
                             <option value="all">All</option>
                         </select>
                     </div>
@@ -188,10 +205,11 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                         <thead className="bg-gray-100 text-gray-800">
                             <tr>
                                 <th className="px-3 py-2">#</th>
+                                <th className="px-3 py-2">Photo</th>
                                 <th className="px-3 py-2">Passport No</th>
                                 <th className="px-3 py-2">Name</th>
                                 <th className="px-3 py-2">Country</th>
-                                <th className="px-3 py-2">Report Date</th>
+                                <th className="px-3 py-2">Reg Date</th>
                                 <th className="px-3 py-2 text-right">Amount</th>
                                 <th className="px-3 py-2 print:hidden text-center">Actions</th>
                             </tr>
@@ -201,15 +219,20 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                                 paginatedData.map((item, i) => (
                                     <tr key={item.id} className="hover:bg-gray-50 border-b last:border-0">
                                         <td className="px-3 py-2">{(currentPage - 1) * perPage + i + 1}</td>
+                                        <td className="px-3 py-2 font-medium">{item.photo && (
+                                            <img
+                                                src={`/images/passengers/${item.photo}`}
+                                                alt="Pre Medical"
+                                                className="w-16 h-16 object-cover rounded-lg border"
+                                            />
+                                        )}</td>
                                         <td className="px-3 py-2 font-medium">{item.passport_no}</td>
                                         <td className="px-3 py-2">
                                             {item.first_name} {item.last_name}
                                         </td>
                                         <td className="px-3 py-2">{item.country_name}</td>
                                         <td className="px-3 py-2">
-                                            {item.report_date
-                                                ? new Date(item.report_date).toLocaleDateString()
-                                                : "-"}
+                                            {formatDate(item.entry_date)}
                                         </td>
                                         <td className="px-3 py-2 text-right">
                                             {item.amount ? parseFloat(item.amount).toFixed(2) : "0.00"}
@@ -219,7 +242,7 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                                                 href={`/pre-medical/${item.id}`}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
                                             >
-                                                View
+                                                Show
                                             </Link>
                                             <Link
                                                 href={`/pre-medical/${item.id}/edit`}
@@ -248,28 +271,22 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                 </div>
 
                 {/* 🔹 Pagination */}
-                {perPage !== "all" && totalPages > 1 && (
-                    <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3 text-sm text-gray-600">
-                        <p>
-                            Showing {(currentPage - 1) * perPage + 1} -{" "}
-                            {Math.min(currentPage * perPage, filteredData.length)} of{" "}
-                            {filteredData.length} records
-                        </p>
-
-                        <div className="flex flex-wrap gap-2 justify-center">
-                            {Array.from({ length: totalPages }, (_, i) => (
+                {totalPages > 1 && (
+                    <div className="flex justify-center mt-4 gap-2">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                            (page) => (
                                 <button
-                                    key={i}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                    className={`px-3 py-1 rounded transition-all duration-150 ${currentPage === i + 1
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    key={page}
+                                    className={`px-3 py-1 border rounded ${page === currentPage
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-white"
                                         }`}
+                                    onClick={() => setCurrentPage(page)}
                                 >
-                                    {i + 1}
+                                    {page}
                                 </button>
-                            ))}
-                        </div>
+                            )
+                        )}
                     </div>
                 )}
             </div>

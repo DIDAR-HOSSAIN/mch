@@ -18,6 +18,6 @@ class PremedicalSample extends Model
 
     public function preMedical()
     {
-        return $this->belongsTo(PreMedical::class);
+        return $this->belongsTo(PreMedical::class, 'pre_medical_id', 'pre_medical_id');
     }
 }
