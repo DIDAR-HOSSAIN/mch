@@ -43,6 +43,11 @@ class PremedicalSampleController extends Controller
             'auth' => ['user' => Auth::user()],
             'patient' => $patient,
             'search' => $search,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+                'sample' => session('sample'),
+            ],
         ]);
     }
 
@@ -61,13 +66,15 @@ class PremedicalSampleController extends Controller
             ->first();
 
         if ($existingSample) {
-            return back()->withErrors([
-                'pre_medical_id' => 'Sample already collected!!',
-            ])->withInput();
+            return redirect()->back()->with([
+                'error' => 'Sample already collected!',
+            ]);
         }
 
+        // 🆔 Barcode number = Patient ID itself (for scanner readability)
+        $barcode = $request->pre_medical_id;
+
         // Create new sample
-        $barcode = 'PM-' . strtoupper(uniqid());
         $sample = PreMedicalSample::create([
             'pre_medical_id' => $request->pre_medical_id,
             'collection_date' => Carbon::now('Asia/Dhaka')->toDateString(),
@@ -75,9 +82,8 @@ class PremedicalSampleController extends Controller
             'user_name' => Auth::user()->name,
         ]);
 
-        // ✅ Return sample directly for Inertia
-        return Inertia::render('Gamca/Sample/CreateSample', [
-            'patient' => $request->pre_medical_id ? PreMedical::where('pre_medical_id', $request->pre_medical_id)->first() : null,
+        return redirect()->back()->with([
+            'success' => 'Sample created successfully!',
             'sample' => $sample,
         ]);
     }

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Head, router, usePage } from "@inertiajs/react";
 import { useForm } from "@inertiajs/react";
 import { useReactToPrint } from "react-to-print";
@@ -6,7 +6,7 @@ import BarcodeLabel from "./BarcodeLabel";
 import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 
 export default function CreateSample({ auth }) {
-    const { patient: initialPatient, search: initialSearch } = usePage().props;
+    const { patient: initialPatient, search: initialSearch, flash } = usePage().props;
     const [searchInput, setSearchInput] = useState(initialSearch || "");
     const [patient, setPatient] = useState(initialPatient || null);
     const [sample, setSample] = useState(null);
@@ -22,12 +22,20 @@ export default function CreateSample({ auth }) {
         documentTitle: `${data.pre_medical_id}_label`,
     });
 
+    // ✅ Handle flash messages
+    useEffect(() => {
+        if (flash?.error) setErrorMessage(flash.error);
+        else setErrorMessage("");
+        if (flash?.sample) setSample(flash.sample);
+    }, [flash]);
+
     // 🔍 Search patient
     const handleSearch = (e) => {
         e.preventDefault();
         if (!searchInput) return;
 
         router.get(route("premedical-sample.create"), { search: searchInput }, {
+            preserveScroll: true,
             onSuccess: (page) => {
                 setPatient(page.props.patient || null);
                 setData({
@@ -44,17 +52,21 @@ export default function CreateSample({ auth }) {
         e.preventDefault();
         if (!patient) return;
 
-        setErrorMessage(""); // Clear previous error
+        setErrorMessage("");
 
         post(route("premedical-sample.store"), {
+            preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props.sample) {
-                    setSample(page.props.sample); // print block trigger
-                    setTimeout(() => handlePrint(), 300);
+                const f = page.props.flash;
+                if (f?.error) {
+                    setErrorMessage(f.error);
+                    setSample(null);
+                } else if (f?.sample) {
+                    setSample(f.sample);
+                    setTimeout(() => handlePrint(), 500);
                 }
             },
         });
-
     };
 
     return (
@@ -87,14 +99,14 @@ export default function CreateSample({ auth }) {
                     </div>
                 )}
 
-                {/* ⚠️ Inline error message */}
+                {/* ⚠️ Error message */}
                 {errorMessage && (
-                    <div className="bg-red-100 text-red-700 p-2 mb-3 rounded text-sm">
+                    <div className="bg-red-100 text-red-700 p-2 mb-3 rounded text-sm text-center">
                         {errorMessage}
                     </div>
                 )}
 
-                {/* 💾 Save */}
+                {/* 💾 Save button */}
                 {patient && (
                     <form onSubmit={handleSubmit}>
                         <button className="w-full bg-green-600 text-white py-2 rounded">
@@ -103,7 +115,7 @@ export default function CreateSample({ auth }) {
                     </form>
                 )}
 
-                {/* 🔹 Hidden print label */}
+                {/* 🖨️ Hidden Print Label */}
                 {sample && (
                     <div style={{ display: "none" }}>
                         <div ref={printRef}>
