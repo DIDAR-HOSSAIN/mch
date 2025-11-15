@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2)->default(0);
             $table->decimal('net_pay', 10, 2)->default(0);
             $table->string('serial_no')->nullable();
+            $table->string('user_name')->nullable();
             $table->timestamps();
         });
     }

@@ -7,6 +7,10 @@ const SidebarMenu = () => {
 
     const [dropdownState, setDropdownState] = useState({
         preMedicalDropdown: false,
+        gamcaMain: false,
+        gamcaPreMedical: false,
+        gamcaRepeat: false,
+        gamcaSample: false,
         pcrDropdown: false,
         antigenDropdown: false,
         dopeDropdown: false,
@@ -29,6 +33,105 @@ const SidebarMenu = () => {
 
     return (
         <div>
+
+
+            {/* MAIN MENU : GAMCA AUTOMATION */}
+            <div className="flex mt-2">
+                <button
+                    onClick={() => toggleDropdown("gamcaMain")}
+                    className="bg-green-500 hover:bg-white font-bold btn w-full text-lg rounded"
+                >
+                    {dropdownState.gamcaMain ? "Gamca Automation ▲" : "Gamca Automation ▼"}
+                </button>
+            </div>
+
+            {dropdownState.gamcaMain && (
+                <div className="flex flex-col gap-1 pl-3">
+
+                    {/* ============================ */}
+                    {/* SUBMENU : PRE-MEDICAL */}
+                    {/* ============================ */}
+                    <button
+                        onClick={() => toggleDropdown("gamcaPreMedical")}
+                        className="btn w-full bg-blue-300 hover:bg-blue-100 font-semibold rounded"
+                    >
+                        {dropdownState.gamcaPreMedical ? "Pre-Medical ▲" : "Pre-Medical ▼"}
+                    </button>
+
+                    {dropdownState.gamcaPreMedical && (
+                        <div className="pl-4 flex flex-col gap-1">
+
+                            <Link href="/pre-medical/create" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Registration
+                            </Link>
+
+                            <Link href="/pre-medical" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Manage Pre-Medical
+                            </Link>
+
+                            <Link href="/pre-medical/summary/report" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Date Wise Summary
+                            </Link>
+
+                            <Link href="/pre-medical/summary/details" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Summary Details
+                            </Link>
+
+                            <Link href="/pre-medical/dues/details" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Dues Details
+                            </Link>
+
+                        </div>
+                    )}
+
+                    {/* ============================ */}
+                    {/* SUBMENU : SAMPLE COLLECTION */}
+                    {/* ============================ */}
+                    <button
+                        onClick={() => toggleDropdown("gamcaSample")}
+                        className="btn w-full bg-blue-300 hover:bg-blue-100 font-semibold rounded"
+                    >
+                        {dropdownState.gamcaSample ? "Sample Collection ▲" : "Sample Collection ▼"}
+                    </button>
+
+                    {dropdownState.gamcaSample && (
+                        <div className="pl-4 flex flex-col gap-1">
+                            <Link href="/premedical-sample/create" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Collect Sample
+                            </Link>
+                            <Link href="/premedical-sample" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Manage Sample
+                            </Link>
+                        </div>
+                    )}
+
+                    {/* ============================ */}
+                    {/* SUBMENU : REPEAT TEST */}
+                    {/* ============================ */}
+                    <button
+                        onClick={() => toggleDropdown("gamcaRepeat")}
+                        className="btn w-full bg-blue-300 hover:bg-blue-100 font-semibold rounded"
+                    >
+                        {dropdownState.gamcaRepeat ? "Repeat Test ▲" : "Repeat Test ▼"}
+                    </button>
+
+                    {dropdownState.gamcaRepeat && (
+                        <div className="pl-4 flex flex-col gap-1">
+                            <Link href="/repeat-test/create" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Add Repeat Test
+                            </Link>
+                            <Link href="/repeat-test" className="hover:bg-yellow-200 btn btn-blue rounded text-sm">
+                                Manage Repeat Test
+                            </Link>
+                        </div>
+                    )}
+
+                </div>
+            )}
+
+
+
+            {/* টসেটটা */}
 
             <div className="flex">
                 <button

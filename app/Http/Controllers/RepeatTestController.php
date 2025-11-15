@@ -10,6 +10,7 @@ use App\Models\PreMedical;
 use App\Models\RepeatTestItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -84,6 +85,7 @@ class RepeatTestController extends Controller
                 'total' => $validated['total'] ?? 0,
                 'net_pay' => $validated['net_pay'] ?? 0,
                 'serial_no' => $serialNo,
+                'user_name' => Auth::user()->name,
             ]);
 
             foreach ($validated['items'] as $item) {

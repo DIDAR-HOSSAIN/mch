@@ -18,7 +18,10 @@ class PremedicalSampleController extends Controller
      */
     public function index()
     {
-        $samples = PreMedicalSample::orderBy('id', 'desc')->get();
+        // $samples = PreMedicalSample::orderBy('id', 'desc')->get();
+        $samples = PreMedicalSample::with('preMedical')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return Inertia::render('Gamca/Sample/ViewSample', [
             'samples' => $samples,

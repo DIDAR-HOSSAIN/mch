@@ -18,6 +18,7 @@ class RepeatTest extends Model
         'total',
         'net_pay',
         'serial_no',
+        'user_name',
     ];
 
     public function items()

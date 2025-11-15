@@ -206,6 +206,7 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                             <tr>
                                 <th className="px-3 py-2">#</th>
                                 <th className="px-3 py-2">Photo</th>
+                                <th className="px-3 py-2">ID</th>
                                 <th className="px-3 py-2">Passport No</th>
                                 <th className="px-3 py-2">Name</th>
                                 <th className="px-3 py-2">Country</th>
@@ -226,6 +227,7 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                                                 className="w-16 h-16 object-cover rounded-lg border"
                                             />
                                         )}</td>
+                                        <td className="px-3 py-2 font-medium">{item.pre_medical_id}</td>
                                         <td className="px-3 py-2 font-medium">{item.passport_no}</td>
                                         <td className="px-3 py-2">
                                             {item.first_name} {item.last_name}
@@ -238,6 +240,12 @@ const ViewPreMedical = ({ auth, preMedicals = [] }) => {
                                             {item.amount ? parseFloat(item.amount).toFixed(2) : "0.00"}
                                         </td>
                                         <td className="px-3 py-2 text-center space-x-1 print:hidden">
+                                            <Link
+                                                href={`/pre-medical-inv/${item.id}`}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                                            >
+                                                Receipt
+                                            </Link>
                                             <Link
                                                 href={`/pre-medical/${item.id}`}
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
