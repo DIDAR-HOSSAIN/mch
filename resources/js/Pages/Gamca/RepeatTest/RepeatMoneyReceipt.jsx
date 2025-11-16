@@ -50,10 +50,10 @@ export default function PrintView({ auth, data }) {
                 <div className="border border-gray-600 p-4 mb-4 rounded-md bg-gray-50">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                         <div className="space-y-1">
-                            <p><strong>Receipt No:</strong> {String(data?.id).padStart(5, "0")}</p>
+                            <p><strong>ID No:</strong> {data?.pre_medical?.pre_medical_id}</p>
                             <p><strong>Date:</strong> {today}</p>
                             <p><strong>Delivery Date:</strong> {data?.delivery_date ? new Date(data.delivery_date).toLocaleDateString("en-GB") : "-"}</p>
-                            <p><strong>SL No:</strong> {data?.pre_medical?.pre_medical_id}</p>
+                            <p><strong>Repeat ID:</strong> {data?.id}</p>
                         </div>
 
                         <div className="space-y-1">

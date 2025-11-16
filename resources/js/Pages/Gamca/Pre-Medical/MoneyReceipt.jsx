@@ -5,6 +5,7 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 import logo from "../../../assets/images/Logo/mch-logo.png";
 import MedicalExaminationForm from "./TestForm";
 import XrayReport from "./XrayForm";
+import BarcodeLabel from "./BarcodeLabel";
 
 const MoneyReceipt = ({ auth, receipt }) => {
     const printRef = useRef();
@@ -68,7 +69,7 @@ const MoneyReceipt = ({ auth, receipt }) => {
 
             <div className="min-h-screen w-2/3 mx-auto">
                 {/* Print Button */}
-                
+
                     <button
                         className="w-full mb-6 bg-blue-700 hover:bg-blue-800 text-white px-3 py-2 rounded-md shadow-md font-semibold print:hidden"
                         onClick={handlePrint}
@@ -145,26 +146,27 @@ const ReceiptSection = ({ title, receipt, formatDate, showAuthTable }) => (
                 <p className="border border-gray-700 rounded px-1 py-0.5 inline-block bg-gray-50">
                     <strong>ID No:</strong> {receipt?.pre_medical_id}
                 </p>
-                <p><strong>Name:</strong> {receipt?.first_name} {receipt?.last_name}</p>
-                <p><strong>Passport:</strong> {receipt?.passport_no}</p>
-                <p><strong>Country:</strong> {receipt?.country_name}</p>
-                <p><strong>DOB:</strong> {formatDate(receipt?.date_of_birth)}</p>
-                <p><strong>Amount:</strong> {receipt?.amount} BDT</p>
-                <p><strong>Received:</strong> {formatDate(receipt?.received_date)}</p>
-                <p><strong>Report:</strong> {formatDate(receipt?.report_date)}</p>
+                <p><strong>Passenger Name:</strong> {receipt?.first_name} {receipt?.last_name}</p>
+                <p><strong>Passport No:</strong> {receipt?.passport_no}</p>
+                <p><strong>Country Name:</strong> {receipt?.country_name}</p>
+                <p><strong>Date Of  Birth:</strong> {formatDate(receipt?.date_of_birth)}</p>
+                <p><strong>Medical Fee:</strong> {receipt?.amount} BDT</p>
+                <p><strong>Received Date:</strong> {formatDate(receipt?.entry_date)}</p>
+                <p><strong>Report Date:</strong> {formatDate(receipt?.report_date)}</p>
             </div>
 
             <div className="space-y-1">
+                <BarcodeLabel entry={receipt} />
                 <p><strong>Daily Serial:</strong> {receipt?.serial_no}</p>
                 <p><strong>GCC Slip No:</strong> {receipt?.gcc_slip_no}</p>
-                <p><strong>GCC Date:</strong> {formatDate(receipt?.gcc_slip_date)}</p>
-                <p><strong>Expired:</strong> {formatDate(receipt?.expired_date)}</p>
+                <p><strong>GCC Slip Date:</strong> {formatDate(receipt?.gcc_slip_date)}</p>
+                <p><strong>Expired:</strong> {formatDate(receipt?.expire_days)}</p>
                 <p><strong>Mobile:</strong> {receipt?.mobile_no}</p>
             </div>
         </div>
 
         {showAuthTable && (
-            <div className="border border-gray-800 mt-1 mb-1 text-center text-[9px] w-3/4 mx-auto rounded-md overflow-hidden">
+            <div className="border border-gray-800 mt-1 mb-1 text-center text-[9px] w-2/4 rounded-md overflow-hidden">
                 <div className="border-b border-gray-800 py-1 font-bold bg-gray-100">
                     Authentication of Examinee
                 </div>

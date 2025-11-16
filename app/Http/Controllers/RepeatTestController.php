@@ -59,7 +59,8 @@ class RepeatTestController extends Controller
     {
         // dd($request->all());
         $validated = $request->validate([
-            'pre_medical_id' => 'required|integer|exists:pre_medicals,id',
+            // 'pre_medical_id' => 'required|integer|exists:pre_medicals,id',
+            'pre_medical_id' => 'required|exists:pre_medicals,pre_medical_id',
             'delivery_date' => 'nullable|date',
             'entry_date' => 'nullable|date',
             'is_free' => 'boolean',

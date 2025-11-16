@@ -6,7 +6,6 @@ const SidebarMenu = () => {
     const { auth } = usePage().props;
 
     const [dropdownState, setDropdownState] = useState({
-        preMedicalDropdown: false,
         gamcaMain: false,
         gamcaPreMedical: false,
         gamcaRepeat: false,
@@ -39,7 +38,7 @@ const SidebarMenu = () => {
             <div className="flex mt-2">
                 <button
                     onClick={() => toggleDropdown("gamcaMain")}
-                    className="bg-green-500 hover:bg-white font-bold btn w-full text-lg rounded"
+                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
                 >
                     {dropdownState.gamcaMain ? "Gamca Automation ▲" : "Gamca Automation ▼"}
                 </button>
@@ -125,96 +124,6 @@ const SidebarMenu = () => {
                             </Link>
                         </div>
                     )}
-
-                </div>
-            )}
-
-
-
-            {/* টসেটটা */}
-
-            <div className="flex">
-                <button
-                    onClick={() => toggleDropdown("preMedicalDropdown")}
-                    className="bg-blue-400 hover:bg-white font-bold btn w-full text-lg rounded"
-                >
-                    {dropdownState.preMedicalDropdown
-                        ? "Gamca Automation ▲"
-                        : "Gamca Automation ▼"}
-                </button>
-            </div>
-            {dropdownState.preMedicalDropdown && (
-                <div className="flex flex-col gap-1">
-                    {hasAnyRole(auth.user, [
-                        "super-admin",
-                        "admin",
-                        "sub-admin",
-                        "user",
-                    ]) && (
-                            <Link
-                                href="/pre-medical/create"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Registration
-                            </Link>
-                        )}
-
-                    {hasAnyRole(auth.user, [
-                        "super-admin",
-                        "admin",
-                        "sub-admin",
-                        "user",
-                        "general",
-                    ]) && (
-                            <Link
-                            href="/pre-medical"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Manage Pre-Medical
-                            </Link>
-                        )}
-
-                    {hasAnyRole(auth.user, [
-                        "super-admin",
-                        "admin",
-                        "sub-admin",
-                        "user",
-                    ]) && (
-                            <Link
-                                href="/pre-medical/summary/report"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary
-                            </Link>
-                        )}
-
-                    {hasAnyRole(auth.user, [
-                        "super-admin",
-                        "admin",
-                        "sub-admin",
-                        "user",
-                    ]) && (
-                            <Link
-                            href="/pre-medical/summary/details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Summary Details
-                            </Link>
-                        )}
-
-                    {hasAnyRole(auth.user, [
-                        "super-admin",
-                        "admin",
-                        "sub-admin",
-                        "user",
-                    ]) && (
-                            <Link
-                                href="/pre-medical/dues/details"
-                                className="hover:bg-yellow-200 font-bold btn btn-blue rounded"
-                            >
-                                Date Wise Dues Details
-                            </Link>
-                        )}
 
                 </div>
             )}

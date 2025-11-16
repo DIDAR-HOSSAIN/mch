@@ -5,7 +5,7 @@ import AdminDashboardLayout from "@/backend/Dashboard/AdminDashboardLayout";
 export default function CreateRepeatTest({ auth, preMedical, tests }) {
     const { data, setData, post, processing, reset } = useForm({
         passport_no: "",
-        pre_medical_id: preMedical?.id || "",
+        pre_medical_id: preMedical?.pre_medical_id || "",
         delivery_date: "",
         is_free: false,
         deduct: 0,
@@ -13,6 +13,13 @@ export default function CreateRepeatTest({ auth, preMedical, tests }) {
         net_pay: 0,
         items: [],
     });
+
+    useEffect(() => {
+        if (preMedical && preMedical.pre_medical_id) {
+            setData("pre_medical_id", preMedical.pre_medical_id);
+        }
+    }, [preMedical]);
+
 
     const [selectedTests, setSelectedTests] = useState([]);
 

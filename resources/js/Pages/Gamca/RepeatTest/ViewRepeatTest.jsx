@@ -173,6 +173,7 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                         <thead className="bg-gray-100 text-gray-700">
                             <tr>
                                 <th className="border p-2 text-left">#</th>
+                                <th className="border p-2 text-left">Medical ID</th>
                                 <th className="border p-2 text-left">Passenger Name</th>
                                 <th className="border p-2 text-left">Passport No</th>
                                 <th className="border p-2 text-left">Entry Date</th>
@@ -190,6 +191,9 @@ const ViewRepeatTest = ({ auth, repeatTests }) => {
                                     >
                                         <td className="border p-2">
                                             {(currentPage - 1) * perPage + index + 1}
+                                        </td>
+                                        <td className="border p-2">
+                                            {test.pre_medical?.pre_medical_id}
                                         </td>
                                         <td className="border p-2">
                                             {test.pre_medical?.first_name}{" "}
